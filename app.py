@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
-from flaskext.mysql import MySQL # cmd install flask-mysql
+from flaskext.mysql import MySQL  # cmd install flask-mysql
+
 app = Flask(__name__)
 
 mysql = MySQL()
@@ -9,6 +10,7 @@ app.config['MYSQL_DATABASE_PASSWORD'] = '528491'
 app.config['MYSQL_DATABASE_DB'] = 'Demologin'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
+
 
 @app.route('/register-form')
 def register_form():
