@@ -1,17 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>User log in</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename = 'stylesheet/login_style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename = 'stylesheet/bootstrap.min.css') }}">
-
-
-</head>
-<body>
-    <div id="container">
+<template>
+  <div id="container">
         <div id="sign-in-form">
-            <h3 id="title">Sign In {{ message }}</h3>
+            <h3 id="title">{{ msg }}, Please sign in</h3>
             <form method="POST" action="/authenticate" enctype="multipart/form-data">
                     <label for="username-input">Username</label>
                         <input type="text" id="username-input"  class="form-control" name="username" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
@@ -58,7 +48,7 @@
                         <input type="password" id="newpassword-input" class="form-control" name="new-password" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1">
                         <br>
                     <label for="confirm-new-password-input">Retype Password</label>
-                        <input type="password" id="confirm-password" class="form-control" name="confirm-password" placeholder="Retype Password" aria-label="Retype Password" aria-describedby="basic-addon1">
+                        <input type="password" id="confirm-new-password-input" class="form-control" name="confirm-password" placeholder="Retype Password" aria-label="Retype Password" aria-describedby="basic-addon1">
                     <br>
                     <button type="submit" style="display: inline-block" class="save btn btn-outline-success">Change Password</button>
                     <button type="button" id="callback-main-form-button-2" style="float: right;" class="save btn btn-outline-dark">Back</button>
@@ -66,18 +56,103 @@
             </form>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='script/jquery-3.2.1.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='script/bootstrap.min.js') }}"></script>
-    <script src="static/script/register/register-form.js"></script>
-    <script src="{{ url_for('static', filename='script/vue.js') }}"></script>
-    <script>
-            var vue = new Vue({
-                el: '#title',
-                data: {
-                    message: "minhngoc"
-                }
-            });
-    </script>
-</body>
+</template>
 
-</html>
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'register_form',
+  data() {
+    return {
+      msg: '',
+    };
+  },
+  methods: {
+    getMessage() {
+      const path = 'http://localhost:5000/register-form';
+      axios.get(path)
+        .then((res) => {
+          this.msg = res.data;
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.error(error);
+        });
+    },
+  },
+  created() {
+    this.getMessage();
+  },
+};
+
+
+</script>
+
+<style scoped>
+  #container {
+    height: 100vh;
+    position: relative;
+  }
+  #sign-in-form, #sign-up-form, #password-change-form {
+    border-radius: 4px;
+    border: 1px rgba(73, 80, 87, 0.30196078431372547)solid;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    min-width: 450px;
+    min-height: 300px;
+    padding: 50px;
+    transform: translate(50%,-50%);
+    -moz-transform: translate(50%,-50%);
+    -webkit-transform: translate(50%,-50%);
+    -o-transform: translate(50%,-50%);
+    -ms-transform: translate(50%,-50%);
+    /*-webkit-transition: width 2s, height 2s; !* Safari prior 6.1 *!*/
+    /*transition: width 2s, height 2s;*/
+    /*transition-timing-function: linear;*/
+  }
+
+  #sign-up-form, #password-change-form {
+    display: none;
+  }
+
+  label {
+    display: inline;
+    max-width: 150px;
+    float: left;
+  }
+
+  #container input {
+      margin-top: 10px;
+  }
+
+#container button {
+    margin-top: 10px;
+}
+
+  #container a {
+      outline: none;
+      text-decoration: none;
+      color:#E45953;
+  }
+
+  #sign-up-call-button {
+      display: inline-block;
+      float: right;
+  }
+
+  @media only screen and (max-width: 500px) {
+      #sign-in-form, #sign-up-form {
+          margin: 0;
+          min-width: 300px;
+          font-size: 12px;
+      }
+  }
+
+  @media only screen and (max-height: 700px) {
+      #container {
+          min-height: 700px;
+      }
+  }
+</style>
