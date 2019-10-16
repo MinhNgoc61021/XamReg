@@ -25,7 +25,7 @@ logging.getLogger('flask_cors').level = logging.DEBUG
 
 @app.route('/register-form')
 def register_form():
-    return jsonify('Success')
+    return jsonify('Hello World')
 
 
 @app.route('/authenticate', methods=['POST'])
@@ -53,7 +53,9 @@ def create_account():
     cursor.execute('select * from user where Username = "' + username + '"')
     is_user_exist = cursor.fetchone()
     if is_user_exist is None:
-        cursor.execute('insert into user(password, username, fullname, email) values ("' + username + '")')
+        cursor.execute('insert into user(password, username, fullname, email) values ("' + password + '", "' + username + '", "' + fullname + '", "' + email + '")')
+    else:
+        return 'LOL'
 
 
 if __name__ == '__main__':

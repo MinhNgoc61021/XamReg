@@ -1,8 +1,8 @@
 <template>
   <div id="container">
         <div id="sign-in-form">
-            <h3 id="title">{{ msg }}, Please sign in</h3>
-            <form method="POST" action="/authenticate" enctype="multipart/form-data">
+            <h3 id="title" >{{ msg }}, Please sign in</h3>
+            <form method="POST" action="http://localhost:5000/authenticate" enctype="multipart/form-data">
                     <label for="username-input">Username</label>
                         <input type="text" id="username-input"  class="form-control" name="username" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
                     <br>
@@ -17,7 +17,7 @@
         </div>
         <div id="sign-up-form">
             <h3>Sign Up</h3>
-            <form method="POST" action="/create-account" enctype="multipart/form-data">
+            <form method="POST" action="http://localhost:5000/create-account" enctype="multipart/form-data">
                     <label for="new-email-input">Email</label>
                         <input type="email" id="new-email-input" class="form-control" name="new-email-input" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
                     <br>
@@ -60,6 +60,17 @@
 
 <script>
 import axios from 'axios';
+window.onload = function () {
+    document.getElementById('sign-up-call-button').onclick = function() {
+        document.getElementById('sign-in-form').style.display = 'none';
+        document.getElementById('sign-up-form').style.display = 'block';
+    };
+
+    document.getElementById('callback-main-form-button').onclick = function () {
+        document.getElementById('sign-in-form').style.display = 'block';
+        document.getElementById('sign-up-form').style.display = 'none';
+    }
+};
 
 export default {
   name: 'register_form',
@@ -69,17 +80,14 @@ export default {
     };
   },
   methods: {
-    getMessage() {
-      const path = 'http://localhost:5000/register-form';
-      axios.get(path)
-        .then((res) => {
-          this.msg = res.data;
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-        });
-    },
+      getMessage() {
+          const path = 'http://localhost:5000/register-form';
+          axios.get(path)
+              .then((response) => {
+                  console.log(response.data);
+                  this.msg = response.data;
+              });
+      },
   },
   created() {
     this.getMessage();
@@ -96,7 +104,7 @@ export default {
   }
   #sign-in-form, #sign-up-form, #password-change-form {
     border-radius: 4px;
-    border: 1px rgba(73, 80, 87, 0.30196078431372547)solid;
+    border: 1px rgba(73, 80, 87, 0.30196078431372547) solid;
     position: absolute;
     top: 50%;
     right: 50%;
