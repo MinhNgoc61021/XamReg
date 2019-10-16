@@ -1,7 +1,7 @@
 <template>
   <div id="container">
         <div id="sign-in-form">
-            <h3 id="title" >{{ msg }}, Please sign in</h3>
+            <h3 id="title">{{ msg }}, Please sign in</h3>
             <form method="POST" action="http://localhost:5000/authenticate" enctype="multipart/form-data">
                     <label for="username-input">Username</label>
                         <input type="text" id="username-input"  class="form-control" name="username" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
@@ -40,7 +40,7 @@
         </div>
         <div id="password-change-form">
             <h3>Change Password</h3>
-            <form method="POST" action="/change-password" enctype="multipart/form-data">
+            <form method="POST" action="http://localhost:5000/change-password" enctype="multipart/form-data">
                     <label for="username-input">Username</label>
                         <input type="text" id="password-username-input" class="form-control" name="username" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
                     <br>
@@ -69,7 +69,17 @@ window.onload = function () {
     document.getElementById('callback-main-form-button').onclick = function () {
         document.getElementById('sign-in-form').style.display = 'block';
         document.getElementById('sign-up-form').style.display = 'none';
-    }
+    };
+
+    document.getElementById('callback-main-form-button-2').onclick = function () {
+        document.getElementById('sign-in-form').style.display = 'block';
+        document.getElementById('password-change-form').style.display = 'none';
+    };
+
+    document.getElementById('reset-password').onclick = function () {
+        document.getElementById('sign-in-form').style.display = 'none';
+        document.getElementById('password-change-form').style.display = 'block';
+    };
 };
 
 export default {
