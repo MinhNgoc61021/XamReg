@@ -1,9 +1,9 @@
 # ExamReg
 Đăng ký dự thi
-1. Thực hiện
+## Thực hiện
 - Thực hiện theo nhóm (team) 3 sinh viên.
 - Trình bày sản phẩm tại buổi thi vấn đáp.
-Tiêu chí chấm điểm
+## Tiêu chí chấm điểm
 TT. Tiêu chí chấm điểm Hệ số
 1. Chức năng và các features đã cài đặt 0.35
 2. Thiết kế: Logic, dễ sử dụng, đẹp 0.15
