@@ -1,4 +1,4 @@
-# ̶<del>ExamReg XamReg
+# ̶<del>ExamReg</del> XamReg
 Đăng ký dự thi
 ## Thực hiện
 - Thực hiện theo nhóm (team) 3 sinh viên.
