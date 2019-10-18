@@ -13,6 +13,7 @@ TT. Tiêu chí chấm điểm Hệ số
 6. Hiệu năng: sử dụng ajax để tải bộ phận, không tải lại, dữ liệu JSON... 0.1
 7. Phong cách lập trình: Sử dụng mẫu thiết kế, tách biệt mã tạo giao diện và mã xử lý nghiệp vụ, tổ chức thư viện, lớp và kế thừa lớp, mô hình MVC, trình bày mã, chú thích mã, ... 0.1
 8. Thao tác CSDL theo lập trình hướng đối và độc lập CSDL 0.1
+
 2. Mô tả chung
 Trường đại học ABC (ABCUni) tổ chức thi kết thúc học phần bằng hình thức thi trắc nghiệm trên máy tính. Để tạo điều kiện tốt nhất cho thí sinh, ABCUni cho phép sinh viên tự đăng ký dự thi. Theo đó, ABCUni sẽ lập lịch cho các kỳ thi và ca thi trước, sinh viên đã học học phần nào sẽ được quyền đăng ký dự thi học phần đó tại ca thi phù hợp. Mỗi kỳ thi có nhiều ca thi. Mỗi ca thi có nhiều phòng thi. Mỗi phòng thi có số lượng máy tính xác định. Số lượng thí sinh có thể thi cùng ca thi bị giới hạn, không được vượt quá tổng số máy tính của các phòng thi trong ca thi. Khi ca thi đã đủ số lượng thí sinh đăng ký thì các thí sinh khác không thể đăng ký vào ca thi nữa.
 
