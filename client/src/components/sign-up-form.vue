@@ -25,8 +25,7 @@
 </template>
 
 <script>
-    export default {
-        name: "sign_up_form"
-    }
+export default {
+  name: 'sign_up_form',
+};
 </script>
-

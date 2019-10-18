@@ -2,7 +2,8 @@
 
 import Vue from 'vue';
 import Router from 'vue-router';
-import register_form from './components/register-form'
+import register from './components/register';
+import Test from './components/Test';
 Vue.use(Router);
 
 export default new Router({
@@ -10,9 +11,14 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/register-form',
-      name: 'Register_form',
-      component: register_form,
-    }
+      path: '/register',
+      name: 'register',
+      component: register,
+    },
+    {
+      path: '/test',
+      name: 'Test',
+      component: Test,
+    },
   ],
 });

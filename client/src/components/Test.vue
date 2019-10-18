@@ -5,8 +5,8 @@ This component is only for studying purpose only
 <!--        <h1 v-once>{{ name }}</h1>-->
 <!--        <button v-on:click="changeName" class="btn btn-dark" v-bind:aria-disabled="btnstate">Change Name</button>-->
       <form @submit.prevent="addInfo">
-        <input type="text" placeholder="Type skill here..." v-model="infomation">
-<!--        <p class="alert" v-if="errors.has('info')" >{{ errors.first('info') }}</p>-->
+        <input type="text" placeholder="Type info here..." v-model="infomation" v-validate="':min5'" name="infomation">
+        <p class="alert" v-if="errors.has('infomation')" >{{ errors.first('infomation') }}</p>
       </form>
 
       <ul>
@@ -24,16 +24,16 @@ This component is only for studying purpose only
             return {
                 name: 'Minhngoc61021',
                 array: [
-                    { infomation : 'Nguyễn Ngọc Minh' },
-                    { infomation : 'Minh' }
+                    { 'infomation' : 'Nguyễn Ngọc Minh' },
+                    { 'infomation' : 'Minh' }
                 ],
             }
         },
         methods: {
             addInfo() {
                 this.array.push({infomation: this.infomation});
-                this.info = '';
-            }
+                this.infomation = '';
+            },
         }
     }
 </script>

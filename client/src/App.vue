@@ -1,15 +1,14 @@
 /*Root component, which is the starting point from which all other components will be rendered*/
 <template>
   <div id="app">
-<!--    <router-view/>-->
+    <router-view/>
 <!--    <register_form msg="Opening register form for user"></register_form>-->
 <!--    <sign_up_form></sign_up_form>-->
-    <Test></Test>
   </div>
 </template>
 <script>
-    import register_form from './components/register-form';
-    import sign_up_form from './components/sign-up-form';
+    // import register_form from './components/register-form';
+    // import sign_up_form from './components/sign-up-form';
     import Test from "./components/Test";
 
     export default {

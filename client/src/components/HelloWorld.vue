@@ -1,7 +1,3 @@
-<!--where UI components are stored-->
-<!--template: for component-specific HTML-->
-<!--script: where the component logic is implemented via JavaScript-->
-<!--style: for CSS styles-->
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
@@ -33,7 +29,6 @@
     </ul>
   </div>
 </template>
-
 <script>
 export default {
   name: 'HelloWorld',
