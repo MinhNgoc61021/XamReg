@@ -1,9 +1,9 @@
-# ExamReg
+# ̶<del>ExamReg</del> XamReg
 Đăng ký dự thi
-1. Thực hiện
+## Thực hiện
 - Thực hiện theo nhóm (team) 3 sinh viên.
 - Trình bày sản phẩm tại buổi thi vấn đáp.
-Tiêu chí chấm điểm
+## Tiêu chí chấm điểm
 TT. Tiêu chí chấm điểm Hệ số
 1. Chức năng và các features đã cài đặt 0.35
 2. Thiết kế: Logic, dễ sử dụng, đẹp 0.15
@@ -13,12 +13,13 @@ TT. Tiêu chí chấm điểm Hệ số
 6. Hiệu năng: sử dụng ajax để tải bộ phận, không tải lại, dữ liệu JSON... 0.1
 7. Phong cách lập trình: Sử dụng mẫu thiết kế, tách biệt mã tạo giao diện và mã xử lý nghiệp vụ, tổ chức thư viện, lớp và kế thừa lớp, mô hình MVC, trình bày mã, chú thích mã, ... 0.1
 8. Thao tác CSDL theo lập trình hướng đối và độc lập CSDL 0.1
-2. Mô tả chung
+
+## Mô tả chung
 Trường đại học ABC (ABCUni) tổ chức thi kết thúc học phần bằng hình thức thi trắc nghiệm trên máy tính. Để tạo điều kiện tốt nhất cho thí sinh, ABCUni cho phép sinh viên tự đăng ký dự thi. Theo đó, ABCUni sẽ lập lịch cho các kỳ thi và ca thi trước, sinh viên đã học học phần nào sẽ được quyền đăng ký dự thi học phần đó tại ca thi phù hợp. Mỗi kỳ thi có nhiều ca thi. Mỗi ca thi có nhiều phòng thi. Mỗi phòng thi có số lượng máy tính xác định. Số lượng thí sinh có thể thi cùng ca thi bị giới hạn, không được vượt quá tổng số máy tính của các phòng thi trong ca thi. Khi ca thi đã đủ số lượng thí sinh đăng ký thì các thí sinh khác không thể đăng ký vào ca thi nữa.
 
 Sinh viên đăng nhập vào phần mềm ExamReg mà ở đó đã có thông tin cá nhân sinh viên (do quản trị viên đưa vào CSDL trên cơ sở danh sách lớp học phần được các đơn vị đào tạo gửi) và CHỌN lịch thi của học phần sinh viên cần đăng ký dự thi. Trong lịch thi đó có thông tin điểm thi, các ca thi, các phòng thi của ca thi, số chỗ thi và có chức năng cho sinh viên chọn ca thi họ muốn dự thi. Sau khi sinh viên chọn xong thì lịch thi sinh viên đăng ký được xuất ra ở dạng báo cáo có tên gọi là PHIẾU BÁO DỰ THI và sinh viên download được/in được. Bản in, bản download đều có giá trị là minh chứng cho việc sinh viên đăng ký dự thi thành công. SV sử dụng phiếu báo dự thi này để đi thi.
 
-3. Quy trình nghiệp vụ
+## Quy trình nghiệp vụ
 Hệ thống có 2 vai trò sử dụng: quản trị viên, sinh viên.
 - Quản trị viên quản lý danh sách môn thi/học phần
 - Quản trị viên quản lý danh sách sinh viên, cấp tài khoản cho sinh viên (từ Excel).
