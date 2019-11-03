@@ -2,9 +2,9 @@
     height: 100vh;
     position: relative;
   }
-  #sign-in-form, #sign-up-form, #password-change-form {
+  #sign-in-form, #password-change-form {
     border-radius: 4px;
-    border: 1px rgba(73, 80, 87, 0.30196078431372547) solid;
+    border: 1px rgba(73, 80, 87, 0.41) solid;
     position: absolute;
     top: 50%;
     right: 50%;
@@ -21,10 +21,6 @@
     /*transition-timing-function: linear;*/
   }
 
-  #sign-up-form, #password-change-form {
-    display: none;
-  }
-
   label {
     display: inline;
     max-width: 150px;
@@ -35,9 +31,9 @@
       margin-top: 10px;
   }
 
-#container button {
-    margin-top: 10px;
-}
+    #container button {
+        margin-top: 10px;
+    }
 
   #container a {
       outline: none;
@@ -60,6 +56,9 @@
 
   @media only screen and (max-height: 700px) {
       #container {
-          min-height: 700px;
+          transform: translate(0%, 0%);
+          /*-moz-transform: translate(50%,-50%);*/
+          /*-webkit-transform: translate(50%,-50%);*/
+          /*-o-transform: translate(50%,-50%);*/
       }
   }

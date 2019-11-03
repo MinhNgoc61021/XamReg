@@ -1,3 +1,4 @@
 flask-mysql
 -U flask-cors
-bcrypt
+-U Flask-SQLAlchemy
+flask-bcrypt
