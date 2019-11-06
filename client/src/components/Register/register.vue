@@ -63,7 +63,7 @@ export default {
         },
 
         checkAuthentication: function() {
-            const path = 'http://localhost:5000/authenticate';
+            const path = 'http://localhost:5000/auth/register';
             axios.post(path, {
                   Username: this.username,
                   Password: this.password,
@@ -80,14 +80,14 @@ export default {
                     }
                 });
         },
-        getMessage: function() {
-            const path = 'http://localhost:5000/register-form';
-            axios.get(path)
-                .then((response) => {
-                    console.log(response.data);
-                    this.msg = response.data;
-                });
-        },
+        // getMessage: function() {
+        //     const path = 'http://localhost:5000//register';
+        //     axios.get(path)
+        //         .then((response) => {
+        //             console.log(response.data);
+        //             this.msg = response.data;
+        //         });
+        // },
         onInputChange: function() {
             this.showAlert = 'none';
             if (this.username.trim() === '' && this.password.trim() !== '') {
@@ -112,10 +112,10 @@ export default {
             }
         },
     },
-
-    created() {
-      this.getMessage();
-    },
+    //
+    // created() {
+    //   this.getMessage();
+    // },
 };
 </script>
 

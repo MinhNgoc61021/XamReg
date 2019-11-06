@@ -1,15 +1,19 @@
 import os
 from flask import Flask
 from flask_bcrypt import Bcrypt
-from backend.db.entity_db import User, engine
+from backend.model.entity_db import *
 
+
+# before run do this
+# cmd set FLASK_APP=controller
+# cmd set FLASK_ENV=development
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     hashing = Bcrypt(app)
     from . import auth
-    app.register_blueprint(auth.bp)
+    app.register_blueprint(auth.auth)
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
@@ -28,17 +32,17 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
+    @app.route('/init_admin')
+    def init_admin():
         password_hash = hashing.generate_password_hash('12345')
-        add_admin = User(Username='MinhNgoc', Password=password_hash, Fullname='Nguyen Ngoc Minh')
-        from sqlalchemy.orm import sessionmaker
-        Session = sessionmaker(bind=engine)
-        session = Session()
-        session.add(add_admin)
-        session.commit()
-        session.close()
-        return 'Hello, World!'
+        check_user = User.isExist('MinhNgoc')
+        # check_user_role = User_Role.isExist(check_user.UserID)
+        if check_user:
+            return "Admin has already been created"
+        else:
+            add_admin = User.create('MinhNgoc', password_hash, 'Nguyen Ngoc Minh', '1999-12-18',
+                                    'Needforspeed1900@gmail.com', 'Male', 'none')
+            User_Role.create(add_admin.UserID, 'Admin')
+            return 'Hello There ' + add_admin.Fullname
 
     return app

@@ -1,5 +1,5 @@
 import logging
-from backend.db.entity_db import Course
+from backend.model.entity_db import Course
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 from flaskext.mysql import MySQL
@@ -25,26 +25,9 @@ CORS(app)
 # get log
 logging.getLogger('flask_cors').level = logging.DEBUG
 
-
 @app.route('/register-form')
 def register_form():
     return jsonify('Hello There')
-
-
-@app.route('/authenticate', methods=['POST'])
-def authenticate():
-    user_form = request.get_json()
-    cursor = mysql.connect().cursor()
-    print(user_form)
-    username = user_form.get('Username')
-    password = user_form.get('Password')
-    cursor.execute('select * from user where Username = "' + username + '" and Password ="' + password + '"')
-    user_tuple = cursor.fetchone()
-    if user_tuple is None:
-        return jsonify("Fuck")
-    else:
-        return jsonify("Proceed")
-
 
 if __name__ == '__main__':
     app.run(debug=True)

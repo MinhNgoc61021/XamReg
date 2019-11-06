@@ -7,35 +7,40 @@ from flask import (
     flash,
     g,
     redirect,
-    render_template,
     request,
     session,
-    url_for
+    url_for,
+    jsonify
 )
+from flask_cors import CORS
+from backend.model.entity_db import User, User_Role
+from flask_bcrypt import Bcrypt
 
-from werkzeug.security import check_password_hash, generate_password_hash
+# create a blueprint is like creating a package
+# ie: Sign In for authentication
+auth = Blueprint('auth', __name__, url_prefix='/auth')
+CORS(auth)
 
-from backend.db.entity_db import User
-
-bp = Blueprint('auth', __name__, url_prefix='/auth')
-
-@bp.route('/register', methods=('GET', 'POST'))
+@auth.route('/register', methods=['POST', 'GET'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        error = None
-        if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
-        elif db.execute(
-        ).fetchone() is not None:
-            error = 'User {} is already registered.'.format(username)
+    if request.method == 'GET':
+        return "Feminist"
+    elif request.method == 'POST':
+        user_form = request.get_json()
+        print(user_form)
+        username = user_form.get('Username')
+        password = user_form.get('Password')
 
-        if error is None:
-            return redirect(url_for('auth.login'))
+        check_user = User.check_register(username, password)
 
-        flash(error)
+        if check_user is False:
+            return jsonify("Flop")
+        else:
+            return jsonify("Proceed")
 
-    return render_template('auth/register.html')
+@auth.before_app_request
+def load_logged_in_user():
+    user_id = session.get('user_id')
+
+    if user_id is None:
+        g.user = None

@@ -1,7 +1,9 @@
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from flask_bcrypt import Bcrypt
 
-# create_engine connect to xamrag db
+# create_engine connect to xamrag model
 engine = create_engine('mysql+mysqldb://newroot:528491@localhost:3306/xamreg',
                        encoding='utf-8',
                        echo=True,
@@ -12,6 +14,9 @@ engine = create_engine('mysql+mysqldb://newroot:528491@localhost:3306/xamreg',
 # Once base class is declared, any number of mapped classes can be defined in terms of it
 Base = declarative_base()
 
+# Session class is defined using sessionmaker()
+Session = sessionmaker(bind=engine)
+session = Session()
 
 # User persistent class
 class User(Base):
@@ -25,35 +30,53 @@ class User(Base):
     Gender = Column(String(45), nullable=False)
     Profile_Picture = Column(String(100), nullable=True)
 
+    @classmethod
+    def isExist(cls, name):
+        session = Session()
+        exists = session.query(User).filter_by(Username=name).scalar()
+        if exists is not None:
+            return exists
+        return
+
+    @classmethod
+    def create(cls, username, password, fullname, dob, email, gender, profile_picture):
+        new_user = User(Username=username, Password=password, Fullname=fullname, Dob=dob, Email=email, Gender=gender, Profile_Picture=profile_picture)
+        session.add(new_user)
+        session.commit()
+        return new_user
+
+    @classmethod
+    def check_register(cls, username, password):
+        check = session.query(User).filter(User.Username == username).scalar()
+        if check is not None:
+            if Bcrypt().check_password_hash(check.Password, password) is True:
+                return True
+            else:
+                return False
+        return False
 
 # User_Role persistent class
 class User_Role(Base):
     __tablename__ = 'user_role'
     UserID = Column(Integer,
                     ForeignKey('user.UserID'),
-                    primary_key=True)
-    RoleID = Column(Integer,
-                    ForeignKey('role.RoleID'))
+                    primary_key=True, unique=True)
+    Role_Type = Column(String(45), nullable=False)
 
+    @classmethod
+    def isExist(cls, UserID):
+        exists = session.query(User_Role).filter_by(UserID=UserID).scalar()
+        session.close()
+        if exists is not None:
+            return True
+        return False
 
-# Role persistent class
-class Role(Base):
-    __tablename__ = 'role'
-    RoleID = Column(Integer,
-                    primary_key=True,
-                    autoincrement=True)
-    RoleTitle = Column(String(45),
-                       nullable=False)
-
-# Admin persistent class
-class Admin(Base):
-    __tablename__ = 'admin'
-    AdminID = Column(Integer,
-                     primary_key=True,
-                     autoincrement=True)
-    UserID = Column(Integer,
-                    ForeignKey('user.UserID'),
-                    nullable=False)
+    @classmethod
+    def create(cls, UserID, Role_Type):
+        role = User_Role(UserID=UserID, Role_Type=Role_Type)
+        session.add(role)
+        session.commit()
+        session.close()
 
 # Student persistent class
 class Student(Base):
