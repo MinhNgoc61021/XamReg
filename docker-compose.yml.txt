@@ -1,0 +1,36 @@
+# Config docker image, cái này copy sang xong sửa lại môi trường db
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    restart: always
+    environment: # nhập username, password, tên database ở đây
+      - MYSQL_USER=dbuser
+      - MYSQL_PASSWORD=dbpassword
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=quotes_db
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      restart: always
+      depends_on:
+        - db
+      environment:
+        - PMA_HOST=db
+        - MYSQL_ROOT_PASSWORD=528491
+      ports:
+        - 8080:80
+  api:
+    build: ./api # setting build to ./api because our Dockerfile is inside the api folder.
+    container_name: api
+    restart: always
+    volumes:
+      - ./api/:/app #
+    depends_on:
+      - db
+    expose:
+      - 9000

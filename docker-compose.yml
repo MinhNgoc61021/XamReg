@@ -1,0 +1,50 @@
+version: '3'
+# cmd: docker-compose build
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./db:/docker-entrypoint-initXamreg.d
+    restart: always
+    environment:
+      - MYSQL_USER=newroot
+      - MYSQL_PASSWORD=528491
+      - MYSQL_ROOT_PASSWORD=528491
+      - MYSQL_DATABASE=xamreg
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      restart: always
+      depends_on:
+        - db
+      environment:
+        - PMA_HOST=db
+        - MYSQL_ROOT_PASSWORD=528491
+      ports:
+        - 8080:80
+  api:
+    build: ./api # setting build to ./api because our Dockerfile is inside the api folder.
+    container_name: api
+    restart: always
+    volumes:
+      - ./api/:/app #
+    depends_on:
+      - db
+    expose:
+      - 9000 # port 9000 is used to run inside the container(api folder), but on host machine (outside the container) it runs on port 8000
+  client:
+    build: ./client
+    container_name: client
+    restart: always
+    expose:
+      - 80
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "8000:8000"
+      # When accessing to port localhost:8000 from the PC, it will actually route the requests to port 8000 in the container,
+      # as requests to port 8000 are routed to port 9000 where Flask api runs.
+      - "8001:80"
+      # This means that, when we visit localhost:8001 on the PC, it will be routed to localhost within the container where our UI app runs.

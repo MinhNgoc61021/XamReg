@@ -1,5 +1,0 @@
-sqlalchemy
-flask-mysql
--U flask-cors
--U Flask-SQLAlchemy
-flask-bcrypt

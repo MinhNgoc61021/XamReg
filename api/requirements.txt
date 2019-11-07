@@ -1,0 +1,9 @@
+sqlalchemy
+flask
+-U flask-cors
+-U Flask-SQLAlchemy
+flask-bcrypt
+flask-mysql
+flask-restful
+uwsgi
+
