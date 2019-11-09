@@ -1,9 +1,10 @@
 sqlalchemy
 flask
--U flask-cors
--U Flask-SQLAlchemy
+flask-cors
+Flask-SQLAlchemy
 flask-bcrypt
 flask-mysql
 flask-restful
 uwsgi
+PyMySQL
 

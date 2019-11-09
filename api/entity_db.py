@@ -4,12 +4,14 @@ from sqlalchemy.orm import sessionmaker
 from flask_bcrypt import Bcrypt
 
 # create_engine connect to xamrag model
-engine = create_engine('mysql+mysqldb://newroot:528491@db/quote_db',
+
+# WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
+engine = create_engine('mysql+pymysql://newroot:528491@db/xamreg',
                        encoding='utf-8',
                        echo=True,
                        pool_size=5)
 # echo is to set up SQLAlchemy logging
-# dialect+driver://username:password@host:port/database
+
 
 # Once base class is declared, any number of mapped classes can be defined in terms of it
 Base = declarative_base()

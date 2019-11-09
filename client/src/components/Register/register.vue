@@ -12,7 +12,7 @@
                     <br>
                     <button type="submit" v-on:blur="showAlert = 'bounceOutUp'" v-on:click="warn($event)" @click="count++" style="display: inline-block;" class="save btn btn-outline-success">Sign In</button>
 
-                    <button type="button" v-on:click="component ='passwordChange'" id="sign-up-call-button" class="save btn btn-outline-warning">Change Password</button>
+                    <button type="button" id="sign-up-call-button" class="save btn btn-outline-warning">About</button>
                     <br>
             </form>
         </div>
@@ -23,13 +23,9 @@
 
 <script>
 import axios from 'axios';
-import passwordChange from '../Register/password-change.vue'
 import Test from "../Test.vue";
 export default {
     name: 'register_form',
-    components: {
-        'passwordChange': passwordChange,
-    },
     data() {
       return {
           msg: 'Not Yet',
@@ -63,7 +59,7 @@ export default {
         },
 
         checkAuthentication: function() {
-            const path = 'http://localhost:5000/auth/register';
+            const path = '/auth/register';
             axios.post(path, {
                   Username: this.username,
                   Password: this.password,
@@ -80,14 +76,14 @@ export default {
                     }
                 });
         },
-        // getMessage: function() {
-        //     const path = 'http://localhost:5000//register';
-        //     axios.get(path)
-        //         .then((response) => {
-        //             console.log(response.data);
-        //             this.msg = response.data;
-        //         });
-        // },
+        getMessage: function() {
+            const path = '/test/hello_flask';
+            axios.get(path)
+                .then((response) => {
+                    console.log(response.data);
+                    this.msg = response.data;
+                });
+        },
         onInputChange: function() {
             this.showAlert = 'none';
             if (this.username.trim() === '' && this.password.trim() !== '') {
