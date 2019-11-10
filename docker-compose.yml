@@ -23,13 +23,12 @@ services:
 #      ports:
 #        - 8000:80
   api:
-      image: flask/api
+      image: xamreg/flask/api
       build: ./api # setting build to ./api because our Dockerfile is inside the api folder.
       container_name: api
-      restart: always
       command: python run.py
       volumes:
-        - ./api/:/run
+        - ./:/run
       depends_on:
         - db
       ports:
@@ -37,12 +36,14 @@ services:
 #      expose:
 #        - 9000 # port 9000 is used to run inside the container(api folder), but on host machine (outside the container) it runs on port 8000
   client:
-      image: vue/client
+      image: xamreg/client/vue
       build: ./client
       container_name: client
       command: npm run dev
       ports:
         - "8080:8080"
+      environment:
+        - CHOKIDAR_USEPOLLING=true
 
 #  nginx:
 #      build: ./nginx

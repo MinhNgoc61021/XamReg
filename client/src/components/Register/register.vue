@@ -28,7 +28,7 @@ export default {
     name: 'register_form',
     data() {
       return {
-          msg: 'Not Yet',
+          msg: 'Please',
           username: '',
           password: '',
           warning: '',

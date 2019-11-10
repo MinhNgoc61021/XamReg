@@ -24,7 +24,6 @@ def register():
         print(user_form)
         username = user_form.get('Username')
         password = user_form.get('Password')
-
         check_user = User.check_register(username, password)
 
         if check_user is False:
