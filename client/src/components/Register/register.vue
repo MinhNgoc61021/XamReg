@@ -65,6 +65,7 @@ export default {
                   Password: this.password,
                 })
                 .then((response) => {
+                    console.log(response.data);
                     if (response.data === 'Proceed') {
                         this.$router.push('Test');
                     }

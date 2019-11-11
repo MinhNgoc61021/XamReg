@@ -7,4 +7,3 @@ flask-mysql
 flask-restful
 uwsgi
 PyMySQL
-

@@ -4,6 +4,7 @@ from flask_restful import Api
 
 from controller import create_app
 from entity_db import *
+from flask import session, g
 
 # write this in cmd
 # for Windows
@@ -17,9 +18,11 @@ from entity_db import *
 # flask run
 
 app = create_app()
+app.config['SECRET_KEY'] = 'IsBLK8lCfYOF7VHNflxkSg'
 api = Api(app)
 hashing = Bcrypt(app)
 CORS(app)
+
 
 # create new admin here, change the username, password
 @app.route('/init_admin')
@@ -33,6 +36,7 @@ def init_admin():
         add_admin = User.create('MinhNgoc', password_hash, 'Nguyen Ngoc Minh', '1999-12-18',
                                 'Needforspeed1900@gmail.com', 'Male', 'none')
         User_Role.create(add_admin.UserID, 'Admin')
+
 
 @app.route('/hello')
 def hello():

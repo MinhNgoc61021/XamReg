@@ -1,3 +1,4 @@
+import os
 from flask import (
     Blueprint,
     # Blueprint is a way to organize a group of related views and other code
@@ -7,10 +8,10 @@ from flask import (
     session,
     jsonify
 )
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from entity_db import User
-authentication = Blueprint('auth', __name__, url_prefix='/auth')
 
+authentication = Blueprint('auth', __name__, url_prefix='/auth')
 # create a blueprint is like creating a package
 # ie: Sign In for authentication
 CORS(authentication)
@@ -25,15 +26,10 @@ def register():
         username = user_form.get('Username')
         password = user_form.get('Password')
         check_user = User.check_register(username, password)
-
         if check_user is False:
             return jsonify("Flop")
         else:
+            session[username] = 'active'
+            print(session)
             return jsonify("Proceed")
 
-@authentication.before_app_request
-def load_logged_in_user():
-    user_id = session.get('user_id')
-
-    if user_id is None:
-        g.user = None
