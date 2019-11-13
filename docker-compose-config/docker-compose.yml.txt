@@ -4,24 +4,23 @@ services:
   db:
     image: mysql:5.7
     volumes:
-      - ./db:/docker-entrypoint-initXamreg.d
+      - ./db:/docker-entrypoint-initdb.d
     restart: always
     environment:
       - MYSQL_USER=newroot
       - MYSQL_PASSWORD=528491
       - MYSQL_ROOT_PASSWORD=528491
       - MYSQL_DATABASE=xamreg
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-#  phpmyadmin:
-#      image: phpmyadmin/phpmyadmin
-#      restart: always
-#      depends_on:
-#        - db
-#      environment:
-#        - PMA_HOST=db
-#        - MYSQL_ROOT_PASSWORD=528491
-#      ports:
-#        - 8000:80
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      restart: always
+      depends_on:
+        - db
+      environment:
+        - PMA_HOST=db
+        - MYSQL_ROOT_PASSWORD=root
+      ports:
+        - 8070:80
   api:
       image: xamreg/flask/api
       build: ./api # setting build to ./api because our Dockerfile is inside the api folder.
@@ -56,11 +55,11 @@ services:
 #      # as requests to port 8000 are routed to port 9000 where Flask api runs.
 #
 #      # This means that, when we visit localhost:8001 on the PC, it will be routed to localhost within the container where our UI app runs.
-  grafana:
-    image: grafana/grafana
-    restart: always
-    ports:
-      - "9878:3000"
-    environment:
-      - GF_SERVER_ROOT_URL=http://grafana.server.name
-      - GF_SECURITY_ADMIN_PASSWORD=secret
+#  grafana:
+#    image: grafana/grafana
+#    restart: always
+#    ports:
+#      - "9878:3000"
+#    environment:
+#      - GF_SERVER_ROOT_URL=http://grafana.server.name
+#      - GF_SECURITY_ADMIN_PASSWORD=secret

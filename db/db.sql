@@ -58,4 +58,3 @@ create table if not exists unqualified_student
             on update cascade on delete cascade
 );
 
-
