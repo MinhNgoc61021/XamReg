@@ -5,7 +5,6 @@ from flask_restful import Api
 from controller import create_app
 from entity_db import *
 from flask import session, g
-
 # write this in cmd
 # for Windows
 # set FLASK_ENV=run.py

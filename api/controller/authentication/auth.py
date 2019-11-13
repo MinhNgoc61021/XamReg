@@ -1,4 +1,3 @@
-import os
 from flask import (
     Blueprint,
     # Blueprint is a way to organize a group of related views and other code
@@ -32,4 +31,3 @@ def register():
             session[username] = 'active'
             print(session)
             return jsonify("Proceed")
-

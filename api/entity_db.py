@@ -6,7 +6,7 @@ from flask_bcrypt import Bcrypt
 # create_engine connect to xamrag model
 
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
-engine = create_engine('mysql+pymysql://newroot:528491@db/xamreg',
+engine = create_engine('mysql+mysqlconnector://newroot:528491@0.0.0.0:3306/xamreg',
                        encoding='utf-8',
                        echo=True,
                        pool_size=5)
@@ -23,14 +23,13 @@ session = Session()
 # User persistent class
 class User(Base):
     __tablename__ = 'user'
-    UserID = Column(Integer, autoincrement=True, primary_key=True)
+    UserID = Column(String(45), primary_key=True)
     Username = Column(String(45), nullable=False, unique=True)
     Password = Column(String(240), nullable=False)
     Fullname = Column(String(45), nullable=False)
     Dob = Column(DateTime(45), nullable=False)
-    Email = Column(String(45), nullable=False)
     Gender = Column(String(45), nullable=False)
-    Profile_Picture = Column(String(100), nullable=True)
+
 
     @classmethod
     def isExist(cls, name):
@@ -41,8 +40,8 @@ class User(Base):
         return
 
     @classmethod
-    def create(cls, username, password, fullname, dob, email, gender, profile_picture):
-        new_user = User(Username=username, Password=password, Fullname=fullname, Dob=dob, Email=email, Gender=gender, Profile_Picture=profile_picture)
+    def create(cls, userid, username, password, fullname, dob, email, gender):
+        new_user = User(UserID=userid, Username=username, Password=password, Fullname=fullname, Dob=dob, Gender=gender)
         session.add(new_user)
         session.commit()
         return new_user
@@ -60,7 +59,7 @@ class User(Base):
 # User_Role persistent class
 class User_Role(Base):
     __tablename__ = 'user_role'
-    UserID = Column(Integer,
+    UserID = Column(String(45),
                     ForeignKey('user.UserID'),
                     primary_key=True, unique=True)
     Role_Type = Column(String(45), nullable=False)
@@ -83,13 +82,10 @@ class User_Role(Base):
 # Student persistent class
 class Student(Base):
     __tablename__ = 'student'
-    StudentID = Column(Integer,
+    StudentID = Column(String(45),
                        primary_key=True,
-                       autoincrement=True)
-    UserID = Column(Integer,
-                    ForeignKey('user.UserID'),
-                    nullable=False)
-    CourseID = Column(Integer,
+                       )
+    CourseID = Column(String(45),
                       ForeignKey('subject.SubjectID'),
                       nullable=False)
 
@@ -106,11 +102,9 @@ class Subject(Base):
 # Course persistent class
 class Course(Base):
     __tablename__ = 'course'
-    CourseID = Column(Integer,
+    CourseID = Column(String(45),
                       primary_key=True,
                       autoincrement=True)
-    CourseTitle = Column(String(45),
-                         nullable=False)
     SubjectID = Column(Integer,
                        ForeignKey('subject.SubjectID'),
                        nullable=False)

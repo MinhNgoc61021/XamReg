@@ -27,6 +27,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/handling/upload': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
     },
 
     // Various Dev Server settings
