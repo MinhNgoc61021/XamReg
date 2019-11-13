@@ -8,19 +8,31 @@ create table if not exists exam_room
 
 create table if not exists subject
 (
-    SubjectID    int auto_increment
+    SubjectID    varchar(45) not null
         primary key,
     SubjectTitle varchar(45) not null
 );
+
+create table if not exists course
+(
+    CourseID  varchar(45) not null
+        primary key,
+    SubjectID varchar(45) not null,
+    constraint course_ibfk_1
+        foreign key (SubjectID) references subject (SubjectID)
+);
+
+create index SubjectID
+    on course (SubjectID);
 
 create table if not exists shift
 (
     ShiftID    int auto_increment
         primary key,
-    SubjectID  int      not null,
-    Start_At   datetime not null,
-    Date_Start datetime not null,
-    RoomID     int      not null,
+    SubjectID  varchar(45) not null,
+    Start_At   datetime    not null,
+    Date_Start datetime    not null,
+    RoomID     int         not null,
     constraint shift_ibfk_1
         foreign key (SubjectID) references subject (SubjectID),
     constraint shift_ibfk_2
@@ -46,63 +58,40 @@ create index RoomID
 create index SubjectID
     on shift (SubjectID);
 
+create table if not exists student
+(
+    StudentID varchar(45) not null
+        primary key,
+    CourseID  varchar(45) not null,
+    constraint student_ibfk_1
+        foreign key (CourseID) references course (CourseID)
+);
+
+create index CourseID
+    on student (CourseID);
+
 create table if not exists user
 (
-    UserID          int auto_increment
+    UserID   varchar(45)  not null
         primary key,
-    Username        varchar(45)  not null,
-    Password        varchar(240) not null,
-    Fullname        varchar(45)  not null,
-    Dob             datetime     null,
-    Email           varchar(45)  null,
-    Gender          varchar(45)  null,
-    Profile_Picture varchar(100) null,
+    Username varchar(45)  not null,
+    Password varchar(240) not null,
+    Fullname varchar(45)  not null,
+    Dob      datetime     not null,
+    Gender   varchar(45)  not null,
     constraint Username
         unique (Username)
 );
 
-create table if not exists admin
-(
-    AdminID int auto_increment
-        primary key,
-    UserID  int not null,
-    constraint admin_ibfk_1
-        foreign key (UserID) references user (UserID)
-);
-
-create index UserID
-    on admin (UserID);
-
-create table if not exists student
-(
-    StudentID int auto_increment
-        primary key,
-    UserID    int not null,
-    SubjectID int not null,
-    constraint student_ibfk_1
-        foreign key (UserID) references user (UserID),
-    constraint student_ibfk_2
-        foreign key (SubjectID) references subject (SubjectID)
-);
-
-create index CourseID
-    on student (SubjectID);
-
-create index UserID
-    on student (UserID);
-
 create table if not exists user_role
 (
-    UserID    int         not null,
+    UserID    varchar(45) not null,
     Role_Type varchar(45) not null,
-    constraint user_role_UserID_uindex
+    constraint UserID
         unique (UserID),
     constraint user_role_ibfk_1
         foreign key (UserID) references user (UserID)
 );
-
-create index RoleID
-    on user_role (Role_Type);
 
 alter table user_role
     add primary key (UserID);

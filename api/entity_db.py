@@ -6,7 +6,7 @@ from flask_bcrypt import Bcrypt
 # create_engine connect to xamrag model
 
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
-engine = create_engine('mysql+mysqlconnector://newroot:528491@0.0.0.0:3306/xamreg',
+engine = create_engine('mysql+pymysql://newroot:528491@db/xamreg',
                        encoding='utf-8',
                        echo=True,
                        pool_size=5)
@@ -86,15 +86,14 @@ class Student(Base):
                        primary_key=True,
                        )
     CourseID = Column(String(45),
-                      ForeignKey('subject.SubjectID'),
+                      ForeignKey('course.CourseID'),
                       nullable=False)
 
 # Subject persistent class
 class Subject(Base):
     __tablename__ = 'subject'
-    SubjectID = Column(Integer,
-                       primary_key=True,
-                       autoincrement=True)
+    SubjectID = Column(String(45),
+                       primary_key=True)
     SubjectTitle = Column(String(45),
                           nullable=False)
 
@@ -103,9 +102,8 @@ class Subject(Base):
 class Course(Base):
     __tablename__ = 'course'
     CourseID = Column(String(45),
-                      primary_key=True,
-                      autoincrement=True)
-    SubjectID = Column(Integer,
+                      primary_key=True)
+    SubjectID = Column(String(45),
                        ForeignKey('subject.SubjectID'),
                        nullable=False)
 
@@ -128,7 +126,7 @@ class Shift(Base):
     ShiftID = Column(Integer,
                      primary_key=True,
                      autoincrement=True)
-    SubjectID = Column(Integer,
+    SubjectID = Column(String(45),
                        ForeignKey('subject.SubjectID'),
                        nullable=False)
     Start_At = Column(DateTime,
