@@ -126,7 +126,7 @@ class Shift(Base):
     ShiftID = Column(Integer,
                      primary_key=True,
                      autoincrement=True)
-    SubjectID = Column(String(45),
+    SubjectID = Column(Integer,
                        ForeignKey('subject.SubjectID'),
                        nullable=False)
     Start_At = Column(DateTime,

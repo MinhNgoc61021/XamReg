@@ -32,8 +32,8 @@ def init_admin():
     if check_user:
         return 'OK, an admin has already been created.'
     else:
-        add_admin = User.create('MinhNgoc', password_hash, 'Nguyen Ngoc Minh', '1999-12-18',
-                                'Needforspeed1900@gmail.com', 'Male', 'none')
+        add_admin = User.create('Admin1','MinhNgoc', password_hash, 'Nguyễn Ngọc Minh', '1999-12-18',
+                                'Needforspeed1900@gmail.com', 'Male')
         User_Role.create(add_admin.UserID, 'Admin')
 
 

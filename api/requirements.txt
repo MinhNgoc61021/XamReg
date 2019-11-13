@@ -9,4 +9,3 @@ uwsgi
 PyMySQL
 Flask-Excel
 pyexcel-xlsx
-mysql-connector-python

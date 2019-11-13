@@ -1,98 +1,61 @@
-create table if not exists exam_room
-(
-    RoomID          int auto_increment
-        primary key,
-    RoomName        varchar(45) not null,
-    Computer_Number int         not null
-);
-
 create table if not exists subject
 (
-    SubjectID    varchar(45) not null
-        primary key,
-    SubjectTitle varchar(45) not null
+    subjectID    varchar(45) not null,
+    subjectTitle varchar(45) not null,
+    constraint subject_subjectID_uindex
+        unique (subjectID),
+    constraint subject_subjectTitle_uindex
+        unique (subjectTitle)
 );
 
-create table if not exists course
-(
-    CourseID  varchar(45) not null
-        primary key,
-    SubjectID varchar(45) not null,
-    constraint course_ibfk_1
-        foreign key (SubjectID) references subject (SubjectID)
-);
-
-create index SubjectID
-    on course (SubjectID);
-
-create table if not exists shift
-(
-    ShiftID    int auto_increment
-        primary key,
-    SubjectID  varchar(45) not null,
-    Start_At   datetime    not null,
-    Date_Start datetime    not null,
-    RoomID     int         not null,
-    constraint shift_ibfk_1
-        foreign key (SubjectID) references subject (SubjectID),
-    constraint shift_ibfk_2
-        foreign key (RoomID) references exam_room (RoomID)
-);
-
-create table if not exists semester_examination
-(
-    ExamID    int auto_increment
-        primary key,
-    ExamTitle varchar(45) not null,
-    ShiftID   int         not null,
-    constraint semester_examination_ibfk_1
-        foreign key (ShiftID) references shift (ShiftID)
-);
-
-create index ShiftID
-    on semester_examination (ShiftID);
-
-create index RoomID
-    on shift (RoomID);
-
-create index SubjectID
-    on shift (SubjectID);
-
-create table if not exists student
-(
-    StudentID varchar(45) not null
-        primary key,
-    CourseID  varchar(45) not null,
-    constraint student_ibfk_1
-        foreign key (CourseID) references course (CourseID)
-);
-
-create index CourseID
-    on student (CourseID);
+alter table subject
+    add primary key (subjectID);
 
 create table if not exists user
 (
-    UserID   varchar(45)  not null
-        primary key,
-    Username varchar(45)  not null,
-    Password varchar(240) not null,
-    Fullname varchar(45)  not null,
-    Dob      datetime     not null,
-    Gender   varchar(45)  not null,
-    constraint Username
-        unique (Username)
+    userID    varchar(45)  not null,
+    username  varchar(45)  not null,
+    password  varchar(200) not null,
+    fullname  varchar(45)  not null,
+    dob       datetime     not null on update CURRENT_TIMESTAMP,
+    gender    varchar(20)  not null,
+    courseID  varchar(45)  not null,
+    role_type varchar(45)  not null,
+    constraint user_userID_uindex
+        unique (userID),
+    constraint user_username_uindex
+        unique (username)
 );
 
-create table if not exists user_role
+alter table user
+    add primary key (userID);
+
+create table if not exists qualified_student
 (
-    UserID    varchar(45) not null,
-    Role_Type varchar(45) not null,
-    constraint UserID
-        unique (UserID),
-    constraint user_role_ibfk_1
-        foreign key (UserID) references user (UserID)
+    quaIifiedD int auto_increment
+        primary key,
+    userID     varchar(45) not null,
+    subjectID  varchar(45) not null,
+    constraint qualified_student_subject_subjectID_fk
+        foreign key (subjectID) references subject (subjectID)
+            on update cascade on delete cascade,
+    constraint qualified_student_user_userID_fk
+        foreign key (userID) references user (userID)
+            on update cascade on delete cascade
 );
 
-alter table user_role
-    add primary key (UserID);
+create table if not exists unqualified_student
+(
+    unqualifiedID int auto_increment
+        primary key,
+    userID        varchar(45) not null,
+    subjectID     varchar(45) not null,
+    constraint student_status_user_userID_fk
+        foreign key (userID) references user (userID)
+            on update cascade on delete cascade,
+    constraint unqualified_student_subject_subjectID_fk
+        foreign key (subjectID) references subject (subjectID)
+            on update cascade on delete cascade
+);
+
 
