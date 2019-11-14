@@ -6,6 +6,6 @@ flask-bcrypt
 flask-mysql
 flask-restful
 uwsgi
-PyMySQL
 Flask-Excel
 pyexcel-xlsx
+mysqlclient

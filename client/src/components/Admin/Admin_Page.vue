@@ -1,24 +1,23 @@
 <template>
-  <a-layout id="components-layout-demo-top-side">
+  <a-layout id="components-layout-top-side">
     <a-layout-header class="header">
       <div class="logo" />
       <a-menu
-        theme="dark"
+        theme="light"
         mode="horizontal"
         :defaultSelectedKeys="['2']"
         :style="{ lineHeight: '64px' }"
       >
         <a-menu-item key="1">Trang chủ</a-menu-item>
-        <a-menu-item key="2">Khóa học</a-menu-item>
-        <a-menu-item key="3">Thống kê</a-menu-item>
-        <a-menu-item key="4"></a-menu-item>
+        <a-menu-item key="2">Danh sách</a-menu-item>
+        <a-menu-item key="3">Câp nhật</a-menu-item>
       </a-menu>
     </a-layout-header>
     <a-layout-content style="padding: 0 50px">
       <a-breadcrumb style="margin: 16px 0">
         <a-breadcrumb-item>Home</a-breadcrumb-item>
-        <a-breadcrumb-item>Admin</a-breadcrumb-item>
-        <a-breadcrumb-item>Student Management</a-breadcrumb-item>
+        <a-breadcrumb-item>List</a-breadcrumb-item>
+        <a-breadcrumb-item>App</a-breadcrumb-item>
       </a-breadcrumb>
       <a-layout style="padding: 24px 0; background: #fff">
         <a-layout-sider width="200" style="background: #fff">
@@ -29,19 +28,25 @@
             style="height: 100%"
           >
             <a-sub-menu key="sub1">
-              <span slot="title"><a-icon type="user" />Caccac1</span>
-              <a-menu-item key="1">Quản lý tài khoản</a-menu-item>
-              <a-menu-item key="2">Quản lý môn thi</a-menu-item>
+              <span slot="title"><a-icon type="user" />subnav 1</span>
+              <a-menu-item key="1">option1</a-menu-item>
+              <a-menu-item key="2">option2</a-menu-item>
+              <a-menu-item key="3">option3</a-menu-item>
+              <a-menu-item key="4">option4</a-menu-item>
             </a-sub-menu>
             <a-sub-menu key="sub2">
-              <span slot="title"><a-icon type="user" />CACLC-2</span>
-              <a-menu-item key="1">Quản lý tài khoản</a-menu-item>
-              <a-menu-item key="2">Quản lý môn thi</a-menu-item>
+              <span slot="title"><a-icon type="laptop" />subnav 2</span>
+              <a-menu-item key="5">option5</a-menu-item>
+              <a-menu-item key="6">option6</a-menu-item>
+              <a-menu-item key="7">option7</a-menu-item>
+              <a-menu-item key="8">option8</a-menu-item>
             </a-sub-menu>
             <a-sub-menu key="sub3">
-              <span slot="title"><a-icon type="user" />CACLC-3</span>
-              <a-menu-item key="1">Quản lý tài khoản</a-menu-item>
-              <a-menu-item key="2">Quản lý môn thi</a-menu-item>
+              <span slot="title"><a-icon type="notification" />subnav 3</span>
+              <a-menu-item key="9">option9</a-menu-item>
+              <a-menu-item key="10">option10</a-menu-item>
+              <a-menu-item key="11">option11</a-menu-item>
+              <a-menu-item key="12">option12</a-menu-item>
             </a-sub-menu>
           </a-menu>
         </a-layout-sider>
@@ -51,14 +56,21 @@
       </a-layout>
     </a-layout-content>
     <a-layout-footer style="text-align: center">
+      Ant Design ©2018 Created by Ant UED
     </a-layout-footer>
   </a-layout>
 </template>
 <script>
-    export default {
-        name: 'Admin_Page'
-    }
+  export default {
+      name: 'Admin_Page'
+  }
 </script>
-
-<style scoped>
+<style>
+  #components-layout-top-side .logo {
+    width: 120px;
+    height: 31px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 16px 28px 16px 0;
+    float: left;
+  }
 </style>
