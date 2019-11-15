@@ -12,8 +12,8 @@
             style="height: 100%">
             <a-sub-menu key="sub1">
               <span slot="title"><a-icon type="upload" :size="32"/>Nhập sinh viên</span>
-              <a-menu-item v-on:click="toggle_type()"><a-icon type="file-add" />Nhập file</a-menu-item>
-              <a-menu-item v-on:click="toggle_type()"><a-icon type="edit" />Nhập tay</a-menu-item>
+              <a-menu-item v-on:click="component='upload_student_list'" key="1"><a-icon type="file-add" />Nhập file</a-menu-item>
+              <a-menu-item v-on:click="component='input_student'"><a-icon type="edit" />Nhập tay</a-menu-item>
             </a-sub-menu>
           </a-menu>
         </a-layout-sider>
@@ -38,16 +38,6 @@
       data() {
           return {
               component: upload_student_list,
-          }
-      },
-      methods: {
-          toggle_type: function () {
-              if (this.component === input_student) {
-                  this.component = upload_student_list;
-              }
-              else {
-                  this.component = input_student;
-              }
           }
       },
   }

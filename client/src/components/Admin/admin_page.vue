@@ -9,8 +9,8 @@
         mode="horizontal"
         :defaultSelectedKeys="['1']"
         :style="{ lineHeight: '64px' }">
-        <a-menu-item key="1" v-on:click="toggle_management_component()">Quản lý sinh viên</a-menu-item>
-        <a-menu-item key="2" v-on:click="toggle_management_component()">Quản lý ca thi</a-menu-item>
+        <a-menu-item key="1" v-on:click="component='student_management'">Quản lý sinh viên</a-menu-item>
+        <a-menu-item key="2" v-on:click="component='schedule_management'">Quản lý ca thi</a-menu-item>
         <a-dropdown :style="{ float: 'right' }" :trigger="['click']">
           <a class="ant-dropdown-link" href="#"><a-avatar size="large" icon="user" /></a>
           <a-menu slot="overlay">
