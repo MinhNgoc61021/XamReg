@@ -1,15 +1,14 @@
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import *
-from flask_bcrypt import Bcrypt
+from flask_bcrypt import generate_password_hash, check_password_hash
 
-# create_engine connect to xamrag model
+# create_engine connect to examrag model
 
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
-engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4&use_unicode=1',
+engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4',
                        echo=True,
-                       pool_size=5,
-                       encoding='utf-8')
+                       pool_size=5)
 # echo is to set up SQLAlchemy logging
 
 
@@ -50,19 +49,28 @@ class User(Base):
 
     # create a new user
     @classmethod
-    def create(cls, userID, username, password, fullname, dob, gender, courseID, role_type):
-        new_user = User(ID=userID, Username=username, Password=password, Fullname=fullname.encode().decode(), Dob=dob,
-                        Gender=gender,
-                        CourseID=courseID, Role_Type=role_type)
-        session.add(new_user)
-        session.commit()
-        return new_user
+    def create(cls, id, username, password, fullname, dob, gender, courseID, role_type):
+        if session.query(User).filter(User.Username == username).scalar() is None:
+            new_user = User(ID=id,
+                            Username=username,
+                            Password=generate_password_hash(password),
+                            Fullname=fullname,
+                            Dob=dob,
+                            Gender=gender,
+                            CourseID=courseID,
+                            Role_Type=role_type)
+            session.add(new_user)
+            session.commit()
+            session.close()
+            return True
+        else:
+            return False
 
     @classmethod
     def check_register(cls, username, password):
         check = session.query(User).filter(User.Username == username).scalar()
         if check is not None:
-            if Bcrypt().check_password_hash(check.Password, password) is True:
+            if check_password_hash(check.Password, password) is True:
                 return True
             else:
                 return False
@@ -72,19 +80,30 @@ class User(Base):
 # Subject persistent class
 class Subject(Base):
     __tablename__ = 'subject'
-
     SubjectID = Column(String(45),
                        primary_key=True)
     SubjectTitle = Column(String(45),
                           nullable=False,
                           unique=True)
 
+    @classmethod
+    def create(cls, subjectID, subjectTitle):
+        if session.query(Subject).filter(Subject.SubjectID == subjectID).scalar() is None:
+            new_subject = Subject(SubjectID=subjectID,
+                                  SubjectTitle=subjectTitle)
+            session.add(new_subject)
+            session.commit()
+            session.close()
+            return True
+        else:
+            return False
+
 
 # Unqualified student class
 class Unqualified_Student(Base):
     __tablename__ = 'unqualified_student'
 
-    unqualifiedID = Column(Integer,
+    UnqualifiedID = Column(Integer,
                            primary_key=True,
                            autoincrement=True)
     StudentID = Column(String(45),
@@ -93,12 +112,23 @@ class Unqualified_Student(Base):
     SubjectID = Column(String(45),
                        ForeignKey('subject.SubjectID'),
                        nullable=False)
-    Reason = Column(String(45),
-                    nullable=False)
     User = relationship('User',
                         back_populates='unqualified_student')
     Subject = relationship('Subject',
                            back_populates='unqualified_student')
+
+    @classmethod
+    def create(cls, studentID, subjectID):
+        if session.query(Unqualified_Student).filter(Unqualified_Student.StudentID == studentID,
+                                                     Unqualified_Student.SubjectID == subjectID).scalar() is None:
+            new_unqualified_user = Unqualified_Student(StudentID=studentID,
+                                                       SubjectID=subjectID)
+            session.add(new_unqualified_user)
+            session.commit()
+            session.close()
+            return True
+        else:
+            return False
 
 
 # relationship() uses the foreign key relationships between the two tables to determine the nature of this linkage
@@ -132,6 +162,19 @@ class Qualified_Student(Base):
                         back_populates='qualified_student')
     Subject = relationship('Subject',
                            back_populates='qualified_student')
+
+    @classmethod
+    def create(cls, studentID, subjectID):
+        if session.query(Qualified_Student).filter(Qualified_Student.StudentID == studentID,
+                                                   Qualified_Student.SubjectID == subjectID).scalar() is None:
+            new_qualified_user = Qualified_Student(StudentID=studentID,
+                                                   SubjectID=subjectID)
+            session.add(new_qualified_user)
+            session.commit()
+            session.close()
+            return True
+        else:
+            return False
 
 
 User.qualified_student = relationship('Qualified_Student',

@@ -8,8 +8,9 @@ from flask import (
     jsonify,
     logging
 )
-
+from entity_db import session, User, Subject, Unqualified_Student, Qualified_Student
 from openpyxl import load_workbook
+
 excel_handling = Blueprint('import_export', __name__, url_prefix='/handling')
 
 
@@ -29,15 +30,40 @@ def upload():
 
     # iterate over all cells
     # iterate over all rows
-    for i in range(1, max_row + 1):
-
-        # iterate over all columns
-        for j in range(1, max_column + 1):
-            # get particular cell value
-            cell_obj = sheet.cell(row=i, column=j)
-            # print cell value
-            print(cell_obj.value, flush=True, end=' | ')
-        # print new line
-        print('\n')
-    return jsonify('coool')
-
+    for i in range(2, max_row + 1):
+        # set excel_data to get data to create new User for SQLAlchemy
+        excel_data = {
+            'ID': None,
+            'username': None,
+            'password': None,
+            'fullname': None,
+            'dob': None,
+            'gender': None,
+            'courseID': None,
+            'subjectID': None,
+            'subjectTitle': None,
+            'status': None,
+        }
+        # Iterate over the dict and all the columns
+        for j, index in zip(range(1, max_column + 1), excel_data):
+            excel_data[index] = sheet.cell(row=i, column=j).value
+            # add students to database
+        init_student = User.create(excel_data['ID'],
+                                   excel_data['username'],
+                                   str(excel_data['password']),
+                                   excel_data['fullname'],
+                                   excel_data['dob'],
+                                   excel_data['gender'],
+                                   excel_data['courseID'],
+                                   'Student')
+        # add subject to database
+        init_subject = Subject.create(excel_data['subjectID'],
+                                      excel_data['subjectTitle'])
+        # add qualified and unqualified students to database
+        if excel_data['status'] == 'Qualified':
+            init_qualified_student = Qualified_Student.create(excel_data['ID'],
+                                                              excel_data['subjectID'])
+        elif excel_data['status'] == 'Unqualified':
+            init_unqualified_student = Unqualified_Student.create(excel_data['ID'],
+                                                                  excel_data['subjectID'])
+    return 'Success'

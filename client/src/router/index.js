@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 import register from '@/components/Register/register';
 import VeeValidate from 'vee-validate'
 import Admin_Page from "../components/Admin/Admin_Page";
@@ -11,11 +10,6 @@ Vue.use(Router);
 export default new Router({
   mode: 'history',
   routes: [
-    {
-      path: '/HelloWorld',
-      name: 'HelloWorld',
-      component: HelloWorld
-    },
     {
       path: '/',
       name: 'register',

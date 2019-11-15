@@ -1,23 +1,24 @@
 <template>
   <a-layout id="components-layout-top-side">
-    <a-layout-header class="header">
+
+    <!--    header-->
+    <a-layout-header class="header" :style="{ position: 'fixed', zIndex: 1, width: '100%', background: '#fff' }" style="border-bottom: 1px solid #e8e8e8; min-height: 66px;">
       <div class="logo" />
       <a-menu
         theme="light"
         mode="horizontal"
-        :defaultSelectedKeys="['2']"
-        :style="{ lineHeight: '64px' }"
-      >
-        <a-menu-item key="1">Trang chủ</a-menu-item>
-        <a-menu-item key="2">Danh sách</a-menu-item>
-        <a-menu-item key="3">Câp nhật</a-menu-item>
+        :defaultSelectedKeys="['1']"
+        :style="{ lineHeight: '64px' }">
+        <a-menu-item key="1">Quản lý sinh viên</a-menu-item>
+        <a-menu-item key="2">Quản lý ca thi</a-menu-item>
       </a-menu>
     </a-layout-header>
-    <a-layout-content style="padding: 0 50px">
+    <!--    header-->
+
+    <!--    content-->
+    <a-layout-content style="padding: 0 50px;margin-top: 70px;">
       <a-breadcrumb style="margin: 16px 0">
         <a-breadcrumb-item>Home</a-breadcrumb-item>
-        <a-breadcrumb-item>List</a-breadcrumb-item>
-        <a-breadcrumb-item>App</a-breadcrumb-item>
       </a-breadcrumb>
       <a-layout style="padding: 24px 0; background: #fff">
         <a-layout-sider width="200" style="background: #fff">
@@ -25,51 +26,46 @@
             mode="inline"
             :defaultSelectedKeys="['1']"
             :defaultOpenKeys="['sub1']"
-            style="height: 100%"
-          >
+            style="height: 100%">
             <a-sub-menu key="sub1">
-              <span slot="title"><a-icon type="user" />subnav 1</span>
-              <a-menu-item key="1">option1</a-menu-item>
-              <a-menu-item key="2">option2</a-menu-item>
-              <a-menu-item key="3">option3</a-menu-item>
-              <a-menu-item key="4">option4</a-menu-item>
-            </a-sub-menu>
-            <a-sub-menu key="sub2">
-              <span slot="title"><a-icon type="laptop" />subnav 2</span>
-              <a-menu-item key="5">option5</a-menu-item>
-              <a-menu-item key="6">option6</a-menu-item>
-              <a-menu-item key="7">option7</a-menu-item>
-              <a-menu-item key="8">option8</a-menu-item>
-            </a-sub-menu>
-            <a-sub-menu key="sub3">
-              <span slot="title"><a-icon type="notification" />subnav 3</span>
-              <a-menu-item key="9">option9</a-menu-item>
-              <a-menu-item key="10">option10</a-menu-item>
-              <a-menu-item key="11">option11</a-menu-item>
-              <a-menu-item key="12">option12</a-menu-item>
+              <span slot="title"><a-icon type="upload" />Nhập sinh viên</span>
+              <a-menu-item key="1">Nhập file</a-menu-item>
+              <a-menu-item key="2">Nhập tay</a-menu-item>
             </a-sub-menu>
           </a-menu>
         </a-layout-sider>
-        <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
-          Content
+        <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' , position: 'relative', margin: 'auto' }">
+          <div>
+            <upload_student_list/>
+          </div>
         </a-layout-content>
       </a-layout>
     </a-layout-content>
-    <a-layout-footer style="text-align: center">
-      Ant Design ©2018 Created by Ant UED
+    <!--    content-->
+
+    <!--    footer-->
+    <a-layout-footer style="text-align: center; color: #1890ff">
+      ExamReg
     </a-layout-footer>
+    <!--    footer-->
+
   </a-layout>
 </template>
 <script>
+  import upload_student_list from '../Admin/student_management/upload.vue';
   export default {
-      name: 'Admin_Page'
+      name: 'Admin_Page',
+      components: {
+          upload_student_list,
+      },
   }
 </script>
 <style>
   #components-layout-top-side .logo {
-    width: 120px;
-    height: 31px;
-    background: rgba(255, 255, 255, 0.2);
+    width: 32px;
+    height: 32px;
+    background-image: url('/static/favicon-32x32.png');
+    background-size: contain;
     margin: 16px 28px 16px 0;
     float: left;
   }
