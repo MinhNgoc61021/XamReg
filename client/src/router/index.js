@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import register from '@/components/Register/register';
 import VeeValidate from 'vee-validate'
-import Admin_Page from "../components/Admin/Admin_Page";
-import upload from "../components/Admin/student_management/upload";
+import Admin_Page from "../components/Admin/admin_page";
+import upload from "../components/Admin/student_management/import/upload";
 Vue.use(VeeValidate);
 Vue.use(Router);
 

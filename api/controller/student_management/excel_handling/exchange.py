@@ -31,7 +31,7 @@ def upload():
     # iterate over all cells
     # iterate over all rows
     for i in range(2, max_row + 1):
-        # set excel_data to get data to create new User for SQLAlchemy
+        # set excel_data to get data in order to create new User, Subject, Qualification for students to SQLAlchemy
         excel_data = {
             'ID': None,
             'username': None,
@@ -46,8 +46,10 @@ def upload():
         }
         # Iterate over the dict and all the columns
         for j, index in zip(range(1, max_column + 1), excel_data):
+            # add data to excel_data dict
             excel_data[index] = sheet.cell(row=i, column=j).value
-            # add students to database
+
+        # add students to database
         init_student = User.create(excel_data['ID'],
                                    excel_data['username'],
                                    str(excel_data['password']),

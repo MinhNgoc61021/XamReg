@@ -15,13 +15,13 @@ authentication = Blueprint('auth', __name__, url_prefix='/auth')
 # ie: Sign In for authentication
 CORS(authentication)
 
+
 @authentication.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'GET':
         return "Feminist"
     elif request.method == 'POST':
         user_form = request.get_json()
-        print(user_form)
         username = user_form.get('Username')
         password = user_form.get('Password')
         check_user = User.check_register(username, password)
@@ -29,5 +29,6 @@ def register():
             return jsonify("Flop")
         else:
             session[username] = 'active'
-            print(session)
+            print('OK')
+            print(session, flush=True)
             return jsonify("Proceed")

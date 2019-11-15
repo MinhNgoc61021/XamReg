@@ -1,10 +1,8 @@
 sqlalchemy
 flask
-flask-cors
-Flask-SQLAlchemy
+flask_cors
 flask_bcrypt
 flask-mysql
-flask-restful
-Flask-Excel
+flask_restful
 pyexcel-xlsx
 mysqlclient

@@ -74,8 +74,8 @@
       </p>
       <p class="ant-upload-text">Chọn hoặc kéo thả file của bạn để tải lên</p>
       <p class="ant-upload-hint">
-        Hỗ trợ tải một hoặc nhiều file Excel.
-        (Hãy dùng định dạng .xlsx)
+        Hỗ trợ tải một hoặc nhiều file <a-icon type="file-excel" /> Excel.
+        <strong>(Hãy dùng định dạng .xlsx)</strong>
       </p>
     </a-upload-dragger>
   </div>

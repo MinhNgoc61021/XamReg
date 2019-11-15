@@ -23,7 +23,7 @@
 
 <script>
 import axios from 'axios';
-import Test from "../Admin/Admin_Page.vue";
+import Admin_Page from "../Admin/admin_page.vue";
 export default {
     name: 'register_form',
     data() {
@@ -67,7 +67,7 @@ export default {
                 .then((response) => {
                     console.log(response.data);
                     if (response.data === 'Proceed') {
-                        this.$router.push('Admin_Page');
+                        this.$router.push('admin');
                     }
                     else {
                         this.showAlert = '';
