@@ -9,16 +9,19 @@
         mode="horizontal"
         :defaultSelectedKeys="['1']"
         :style="{ lineHeight: '64px' }">
-        <a-menu-item key="1" v-on:click="component='student_management'">Quản lý sinh viên</a-menu-item>
-        <a-menu-item key="2" v-on:click="component='schedule_management'">Quản lý ca thi</a-menu-item>
+        <a-menu-item key="1" v-on:click="component='student_management'" >Quản lý sinh viên</a-menu-item>
+        <a-menu-item key="2" v-on:click="component='schedule_management'">Quản lý kỳ thi</a-menu-item>
         <a-dropdown :style="{ float: 'right' }" :trigger="['click']">
-          <a class="ant-dropdown-link" href="#"><a-avatar size="large" icon="user" /></a>
+          <a class="ant-dropdown-link" href="javascript:void(0)"><a-avatar size="large" icon="user" /></a>
           <a-menu slot="overlay">
             <a-menu-item key="0">
+              <a href="javascript:void(0)" style="text-align: center" ><span>{{ fullname }} ({{ username }})</span></a>
+            </a-menu-item>
+            <a-menu-item key="1">
               <a><a-icon type="user" class="logo-align"/><span>Cập nhật tài khoản</span></a>
             </a-menu-item>
             <a-menu-divider />
-            <a-menu-item key="1">
+            <a-menu-item key="2" v-on:click="admin_signOut()">
               <a-icon type="logout" class="logo-align"/><span>Đăng xuất</span>
             </a-menu-item>
           </a-menu>
@@ -44,9 +47,13 @@
 <script>
   import student_management from './student_management/student_management.vue';
   import schedule_management from './schedule_management/schedule_management.vue';
+  import Register_form from '../Register/register.vue';
+  import  { mapState, mapActions } from 'vuex';
+
   export default {
       name: 'Admin_Page',
       components: {
+          Register_form,
           student_management, schedule_management,
       },
       data() {
@@ -54,16 +61,23 @@
               component: student_management,
           }
       },
+      computed: {
+          ...mapState([
+              'user', 'username', 'fullname', 'dob', 'gender'
+          ]),
+      },
       methods: {
-          toggle_management_component: function () {
-              if (this.component === student_management) {
-                  this.component = schedule_management;
-              }
-              else {
-                  this.component = student_management;
-              }
+          ...mapActions([
+              'SignOut', 'GetUserData'
+          ]),
+          admin_signOut: function() {
+              console.log('clicked');
+              this.SignOut();
           }
       },
+      created() {
+          this.GetUserData();
+      }
   }
 </script>
 <style>

@@ -8,16 +8,6 @@
   import axios from 'axios';
   export default {
       name: 'App',
-      created: function () {
-          const path = '/auth/';
-          axios.get(path)
-              .then(function (response) {
-                  if (response.data) {
-                      console.log(response.data);
-                  }
-              })
-
-      },
   }
 </script>
 

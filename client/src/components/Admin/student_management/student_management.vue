@@ -11,18 +11,16 @@
             :defaultOpenKeys="['sub1']"
             style="height: 100%">
             <a-sub-menu key="sub1">
-              <span slot="title"><a-icon type="upload" :size="32"/>Nhập sinh viên</span>
+              <span slot="title"><a-icon type="upload" :size="32"/>Nhập</span>
               <a-menu-item v-on:click="component='upload_student_list'" key="1"><a-icon type="file-add" />Nhập file</a-menu-item>
               <a-menu-item v-on:click="component='input_student'"><a-icon type="edit" />Nhập tay</a-menu-item>
             </a-sub-menu>
           </a-menu>
         </a-layout-sider>
         <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' , position: 'relative', margin: 'auto' }">
-          <div>
             <keep-alive>
               <component v-bind:is="component" />
             </keep-alive>
-          </div>
         </a-layout-content>
       </a-layout>
     </a-layout-content>

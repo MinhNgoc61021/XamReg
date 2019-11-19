@@ -1,10 +1,8 @@
-from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api
 
 from controller import create_app
-from entity_db import *
-from flask import session, g
+from controller.db.entity_db import *
 
 # write this in cmd
 # for Windows

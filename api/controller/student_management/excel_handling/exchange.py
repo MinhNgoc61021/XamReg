@@ -2,20 +2,18 @@ from flask import (
     Blueprint,
     # Blueprint is a way to organize a group of related views and other code
     # There will be 2 blueprints: one for authentication and one for posts function
-    g,
-    request,
-    session,
-    jsonify,
-    logging
+    request
 )
-from entity_db import session, User, Subject, Unqualified_Student, Qualified_Student
+from controller.db.entity_db import User, Subject, Student_Status
 from openpyxl import load_workbook
+from controller.authentication.auth import token_required
 
 excel_handling = Blueprint('import_export', __name__, url_prefix='/handling')
 
 
 # to get excel data
 @excel_handling.route('/upload', methods=['POST'])
+@token_required
 def upload():
     print(request.files['student_list_excel'], flush=True)
     # load file
@@ -34,8 +32,6 @@ def upload():
         # set excel_data to get data in order to create new User, Subject, Qualification for students to SQLAlchemy
         excel_data = {
             'ID': None,
-            'username': None,
-            'password': None,
             'fullname': None,
             'dob': None,
             'gender': None,
@@ -51,8 +47,8 @@ def upload():
 
         # add students to database
         init_student = User.create(excel_data['ID'],
-                                   excel_data['username'],
-                                   str(excel_data['password']),
+                                   excel_data['ID'] + '@vnu.edu.vn',
+                                   excel_data['ID'],
                                    excel_data['fullname'],
                                    excel_data['dob'],
                                    excel_data['gender'],
@@ -62,10 +58,6 @@ def upload():
         init_subject = Subject.create(excel_data['subjectID'],
                                       excel_data['subjectTitle'])
         # add qualified and unqualified students to database
-        if excel_data['status'] == 'Qualified':
-            init_qualified_student = Qualified_Student.create(excel_data['ID'],
-                                                              excel_data['subjectID'])
-        elif excel_data['status'] == 'Unqualified':
-            init_unqualified_student = Unqualified_Student.create(excel_data['ID'],
-                                                                  excel_data['subjectID'])
+        init_qualified_student = Student_Status.create(excel_data['ID'],
+                                                       excel_data['subjectID'], excel_data['status'])
     return 'Success'

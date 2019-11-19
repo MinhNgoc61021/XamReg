@@ -2,18 +2,21 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import router from './router'
+import router  from './router/index.js'
 import 'bootstrap/dist/css/bootstrap.css'
 import Antd  from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
+import { store } from './store/store.js';
+
 Vue.use(Antd);
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 });

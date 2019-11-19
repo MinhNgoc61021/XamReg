@@ -31,6 +31,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/auth/get-user': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
     },
 
     // Various Dev Server settings

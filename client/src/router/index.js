@@ -10,20 +10,21 @@ Vue.use(Router);
 export default new Router({
   mode: 'history',
   routes: [
-    {
-      path: '/',
-      name: 'register',
-      component: register,
-    },
-    {
-      path: '/admin',
-      name: 'admin',
-      component: Admin_Page,
-    },
-    {
-      path: '/upload',
-      name: 'upload',
-      component: upload,
+    { path: '/register', name: 'register', component: register },
+    { path: '/admin-page', name: 'admin', component: Admin_Page },
+    { path: '/upload', name: 'upload', component: upload },
+    { path: '*', redirect: '/register'}
+  ],
+  beforeEach: function (to, from, next) {
+    // redirect to register page if not logged in and trying to access a restricted page
+    const publicPages = ['/register'];
+    const authRequired = !publicPages.includes(to.path);
+    const loggedIn = localStorage.getItem('user');
+
+    if (authRequired && !loggedIn) {
+      return next('/register');
     }
-  ]
-})
+
+    else { next(); }
+  }
+});

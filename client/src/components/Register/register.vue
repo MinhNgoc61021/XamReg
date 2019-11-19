@@ -3,7 +3,7 @@
     <component v-bind:is="component"></component>
         <div id="sign-in-form">
             <h3 id="title">{{ msg }}, Please sign in</h3>
-            <form v-on:submit.prevent="checkAuthentication()" enctype="multipart/form-data">
+            <form v-on:submit.prevent="signIn()" enctype="multipart/form-data">
                     <label for="username-input">Username</label>
                         <input type="text" id="username-input" v-on:blur="showAlert = 'bounceOutUp'" v-on:keyup="onInputChange()" v-model="username" class="form-control" name="username" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
                     <br>
@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Admin_Page from "../Admin/admin_page.vue";
+import { mapMutations , mapActions } from 'vuex';
+
 export default {
     name: 'register_form',
     data() {
@@ -39,9 +39,16 @@ export default {
           count: 0,
           component: '',
           showAlert: '',
+          jwt: '',
       };
     },
     methods: {
+        ...mapMutations([
+            "signinFailure", "signinSuccess"
+        ]),
+        ...mapActions([
+            "SignIn"
+        ]),
         warn: function(event) {
             console.log("Warning");
             this.showAlert = 'none';
@@ -57,33 +64,9 @@ export default {
             console.log(this.count);
 
         },
-
-        checkAuthentication: function() {
-            const path = '/auth/register';
-            axios.post(path, {
-                  Username: this.username,
-                  Password: this.password,
-                })
-                .then((response) => {
-                    console.log(response.data);
-                    if (response.data === 'Proceed') {
-                        this.$router.push('admin');
-                    }
-                    else {
-                        this.showAlert = '';
-                        this.warning = 'Account does not exist.';
-                        this.invalidSyntax = 'alert-danger';
-                        this.animateError ='bounceInDown';
-                    }
-                });
-        },
-        getMessage: function() {
-            const path = '/test/hello_flask';
-            axios.get(path)
-                .then((response) => {
-                    console.log(response.data);
-                    this.msg = response.data;
-                });
+        signIn: function() {
+            const { username, password } = this;
+            this.SignIn({ username, password });
         },
         onInputChange: function() {
             this.showAlert = 'none';
@@ -109,10 +92,6 @@ export default {
             }
         },
     },
-    //
-    // created() {
-    //   this.getMessage();
-    // },
 };
 </script>
 

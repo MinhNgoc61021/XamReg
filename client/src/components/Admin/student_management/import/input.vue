@@ -1,5 +1,6 @@
 <template>
-  <a-form :form="form" @submit="handleSubmit">
+  <section id="form-container">
+    <a-form :form="form" @submit="handleSubmit">
     <a-form-item v-bind="formItemLayout" label="E-mail">
       <a-input
         v-decorator="[
@@ -159,6 +160,8 @@
       </a-button>
     </a-form-item>
   </a-form>
+  </section>
+
 </template>
 
 <script>
@@ -271,3 +274,11 @@ export default {
   },
 };
 </script>
+<style scoped>
+  #form-container {
+    position: absolute;
+    width: 60%;
+    left: 13%;
+    right: 12%;
+  }
+</style>

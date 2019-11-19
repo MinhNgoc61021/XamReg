@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, DateTime, Foreign
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import *
 from flask_bcrypt import generate_password_hash, check_password_hash
+from marshmallow_sqlalchemy import ModelSchema
 
 # create_engine connect to examrag model
 
@@ -40,8 +41,12 @@ class User(Base):
     # qualified_student = relationship("qualified_student", cascade="all, delete, delete-orphan", passive_deletes=True)
 
     @classmethod
+    def getUser(cls, username):
+        user = session.query(User).filter_by(Username=username).scalar()
+        return user_schema.dump(user)
+
+    @classmethod
     def isExist(cls, name):
-        session = Session()
         exists = session.query(User).filter_by(Username=name).scalar()
         if exists is not None:
             return exists
@@ -71,9 +76,12 @@ class User(Base):
         check = session.query(User).filter(User.Username == username).scalar()
         if check is not None:
             if check_password_hash(check.Password, password) is True:
+                session.close()
                 return True
             else:
+                session.close()
                 return False
+        session.close()
         return False
 
 
@@ -99,31 +107,34 @@ class Subject(Base):
             return False
 
 
-# Unqualified student class
-class Unqualified_Student(Base):
-    __tablename__ = 'unqualified_student'
+# student status class
+class Student_Status(Base):
+    __tablename__ = 'student_status'
 
-    UnqualifiedID = Column(Integer,
-                           primary_key=True,
-                           autoincrement=True)
+    StatusID = Column(Integer,
+                      primary_key=True,
+                      autoincrement=True)
     StudentID = Column(String(45),
                        ForeignKey('user.ID'),
                        nullable=False)
     SubjectID = Column(String(45),
                        ForeignKey('subject.SubjectID'),
                        nullable=False)
+    Status = Column(String(45),
+                    nullable=False)
+
     User = relationship('User',
-                        back_populates='unqualified_student')
+                        back_populates='student_status')
     Subject = relationship('Subject',
-                           back_populates='unqualified_student')
+                           back_populates='student_status')
 
     @classmethod
-    def create(cls, studentID, subjectID):
-        if session.query(Unqualified_Student).filter(Unqualified_Student.StudentID == studentID,
-                                                     Unqualified_Student.SubjectID == subjectID).scalar() is None:
-            new_unqualified_user = Unqualified_Student(StudentID=studentID,
-                                                       SubjectID=subjectID)
-            session.add(new_unqualified_user)
+    def create(cls, studentID, subjectID, status):
+        if session.query(Student_Status).filter(Student_Status.StudentID == studentID,
+                                                Student_Status.SubjectID == subjectID).scalar() is None:
+            student_status = Student_Status(StudentID=studentID,
+                                            SubjectID=subjectID)
+            session.add(student_status)
             session.commit()
             session.close()
             return True
@@ -137,55 +148,42 @@ class Unqualified_Student(Base):
 # back_populates parameter is used to establish a bidirectional relationship in one-to-many.
 # where the “reverse” side is a many to one.
 
-User.unqualified_student = relationship('Unqualified_Student',
-                                        order_by=Unqualified_Student.StudentID,
-                                        back_populates='User')
-Subject.unqualified_student = relationship('Unqualified_Student',
-                                           order_by=Unqualified_Student.SubjectID,
-                                           back_populates='Subject')
-
-
-# Unqualified student class
-class Qualified_Student(Base):
-    __tablename__ = 'qualified_student'
-
-    QualifiedID = Column(Integer,
-                         primary_key=True,
-                         autoincrement=True)
-    StudentID = Column(String(45),
-                       ForeignKey('user.ID'),
-                       nullable=False)
-    SubjectID = Column(String(45),
-                       ForeignKey('subject.SubjectID'),
-                       nullable=False)
-    User = relationship('User',
-                        back_populates='qualified_student')
-    Subject = relationship('Subject',
-                           back_populates='qualified_student')
-
-    @classmethod
-    def create(cls, studentID, subjectID):
-        if session.query(Qualified_Student).filter(Qualified_Student.StudentID == studentID,
-                                                   Qualified_Student.SubjectID == subjectID).scalar() is None:
-            new_qualified_user = Qualified_Student(StudentID=studentID,
-                                                   SubjectID=subjectID)
-            session.add(new_qualified_user)
-            session.commit()
-            session.close()
-            return True
-        else:
-            return False
-
-
-User.qualified_student = relationship('Qualified_Student',
-                                      order_by=Qualified_Student.StudentID,
-                                      back_populates="User")
-Subject.qualified_student = relationship('Qualified_Student',
-                                         order_by=Qualified_Student.SubjectID,
-                                         back_populates="Subject")
+User.student_status = relationship('Student_Status',
+                                   order_by=Student_Status.StudentID,
+                                   back_populates='User')
+Subject.student_status = relationship('Student_Status',
+                                      order_by=Student_Status.SubjectID,
+                                      back_populates='Subject')
 
 # Each Table object is a member of larger collection known as MetaData
 # This object is available using the .metadata attribute of declarative base class.
 # The metadata.create_all() method is passing in our Engine as a source of database connectivity.
 #  For all tables that haven’t been created yet, it issues CREATE TABLE statements to the database.
 Base.metadata.create_all(bind=engine)
+
+
+# marshmallow for entity
+
+
+class UserSchema(ModelSchema):
+    class Meta:
+        model = User
+
+
+class SubjectSchema(ModelSchema):
+    class Meta:
+        model = Subject
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = session
+
+
+class StudentStatusSchema(ModelSchema):
+    class Meta:
+        model = Student_Status
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = session
+
+
+user_schema = UserSchema()
