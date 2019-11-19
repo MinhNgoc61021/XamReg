@@ -15,7 +15,7 @@
           <a class="ant-dropdown-link" href="javascript:void(0)"><a-avatar size="large" icon="user" /></a>
           <a-menu slot="overlay">
             <a-menu-item key="0">
-              <a href="javascript:void(0)" style="text-align: center" ><span>{{ fullname }} ({{ username }})</span></a>
+              <a href="javascript:void(0)" style="text-align: center" ><span><strong>{{ fullname }}</strong> ({{ username }})</span></a>
             </a-menu-item>
             <a-menu-item key="1">
               <a><a-icon type="user" class="logo-align"/><span>Cập nhật tài khoản</span></a>
@@ -71,7 +71,6 @@
               'SignOut', 'GetUserData'
           ]),
           admin_signOut: function() {
-              console.log('clicked');
               this.SignOut();
           }
       },

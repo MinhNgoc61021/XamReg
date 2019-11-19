@@ -37,7 +37,7 @@ function getUserData() {
     }));
   }
    else {
-     console.log('Failed');
+     return {'error': 'JWT invalid'};
   }
 
 }
@@ -46,7 +46,6 @@ function signOut() {
   console.log('Signed Out');
   // remove user token from local storage
   localStorage.removeItem('user');
-  location.replace('/register');
 }
 
 // check if the response from the api is Unauthorized

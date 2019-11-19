@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { apiService } from '../components/api/api_service.js';
-import Router from '../router/index.js';
+import { router } from '../router/index.js';
 Vue.use(Vuex);
 
 const userData = localStorage.getItem('user');
@@ -45,11 +45,11 @@ export const store = new Vuex.Store ({
               if (user.type === 'admin') {
                 context.commit('signinSuccess', user.token);
                 //console.log(user.token);
-                Router.push('/admin-page');
+                router.push('/admin-page');
               }
               else if (user.type === 'student'){
                 context.commit('signinSuccess', user.token);
-                Router.push('/student-page');
+                router.push('/student-page');
               }
             },
             error => {
@@ -59,6 +59,7 @@ export const store = new Vuex.Store ({
       },
       SignOut: () => {
         apiService.signOut();
+        router.push('/register');
       },
       GetUserData: (context) => {
         apiService.getUserData()

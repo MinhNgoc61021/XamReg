@@ -67,7 +67,6 @@
     <a-upload-dragger
     name="student_list_excel"
     :multiple="true"
-    action="/handling/upload"
     @change="handleChange">
       <p class="ant-upload-drag-icon">
         <a-icon type="inbox" />
@@ -83,18 +82,23 @@
 <script>
   export default {
     data() {
-      return {};
+      return {
+          upload_status: '',
+      }
     },
     methods: {
       handleChange(info) {
         const status = info.file.status;
         if (status !== 'uploading') {
-          console.log(info.file, info.fileList);
+            this.upload_status = 'in-done';
+            console.log(this.upload_status);
+            console.log(info.file, info.fileList);
         }
         if (status === 'done') {
-          this.$message.success(`${info.file.name} đã được tải lên thành công.`);
-        } else if (status === 'error') {
-          this.$message.error(`${info.file.name} chưa không được tải lên thành công.`);
+            this.$message.success(`${info.file.name} đã được tải lên thành công.`);
+        }
+        else if (status === 'error') {
+            this.$message.error(`${info.file.name} không được tải lên thành công.`);
         }
       },
     },
