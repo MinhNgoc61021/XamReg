@@ -6,7 +6,11 @@ from flask_bcrypt import Bcrypt
 # create_engine connect to xamrag model
 
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
+<<<<<<< Updated upstream
 engine = create_engine('mysql+mysqldb://namphamc:baloney1@db/xamreg?charset=utf8mb4&use_unicode=1',
+=======
+engine = create_engine('mysql+mysqldb://namphamc:baloney1@db/xamreg?charset=utf8mb4',
+>>>>>>> Stashed changes
                        echo=True,
                        pool_size=5,
                        encoding='utf-8')
