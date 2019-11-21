@@ -9,51 +9,43 @@ const userState = userData ? { status: { signedIn: true}, userData } : { status:
 
 export const store = new Vuex.Store ({
   state: {
-    user: userState,
+    userStatus: userState,
     ID: '',
-    username: '',
     fullname: '',
-    dob: '',
-    gender: '',
   },
   mutations: {
-        signinSuccess(state, user) {
-            state.status = { signedIn: true };
-            state.user = user;
+        signInSuccess(state, user) {
+            state.userStatus = { signedIn: true };
         },
         getUserData(state, data) {
-            state.username = data.ID;
+            state.ID = data.ID;
             state.fullname = data.Fullname;
-            state.dob = data.Dob;
-            state.gender = data.Gender;
+        },
+        signInFailure(state) {
+            state.userStatus = {};
 
         },
-        signinFailure(state) {
-            state.status = {};
-            state.user = null;
-        },
-        signout(state) {
-            state.status = {};
-            state.user = null;
+        signOut(state) {
+            state.userStatus = {};
         }
   },
   actions: {
-      SignIn: (context, {username, password}) => {
+      SignIn: (context, { username, password }) => {
         apiService.signIn(username, password)
           .then(
             (user) => {
-              if (user.type === 'admin') {
-                context.commit('signinSuccess', user.token);
+              if (user.type === 'Admin') {
+                context.commit('signInSuccess', user.token);
                 //console.log(user.token);
                 router.push('/admin-page');
               }
-              else if (user.type === 'student'){
-                context.commit('signinSuccess', user.token);
+              else if (user.type === 'Student'){
+                context.commit('signInSuccess', user.token);
                 router.push('/student-page');
               }
             },
             error => {
-              context.commit('signinFailure', error);
+              context.commit('signInFailure', error);
             },
           )
       },
@@ -63,9 +55,14 @@ export const store = new Vuex.Store ({
       },
       GetUserData: (context) => {
         apiService.getUserData()
-          .then((UserData) => {
-            context.commit('getUserData', UserData)
-          });
+          .then(
+            (UserData) => {
+              context.commit('getUserData', UserData);
+            },
+            error => {
+              context.commit('signOut', error);
+            },
+          )
         },
   },
   getters: {

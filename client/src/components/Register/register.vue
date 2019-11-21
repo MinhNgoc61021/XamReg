@@ -1,100 +1,86 @@
 <template>
   <div id="container">
-    <component v-bind:is="component"></component>
-        <div id="sign-in-form">
-            <h3 id="title">{{ msg }}, Please sign in</h3>
-            <form v-on:submit.prevent="signIn()" enctype="multipart/form-data">
-                    <label for="username-input">Username</label>
-                        <input type="text" id="username-input" v-on:blur="showAlert = 'bounceOutUp'" v-on:keyup="onInputChange()" v-model="username" class="form-control" name="username" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-                    <br>
-                    <label for="password-input">Password</label>
-                        <input type="password" id="password-input" v-on:blur="showAlert = 'bounceOutUp'" v-on:keyup="onInputChange()" v-model="password" class="form-control" name="password" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1">
-                    <br>
-                    <button type="submit" v-on:blur="showAlert = 'bounceOutUp'" v-on:click="warn($event)" @click="count++" style="display: inline-block;" class="save btn btn-outline-success">Sign In</button>
-
-                    <button type="button" id="sign-up-call-button" class="save btn btn-outline-warning">About</button>
-                    <br>
-            </form>
-        </div>
-        <div class="alert animated " role="alert" id="password_warning" v-html="warning" style="text-align: center;" v-bind:class="[invalidSyntax, validSyntax, animateError, animateNotError, showAlert]">
-        </div>
+    <div id="sign-in-form">
+      <a-form layout="horizontal" :form="form" @submit="handleSubmit">
+        <h3 id="title">Đăng Nhập</h3>
+        <strong>Hãy đăng nhập bằng tài khoãn mà bạn đã được cấp</strong>
+        <a-form-item :validate-status="userNameError() ? 'error' : ''" :help="userNameError() || ''">
+          <a-input
+            v-decorator="[
+              'username',
+              { rules: [{ required: true, message: 'Hãy nhập tên người dùng!' }] },
+            ]"
+            placeholder="Username">
+            <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
+          </a-input>
+        </a-form-item>
+        <a-form-item :validate-status="passwordError() ? 'error' : ''" :help="passwordError() || ''">
+          <a-input
+            v-decorator="[
+              'password',
+              { rules: [{ required: true, message: 'Hãy nhập mật khẩu!' }] },
+            ]"
+            type="password"
+            placeholder="Password"
+          >
+            <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)" />
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          <a-button type="primary" html-type="submit" :disabled="hasErrors(form.getFieldsError())">
+            Đăng nhập
+          </a-button>
+        </a-form-item>
+      </a-form>
     </div>
+  </div>
 </template>
 
 <script>
 import { mapMutations , mapActions } from 'vuex';
 
+function hasErrors(fieldsError) {
+  return Object.keys(fieldsError).some(field => fieldsError[field]);
+}
 export default {
-    name: 'register_form',
-    data() {
-      return {
-          msg: 'OK',
-          username: '',
-          password: '',
-          warning: '',
-          invalidSyntax: '',
-          animateError: '',
-          animateNotError: '',
-          validSyntax: '',
-          count: 0,
-          component: '',
-          showAlert: '',
-          jwt: '',
-      };
-    },
-    methods: {
-        ...mapMutations([
-            "signinFailure", "signinSuccess"
-        ]),
-        ...mapActions([
-            "SignIn"
-        ]),
-        warn: function(event) {
-            console.log("Warning");
-            this.showAlert = 'none';
-            if (this.username.trim() === '' || this.password.trim() === '') {
-                this.invalidSyntax = 'alert-danger';
-                this.animateError ='bounceInDown';
-                this.warning = 'Invalid, please type all your username | password.'
-                event.preventDefault();
-                if (this.count > 0) {
-                    this.animateError = 'shake';
-                }
-            }
-            console.log(this.count);
-
-        },
-        signIn: function() {
-            const { username, password } = this;
-            this.SignIn({ username, password });
-        },
-        onInputChange: function() {
-            this.showAlert = 'none';
-            if (this.username.trim() === '' && this.password.trim() !== '') {
-                this.warning = 'Please type your username.';
-                this.invalidSyntax = 'alert-warning';
-                this.animateError ='bounceInDown';
-            }
-            else if (this.password.trim() === '' && this.username.trim() !== '') {
-                this.warning = 'Please type your password.';
-                this.invalidSyntax = 'alert-warning';
-                this.animateError ='bounceInDown';
-            }
-            else if (this.password.trim() === '' && this.username.trim() === '') {
-                this.warning = 'Please type your username and password.';
-                this.invalidSyntax = 'alert-warning';
-                this.animateError ='bounceInDown';
-            }
-            else {
-                this.animateError ='bounceInDown';
-                this.invalidSyntax = 'alert-success';
-                this.warning = 'All good!';
-            }
-        },
+    name: 'Register_Form',
+  data() {
+    return {
+      hasErrors,
+      form: this.$form.createForm(this, { name: 'horizontal_login' }),
+    };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      // To disabled submit button at the beginning.
+      this.form.validateFields();
+    });
+  },
+  methods: {
+      ...mapActions([
+          "SignIn"
+      ]),
+      // Only show error after a field is touched.
+      userNameError() {
+        const { getFieldError, isFieldTouched } = this.form;
+        return isFieldTouched('userName') && getFieldError('userName');
+      },
+      // Only show error after a field is touched.
+      passwordError() {
+        const { getFieldError, isFieldTouched } = this.form;
+        return isFieldTouched('password') && getFieldError('password');
+      },
+      handleSubmit(e) {
+        e.preventDefault();
+        this.form.validateFields((err, formInput) => {
+          if (!err) {
+            this.SignIn(formInput);
+          }
+        });
+      },
     },
 };
 </script>
-
 <style src="../css/login_style.css">
 
 </style>

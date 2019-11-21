@@ -75,14 +75,15 @@ class User(Base):
     def check_register(cls, username, password):
         check = session.query(User).filter(User.Username == username).scalar()
         if check is not None:
-            if check_password_hash(check.Password, password) is True:
-                session.close()
-                return True
-            else:
-                session.close()
-                return False
+            if check_password_hash(check.Password, str(password)) is True:
+                if check.Role_Type == 'Admin':
+                    session.close()
+                    return 'Admin'
+                else:
+                    session.close()
+                    return 'Student'
         session.close()
-        return False
+        return 'Not found'
 
 
 # Subject persistent class
@@ -133,7 +134,7 @@ class Student_Status(Base):
         if session.query(Student_Status).filter(Student_Status.StudentID == studentID,
                                                 Student_Status.SubjectID == subjectID).scalar() is None:
             student_status = Student_Status(StudentID=studentID,
-                                            SubjectID=subjectID)
+                                            SubjectID=subjectID, Status=status)
             session.add(student_status)
             session.commit()
             session.close()

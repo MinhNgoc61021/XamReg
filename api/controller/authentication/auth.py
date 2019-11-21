@@ -64,7 +64,7 @@ def register():
         username = user_form.get('username')
         password = user_form.get('password')
         check_user = User.check_register(username, password)
-        if check_user is False:
+        if check_user == 'Not found':
             return jsonify({'status': 'fail'})
         else:
             token = jwt.encode({
@@ -73,7 +73,7 @@ def register():
                 'exp': datetime.utcnow() + timedelta(minutes=30)},  # the time in which the token will expire as seconds
                 current_app.config['SECRET_KEY'])
             return jsonify({'status': 'success',
-                            'type': 'admin',
+                            'type': check_user,
                             'message': 'login successful',
                             'token': token.decode('UTF-8')})
 
@@ -83,10 +83,7 @@ def register():
 def get_user(current_user):
     # print(current_user['Username'], flush=True)
     return jsonify({'ID': current_user['ID'],
-                    'Username': current_user['Username'],
                     'Fullname': current_user['Fullname'],
-                    'Dob': current_user['Dob'],
-                    'Gender': current_user['Gender']
                     })
 
 

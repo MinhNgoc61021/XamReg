@@ -2,6 +2,7 @@ import axios from 'axios';
 import { authHeader, isValidJwt } from './jwt_handling.js';
 
 
+
 //This is where the client call the api server
 export const apiService = {
   signIn, signOut, getUserData
@@ -14,8 +15,6 @@ function signIn(username, password) {
   })
     .then(response => {
       // Check if the response is a token
-      //const userPayload = getTokenData(response.data.token);
-      //console.log(response.data);
       if (response.data.token) {
         // store user details and jwt in local storage to keep user signed in
         localStorage.setItem('user', JSON.stringify(response.data));
@@ -25,20 +24,25 @@ function signIn(username, password) {
     });
 }
 
-
-function getUserData() {
-  if (isValidJwt()) {
-    return axios({
-      method: 'post',
-      url: '/auth/get-user',
-      headers: authHeader(),
-    }).then((response => {
-      return response.data;
-    }));
+async function getUserData() {
+  try {
+    if (isValidJwt()) {
+      const userData = await axios({
+        method: 'post',
+        url: '/auth/get-user',
+        headers: authHeader(),
+      });
+      let { data } = userData;
+      return data;
+    }
+    else {
+      localStorage.removeItem('user');
+      router.push('/')
+    }
   }
-   else {
-     return {'error': 'JWT invalid'};
-  }
+   catch (err) {
+     return err.message;
+   }
 
 }
 
@@ -50,20 +54,20 @@ function signOut() {
 
 // check if the response from the api is Unauthorized
 // this handles if the JWT token expires or is no longer valid for any reason.
-function handleResponse(response) {
-    return response.then(text => {
-        const data = text && JSON.parse(text);
-        if (!response.ok) {
-            if (response.status === 401) {
-                // auto logout if 401 response returned from api
-                signOut();
-                location.reload(true);
-            }
-
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
-        }
-
-        return data;
-    });
-}
+// function handleResponse(response) {
+//     return response.then(text => {
+//         const data = text && JSON.parse(text);
+//         if (!response.ok) {
+//             if (response.status === 401) {
+//                 // auto logout if 401 response returned from api
+//                 signOut();
+//                 location.reload(true);
+//             }
+//
+//             const error = (data && data.message) || response.statusText;
+//             return Promise.reject(error);
+//         }
+//
+//         return data;
+//     });
+// }

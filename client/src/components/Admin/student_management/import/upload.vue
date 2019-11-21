@@ -67,6 +67,8 @@
     <a-upload-dragger
     name="student_list_excel"
     :multiple="true"
+    action="/handling/upload"
+    :headers="headers"
     @change="handleChange">
       <p class="ant-upload-drag-icon">
         <a-icon type="inbox" />
@@ -80,18 +82,18 @@
   </div>
 </template>
 <script>
+  import { authHeader } from "../../../api/jwt_handling";
   export default {
     data() {
       return {
           upload_status: '',
+          headers: authHeader(),
       }
     },
     methods: {
       handleChange(info) {
         const status = info.file.status;
         if (status !== 'uploading') {
-            this.upload_status = 'in-done';
-            console.log(this.upload_status);
             console.log(info.file, info.fileList);
         }
         if (status === 'done') {

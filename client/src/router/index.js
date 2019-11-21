@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import register from '@/components/Register/register';
 import VeeValidate from 'vee-validate'
 import Admin_Page from "../components/Admin/admin_page";
+import Student_Page from '../components/Student/student-page';
 import upload from "../components/Admin/student_management/import/upload";
 import { getToken } from "../components/api/jwt_handling";
 Vue.use(VeeValidate);
@@ -13,6 +14,7 @@ export const router = new Router({
   routes: [
     { path: '/register', name: 'register', component: register },
     { path: '/admin-page', name: 'admin', component: Admin_Page },
+    { path: '/student-page', name: 'student', component: Student_Page },
     { path: '/upload', name: 'upload', component: upload },
     { path: '/*', redirect: '/register'},
   ],
@@ -23,17 +25,17 @@ router.beforeEach ((to, from, next) => {
     const authRequired = !publicPages.includes(to.path);
     const loggedIn = getToken(localStorage.getItem('user'));
     if (loggedIn) {
-      if (loggedIn.type === 'admin') {
+      if (loggedIn.type === 'Admin') {
         if (!authRequired) { // When there is register page
           return next('/admin-page');
         } else { //Move to a new hook
           return next();
         }
       }
-      if (loggedIn.type === 'student') {
+      if (loggedIn.type === 'Student') {
         if (!authRequired) { // When there is register page
           return next('/student-page');
-        } else {
+        } else { // Move to a new hook
           return next();
         }
       }
@@ -46,7 +48,7 @@ router.beforeEach ((to, from, next) => {
         return next();
       }
     }
-    else next();
+    //else next();
 
 });
 
