@@ -26,7 +26,7 @@ export function isValidJwt () {
   return now < exp;
 }
 
-function getTokenData(data) {
-    return JSON.parse(atob(data.split('.')[1]));
+export function getToken() {
+    return JSON.parse(localStorage.getItem('user'));
 }
 

@@ -29,7 +29,7 @@ function signIn(username, password) {
 function getUserData() {
   if (isValidJwt()) {
     return axios({
-      method: 'get',
+      method: 'post',
       url: '/auth/get-user',
       headers: authHeader(),
     }).then((response => {

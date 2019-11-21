@@ -78,7 +78,7 @@ def register():
                             'token': token.decode('UTF-8')})
 
 
-@authentication.route('/get-user', methods=['GET'])
+@authentication.route('/get-user', methods=['POST'])
 @token_required
 def get_user(current_user):
     # print(current_user['Username'], flush=True)

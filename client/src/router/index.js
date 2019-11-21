@@ -4,6 +4,7 @@ import register from '@/components/Register/register';
 import VeeValidate from 'vee-validate'
 import Admin_Page from "../components/Admin/admin_page";
 import upload from "../components/Admin/student_management/import/upload";
+import { getToken } from "../components/api/jwt_handling";
 Vue.use(VeeValidate);
 Vue.use(Router);
 
@@ -20,7 +21,7 @@ router.beforeEach ((to, from, next) => {
     // redirect to register page if not logged in and trying to access a restricted page
     const publicPages = ['/register'];
     const authRequired = !publicPages.includes(to.path);
-    const loggedIn = JSON.parse(localStorage.getItem('user'));
+    const loggedIn = getToken(localStorage.getItem('user'));
     if (loggedIn) {
       if (loggedIn.type === 'admin') {
         if (!authRequired) { // When there is register page
