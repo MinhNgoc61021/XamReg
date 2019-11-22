@@ -2,7 +2,7 @@
   <div id="dragger-container">
     <a-upload-dragger
     name="student_list_excel"
-    :multiple="true"
+    :multiple="false"
     action="/handling/upload"
     :headers="headers"
     @change="handleChange">
@@ -33,10 +33,10 @@
             console.log(info.file, info.fileList);
         }
         if (status === 'done') {
-            this.$message.success(`${info.file.name} đã được tải lên thành công.`);
+            this.$message.success(`${info.file.name} đã được tải lên và dữ liệu được thành công.`);
         }
         else if (status === 'error') {
-            this.$message.error(`${info.file.name} không được tải lên thành công.`);
+            this.$message.error(`${info.file.name} không được tải lên thành công hoặc có lỗi trong file.`);
         }
       },
     },

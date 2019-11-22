@@ -92,8 +92,7 @@ class Subject(Base):
     SubjectID = Column(String(45),
                        primary_key=True)
     SubjectTitle = Column(String(45),
-                          nullable=False,
-                          unique=True)
+                          nullable=False)
 
     @classmethod
     def create(cls, subjectID, subjectTitle):

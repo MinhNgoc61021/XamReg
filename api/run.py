@@ -29,9 +29,9 @@ def init_admin():
     if check_user:
         return 'OK, an admin has already been created.'
     else:
-        fullname = 'Nguyễn Ngọc Minh'
-        print(fullname, flush=True)
-        add_admin = User.create('Admin1', 'MinhNgoc', '12345', 'Minh', '1999-12-18',
+        # fullname = 'Nguyễn Ngọc Minh'
+        # print(fullname, flush=True)
+        add_admin = User.create('Admin1', 'MinhNgoc', '12345', 'Nguyễn Mĩnh Ngháo', '1999-12-18',
                                 'Male', 'INTAdmin', 'Admin')
 
 

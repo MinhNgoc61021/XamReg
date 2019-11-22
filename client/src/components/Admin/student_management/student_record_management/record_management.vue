@@ -5,8 +5,7 @@
     :dataSource="data"
     :pagination="pagination"
     :loading="loading"
-    @change="handleTableChange"
-  >
+    @change="handleTableChange">
     <template slot="name" slot-scope="name">
       {{name.first}} {{name.last}}
     </template>
@@ -21,12 +20,6 @@
       sorter: true,
       width: '20%',
       scopedSlots: { customRender: 'name' },
-    },
-    {
-      title: 'Giới tính',
-      dataIndex: 'gender',
-      filters: [{ text: 'Nam', value: 'male' }, { text: 'Nữ', value: 'female' }],
-      width: '20%',
     },
     {
       title: 'Giới tính',

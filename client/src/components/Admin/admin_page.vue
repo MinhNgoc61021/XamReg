@@ -2,7 +2,7 @@
   <a-layout id="components-layout-top-side">
 
     <!--    header-->
-    <a-layout-header class="header" :style="{ position: 'fixed', zIndex: 1, width: '100%', background: '#fff' }" style="border-bottom: 1px solid #e8e8e8; min-height: 66px;">
+    <a-layout-header class="header" :style="{ position: 'fixed', zIndex: 2, width: '100%', background: '#fff' }" style="border-bottom: 1px solid #e8e8e8; min-height: 66px;">
       <div class="logo" />
       <a-menu
         theme="light"

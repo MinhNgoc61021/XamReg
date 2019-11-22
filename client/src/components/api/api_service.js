@@ -37,7 +37,7 @@ async function getUserData() {
     }
     else {
       localStorage.removeItem('user');
-      router.push('/')
+      router.push('/');
     }
   }
    catch (err) {
@@ -51,23 +51,24 @@ function signOut() {
   // remove user token from local storage
   localStorage.removeItem('user');
 }
-
-// check if the response from the api is Unauthorized
-// this handles if the JWT token expires or is no longer valid for any reason.
-// function handleResponse(response) {
-//     return response.then(text => {
-//         const data = text && JSON.parse(text);
-//         if (!response.ok) {
-//             if (response.status === 401) {
-//                 // auto logout if 401 response returned from api
-//                 signOut();
-//                 location.reload(true);
-//             }
-//
-//             const error = (data && data.message) || response.statusText;
-//             return Promise.reject(error);
-//         }
-//
-//         return data;
-//     });
 // }
+//
+// // check if the response from the api is Unauthorized
+// // this handles if the JWT token expires or is no longer valid for any reason.
+// // function handleResponse(response) {
+// //     return response.then(text => {
+// //         const data = text && JSON.parse(text);
+// //         if (!response.ok) {
+// //             if (response.status === 401) {
+// //                 // auto logout if 401 response returned from api
+// //                 signOut();
+// //                 location.reload(true);
+// //             }
+// //
+// //             const error = (data && data.message) || response.statusText;
+// //             return Promise.reject(error);
+// //         }
+// //
+// //         return data;
+// //     });
+// // }
