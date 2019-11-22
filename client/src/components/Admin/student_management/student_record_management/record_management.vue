@@ -1,122 +1,93 @@
 <template>
-  <a-table :columns="columns" :dataSource="data" bordered>
-    <template
-      v-for="col in ['name', 'age', 'address']"
-      :slot="col"
-      slot-scope="text, record, index"
-    >
-      <div :key="col">
-        <a-input
-          v-if="record.editable"
-          style="margin: -5px 0"
-          :value="text"
-          @change="e => handleChange(e.target.value, record.key, col)"
-        />
-        <template v-else
-          >{{text}}</template
-        >
-      </div>
-    </template>
-    <template slot="operation" slot-scope="text, record, index">
-      <div class="editable-row-operations">
-        <span v-if="record.editable">
-          <a @click="() => save(record.key)">Save</a>
-          <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(record.key)">
-            <a>Cancel</a>
-          </a-popconfirm>
-        </span>
-        <span v-else>
-          <a @click="() => edit(record.key)">Edit</a>
-        </span>
-      </div>
+  <a-table
+    :columns="columns"
+    :rowKey="record => record.login.uuid"
+    :dataSource="data"
+    :pagination="pagination"
+    :loading="loading"
+    @change="handleTableChange"
+  >
+    <template slot="name" slot-scope="name">
+      {{name.first}} {{name.last}}
     </template>
   </a-table>
 </template>
 <script>
+  import axios from 'axios';
   const columns = [
     {
-      title: 'name',
-      dataIndex: 'name',
-      width: '25%',
+      title: 'Tên',
+      dataIndex: 'ID',
+      sorter: true,
+      width: '20%',
       scopedSlots: { customRender: 'name' },
     },
     {
-      title: 'age',
-      dataIndex: 'age',
-      width: '5%',
-      scopedSlots: { customRender: 'age' },
+      title: 'Giới tính',
+      dataIndex: 'gender',
+      filters: [{ text: 'Nam', value: 'male' }, { text: 'Nữ', value: 'female' }],
+      width: '20%',
     },
     {
-      title: 'address',
-      dataIndex: 'address',
-      width: '40%',
-      scopedSlots: { customRender: 'address' },
+      title: 'Giới tính',
+      dataIndex: 'gender',
+      filters: [{ text: 'Nam', value: 'male' }, { text: 'Nữ', value: 'female' }],
+      width: '20%',
     },
     {
-      title: 'operation',
-      dataIndex: 'operation',
-      scopedSlots: { customRender: 'operation' },
+      title: 'Email',
+      dataIndex: 'email',
     },
+
   ];
 
-  const data = [];
-  for (let i = 0; i < 100; i++) {
-    data.push({
-      key: i.toString(),
-      name: `Edrward ${i}`,
-      age: 32,
-      address: `London Park no. ${i}`,
-    });
-  }
   export default {
-    name: 'record_management',
+    mounted() {
+      this.fetch();
+    },
     data() {
-      this.cacheData = data.map(item => ({ ...item }));
       return {
-        data,
+        data: [],
+        pagination: {},
+        loading: false,
         columns,
       };
     },
     methods: {
-      handleChange(value, key, column) {
-        const newData = [...this.data];
-        const target = newData.filter(item => key === item.key)[0];
-        if (target) {
-          target[column] = value;
-          this.data = newData;
-        }
+      handleTableChange(pagination, filters, sorter) {
+        console.log(pagination);
+        const pager = { ...this.pagination };
+        pager.current = pagination.current;
+        this.pagination = pager;
+        this.fetch({
+          results: pagination.pageSize,
+          page: pagination.current,
+          sortField: sorter.field,
+          sortOrder: sorter.order,
+          ...filters,
+        });
       },
-      edit(key) {
-        const newData = [...this.data];
-        const target = newData.filter(item => key === item.key)[0];
-        if (target) {
-          target.editable = true;
-          this.data = newData;
-        }
-      },
-      save(key) {
-        const newData = [...this.data];
-        const target = newData.filter(item => key === item.key)[0];
-        if (target) {
-          delete target.editable;
-          this.data = newData;
-          this.cacheData = newData.map(item => ({ ...item }));
-        }
-      },
-      cancel(key) {
-        const newData = [...this.data];
-        const target = newData.filter(item => key === item.key)[0];
-        if (target) {
-          Object.assign(target, this.cacheData.filter(item => key === item.key)[0]);
-          delete target.editable;
-          this.data = newData;
-        }
+      fetch(params = {}) {
+        console.log('params:', params);
+        this.loading = true;
+        axios({
+          url: 'https://randomuser.me/api',
+          method: 'get',
+          data: {
+            results: 10,
+            ...params,
+          },
+          type: 'json',
+        }).then(data => {
+          const pagination = { ...this.pagination };
+          // Read total count from server
+          // pagination.total = data.totalCount;
+          pagination.total = 200;
+          this.loading = false;
+          this.data = data.results;
+          this.pagination = pagination;
+        });
       },
     },
   };
 </script>
-<style scoped>
-  .editable-row-operations a {
-    margin-right: 8px;
-  }
-</style>

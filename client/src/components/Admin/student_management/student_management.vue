@@ -3,7 +3,7 @@
       <a-breadcrumb style="margin: 16px 0">
         <a-breadcrumb-item>Home</a-breadcrumb-item>
       </a-breadcrumb>
-      <a-layout style="padding: 24px 0; background: #fff">
+      <a-layout id="main-content" style="padding: 24px 0; background: #fff">
 
         <!--sider-->
         <a-layout-sider width="200" style="background: #fff">
@@ -27,7 +27,7 @@
         <!--sider-->
 
         <!--content-->
-        <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' , position: 'relative', margin: 'auto' }">
+        <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' , position: 'relative', margin: 'auto' }" >
             <keep-alive>
               <component v-bind:is="component" />
             </keep-alive>
@@ -41,6 +41,7 @@
   import upload_student_list from './import/upload.vue';
   import input_student from './import/input.vue';
   import record_management from "./student_record_management/record_management";
+
   export default {
       name: 'student_management',
       components: {
@@ -54,5 +55,12 @@
   }
 </script>
 <style>
+  @media screen and (max-width: 400px) {
+    #main-content {
+      overflow-x: scroll;
+    }
+  }
+  #main-content {
 
+  }
 </style>
