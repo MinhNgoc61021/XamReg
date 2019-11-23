@@ -2,7 +2,7 @@
     height: 100vh;
     position: relative;
   }
-  #sign-in-form, #password-change-form {
+  #sign-in-form {
     border-radius: 4px;
     border: 1px rgba(73, 80, 87, 0.41) solid;
     position: absolute;

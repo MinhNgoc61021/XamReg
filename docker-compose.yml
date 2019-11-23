@@ -10,7 +10,6 @@ services:
       - MYSQL_USER=namphamc
       - MYSQL_PASSWORD=baloney1
       - MYSQL_ROOT_PASSWORD=baloney1
-      - MYSQL_DATABASE=xamreg
   phpmyadmin:
       image: phpmyadmin/phpmyadmin
       restart: always
