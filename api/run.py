@@ -1,8 +1,7 @@
 from flask_cors import CORS
 from flask_restful import Api
-
+from db.entity_db import User
 from controller import create_app
-from controller.db.entity_db import *
 
 # write this in cmd
 # for Windows

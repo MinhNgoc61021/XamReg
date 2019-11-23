@@ -7,7 +7,7 @@ from flask import (
     jsonify
 )
 from flask_cors import CORS
-from controller.db.entity_db import User
+from db.entity_db import User
 import jwt
 from datetime import datetime, timedelta
 from functools import wraps

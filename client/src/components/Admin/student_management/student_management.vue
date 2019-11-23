@@ -15,10 +15,10 @@
             <a-sub-menu key="sub1">
               <span slot="title" title="Nhập"><a-icon type="upload" :size="32" title="Nhập"/>Nhập (Import)</span>
               <a-menu-item v-on:click="component='upload_student_list'" key="1"><a-icon type="file-add" />Nhập file</a-menu-item>
-              <a-menu-item v-on:click="component='input_student'"><a-icon type="edit" />Nhập tay</a-menu-item>
+              <a-menu-item v-on:click="component='input_student'"><a-icon type="form" />Nhập tay</a-menu-item>
             </a-sub-menu>
             <a-sub-menu>
-              <span slot="title" title="Xem & Cập nhật danh sách sinh viên"><a-icon type="upload" :size="32" />Xem & Cập nhật danh sách sinh viên</span>
+              <span slot="title" title="Xem & Cập nhật danh sách sinh viên"><a-icon type="edit" />Xem & Cập nhật danh sách sinh viên</span>
               <a-menu-item v-on:click="component='record_management'"><a-icon type="ordered-list" />Danh sách</a-menu-item>
             </a-sub-menu>
           </a-menu>

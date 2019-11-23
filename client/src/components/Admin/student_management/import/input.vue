@@ -29,21 +29,22 @@
     <a-form-item
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol"
-      label="Nickname"
-    >
-      <a-input
-        v-decorator="[
-          'nickname',
-          { rules: [{ required: true, message: 'Hãy nhập ngày sinh' }] },
-        ]"
-        placeholder="Hãy nhập ngày sinh"
+      label="Date of birth">
+      <a-date-picker :format="dateFormat"
+          v-decorator="[
+            'dob',
+            { rules: [{ required: true, message: 'Hãy nhập đầy đủ ngày tháng năm sinh' }] },
+          ]"
       />
     </a-form-item>
-    <a-form-item label="Giới tính" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+    <a-form-item
+      :label-col="formItemLayout.labelCol"
+      :wrapper-col="formItemLayout.wrapperCol"
+      label="Giới tính" >
       <a-select
         v-decorator="[
           'gender',
-          { rules: [{ required: true, message: 'Please select your gender!' }] },
+          { rules: [{ required: true, message: 'Hãy chọn giới tính' }] },
         ]"
         placeholder="Chọn giới tính"
         @change="handleSelectChange"
@@ -59,40 +60,13 @@
     <a-form-item
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol"
-      label="Nickname"
-    >
+      label="Mã khóa học">
       <a-input
         v-decorator="[
-          'nickname',
-          { rules: [{ required: true, message: 'Hãy nhập username' }] },
+          'courseID',
+          { rules: [{ required: true, message: 'Hãy nhập mã khóa học' }] },
         ]"
-        placeholder="Please input your nickname"
-      />
-    </a-form-item>
-    <a-form-item
-      :label-col="formItemLayout.labelCol"
-      :wrapper-col="formItemLayout.wrapperCol"
-      label="Nickname"
-    >
-      <a-input
-        v-decorator="[
-          'nickname',
-          { rules: [{ required: true, message: 'Hãy nhập username' }] },
-        ]"
-        placeholder="Please input your nickname"
-      />
-    </a-form-item>
-    <a-form-item
-      :label-col="formItemLayout.labelCol"
-      :wrapper-col="formItemLayout.wrapperCol"
-      label="Nickname"
-    >
-      <a-input
-        v-decorator="[
-          'nickname',
-          { rules: [{ required: true, message: 'Hãy nhập username' }] },
-        ]"
-        placeholder="Please input your nickname"
+        placeholder="Hãy nhập mã khóa học"
       />
     </a-form-item>
     <a-form-item :label-col="formTailLayout.labelCol" :wrapper-col="formTailLayout.wrapperCol">
@@ -116,6 +90,7 @@ const formTailLayout = {
 export default {
   data() {
     return {
+      dateFormat: 'MM/DD/YYYY',
       checkNick: false,
       formItemLayout,
       formTailLayout,

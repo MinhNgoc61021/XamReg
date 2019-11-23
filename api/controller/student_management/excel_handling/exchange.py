@@ -5,11 +5,10 @@ from flask import (
     request,
     jsonify
 )
-from controller.db.entity_db import User, Subject, Student_Status
+from db.entity_db import User, Subject, Student_Status
 from openpyxl import load_workbook
 from controller.authentication.auth import token_required
 import re
-from datetime import datetime
 
 excel_handling = Blueprint('import_export', __name__, url_prefix='/handling')
 
@@ -61,13 +60,13 @@ def upload(auth):
             subjectID = re.search('^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})',
                                   str(excel_data['subjectID']))
             status = re.search('[Qualified|Unqualified]', excel_data['status'])
-            print(ID, flush=True)
-            print(fullname, flush=True)
-            print(dob, flush=True)
-            print(gender, flush=True)
-            print(courseID, flush=True)
-            print(subjectID, flush=True)
-            print(status, flush=True)
+            # print(ID, flush=True)
+            # print(fullname, flush=True)
+            # print(dob, flush=True)
+            # print(gender, flush=True)
+            # print(courseID, flush=True)
+            # print(subjectID, flush=True)
+            # print(status, flush=True)
 
             if (ID is not None) and (fullname is not None) and (dob is not None) and (gender is not None) and (
                     courseID is not None) and (subjectID is not None) and (status is not None):
