@@ -11,4 +11,4 @@ import re
 
 record_management = Blueprint('record_management', __name__, url_prefix='/record')
 
-# COMING SOON 
+# COMING SOON

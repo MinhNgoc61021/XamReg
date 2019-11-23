@@ -1,9 +1,11 @@
 // The authHeader is used to make authenticated HTTP requests to the server api using JWT authentication.
+import { router } from "../../router";
+
 export function authHeader() {
     // return authorization header with jwt token
     let user = JSON.parse(localStorage.getItem('user'));
     // console.log(user.token);
-    if (user && user.token) {
+    if (isValidJwt()) {
         return { Authorization: 'Bearer: ' + user.token }; // send encoded jwt token
     } else {
         return {};
@@ -16,7 +18,6 @@ export function authHeader() {
 // JWT (JSON Web Token) is an encoded JSON object of the form "[HEADER].[PAYLOAD].[SIGNATURE]".
 export function isValidJwt () {
   const jwt = localStorage.getItem('user');
-  // console.log(jwt);
   if (!jwt || jwt.split('.').length < 3) {
     return false
   }
@@ -24,6 +25,7 @@ export function isValidJwt () {
   const exp = new Date(data.exp * 1000); // JS deals with dates in milliseconds since epoch
   const now = new Date();
   return now < exp;
+
 }
 
 export function getToken() {

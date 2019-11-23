@@ -3,14 +3,14 @@
     <div id="sign-in-form">
       <a-form layout="horizontal" :form="form" @submit="handleSubmit">
         <h3 id="title">Đăng Nhập</h3>
-        <strong>Hãy đăng nhập bằng tài khoãn mà bạn đã được cấp</strong>
+        <strong>Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</strong>
         <a-form-item :validate-status="userNameError() ? 'error' : ''" :help="userNameError() || ''">
           <a-input
             v-decorator="[
               'username',
-              { rules: [{ required: true, message: 'Hãy nhập tên người dùng!' }] },
+              { rules: [{ required: true, message: 'Hãy nhập username của bạn!' }] },
             ]"
-            placeholder="Username">
+            placeholder="Hãy nhập username của bạn">
             <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
           </a-input>
         </a-form-item>
@@ -18,10 +18,10 @@
           <a-input
             v-decorator="[
               'password',
-              { rules: [{ required: true, message: 'Hãy nhập mật khẩu!' }] },
+              { rules: [{ required: true, message: 'Hãy nhập mật khẩu của bạn!' }] },
             ]"
             type="password"
-            placeholder="Password"
+            placeholder="Hãy nhập mật khẩu của bạn"
           >
             <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)" />
           </a-input>
@@ -63,7 +63,7 @@ export default {
       // Only show error after a field is touched.
       userNameError() {
         const { getFieldError, isFieldTouched } = this.form;
-        return isFieldTouched('userName') && getFieldError('userName');
+        return isFieldTouched('username') && getFieldError('username');
       },
       // Only show error after a field is touched.
       passwordError() {

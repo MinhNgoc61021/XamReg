@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { authHeader, isValidJwt } from './jwt_handling.js';
-
+import { router } from "../../router";
 
 
 //This is where the client call the api server
@@ -27,21 +27,29 @@ function signIn(username, password) {
 async function getUserData() {
   try {
     if (isValidJwt()) {
-      const userData = await axios({
+      const response = await axios({
         method: 'post',
         url: '/auth/get-user',
         headers: authHeader(),
       });
-      let { data } = userData;
-      return data;
+      let { data } = response;
+      console.log(response.status);
+      if (response.status === 200) {
+        return data;
+      }
+      else if (response.status === 401) {
+        localStorage.removeItem('user');
+        await router.push('/register');
+      }
     }
     else {
+      alert('User is expired');
       localStorage.removeItem('user');
-      router.push('/');
+      await router.push('/register');
     }
   }
    catch (err) {
-     return err.message;
+    return err.message;
    }
 
 }
