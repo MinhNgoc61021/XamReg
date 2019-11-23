@@ -46,11 +46,11 @@ class User(Base):
         return user_schema.dump(user)
 
     @classmethod
-    def isExist(cls, name):
-        exists = session.query(User).filter_by(Username=name).scalar()
+    def isExist(cls, id):
+        exists = session.query(User).filter_by(ID=id).scalar()
         if exists is not None:
-            return exists
-        return
+            return True
+        return False
 
     # create a new user
     @classmethod
