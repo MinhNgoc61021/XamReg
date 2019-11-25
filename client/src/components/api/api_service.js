@@ -28,7 +28,7 @@ async function getUserData() {
   try {
     if (isValidJwt()) {
       const response = await axios({
-        method: 'post',
+        method: 'get',
         url: '/auth/get-user',
         headers: authHeader(),
       });

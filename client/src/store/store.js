@@ -12,6 +12,7 @@ export const store = new Vuex.Store ({
     userStatus: userState,
     ID: '',
     fullname: '',
+    current_location: ['1'],
   },
   mutations: {
         signInSuccess(state, user) {
@@ -26,7 +27,11 @@ export const store = new Vuex.Store ({
 
         },
         signOut(state) {
-            state.userStatus = {};
+          state.userStatus = {};
+        },
+        setCurrentLocation(state, index) {
+          state.current_location.pop();
+          state.current_location.push(index);
         }
   },
   actions: {
