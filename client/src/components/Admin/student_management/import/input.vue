@@ -1,11 +1,11 @@
 <template>
     <section id="create-user-form">
         <b-field label="MSSV">
-            <b-input placeholder="Hãy nhập mã số sinh viên" type="text"></b-input>
+            <b-input placeholder="Hãy nhập mã số sinh viên"></b-input>
         </b-field>
 
         <b-field label="Họ và tên">
-            <b-input placeholder="Hãy nhập họ tên sinh viên" type="text"></b-input>
+            <b-input placeholder="Hãy nhập họ tên sinh viên"></b-input>
         </b-field>
 
         <b-field label="Ngày sinh">
@@ -24,7 +24,7 @@
                 <option value="Nữ">Nữ</option>
             </b-select>
         </b-field>
-        <div class="buttons">
+        <div class="buttons" style="float: right;">
           <b-button outlined>Thêm</b-button>
         </div>
     </section>

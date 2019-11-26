@@ -1,13 +1,12 @@
 <template>
-    <b-tabs type="is-toggle" expanded>
-        <b-tab-item label="Nhập bằng Excel" style="margin: auto">
-          <div style="margin: auto;">
-            <keep-alive>
-              <component v-bind:is="upload"/>
-            </keep-alive>
-          </div>
+    <b-tabs type="is-toggle" expanded >
+        <b-tab-item label="Nhập bằng Excel" icon-pack="fas" icon="file-excel" c style="margin: auto">
+          <keep-alive>
+            <component v-bind:is="upload"/>
+          </keep-alive>
+
         </b-tab-item>
-        <b-tab-item label="Nhập bằng tay" >
+        <b-tab-item label="Nhập bằng form" icon-pack="fas" icon="keyboard">
           <keep-alive>
             <component v-bind:is="input"/>
           </keep-alive>

@@ -88,18 +88,19 @@
   <div id="container">
     <section id="sign-in-form">
 <!--        <b-checkbox v-model="hasError">Show errors</b-checkbox>-->
-        <p id="title">Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</p>
+      <h3 class="title is-3">Đăng nhập</h3>
+      <p class="subtitle is-6">Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</p>
       <form @submit="handleSubmit">
         <b-field label="Username"
             :type="{ 'is-danger': hasError }"
-            :message="{ 'Username is not available': hasError }">
-            <b-input placeholder="Hãy nhập username" v-model="username" type="text"></b-input>
+            :message="{ 'Username không tồn tại': hasError }">
+            <b-input placeholder="Hãy nhập username" v-model="username"></b-input>
         </b-field>
 
         <b-field label="Password"
             :type="{ 'is-danger': hasError }"
             :message="[
-                { 'User is not exist': hasError },
+                { 'Mật khẩu không tồn tại': hasError },
             ]">
             <b-input placeholder="Hãy nhập mật khẩu" v-model="password" type="password"></b-input>
         </b-field>
@@ -134,8 +135,7 @@
               }
               else {
                   const { username, password } = this;
-                  //console.log(this.Username, this.Password);
-                  this.SignIn({ username, password });
+                  this.SignIn( { username, password } );
               }
             },
         }

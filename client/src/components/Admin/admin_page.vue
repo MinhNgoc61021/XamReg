@@ -4,7 +4,7 @@
     <div id="header">
       <b-navbar mobile-burger fixed-top style="max-width: 1200px; margin: auto">
           <template slot="brand">
-              <b-navbar-item>
+              <b-navbar-item title="ExamReg">
                   <img src="static/img/favicon-32x32.png"
                    alt="ExamReg">
               </b-navbar-item>
@@ -25,10 +25,12 @@
                   </b-navbar-item>
                   <hr class="dropdown-divider" aria-role="menuitem">
                   <b-navbar-item>
-                    Cập nhật thông tin người dùng
+                    <b-icon icon-pack="fas" icon="user"></b-icon>
+                    <span>Cập nhật thông tin người dùng</span>
                   </b-navbar-item>
                   <b-navbar-item v-on:click="admin_signOut()" >
-                    Đăng xuất
+                    <b-icon icon-pack="fas" icon="sign-out-alt"></b-icon>
+                    <span>Đăng xuất</span>
                   </b-navbar-item>
               </b-navbar-dropdown>
           </template>
@@ -45,8 +47,9 @@
     <footer class="footer">
       <div class="content has-text-centered" >
         <p>
-          ExamReg
-          <a href="">Github </a>
+
+          <span>ExamReg</span>
+          <a href=""> <span>Github</span> </a>
         </p>
       </div>
     </footer>
