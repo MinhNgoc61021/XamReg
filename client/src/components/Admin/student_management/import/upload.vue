@@ -50,12 +50,16 @@
             },
             async uploadExcelFile() {
                 let formData = new FormData();
-                for (const element of this.dropFiles) {
-                    formData.append('student_list_excel', element);
+                // send each file using axios
+                // the loop is to put each file in to the formData
+                // after every request, the formData will delete the file
+                for (const file of this.dropFiles) {
+                    formData.append('student_list_excel', file);
                     const loadingComponent = this.$buefy.loading.open({
                       container: this.isFullPage ? null : this.$refs.element.$el
                     });
                     try {
+                        console.log(formData);
                       const excel_upload = await axios.post('/handling/upload', formData, {
                         headers: {
                           'Content-Type': 'multipart/form-data',
@@ -64,11 +68,11 @@
                       });
                       if (excel_upload.status === 200) {
                           loadingComponent.close();
-                          this.dropFiles = [];
+
                           this.$buefy.notification.open({
                               duration: 3000,
-                              message: 'Dữ liệu sinh viên đã được tạo thành công!',
-                              position: 'is-top-right',
+                              message: 'Dữ liệu sinh viên từ file ' + file.name + ' đã được tạo thành công!',
+                              position: 'is-bottom-right',
                               type: 'is-success',
                           });
                       }
@@ -77,11 +81,13 @@
                         if (e['message'].includes('400')) {
                             this.$buefy.notification.open({
                               duration: 3000,
-                              message: 'Lỗi 400: Dữ liệu bạn nhập đang có vấn đề!',
-                              position: 'is-top-right',
+                              message: 'Lỗi 400: Kiểm tra lại, dữ liệu bạn nhập trong file ' + file.name + ' đang có vấn đề!',
+                              position: 'is-bottom-right',
                               type: 'is-danger',
                             })
                         }
+                    } finally {
+                        formData.delete('student_list_excel')
                     }
                 }
             }
