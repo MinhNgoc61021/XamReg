@@ -29,10 +29,6 @@ export const store = new Vuex.Store ({
         signOut(state) {
           state.userStatus = {};
         },
-        setCurrentLocation(state, index) {
-          state.current_location.pop();
-          state.current_location.push(index);
-        }
   },
   actions: {
       SignIn: (context, { username, password }) => {

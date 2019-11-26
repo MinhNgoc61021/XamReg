@@ -1,86 +1,144 @@
+<!--<template>-->
+<!--  <div id="container">-->
+<!--    <div id="sign-in-form">-->
+<!--      <a-form layout="horizontal" :form="form" @submit="handleSubmit">-->
+<!--        <h3 id="title">Đăng Nhập</h3>-->
+<!--        <strong>Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</strong>-->
+<!--        <a-form-item :validate-status="userNameError() ? 'error' : ''" :help="userNameError() || ''">-->
+<!--          <a-input-->
+<!--            v-decorator="[-->
+<!--              'username',-->
+<!--              { rules: [{ required: true, message: 'Hãy nhập username của bạn!' }] },-->
+<!--            ]"-->
+<!--            placeholder="Hãy nhập username của bạn">-->
+<!--            <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />-->
+<!--          </a-input>-->
+<!--        </a-form-item>-->
+<!--        <a-form-item :validate-status="passwordError() ? 'error' : ''" :help="passwordError() || ''">-->
+<!--          <a-input-->
+<!--            v-decorator="[-->
+<!--              'password',-->
+<!--              { rules: [{ required: true, message: 'Hãy nhập mật khẩu của bạn!' }] },-->
+<!--            ]"-->
+<!--            type="password"-->
+<!--            placeholder="Hãy nhập mật khẩu của bạn"-->
+<!--          >-->
+<!--            <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)" />-->
+<!--          </a-input>-->
+<!--        </a-form-item>-->
+<!--        <a-form-item>-->
+<!--          <a-button type="primary" html-type="submit" :disabled="hasErrors(form.getFieldsError())">-->
+<!--            Đăng nhập-->
+<!--          </a-button>-->
+<!--        </a-form-item>-->
+<!--      </a-form>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</template>-->
+
+<!--<script>-->
+<!--import { mapMutations , mapActions } from 'vuex';-->
+
+<!--function hasErrors(fieldsError) {-->
+<!--  return Object.keys(fieldsError).some(field => fieldsError[field]);-->
+<!--}-->
+<!--export default {-->
+<!--    name: 'Register_Form',-->
+<!--  data() {-->
+<!--    return {-->
+<!--      hasErrors,-->
+<!--      form: this.$form.createForm(this, { name: 'horizontal_login' }),-->
+<!--    };-->
+<!--  },-->
+<!--  mounted() {-->
+<!--    this.$nextTick(() => {-->
+<!--      // To disabled submit button at the beginning.-->
+<!--      this.form.validateFields();-->
+<!--    });-->
+<!--  },-->
+<!--  methods: {-->
+<!--      ...mapActions([-->
+<!--          "SignIn"-->
+<!--      ]),-->
+<!--      // Only show error after a field is touched.-->
+<!--      userNameError() {-->
+<!--        const { getFieldError, isFieldTouched } = this.form;-->
+<!--        return isFieldTouched('username') && getFieldError('username');-->
+<!--      },-->
+<!--      // Only show error after a field is touched.-->
+<!--      passwordError() {-->
+<!--        const { getFieldError, isFieldTouched } = this.form;-->
+<!--        return isFieldTouched('password') && getFieldError('password');-->
+<!--      },-->
+<!--      handleSubmit(e) {-->
+<!--        e.preventDefault();-->
+<!--        this.form.validateFields((err, formInput) => {-->
+<!--          if (!err) {-->
+<!--            this.SignIn(formInput);-->
+<!--          }-->
+<!--        });-->
+<!--      },-->
+<!--    },-->
+<!--};-->
+<!--</script>-->
+<!--<style src="../css/login_style.css">-->
+
+<!--</style>-->
 <template>
   <div id="container">
-    <div id="sign-in-form">
-      <a-form layout="horizontal" :form="form" @submit="handleSubmit">
-        <h3 id="title">Đăng Nhập</h3>
-        <strong>Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</strong>
-        <a-form-item :validate-status="userNameError() ? 'error' : ''" :help="userNameError() || ''">
-          <a-input
-            v-decorator="[
-              'username',
-              { rules: [{ required: true, message: 'Hãy nhập username của bạn!' }] },
-            ]"
-            placeholder="Hãy nhập username của bạn">
-            <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
-          </a-input>
-        </a-form-item>
-        <a-form-item :validate-status="passwordError() ? 'error' : ''" :help="passwordError() || ''">
-          <a-input
-            v-decorator="[
-              'password',
-              { rules: [{ required: true, message: 'Hãy nhập mật khẩu của bạn!' }] },
-            ]"
-            type="password"
-            placeholder="Hãy nhập mật khẩu của bạn"
-          >
-            <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)" />
-          </a-input>
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" html-type="submit" :disabled="hasErrors(form.getFieldsError())">
-            Đăng nhập
-          </a-button>
-        </a-form-item>
-      </a-form>
-    </div>
+    <section id="sign-in-form">
+<!--        <b-checkbox v-model="hasError">Show errors</b-checkbox>-->
+        <p id="title">Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</p>
+      <form @submit="handleSubmit">
+        <b-field label="Username"
+            :type="{ 'is-danger': hasError }"
+            :message="{ 'Username is not available': hasError }">
+            <b-input placeholder="Hãy nhập username" v-model="username" type="text"></b-input>
+        </b-field>
+
+        <b-field label="Password"
+            :type="{ 'is-danger': hasError }"
+            :message="[
+                { 'User is not exist': hasError },
+            ]">
+            <b-input placeholder="Hãy nhập mật khẩu" v-model="password" type="password"></b-input>
+        </b-field>
+        <div class="buttons">
+            <b-button native-type="submit">Đăng nhập</b-button>
+        </div>
+      </form>
+    </section>
+
   </div>
 </template>
 
 <script>
-import { mapMutations , mapActions } from 'vuex';
+    import {mapActions} from "vuex";
 
-function hasErrors(fieldsError) {
-  return Object.keys(fieldsError).some(field => fieldsError[field]);
-}
-export default {
-    name: 'Register_Form',
-  data() {
-    return {
-      hasErrors,
-      form: this.$form.createForm(this, { name: 'horizontal_login' }),
-    };
-  },
-  mounted() {
-    this.$nextTick(() => {
-      // To disabled submit button at the beginning.
-      this.form.validateFields();
-    });
-  },
-  methods: {
-      ...mapActions([
-          "SignIn"
-      ]),
-      // Only show error after a field is touched.
-      userNameError() {
-        const { getFieldError, isFieldTouched } = this.form;
-        return isFieldTouched('username') && getFieldError('username');
-      },
-      // Only show error after a field is touched.
-      passwordError() {
-        const { getFieldError, isFieldTouched } = this.form;
-        return isFieldTouched('password') && getFieldError('password');
-      },
-      handleSubmit(e) {
-        e.preventDefault();
-        this.form.validateFields((err, formInput) => {
-          if (!err) {
-            this.SignIn(formInput);
-          }
-        });
-      },
-    },
-};
+    export default {
+        data() {
+            return {
+                hasError: false,
+                username: '',
+                password: '',
+            }
+        },
+        methods: {
+            ...mapActions([
+              'SignIn'
+            ]),
+            handleSubmit(e) {
+              e.preventDefault();
+              if (this.username.length < 5 || this.password.length < 5) {
+                  this.hasError = true;
+              }
+              else {
+                  const { username, password } = this;
+                  //console.log(this.Username, this.Password);
+                  this.SignIn({ username, password });
+              }
+            },
+        }
+    }
 </script>
-<style src="../css/login_style.css">
-
-</style>
+<style src="../css/login_style.css"></style>
