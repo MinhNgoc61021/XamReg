@@ -22,7 +22,7 @@
               <b-button @click="uploadExcelFile()" outlined>Nhập</b-button>
             </div>
         </b-field>
-        <div class="tags">
+        <div class="tags" style="max-width: 350px;">
             <span v-for="(file, index) in dropFiles"
                 :key="index"
                 class="tag is-primary" >
@@ -50,40 +50,41 @@
             },
             async uploadExcelFile() {
                 let formData = new FormData();
-                formData.append('student_list_excel', this.dropFiles[0]);
-                const loadingComponent = this.$buefy.loading.open({
-                    container: this.isFullPage ? null : this.$refs.element.$el
-                });
-                try {
-                    const excel_upload = await axios.post('/handling/upload', formData, {
-                      headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'Authorization': 'Bearer: ' + JSON.parse(localStorage.getItem('user')).token,
-                      }
+                for (const element of this.dropFiles) {
+                    formData.append('student_list_excel', element);
+                    const loadingComponent = this.$buefy.loading.open({
+                      container: this.isFullPage ? null : this.$refs.element.$el
                     });
-                    if (excel_upload.status === 200) {
-                        loadingComponent.close();
-                        this.$buefy.notification.open({
-                            duration: 3000,
-                            message: 'Dữ liệu sinh viên đã được tạo thành công!',
-                            position: 'is-bottom-right',
-                            type: 'is-success',
-                        });
-                    }
-                } catch (e) {
-                      loadingComponent.close();
-                      if (e['message'].includes('400')) {
+                    try {
+                      const excel_upload = await axios.post('/handling/upload', formData, {
+                        headers: {
+                          'Content-Type': 'multipart/form-data',
+                          'Authorization': 'Bearer: ' + JSON.parse(localStorage.getItem('user')).token,
+                        }
+                      });
+                      if (excel_upload.status === 200) {
+                          loadingComponent.close();
+                          this.dropFiles = [];
                           this.$buefy.notification.open({
-                            duration: 3000,
-                            message: 'Lỗi 400: Dữ liệu bạn nhập đang có vấn đề',
-                            position: 'is-bottom-right',
-                            type: 'is-danger',
-                          })
+                              duration: 3000,
+                              message: 'Dữ liệu sinh viên đã được tạo thành công!',
+                              position: 'is-top-right',
+                              type: 'is-success',
+                          });
                       }
+                    } catch (e) {
+                        loadingComponent.close();
+                        if (e['message'].includes('400')) {
+                            this.$buefy.notification.open({
+                              duration: 3000,
+                              message: 'Lỗi 400: Dữ liệu bạn nhập đang có vấn đề!',
+                              position: 'is-top-right',
+                              type: 'is-danger',
+                            })
+                        }
+                    }
                 }
-
             }
-
         }
     }
 </script>
