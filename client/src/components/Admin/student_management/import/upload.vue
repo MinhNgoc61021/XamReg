@@ -81,7 +81,15 @@
                         if (e['message'].includes('400')) {
                             this.$buefy.notification.open({
                               duration: 3000,
-                              message: 'Lỗi 400: Kiểm tra lại, dữ liệu bạn nhập trong file ' + file.name + ' đang có vấn đề!',
+                              message: 'HTTP Status 400: Kiểm tra lại, dữ liệu bạn nhập trong file ' + file.name + ' đang có vấn đề!',
+                              position: 'is-bottom-right',
+                              type: 'is-danger',
+                            })
+                        }
+                        else if (e['message'].includes('401')) {
+                            this.$buefy.notification.open({
+                              duration: 3000,
+                              message: 'HTTP Status 401: Không được quyền sử dụng!',
                               position: 'is-bottom-right',
                               type: 'is-danger',
                             })
