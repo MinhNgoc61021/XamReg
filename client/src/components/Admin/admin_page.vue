@@ -21,7 +21,8 @@
           <template slot="end">
               <b-navbar-dropdown right arrowless v-bind:label="fullname">
                   <b-navbar-item>
-                      <strong>{{ ID }}</strong>
+                    <b-icon icon-pack="fas" icon="id-badge"></b-icon>
+                    <strong>{{ ID }}</strong>
                   </b-navbar-item>
                   <hr class="dropdown-divider" aria-role="menuitem">
                   <b-navbar-item>

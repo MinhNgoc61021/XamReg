@@ -38,6 +38,7 @@
 
 <script>
     import axios from 'axios';
+    import { authHeader } from "../../../../api/jwt_handling";
     export default {
         data() {
             return {
@@ -59,11 +60,10 @@
                       container: this.isFullPage ? null : this.$refs.element.$el
                     });
                     try {
-                        console.log(formData);
                       const excel_upload = await axios.post('/handling/upload', formData, {
                         headers: {
                           'Content-Type': 'multipart/form-data',
-                          'Authorization': 'Bearer: ' + JSON.parse(localStorage.getItem('user')).token,
+                          'Authorization': authHeader(),
                         }
                       });
                       if (excel_upload.status === 200) {
@@ -92,6 +92,14 @@
                               message: 'HTTP Status 401: Không được quyền sử dụng!',
                               position: 'is-bottom-right',
                               type: 'is-danger',
+                            })
+                        }
+                        else if (e['message'].includes('403')) {
+                            this.$buefy.notification.open({
+                              duration: 3000,
+                              message: 'Đối với nhập danh sách tình trang môn học của sinh viên, hãy đảm bảo là tài khoản của sinh viên đó đã tồn tại sẵn!',
+                              position: 'is-bottom-right',
+                              type: 'is-warning',
                             })
                         }
                     } finally {

@@ -47,10 +47,12 @@ class User(Base):
 
     @classmethod
     def isExist(cls, id):
-        exists = session.query(User).filter_by(ID=id).scalar()
-        if exists is not None:
+        exist = session.query(User).filter_by(ID=id).scalar()
+        if exist is None:
+            return False
+        else:
             return True
-        return False
+
 
     # create a new user
     @classmethod

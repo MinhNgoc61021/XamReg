@@ -84,6 +84,6 @@ def get_user(current_user):
     # print(current_user['Username'], flush=True)
     return jsonify({'ID': current_user['ID'],
                     'Fullname': current_user['Fullname'],
-                    })
+                    }), 200
 
 

@@ -57,12 +57,11 @@ export const store = new Vuex.Store ({
       GetUserData: (context) => {
         apiService.getUserData()
           .then(
-            (UserData) => {
-              context.commit('getUserData', UserData);
-            },
-            error => {
-              context.commit('signOut', error);
-            },
+            (response) => {
+              console.log('sdsd');
+              if (response.status === 200) {
+                context.commit('getUserData', response.data);
+              }},
           )
         },
   },

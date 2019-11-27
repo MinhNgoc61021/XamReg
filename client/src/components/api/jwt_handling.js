@@ -6,7 +6,7 @@ export function authHeader() {
     let user = JSON.parse(localStorage.getItem('user'));
     // console.log(user.token);
     if (isValidJwt()) {
-        return { Authorization: 'Bearer: ' + user.token }; // send encoded jwt token
+        return 'Bearer: ' + user.token; // send encoded jwt token
     } else {
         return {};
     }

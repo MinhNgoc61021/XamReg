@@ -14,8 +14,8 @@
     </b-tabs>
 </template>
 <script>
-    import upload from './upload';
-    import input from './input';
+    import upload from './upload/upload';
+    import input from './input/input';
 
     export default {
         name: "import",
