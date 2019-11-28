@@ -92,16 +92,18 @@
       <p class="subtitle is-6">Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</p>
       <form @submit="handleSubmit">
         <b-field label="Username"
-            :type="{ 'is-danger': hasError }"
-            :message="{ 'Username không tồn tại': hasError }">
+            :type="{ 'is-danger': hasError, 'is-danger': userExistence }"
+            :message="[{ 'Username chưa được đánh': hasError },
+                      {'Tài khoản không tồn tại hoặc mật khẩu sai': userExistence },
+                      ]">
             <b-input placeholder="Hãy nhập username" v-model="username"></b-input>
         </b-field>
 
         <b-field label="Password"
-            :type="{ 'is-danger': hasError }"
-            :message="[
-                { 'Mật khẩu không tồn tại': hasError },
-            ]">
+            :type="{ 'is-danger': hasError, 'is-danger': userExistence }"
+            :message="[{ 'Mật khẩu chưa được đánh': hasError },
+                      {'Tài khoản không tồn tại hoặc mật khẩu sai': userExistence },
+                      ]">
             <b-input placeholder="Hãy nhập mật khẩu" v-model="password" type="password"></b-input>
         </b-field>
         <div class="buttons">
@@ -114,7 +116,7 @@
 </template>
 
 <script>
-    import {mapActions} from "vuex";
+    import {mapActions, mapState} from "vuex";
 
     export default {
         data() {
@@ -122,11 +124,17 @@
                 hasError: false,
                 username: '',
                 password: '',
+                isNotExist: false,
             }
+        },
+        computed: {
+            ...mapState([
+                'userExistence'
+            ]),
         },
         methods: {
             ...mapActions([
-              'SignIn'
+                'SignIn'
             ]),
             handleSubmit(e) {
               e.preventDefault();
@@ -134,6 +142,7 @@
                   this.hasError = true;
               }
               else {
+                  this.hasError = false;
                   const { username, password } = this;
                   this.SignIn( { username, password } );
               }
