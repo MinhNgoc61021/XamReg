@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import *
 from flask_bcrypt import generate_password_hash, check_password_hash
@@ -7,6 +7,8 @@ from marshmallow_sqlalchemy import ModelSchema
 # create_engine connect to examrag model
 
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
+from sqlalchemy_filters import apply_pagination
+
 engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4',
                        echo=True,
                        pool_size=5)
@@ -46,13 +48,23 @@ class User(Base):
         return user_schema.dump(user)
 
     @classmethod
+    def getRecord(cls, page_index, per_page):
+        rows = ["ID", "Username", "Fullname", "Dob", "Gender", "CourseID"]
+        user_query = session.query(User).filter(text('Role_Type = :type')).params(type='Student')
+
+        # user_query is the user object and pagination is the index data
+        user_query, get_record_pagination = apply_pagination(user_query, page_number=int(page_index),
+                                                             page_size=int(per_page))
+        # many=True if user_query is a collection so that record will be serialized to a list.
+        return user_schema.dump(user_query, many=True), get_record_pagination
+
+    @classmethod
     def isExist(cls, id):
         exist = session.query(User).filter_by(ID=id).scalar()
         if exist is None:
             return False
         else:
             return True
-
 
     # create a new user
     @classmethod
@@ -86,6 +98,9 @@ class User(Base):
                     return 'Student'
         session.close()
         return 'Not found'
+
+
+UserQuery = session.query(User)
 
 
 # Subject persistent class
@@ -188,4 +203,5 @@ class StudentStatusSchema(ModelSchema):
         sqla_session = session
 
 
-user_schema = UserSchema()
+# only takes specific columns
+user_schema = UserSchema(only=['ID', 'Username', 'Fullname', 'Dob', 'Gender', 'CourseID', 'Role_Type'])
