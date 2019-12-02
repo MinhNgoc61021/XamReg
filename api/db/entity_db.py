@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import *
 from flask_bcrypt import generate_password_hash, check_password_hash
@@ -7,7 +7,7 @@ from marshmallow_sqlalchemy import ModelSchema
 # create_engine connect to examrag model
 
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
-engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4',
+engine = create_engine('mysql+mysqldb://root:120399@db/xamreg?charset=utf8mb4',
                        echo=True,
                        pool_size=5)
 # echo is to set up SQLAlchemy logging
@@ -30,9 +30,9 @@ class User(Base):
 
     ID = Column(String(45), primary_key=True)
     Username = Column(String(45), nullable=False, unique=True)
-    Password = Column(String(240), nullable=False)
-    Fullname = Column(String(45), nullable=False)
-    Dob = Column(DateTime, nullable=False)
+    Password = Column(String(50), nullable=False)
+    Fullname = Column(String(100), nullable=False)
+    Dob = Column(Date, nullable=False)
     Gender = Column(String(45), nullable=False)
     CourseID = Column(String(45), nullable=False)
     Role_Type = Column(String(45), nullable=False)
@@ -161,12 +161,113 @@ Subject.student_status = relationship('Student_Status',
 # This object is available using the .metadata attribute of declarative base class.
 # The metadata.create_all() method is passing in our Engine as a source of database connectivity.
 #  For all tables that haven’t been created yet, it issues CREATE TABLE statements to the database.
+# Semester Examination persistent class
+class Semester_Examination(Base):
+    __tablename__ = 'semester_examination'
+    SemID = Column(Integer,
+                   primary_key=True,
+                   autoincrement=True)
+    SemTitle = Column(String(200),
+                      nullable=False)
+
+    @classmethod
+    def create(cls, semid, semtitle):
+        if session.query(Semester_Examination).filter(Semester_Examination.SemID == semid).scalar() is None:
+            new_semester = Semester_Examination(SemID=semid,
+                                                SemTitle=semtitle)
+            session.add(new_semester)
+            session.commit()
+            session.close()
+            return True
+        else:
+            return False
+
+
+# Shift persistent class
+class Shift(Base):
+    __tablename__ = 'shift'
+    ShiftID = Column(Integer,
+                     primary_key=True,
+                     autoincrement=True)
+    Date_Start = Column(Date,
+                        nullable=False)
+    Start_At = Column(Time,
+                        nullable=False)
+    SubjectID = Column(String(45),
+                       ForeignKey('subject.SubjectID'),
+                       nullable=False)
+    Subject = relationship("Subject",
+                           back_populates="shift")
+    SemID = Column(Integer,
+                   ForeignKey('semester_examination.SemID'),
+                   nullable=False)
+    Semester_Examination = relationship("Semester_Examination",
+                                        back_populates="shift")
+
+    @classmethod
+    def create(cls, shiftid, subjectid, semid, start_at, date_start):
+        if session.query(Shift).filter(Shift.ShiftID == shiftid,
+                                       Shift.SubjectID == subjectid,
+                                       Shift.SemID == semid).scalar() is None:
+            new_shift = Shift(ShiftID=shiftid,
+                              SubjectID=subjectid,
+                              Start_At=start_at,
+                              SemID=semid,
+                              Date_Start=date_start)
+            session.add(new_shift)
+            session.commit()
+            session.close()
+            return True
+        else:
+            return False
+
+
+########Relationship###########
+Semester_Examination.shift = relationship("Shift",
+                                          back_populates="Semester_Examination")
+Subject.shift = relationship("Shift",
+                             back_populates="Subject",
+                             uselist=False)  # one-to-one relationship
+
+
+# Exam_Room persistent class
+class Exam_Room(Base):
+    __tablename__ = 'exam_room'
+    RoomID = Column(Integer,
+                    primary_key=True,
+                    autoincrement=True)
+    RoomName = Column(String(45),
+                      nullable=False)
+    Computer_Number = Column(Integer,
+                             nullable=False)
+    ShiftID = Column(Integer,
+                     ForeignKey('shift.ShiftID'),
+                     nullable=False)
+    Shift = relationship("Shift", back_populates="exam_room")
+
+    @classmethod
+    def create(cls, roomid, shiftid, room_name, computer_number):
+        if session.query(Exam_Room).filter(Exam_Room.ShiftID == shiftid,
+                                           Exam_Room.RoomID == roomid).scalar() is None:
+            new_room = Exam_Room(RoomID=roomid,
+                                 ShiftID=shiftid,
+                                 RoomName=room_name,
+                                 Computer_Number=computer_number)
+            session.add(new_room)
+            session.commit()
+            session.close()
+            return True
+        else:
+            return False
+
+###############Relationship######################
+Shift.exam_room = relationship("Exam_Room", back_populates="Shift")
+
+###Create Database##########
 Base.metadata.create_all(bind=engine)
 
 
 # marshmallow for entity
-
-
 class UserSchema(ModelSchema):
     class Meta:
         model = User
@@ -183,6 +284,30 @@ class SubjectSchema(ModelSchema):
 class StudentStatusSchema(ModelSchema):
     class Meta:
         model = Student_Status
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = session
+
+
+class ExamRoomSchema(ModelSchema):
+    class Meta:
+        model = Exam_Room
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = session
+
+
+class ShiftSchema(ModelSchema):
+    class Meta:
+        model = Shift
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = session
+
+
+class SemesterExaminationSchema(ModelSchema):
+    class Meta:
+        model = Semester_Examination
         # optionally attach a Session
         # to use for deserialization
         sqla_session = session
