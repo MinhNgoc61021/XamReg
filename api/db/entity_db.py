@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, text
+from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import *
 from flask_bcrypt import generate_password_hash, check_password_hash
@@ -34,7 +34,7 @@ class User(Base):
     Username = Column(String(45), nullable=False, unique=True)
     Password = Column(String(240), nullable=False)
     Fullname = Column(String(45), nullable=False)
-    Dob = Column(DateTime, nullable=False)
+    Dob = Column(Date, nullable=False)
     Gender = Column(String(45), nullable=False)
     CourseID = Column(String(45), nullable=False)
     Role_Type = Column(String(45), nullable=False)
@@ -48,14 +48,15 @@ class User(Base):
         return user_schema.dump(user)
 
     @classmethod
-    def getRecord(cls, page_index, per_page):
+    def getRecord(cls, page_index, per_page, sort_field, sort_order):
         rows = ["ID", "Username", "Fullname", "Dob", "Gender", "CourseID"]
-        user_query = session.query(User).filter(text('Role_Type = :type')).params(type='Student')
+        user_query = session.query(User).filter(text('Role_Type = :type')).params(type='Student').order_by(getattr(
+                                                                                                            getattr(User, sort_field), sort_order)())
 
         # user_query is the user object and pagination is the index data
         user_query, get_record_pagination = apply_pagination(user_query, page_number=int(page_index),
                                                              page_size=int(per_page))
-        # many=True if user_query is a collection so that record will be serialized to a list.
+        # many=True if user_query is a collection of many results, so that record will be serialized to a list.
         return user_schema.dump(user_query, many=True), get_record_pagination
 
     @classmethod
@@ -180,8 +181,6 @@ Base.metadata.create_all(bind=engine)
 
 
 # marshmallow for entity
-
-
 class UserSchema(ModelSchema):
     class Meta:
         model = User

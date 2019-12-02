@@ -222,33 +222,40 @@
             aria-previous-label="Previous page"
             aria-page-label="Page"
             aria-current-label="Current page"
-
             backend-sorting
+            hoverable
             :default-sort-direction="defaultSortOrder"
             :default-sort="[sortField, sortOrder]"
             @sort="onSort">
 
             <template slot-scope="props">
-                <b-table-column field="original_title" label="Title" sortable>
-                    {{ props.row.original_title }}
+                <b-table-column field="ID" label="ID" sortable searchable>
+                    {{ props.row.ID }}
                 </b-table-column>
 
-                <b-table-column field="vote_average" label="Vote Average" numeric sortable>
-                    <span class="tag" :class="type(props.row.vote_average)">
-                        {{ props.row.vote_average }}
-                    </span>
+                <b-table-column field="Fullname" label="Họ và tên" sortable searchable>
+                     {{ props.row.Fullname }}
                 </b-table-column>
 
-                <b-table-column field="vote_count" label="Vote Count" numeric sortable>
-                     {{ props.row.vote_count }}
+                <b-table-column field="Username" label="Tài khoản" sortable searchable>
+                    {{ props.row.Username }}
                 </b-table-column>
 
-                <b-table-column field="release_date" label="Release Date" sortable centered>
-                    {{ props.row.release_date ? new Date(props.row.release_date).toLocaleDateString() : '' }}
+                <b-table-column field="Dob" label="Ngày sinh" sortable searchable>
+                     {{ props.row.Dob }}
                 </b-table-column>
 
-                <b-table-column label="Overview" width="500">
-                    {{ props.row.overview | truncate(80) }}
+                <b-table-column field="Role_Type" label="Quyền" sortable searchable>
+                     {{ props.row.Role_Type }}
+                </b-table-column>
+
+                <b-table-column field="Gender" label="Giới tính" sortable searchable>
+                     {{ props.row.Gender }}
+                </b-table-column>
+
+                <b-table-column field="Action" label="Hành động" width="120">
+                    <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined></b-button>
+                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined></b-button>
                 </b-table-column>
             </template>
         </b-table>
@@ -265,7 +272,7 @@
                 data: [],
                 total: 0,
                 loading: false,
-                sortField: 'vote_count',
+                sortField: 'ID',
                 sortOrder: 'desc',
                 defaultSortOrder: 'desc',
                 page: 1,
@@ -274,23 +281,16 @@
         },
         methods: {
             /*
-        * Load async data
-        */
-            loadAsyncData() {
-                const params = [
-                    'api_key=bb6f51bef07465653c3e553d6ab161a8',
-                    'language=en-US',
-                    'include_adult=false',
-                    'include_video=false',
-                    `sort_by=${this.sortField}.${this.sortOrder}`,
-                    `page=${this.page}`
-                ].join('&');
-
+             * Load async record data
+            */
+            getRecordData() {
                 this.loading = true;
                 axios.get('/record/student-records', {
                     params: {
                         page_index: this.page,
                         per_page: this.per_page,
+                        sort_field: this.sortField,
+                        sort_order: this.sortOrder
                     },
                     headers: {
                         'Authorization': authHeader(),
@@ -304,9 +304,11 @@
                         //     currentTotal = this.perPage * 1000
                         // }
                         this.total = response.data.total_results;
+                        console.log(response.data.records);
                         response.data.records.forEach((item) => {
                             this.data.push(item);
                         });
+                        console.log(this.data);
                         this.loading = false
                     })
                     .catch((error) => {
@@ -321,7 +323,7 @@
         */
             onPageChange(page) {
                 this.page = page;
-                this.loadAsyncData();
+                this.getRecordData();
             },
             /*
         * Handle sort event
@@ -329,7 +331,7 @@
             onSort(field, order) {
                 this.sortField = field;
                 this.sortOrder = order;
-                this.loadAsyncData()
+                this.getRecordData()
             },
             /*
         * Type style in relation to the value
@@ -356,7 +358,7 @@
             }
         },
         mounted() {
-            this.loadAsyncData()
+            this.getRecordData();
         }
     }
 </script>

@@ -2,7 +2,7 @@
   <section style="max-width: 1200px; margin: auto; background: #ffffff;">
     <!--header-->
     <div id="header">
-      <b-navbar mobile-burger fixed-top style="max-width: 1200px; margin: auto">
+      <b-navbar mobile-burger fixed-top style="max-width: 1200px; margin: auto" shadow>
           <template slot="brand">
               <b-navbar-item title="ExamReg">
                   <img src="static/img/favicon-32x32.png"

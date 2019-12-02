@@ -19,8 +19,12 @@ def get_student_record(current_user):
     try:
         page_index = request.args.get('page_index')
         per_page = request.args.get('per_page')
+        sort_order = request.args.get('sort_order')
+        sort_field = request.args.get('sort_field')
+        print(sort_order, flush=True)
+        print(sort_field, flush=True)
         # FYI: User.getRecord function return a tuple, [0] is the records data, and [1] is the pagination data
-        record = User.getRecord(page_index, per_page)
+        record = User.getRecord(page_index, per_page, sort_field, sort_order)
         print(record[1], flush=True)
 
         return jsonify({ 'records': record[0],
