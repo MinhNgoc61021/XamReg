@@ -4,7 +4,9 @@ flask_cors
 flask_bcrypt
 flask-mysql
 flask_restful
+Flask-SQLAlchemy
 pyexcel-xlsx
 mysqlclient
 PyJWT
 marshmallow-sqlalchemy
+sqlalchemy-filters

@@ -12,6 +12,7 @@ export const store = new Vuex.Store ({
     userStatus: userState,
     ID: '',
     fullname: '',
+    userExistence: false,
   },
   mutations: {
         signInSuccess(state, user) {
@@ -22,32 +23,31 @@ export const store = new Vuex.Store ({
             state.fullname = data.Fullname;
         },
         signInFailure(state) {
-            state.userStatus = {};
-
+            state.userExistence = true;
         },
         signOut(state) {
-            state.userStatus = {};
-        }
+          state.userStatus = {};
+        },
   },
   actions: {
       SignIn: (context, { username, password }) => {
         apiService.signIn(username, password)
           .then(
-            (user) => {
-              if (user.type === 'Admin') {
-                context.commit('signInSuccess', user.token);
+            (response) => {
+              console.log(response);
+              if (response.type === 'Admin') {
+                context.commit('signInSuccess', response.token);
                 //console.log(user.token);
                 router.push('/admin-page');
               }
-              else if (user.type === 'Student'){
-                context.commit('signInSuccess', user.token);
+              else if (response.type === 'Student'){
+                context.commit('signInSuccess', response.token);
                 router.push('/student-page');
               }
-            },
-            error => {
-              context.commit('signInFailure', error);
-            },
-          )
+              else if (response.status === 'fail') {
+                context.commit('signInFailure');
+              }
+            })
       },
       SignOut: () => {
         apiService.signOut();
@@ -56,12 +56,10 @@ export const store = new Vuex.Store ({
       GetUserData: (context) => {
         apiService.getUserData()
           .then(
-            (UserData) => {
-              context.commit('getUserData', UserData);
-            },
-            error => {
-              context.commit('signOut', error);
-            },
+            (response) => {
+              if (response.status === 200) {
+                context.commit('getUserData', response.data);
+              }},
           )
         },
   },

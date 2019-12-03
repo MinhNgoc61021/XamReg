@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import *
 from flask_bcrypt import generate_password_hash, check_password_hash
@@ -7,6 +7,8 @@ from marshmallow_sqlalchemy import ModelSchema
 # create_engine connect to examrag model
 
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
+from sqlalchemy_filters import apply_pagination
+
 engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4',
                        echo=True,
                        pool_size=5)
@@ -32,7 +34,7 @@ class User(Base):
     Username = Column(String(45), nullable=False, unique=True)
     Password = Column(String(240), nullable=False)
     Fullname = Column(String(45), nullable=False)
-    Dob = Column(DateTime, nullable=False)
+    Dob = Column(Date, nullable=False)
     Gender = Column(String(45), nullable=False)
     CourseID = Column(String(45), nullable=False)
     Role_Type = Column(String(45), nullable=False)
@@ -46,30 +48,66 @@ class User(Base):
         return user_schema.dump(user)
 
     @classmethod
+    def getRecord(cls, page_index, per_page, sort_field, sort_order):
+        rows = ["ID", "Username", "Fullname", "Dob", "Gender", "CourseID"]
+        user_query = session.query(User).filter(text('Role_Type = :type')).params(type='Student').order_by(getattr(
+            getattr(User, sort_field), sort_order)())
+
+        # user_query is the user object and get_record_pagination is the index data
+        user_query, get_record_pagination = apply_pagination(user_query, page_number=int(page_index),
+                                                             page_size=int(per_page))
+
+        # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+        return user_schema.dump(user_query, many=True), get_record_pagination
+
+    @classmethod
+    def delRecord(cls, studentID):
+        try:
+            user = session.query(User).filter_by(ID=studentID).one()
+            session.delete(user)
+            session.commit()
+        except:
+            session.rollback()
+            raise
+
+    @classmethod
     def isExist(cls, id):
-        exists = session.query(User).filter_by(ID=id).scalar()
-        if exists is not None:
-            return True
-        return False
+        try:
+            exist = session.query(User).filter_by(ID=id).scalar()
+            if exist is None:
+                return False
+            else:
+                return True
+        except:
+            session.rollback()
+            raise
 
     # create a new user
     @classmethod
     def create(cls, id, username, password, fullname, dob, gender, courseID, role_type):
-        if session.query(User).filter(User.Username == username).scalar() is None:
-            new_user = User(ID=id,
-                            Username=username,
-                            Password=generate_password_hash(password),
-                            Fullname=fullname,
-                            Dob=dob,
-                            Gender=gender,
-                            CourseID=courseID,
-                            Role_Type=role_type)
-            session.add(new_user)
-            session.commit()
-            session.close()
-            return True
-        else:
-            return False
+        try:
+            print('1232313123', flush=True)
+            if session.query(User).filter(User.Username == username).scalar() is None:
+                new_user = User(ID=id,
+                                Username=username,
+                                Password=generate_password_hash(password),
+                                Fullname=fullname,
+                                Dob=dob,
+                                Gender=gender,
+                                CourseID=courseID,
+                                Role_Type=role_type)
+                print('528491', flush=True)
+
+                session.add(new_user)
+                print('abc', flush=True)
+                session.commit()
+                print('def', flush=True)
+                return True
+            else:
+                return False
+        except:
+            session.rollback()
+            raise
 
     @classmethod
     def check_register(cls, username, password):
@@ -77,13 +115,14 @@ class User(Base):
         if check is not None:
             if check_password_hash(check.Password, str(password)) is True:
                 if check.Role_Type == 'Admin':
-                    session.close()
                     return 'Admin'
                 else:
-                    session.close()
                     return 'Student'
-        session.close()
-        return 'Not found'
+        else:
+            return 'Not found'
+
+
+UserQuery = session.query(User)
 
 
 # Subject persistent class
@@ -96,15 +135,19 @@ class Subject(Base):
 
     @classmethod
     def create(cls, subjectID, subjectTitle):
-        if session.query(Subject).filter(Subject.SubjectID == subjectID).scalar() is None:
-            new_subject = Subject(SubjectID=subjectID,
-                                  SubjectTitle=subjectTitle)
-            session.add(new_subject)
-            session.commit()
-            session.close()
-            return True
-        else:
-            return False
+        try:
+            if session.query(Subject).filter(Subject.SubjectID == subjectID).scalar() is None:
+                new_subject = Subject(SubjectID=subjectID,
+                                      SubjectTitle=subjectTitle)
+                session.add(new_subject)
+                session.commit()
+                return True
+            else:
+                return False
+        except:
+            session.rollback()
+            raise
+
 
 
 # student status class
@@ -130,16 +173,19 @@ class Student_Status(Base):
 
     @classmethod
     def create(cls, studentID, subjectID, status):
-        if session.query(Student_Status).filter(Student_Status.StudentID == studentID,
-                                                Student_Status.SubjectID == subjectID).scalar() is None:
-            student_status = Student_Status(StudentID=studentID,
-                                            SubjectID=subjectID, Status=status)
-            session.add(student_status)
-            session.commit()
-            session.close()
-            return True
-        else:
-            return False
+        try:
+            if session.query(Student_Status).filter(Student_Status.StudentID == studentID,
+                                                    Student_Status.SubjectID == subjectID).scalar() is None:
+                student_status = Student_Status(StudentID=studentID,
+                                                SubjectID=subjectID, Status=status)
+                session.add(student_status)
+                session.commit()
+                return True
+            else:
+                return False
+        except:
+            session.rollback()
+            raise
 
 
 # relationship() uses the foreign key relationships between the two tables to determine the nature of this linkage
@@ -150,7 +196,7 @@ class Student_Status(Base):
 
 User.student_status = relationship('Student_Status',
                                    order_by=Student_Status.StudentID,
-                                   back_populates='User')
+                                   back_populates='User', cascade="all, delete, delete-orphan")
 Subject.student_status = relationship('Student_Status',
                                       order_by=Student_Status.SubjectID,
                                       back_populates='Subject')
@@ -163,8 +209,6 @@ Base.metadata.create_all(bind=engine)
 
 
 # marshmallow for entity
-
-
 class UserSchema(ModelSchema):
     class Meta:
         model = User
@@ -186,4 +230,5 @@ class StudentStatusSchema(ModelSchema):
         sqla_session = session
 
 
-user_schema = UserSchema()
+# only takes specific columns
+user_schema = UserSchema(only=['ID', 'Username', 'Fullname', 'Dob', 'Gender', 'CourseID', 'Role_Type'])

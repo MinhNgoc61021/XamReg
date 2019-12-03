@@ -19,19 +19,19 @@ module.exports = {
           target: 'http://api:5000', // if it is localhost:5000, which means the client(front-end side) will roast itself inside its own container. Because there is nothing here.
           changeOrigin: true,
       },
-      '/hello': {
-          target: 'http://api:5000',
-          changeOrigin: true,
-      },
-      '/test/hello_flask': {
-          target: 'http://api:5000',
-          changeOrigin: true,
-      },
       '/handling/upload': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
       '/auth/get-user': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/student-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/remove-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },

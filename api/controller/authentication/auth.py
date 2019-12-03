@@ -7,7 +7,7 @@ from flask import (
     jsonify
 )
 from flask_cors import CORS
-from controller.db.entity_db import User
+from db.entity_db import User
 import jwt
 from datetime import datetime, timedelta
 from functools import wraps
@@ -70,7 +70,7 @@ def register():
             token = jwt.encode({
                 'sub': username,  # representing username
                 'iat': datetime.utcnow(),  # issued at timestamp in seconds
-                'exp': datetime.utcnow() + timedelta(minutes=30)},  # the time in which the token will expire as seconds
+                'exp': datetime.utcnow() + timedelta(minutes=90)},  # the time in which the token will expire as seconds
                 current_app.config['SECRET_KEY'])
             return jsonify({'status': 'success',
                             'type': check_user,
@@ -78,12 +78,11 @@ def register():
                             'token': token.decode('UTF-8')})
 
 
-@authentication.route('/get-user', methods=['POST'])
+@authentication.route('/get-user', methods=['GET'])
 @token_required
 def get_user(current_user):
-    # print(current_user['Username'], flush=True)
-    return jsonify({'ID': current_user['ID'],
+    return jsonify({'status': 'success', 'ID': current_user['ID'],
                     'Fullname': current_user['Fullname'],
-                    })
+                    }), 200
 
 
