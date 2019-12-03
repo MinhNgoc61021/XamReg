@@ -31,6 +31,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/record/remove-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
     },
 
     // Various Dev Server settings

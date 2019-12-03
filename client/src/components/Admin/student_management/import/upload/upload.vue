@@ -80,7 +80,7 @@
                         loadingComponent.close();
                         if (e['message'].includes('400')) {
                             this.$buefy.notification.open({
-                              duration: 3000,
+                              duration: 1500,
                               message: 'HTTP Status 400: Kiểm tra lại, dữ liệu bạn nhập trong file ' + file.name + ' đang có vấn đề!',
                               position: 'is-bottom-right',
                               type: 'is-danger',
@@ -88,7 +88,7 @@
                         }
                         else if (e['message'].includes('401')) {
                             this.$buefy.notification.open({
-                              duration: 3000,
+                              duration: 1500,
                               message: 'HTTP Status 401: Không được quyền sử dụng!',
                               position: 'is-bottom-right',
                               type: 'is-danger',
@@ -96,7 +96,7 @@
                         }
                         else if (e['message'].includes('403')) {
                             this.$buefy.notification.open({
-                              duration: 3000,
+                              duration: 1500,
                               message: 'Đối với nhập danh sách tình trang môn học của sinh viên, hãy đảm bảo là tài khoản của sinh viên đó đã tồn tại sẵn!',
                               position: 'is-bottom-right',
                               type: 'is-warning',

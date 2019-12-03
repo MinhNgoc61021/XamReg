@@ -27,12 +27,26 @@ def get_student_record(current_user):
         record = User.getRecord(page_index, per_page, sort_field, sort_order)
         print(record[1], flush=True)
 
-        return jsonify({ 'records': record[0],
-                         'page_number': record[1].page_number,
-                         'page_size': record[1].page_size,
-                         'num_pages': record[1].num_pages,
-                         'total_results': record[1].total_results,
-                         })
+        return jsonify({'status': 'success',
+                        'records': record[0],
+                        'page_number': record[1].page_number,
+                        'page_size': record[1].page_size,
+                        'num_pages': record[1].num_pages,
+                        'total_results': record[1].total_results,
+                        }), 200
 
     except:
-        return {'status': 'bad-request'}, 400
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@record_management.route('/remove-record', methods=['DELETE'])
+@token_required
+def remove_record(current_user):
+    try:
+        # print(request.get_json('studentID'), flush=True)
+        record = request.get_json()
+        studentID = record.get('studentID')
+        User.delRecord(str(studentID))
+        return jsonify({'status': 'success'}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
