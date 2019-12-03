@@ -226,8 +226,7 @@ class Shift(Base):
 Semester_Examination.shift = relationship("Shift",
                                           back_populates="Semester_Examination")
 Subject.shift = relationship("Shift",
-                             back_populates="Subject",
-                             uselist=False)  # one-to-one relationship
+                             back_populates="Subject")
 
 
 # Exam_Room persistent class
