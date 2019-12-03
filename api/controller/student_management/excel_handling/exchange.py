@@ -87,7 +87,7 @@ def upload(auth):
                                           excel_data['subjectID'], excel_data['status'])
                 else:
                     return jsonify({'status': 'error'}), 400
-            return jsonify({'status': 'success'}), 200
+
         # When the excel file are included of only student info
         elif max_column == 5:
             # set excel_data to get data in order to create new account only for students to SQLAlchemy

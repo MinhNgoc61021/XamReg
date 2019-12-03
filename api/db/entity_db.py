@@ -22,9 +22,6 @@ Base = declarative_base()
 # Session class is defined using sessionmaker()
 Session = sessionmaker(bind=engine)
 
-# A session object is the handle to database
-session = Session()
-
 
 # User persistent class
 class User(Base):
@@ -44,50 +41,70 @@ class User(Base):
 
     @classmethod
     def getUser(cls, username):
-        user = session.query(User).filter_by(Username=username).scalar()
-        return user_schema.dump(user)
+        sess = Session()
+        try:
+            user = sess.query(User).filter_by(Username=username).scalar()
+            return user_schema.dump(user)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
 
     @classmethod
     def getRecord(cls, page_index, per_page, sort_field, sort_order):
-        rows = ["ID", "Username", "Fullname", "Dob", "Gender", "CourseID"]
-        user_query = session.query(User).filter(text('Role_Type = :type')).params(type='Student').order_by(getattr(
-            getattr(User, sort_field), sort_order)())
+        sess = Session()
+        try:
+            rows = ["ID", "Username", "Fullname", "Dob", "Gender", "CourseID"]
+            user_query = sess.query(User).filter(text('Role_Type = :type')).params(type='Student').order_by(getattr(
+                getattr(User, sort_field), sort_order)())
 
-        # user_query is the user object and get_record_pagination is the index data
-        user_query, get_record_pagination = apply_pagination(user_query, page_number=int(page_index),
-                                                             page_size=int(per_page))
+            # user_query is the user object and get_record_pagination is the index data
+            user_query, get_record_pagination = apply_pagination(user_query, page_number=int(page_index),
+                                                                 page_size=int(per_page))
 
-        # many=True if user_query is a collection of many results, so that record will be serialized to a list.
-        return user_schema.dump(user_query, many=True), get_record_pagination
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return user_schema.dump(user_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
 
     @classmethod
     def delRecord(cls, studentID):
+        sess = Session()
         try:
-            user = session.query(User).filter_by(ID=studentID).one()
-            session.delete(user)
-            session.commit()
+            user = sess.query(User).filter_by(ID=studentID).one()
+            sess.delete(user)
+            sess.commit()
         except:
-            session.rollback()
+            sess.rollback()
             raise
+        finally:
+            sess.close()
 
     @classmethod
     def isExist(cls, id):
+        sess = Session()
         try:
-            exist = session.query(User).filter_by(ID=id).scalar()
+            exist = sess.query(User).filter_by(ID=id).scalar()
             if exist is None:
                 return False
             else:
                 return True
         except:
-            session.rollback()
+            sess.rollback()
             raise
+        finally:
+            sess.close()
 
     # create a new user
     @classmethod
     def create(cls, id, username, password, fullname, dob, gender, courseID, role_type):
+        sess = Session()
         try:
-            print('1232313123', flush=True)
-            if session.query(User).filter(User.Username == username).scalar() is None:
+            if sess.query(User).filter(User.Username == username).scalar() is None:
                 new_user = User(ID=id,
                                 Username=username,
                                 Password=generate_password_hash(password),
@@ -98,31 +115,40 @@ class User(Base):
                                 Role_Type=role_type)
                 print('528491', flush=True)
 
-                session.add(new_user)
+                sess.add(new_user)
                 print('abc', flush=True)
-                session.commit()
+                sess.commit()
                 print('def', flush=True)
                 return True
             else:
                 return False
         except:
-            session.rollback()
+            sess.rollback()
             raise
+        finally:
+            sess.close()
 
     @classmethod
     def check_register(cls, username, password):
-        check = session.query(User).filter(User.Username == username).scalar()
-        if check is not None:
-            if check_password_hash(check.Password, str(password)) is True:
-                if check.Role_Type == 'Admin':
-                    return 'Admin'
-                else:
-                    return 'Student'
-        else:
-            return 'Not found'
+        sess = Session()
+        try:
+            check = sess.query(User).filter(User.Username == username).scalar()
+            if check is not None:
+                if check_password_hash(check.Password, str(password)) is True:
+                    if check.Role_Type == 'Admin':
+                        return 'Admin'
+                    else:
+                        return 'Student'
+            else:
+                return 'Not found'
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
 
 
-UserQuery = session.query(User)
+# UserQuery = session.query(User)
 
 
 # Subject persistent class
@@ -135,19 +161,21 @@ class Subject(Base):
 
     @classmethod
     def create(cls, subjectID, subjectTitle):
+        sess = Session()
         try:
-            if session.query(Subject).filter(Subject.SubjectID == subjectID).scalar() is None:
+            if sess.query(Subject).filter(Subject.SubjectID == subjectID).scalar() is None:
                 new_subject = Subject(SubjectID=subjectID,
                                       SubjectTitle=subjectTitle)
-                session.add(new_subject)
-                session.commit()
+                sess.add(new_subject)
+                sess.commit()
                 return True
             else:
                 return False
         except:
-            session.rollback()
+            sess.rollback()
             raise
-
+        finally:
+            sess.close()
 
 
 # student status class
@@ -173,19 +201,22 @@ class Student_Status(Base):
 
     @classmethod
     def create(cls, studentID, subjectID, status):
+        sess = Session()
         try:
-            if session.query(Student_Status).filter(Student_Status.StudentID == studentID,
-                                                    Student_Status.SubjectID == subjectID).scalar() is None:
+            if sess.query(Student_Status).filter(Student_Status.StudentID == studentID,
+                                                 Student_Status.SubjectID == subjectID).scalar() is None:
                 student_status = Student_Status(StudentID=studentID,
                                                 SubjectID=subjectID, Status=status)
-                session.add(student_status)
-                session.commit()
+                sess.add(student_status)
+                sess.commit()
                 return True
             else:
                 return False
         except:
-            session.rollback()
+            sess.rollback()
             raise
+        finally:
+            sess.close()
 
 
 # relationship() uses the foreign key relationships between the two tables to determine the nature of this linkage
@@ -219,7 +250,7 @@ class SubjectSchema(ModelSchema):
         model = Subject
         # optionally attach a Session
         # to use for deserialization
-        sqla_session = session
+        # sqla_session = session
 
 
 class StudentStatusSchema(ModelSchema):
@@ -227,7 +258,7 @@ class StudentStatusSchema(ModelSchema):
         model = Student_Status
         # optionally attach a Session
         # to use for deserialization
-        sqla_session = session
+        # sqla_session = session
 
 
 # only takes specific columns

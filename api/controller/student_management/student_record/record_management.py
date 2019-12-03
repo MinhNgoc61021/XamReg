@@ -5,10 +5,8 @@ from flask import (
     request,
     jsonify
 )
-from db.entity_db import session, User, Subject, Student_Status
 from controller.authentication.auth import token_required
 from db.entity_db import User
-import json
 
 record_management = Blueprint('record_management', __name__, url_prefix='/record')
 
