@@ -222,7 +222,7 @@
           </button>
         </div>
         <b-table
-            :data="data"
+            :data="student_record"
             :loading="loading"
 
             paginated
@@ -284,17 +284,90 @@
     import axios from 'axios'
     import {authHeader} from "../../../api/jwt_handling";
 
+    const editUserForm = {
+        props: ['editID','editFullname', 'editUsername', 'editPassword', 'editCourseID' , 'editDob', 'editGender'],
+        template: `
+                <div class="modal-card" style="width: 450px;">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Form chỉnh sửa</p>
+                    </header>
+                    <section class="modal-card-body">
+                        <b-field label="ID">
+                            <b-input
+                                type="text"
+                                :value="editID"
+                                placeholder="Nhập mã số sinh viên"
+                                required>
+                            </b-input>
+                        </b-field>
+
+                        <b-field label="Tài khoản">
+                            <b-input
+                                type="email"
+                                :value="editUsername"
+                                placeholder="Sửa tài khoản"
+                                required>
+                            </b-input>
+                        </b-field>
+
+                        <b-field label="Mật khẩu">
+                            <b-input
+                                type="password"
+                                :value="editPassword"
+                                password-reveal
+                                placeholder="Sửa mật khẩu"
+                                required>
+                            </b-input>
+                        </b-field>
+
+                        <b-field label="Mã khóa học">
+                            <b-input
+                                type="text"
+                                :value="editCourseID"
+                                placeholder="Sửa mã khóa học"
+                                required>
+                            </b-input>
+                        </b-field>
+
+                        <b-field label="Ngày sinh">
+                            <b-datepicker
+                                placeholder="Chọn ngày sinh"
+                                :value="editDob">
+                            </b-datepicker>
+                        </b-field>
+
+                        <b-field label="Giới tính">
+                            <b-select placeholder="Chọn giới tính" :value="editGender">
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </b-select>
+                        </b-field>
+
+                    </section>
+                    <footer class="modal-card-foot">
+                        <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
+                        <button class="button is-primary">Sửa</button>
+                    </footer>
+                </div>
+        `,
+        methods: {
+
+        },
+    };
     export default {
+        components: {
+            editUserForm
+        },
         data() {
             return {
-                data: [],
+                student_record: [],
                 total: 0,
                 loading: false,
                 sortField: 'ID',
                 sortOrder: 'desc',
                 defaultSortOrder: 'desc',
                 page: 1,
-                per_page: 5
+                per_page: 5,
             }
         },
         methods: {
@@ -314,23 +387,16 @@
                         'Authorization': authHeader(),
                     }
                 }).then((response) => {
-                        // api.themoviedb.org manage max 1000 pages
-                        // console.log(response);
-                        this.data = [];
-                        // let currentTotal = response.data.total_results;
-                        // if (data.total_results / this.perPage > 1000) {
-                        //     currentTotal = this.perPage * 1000
-                        // }
+                        this.student_record = [];
                         this.total = response.data.total_results;
-                        // console.log(response.data.records);
                         response.data.records.forEach((item) => {
-                            this.data.push(item);
+                            this.student_record.push(item);
                         });
                         // console.log(this.data);
                         this.loading = false
                     })
                     .catch((error) => {
-                        this.data = [];
+                        this.student_record = [];
                         this.total = 0;
                         this.loading = false;
                         throw error
@@ -352,7 +418,7 @@
                 this.getRecordData()
             },
             async onDelete(recordID) {
-                console.log(recordID);
+                // console.log(recordID);
                 this.$buefy.dialog.confirm({
                     title: 'Xóa tài khoản',
                     message: `Bạn có chắc chắn là muốn <b>xóa</b> tài khoản ${recordID}? Đã làm thì tự chịu đấy.`,
@@ -388,7 +454,14 @@
                 });
             },
             async onEdit(record) {
-                console.log(record.ID)
+                console.log(editUserForm.props['editID']);
+                this.$buefy.modal.open({
+                    parent: this,
+                    component: editUserForm,
+                    props: { editID: record.ID, editFullname: record.Fullname, editUsername: record.Username, editPassword: '' , editCourseID: record.CourseID, editDob: Date(record.Dob), editGender: record.Gender},
+                    hasModalCard: true,
+                    customClass: 'custom-class custom-class-2'
+                });
             },
             /*
               * Type style in relation to the value
@@ -419,71 +492,3 @@
         }
     }
 </script>
-
-<!--<template>-->
-<!--    <section>-->
-<!--        <button class="button is-primary is-medium"-->
-<!--            @click="isComponentModalActive = true">-->
-<!--            Launch component modal-->
-<!--        </button>-->
-
-<!--        <b-modal :active.sync="isComponentModalActive"-->
-<!--            has-modal-card full-screen :can-cancel="false">-->
-<!--            <modal-form v-bind="formProps"></modal-form>-->
-<!--        </b-modal>-->
-<!--    </section>-->
-<!--</template>-->
-
-<!--<script>-->
-<!--    const ModalForm = {-->
-<!--        props: ['email', 'password'],-->
-<!--        template: `-->
-<!--            <div class="modal-card" style="width: auto">-->
-<!--                <header class="modal-card-head">-->
-<!--                    <p class="modal-card-title">Login</p>-->
-<!--                </header>-->
-<!--                <section class="modal-card-body">-->
-<!--                    <b-field label="Email">-->
-<!--                        <b-input-->
-<!--                            type="email"-->
-<!--                            :value="email"-->
-<!--                            placeholder="Your email"-->
-<!--                            required>-->
-<!--                        </b-input>-->
-<!--                    </b-field>-->
-
-<!--                    <b-field label="Password">-->
-<!--                        <b-input-->
-<!--                            type="password"-->
-<!--                            :value="password"-->
-<!--                            password-reveal-->
-<!--                            placeholder="Your password"-->
-<!--                            required>-->
-<!--                        </b-input>-->
-<!--                    </b-field>-->
-
-<!--                    <b-checkbox>Remember me</b-checkbox>-->
-<!--                </section>-->
-<!--                <footer class="modal-card-foot">-->
-<!--                    <button class="button" type="button" @click="$parent.close()">Close</button>-->
-<!--                    <button class="button is-primary">Login</button>-->
-<!--                </footer>-->
-<!--            </div>-->
-<!--        `-->
-<!--    }-->
-
-<!--    export default {-->
-<!--        components: {-->
-<!--            ModalForm-->
-<!--        },-->
-<!--        data() {-->
-<!--            return {-->
-<!--                isComponentModalActive: false,-->
-<!--                formProps: {-->
-<!--                    email: 'evan@you.com',-->
-<!--                    password: 'testing'-->
-<!--                }-->
-<!--            }-->
-<!--        }-->
-<!--    }-->
-<!--</script>-->

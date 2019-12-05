@@ -85,7 +85,7 @@
           ...mapActions([
               'SignOut', 'GetUserData'
           ]),
-          admin_signOut: function() {
+          admin_signOut() {
               this.SignOut();
           },
       },
