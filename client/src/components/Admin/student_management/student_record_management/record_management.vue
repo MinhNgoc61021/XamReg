@@ -241,7 +241,7 @@
             @sort="onSort">
 
             <template slot-scope="props">
-                <b-table-column field="ID" label="ID" sortable>
+                <b-table-column field="ID" label="MSSV" sortable>
                     {{ props.row.ID }}
                 </b-table-column>
 
@@ -282,20 +282,28 @@
 
 <script>
     import axios from 'axios'
-    import {authHeader} from "../../../api/jwt_handling";
-
+    import { authHeader } from "../../../api/jwt_handling";
+    import moment from 'moment/moment';
+    /*
+     student edit data form
+    */
     const editUserForm = {
-        props: ['editID','editFullname', 'editUsername', 'editPassword', 'editCourseID' , 'editDob', 'editGender'],
+        // props in component work the same as parameters in a function
+        // in here userID prop is used to find the user in the api in order to update the student record
+        // editXXX props are used to update the record
+        props: ['currentStudentID','currentFullname', 'currentUsername', 'currentCourseID' , 'currentDob', 'currentGender'],
         template: `
+            <form @submit.prevent="updateStudentData">
                 <div class="modal-card" style="width: 450px;">
                     <header class="modal-card-head">
                         <p class="modal-card-title">Form chỉnh sửa</p>
                     </header>
                     <section class="modal-card-body">
-                        <b-field label="ID">
+                        <b-field label="MSSV">
                             <b-input
                                 type="text"
-                                :value="editID"
+                                v-model="newStudentID"
+                                :value="newStudentID"
                                 placeholder="Nhập mã số sinh viên"
                                 required>
                             </b-input>
@@ -304,7 +312,8 @@
                         <b-field label="Tài khoản">
                             <b-input
                                 type="email"
-                                :value="editUsername"
+                                v-model="newUsername"
+                                :value="newUsername"
                                 placeholder="Sửa tài khoản"
                                 required>
                             </b-input>
@@ -313,7 +322,8 @@
                         <b-field label="Mật khẩu">
                             <b-input
                                 type="password"
-                                :value="editPassword"
+                                v-model="newPassword"
+                                :value="newPassword"
                                 password-reveal
                                 placeholder="Sửa mật khẩu"
                                 required>
@@ -323,7 +333,8 @@
                         <b-field label="Mã khóa học">
                             <b-input
                                 type="text"
-                                :value="editCourseID"
+                                v-model="newCourseID"
+                                :value="newCourseID"
                                 placeholder="Sửa mã khóa học"
                                 required>
                             </b-input>
@@ -332,31 +343,79 @@
                         <b-field label="Ngày sinh">
                             <b-datepicker
                                 placeholder="Chọn ngày sinh"
-                                :value="editDob">
-                            </b-datepicker>
+                                v-model="newDob"
+                                :value="newDob" editable>
+                            </b-datepicker required>
                         </b-field>
 
                         <b-field label="Giới tính">
-                            <b-select placeholder="Chọn giới tính" :value="editGender">
+                            <b-select placeholder="Chọn giới tính" v-model="newGender" :value="newGender" required>
                                 <option value="Nam">Nam</option>
                                 <option value="Nữ">Nữ</option>
                             </b-select>
                         </b-field>
-
                     </section>
+
                     <footer class="modal-card-foot">
                         <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
-                        <button class="button is-primary">Sửa</button>
+                        <button class="button is-primary" type="submit">Cập nhật</button>
                     </footer>
                 </div>
+            </form>
         `,
+        data() {
+            return {
+                newStudentID: this.currentStudentID,
+                newFullname: this.currentFullname,
+                newUsername: this.currentUsername,
+                newPassword: '',
+                newCourseID: this.currentCourseID,
+                newDob: this.currentDob,
+                newGender: this.currentGender,
+            };
+        },
         methods: {
+            async updateStudentData() {
+                try {
+                    // console.log(moment(this.newDob).format('MM/DD/YYYY'));
+                    const update = await axios({
+                        method: 'put',
+                        url: '/record/update-record',
+                        headers: {
+                            'Authorization': authHeader(),
+                        },
+                        data: {
+                            currentStudentID: this.currentStudentID,
+                            StudentID: this.newStudentID,
+                            Fullname: this.newFullname,
+                            Username: this.newUsername,
+                            Password: this.newPassword,
+                            CourseID: this.newCourseID,
+                            Dob: moment(this.newDob).format('YYYY-MM-DD'),
+                            Gender: this.newGender,
+                        },
+                    });
+                    if (update.status === 200) {
+                        this.$parent.close();
+                        this.$buefy.notification.open({
+                            duration: 1000,
+                            message: `Đã cập nhật tài khoản ${this.StudentID} thành công.`,
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                        });
+                    }
 
+                } catch (e) {
+
+                }
+                finally {
+                }
+            },
         },
     };
     export default {
         components: {
-            editUserForm
+            editUserForm,
         },
         data() {
             return {
@@ -415,10 +474,12 @@
             onSort(field, order) {
                 this.sortField = field;
                 this.sortOrder = order;
-                this.getRecordData()
+                this.getRecordData();
             },
+            /*
+              * Handle delete record event
+            */
             async onDelete(recordID) {
-                // console.log(recordID);
                 this.$buefy.dialog.confirm({
                     title: 'Xóa tài khoản',
                     message: `Bạn có chắc chắn là muốn <b>xóa</b> tài khoản ${recordID}? Đã làm thì tự chịu đấy.`,
@@ -435,7 +496,7 @@
                                     'Authorization': authHeader(),
                                 },
                                 data: {
-                                    studentID: recordID,
+                                    StudentID: recordID,
                                 },
                             });
                             if (removeData.status === 200) {
@@ -448,19 +509,34 @@
                             }
                             this.getRecordData();
                         } catch (e) {
-                            console.log(e);
+                            if (e['message'].includes('401')) {
+                                this.$buefy.notification.open({
+                                  duration: 1500,
+                                  message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                  position: 'is-bottom-right',
+                                  type: 'is-danger',
+                                })
+                            }
                         }
                     },
                 });
             },
-            async onEdit(record) {
-                console.log(editUserForm.props['editID']);
+            onEdit(record) {
+                // console.log(record.Dob);
+                // console.log(new Date(moment(record.Dob).format('MM/DD/YYYY')));
                 this.$buefy.modal.open({
                     parent: this,
                     component: editUserForm,
-                    props: { editID: record.ID, editFullname: record.Fullname, editUsername: record.Username, editPassword: '' , editCourseID: record.CourseID, editDob: Date(record.Dob), editGender: record.Gender},
+                    props: {
+                        currentStudentID: record.ID,
+                        currentFullname: record.Fullname,
+                        currentUsername: record.Username,
+                        currentCourseID: record.CourseID,
+                        currentDob: new Date(moment(record.Dob).format('MM/DD/YYYY')),
+                        currentGender: record.Gender,
+                    },
                     hasModalCard: true,
-                    customClass: 'custom-class custom-class-2'
+                    customClass: 'custom-class custom-class-2',
                 });
             },
             /*

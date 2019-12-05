@@ -1,8 +1,8 @@
-'use strict'
+'use strict';
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
 
-const path = require('path')
+const path = require('path');
 
 module.exports = {
   dev: {
@@ -32,6 +32,10 @@ module.exports = {
           changeOrigin: true,
       },
       '/record/remove-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/update-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
