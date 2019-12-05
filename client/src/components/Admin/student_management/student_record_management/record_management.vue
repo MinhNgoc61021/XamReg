@@ -399,7 +399,7 @@
                         this.$parent.close();
                         this.$buefy.notification.open({
                             duration: 1000,
-                            message: `Đã cập nhật tài khoản ${this.StudentID} thành công.`,
+                            message: `Đã cập nhật tài khoản ${this.newStudentID} thành công.`,
                             position: 'is-bottom-right',
                             type: 'is-success',
                         });
