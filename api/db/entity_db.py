@@ -20,7 +20,8 @@ engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4
 Base = declarative_base()
 
 # Session class is defined using sessionmaker()
-Session = sessionmaker(bind=engine)
+Session = scoped_session(sessionmaker())
+Session.configure(bind=engine)
 
 
 # User persistent class
@@ -232,6 +233,26 @@ class Student_Status(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def getRecord(cls, studentID, status_type, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Student_Status, Subject).filter(Student_Status.StudentID == studentID,
+                                                             Student_Status.Status == status_type).order_by(getattr(
+                getattr(User, sort_field), sort_order)())
+
+            # user_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return subject_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
 
 class Semester_Examination(Base):
     __tablename__ = 'semester_examination'
@@ -384,7 +405,7 @@ class SubjectSchema(ModelSchema):
         model = Subject
         # optionally attach a Session
         # to use for deserialization
-        # sqla_session = session
+        sqla_session = scoped_session
 
 
 class StudentStatusSchema(ModelSchema):
@@ -392,7 +413,7 @@ class StudentStatusSchema(ModelSchema):
         model = Student_Status
         # optionally attach a Session
         # to use for deserialization
-        # sqla_session = session
+        sqla_session = scoped_session
 
 
 class ExamRoomSchema(ModelSchema):
@@ -419,5 +440,9 @@ class SemesterExaminationSchema(ModelSchema):
         # sqla_session = session
 
 
-# only takes specific columns
+# only=[] takes specific columns
 user_schema = UserSchema(only=['ID', 'Username', 'Fullname', 'Dob', 'Gender', 'CourseID', 'Role_Type'])
+
+subject_schema = SubjectSchema()
+
+student_status_schema = StudentStatusSchema()

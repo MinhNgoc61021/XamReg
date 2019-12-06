@@ -19,7 +19,7 @@
         </b-field>
         <b-field>
             <div class="buttons" style="float: right;">
-              <b-button @click="uploadExcelFile()" outlined>Nhập</b-button>
+              <b-button @click="uploadExcelFile()" outlined>Tạo</b-button>
             </div>
         </b-field>
         <div class="tags" style="max-width: 350px;">
@@ -70,25 +70,26 @@
                           loadingComponent.close();
 
                           this.$buefy.notification.open({
-                              duration: 3000,
-                              message: 'Dữ liệu sinh viên từ file ' + file.name + ' đã được tạo thành công!',
+                              duration: 2500,
+                              message: `Dữ liệu sinh viên từ file <b>${file.name}</b> đã được tạo thành công!`,
                               position: 'is-bottom-right',
                               type: 'is-success',
                           });
                       }
                     } catch (e) {
                         loadingComponent.close();
+                        console.log(e);
                         if (e['message'].includes('400')) {
                             this.$buefy.notification.open({
-                              duration: 1500,
-                              message: 'HTTP Status 400: Kiểm tra lại, dữ liệu bạn nhập trong file ' + file.name + ' đang có vấn đề!',
+                              duration: 2500,
+                              message: `HTTP Status 400: Kiểm tra lại, dữ liệu bạn nhập trong file <b>${file.name}</b> đang có vấn đề!`,
                               position: 'is-bottom-right',
                               type: 'is-danger',
                             })
                         }
                         else if (e['message'].includes('401')) {
                             this.$buefy.notification.open({
-                              duration: 1500,
+                              duration: 2500,
                               message: 'HTTP Status 401: Không được quyền sử dụng!',
                               position: 'is-bottom-right',
                               type: 'is-danger',
@@ -96,7 +97,7 @@
                         }
                         else if (e['message'].includes('403')) {
                             this.$buefy.notification.open({
-                              duration: 1500,
+                              duration: 2500,
                               message: 'Đối với nhập danh sách tình trang môn học của sinh viên, hãy đảm bảo là tài khoản của sinh viên đó đã tồn tại sẵn!',
                               position: 'is-bottom-right',
                               type: 'is-warning',

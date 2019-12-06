@@ -6,15 +6,15 @@ from flask import (
     jsonify
 )
 from controller.authentication.auth import token_required
-from db.entity_db import User
+from db.entity_db import User, Student_Status
 import re
 
-record_management = Blueprint('record_management', __name__, url_prefix='/record')
+student_record_management = Blueprint('student_record_management', __name__, url_prefix='/record')
 
 
-@record_management.route('/student-records', methods=['GET'])
+@student_record_management.route('/student-records', methods=['GET'])
 @token_required
-def get_student_record(current_user):
+def get_student_info_record(current_user):
     try:
         page_index = request.args.get('page_index')
         per_page = request.args.get('per_page')
@@ -38,7 +38,35 @@ def get_student_record(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
-@record_management.route('/remove-record', methods=['DELETE'])
+@student_record_management.route('/student-subject-records', methods=['GET'])
+@token_required
+def get_subject_status_record(current_user):
+    try:
+        studentID = request.args.get('currentStudentID')
+        status_type = request.args.get('type')
+        page_index = request.args.get('page_index')
+        per_page = request.args.get('per_page')
+        sort_order = request.args.get('sort_order')
+        sort_field = request.args.get('sort_field')
+        # print(sort_order, flush=True)
+        # print(sort_field, flush=True)
+        # FYI: User.getRecord function return a tuple, [0] is the records data, and [1] is the pagination data
+        record = Student_Status.getRecord(studentID, status_type, page_index, per_page, sort_field, sort_order)
+        print(record[1], flush=True)
+
+        return jsonify({'status': 'success',
+                        'records': record[0],
+                        'page_number': record[1].page_number,
+                        'page_size': record[1].page_size,
+                        'num_pages': record[1].num_pages,
+                        'total_results': record[1].total_results,
+                        }), 200
+
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@student_record_management.route('/remove-record', methods=['DELETE'])
 @token_required
 def remove_record(current_user):
     try:
@@ -51,7 +79,7 @@ def remove_record(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
-@record_management.route('/update-record', methods=['PUT'])
+@student_record_management.route('/update-record', methods=['PUT'])
 @token_required
 def update_record(current_user):
     try:
@@ -89,8 +117,10 @@ def update_record(current_user):
         print(checkDob, flush=True)
         print(checkCourseID, flush=True)
 
-        if (checkID is not None) and (checkUsername is not None) and (checkFullname is not None) and (checkDob is not None) and (
-                checkGender is not None) and (checkCourseID is not None):
+        if (checkID is not None) and (checkUsername is not None) and (checkFullname is not None) and (
+                checkDob is not None) and (
+                checkGender is not None) and (checkCourseID is not None) and (
+                newStudentID == newUsername.split('@')[0]):
             print('OK1', flush=True)
             User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob, newGender)
             return jsonify({'status': 'success'}), 200

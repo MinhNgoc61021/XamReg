@@ -12,11 +12,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/auth/': {
-          target: 'http://api:5000',
+          target: 'http://api:5000', // if it is localhost:5000, which means the client(front-end side) will roast itself inside its own container. Because there is nothing here.
           changeOrigin: true,
       },
       '/auth/register': {
-          target: 'http://api:5000', // if it is localhost:5000, which means the client(front-end side) will roast itself inside its own container. Because there is nothing here.
+          target: 'http://api:5000',
           changeOrigin: true,
       },
       '/handling/upload': {
@@ -39,6 +39,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/record/student-subject-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      }
     },
 
     // Various Dev Server settings

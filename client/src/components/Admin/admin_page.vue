@@ -48,7 +48,6 @@
     <footer class="footer">
       <div class="content has-text-centered" >
         <p>
-
           <span>ExamReg</span>
           <a href=""> <span>Github</span> </a>
         </p>

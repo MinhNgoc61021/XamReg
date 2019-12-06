@@ -45,7 +45,7 @@
             </b-select>
         </b-field>
         <div class="buttons" style="float: right;">
-          <b-button outlined>Thêm</b-button>
+          <b-button outlined>Tạo</b-button>
         </div>
     </section>
 </template>
