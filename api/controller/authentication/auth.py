@@ -81,7 +81,7 @@ def register():
 @authentication.route('/get-user', methods=['GET'])
 @token_required
 def get_user(current_user):
-    return jsonify({'ID': current_user['ID'],
+    return jsonify({'status': 'success', 'ID': current_user['ID'],
                     'Fullname': current_user['Fullname'],
                     }), 200
 

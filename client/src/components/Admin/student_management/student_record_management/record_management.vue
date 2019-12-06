@@ -209,8 +209,20 @@
 
 <template>
     <section>
+        <div class="control">
+        <button
+          :class="{'is-loading': loading}"
+          class="button"
+          @click="getRecordData"
+        >
+          <b-icon
+            size="is-small"
+            icon="sync"/>
+          <span>Refresh</span>
+          </button>
+        </div>
         <b-table
-            :data="data"
+            :data="student_record"
             :loading="loading"
 
             paginated
@@ -229,33 +241,39 @@
             @sort="onSort">
 
             <template slot-scope="props">
-                <b-table-column field="ID" label="ID" sortable searchable>
+                <b-table-column field="ID" label="MSSV" sortable>
                     {{ props.row.ID }}
                 </b-table-column>
 
-                <b-table-column field="Fullname" label="Họ và tên" sortable searchable>
+                <b-table-column field="Fullname" label="Họ và tên" sortable>
                      {{ props.row.Fullname }}
                 </b-table-column>
 
-                <b-table-column field="Username" label="Tài khoản" sortable searchable>
+                <b-table-column field="Username" label="Tài khoản" sortable>
                     {{ props.row.Username }}
                 </b-table-column>
 
-                <b-table-column field="Dob" label="Ngày sinh" sortable searchable>
+                <b-table-column field="Dob" label="Ngày sinh" sortable>
+                    <span class="tag is-success">
                      {{ props.row.Dob }}
+                    </span>
                 </b-table-column>
 
-                <b-table-column field="Role_Type" label="Quyền" sortable searchable>
+                <b-table-column field="CourseID" label="Khóa" sortable>
+                     {{ props.row.CourseID }}
+                </b-table-column>
+
+                <b-table-column field="Role_Type" label="Quyền" sortable>
                      {{ props.row.Role_Type }}
                 </b-table-column>
 
-                <b-table-column field="Gender" label="Giới tính" sortable searchable>
+                <b-table-column field="Gender" label="Giới tính" sortable>
                      {{ props.row.Gender }}
                 </b-table-column>
 
-                <b-table-column field="Action" label="Hành động" width="120">
-                    <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined></b-button>
-                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined></b-button>
+                <b-table-column field="Action" width="120">
+                    <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onEdit(props.row)"></b-button>
+                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onDelete(props.row.ID)"></b-button>
                 </b-table-column>
             </template>
         </b-table>
@@ -264,19 +282,151 @@
 
 <script>
     import axios from 'axios'
-    import {authHeader} from "../../../api/jwt_handling";
+    import { authHeader } from "../../../api/jwt_handling";
+    import moment from 'moment/moment';
+    /*
+     student edit data form
+    */
+    const editUserForm = {
+        // props in component work the same as parameters in a function
+        // in here userID prop is used to find the user in the api in order to update the student record
+        // editXXX props are used to update the record
+        props: ['currentStudentID','currentFullname', 'currentUsername', 'currentCourseID' , 'currentDob', 'currentGender'],
+        template: `
+            <form @submit.prevent="updateStudentData">
+                <div class="modal-card" style="width: 450px;">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Form chỉnh sửa</p>
+                    </header>
+                    <section class="modal-card-body">
+                        <b-field label="MSSV">
+                            <b-input
+                                type="text"
+                                v-model="newStudentID"
+                                :value="newStudentID"
+                                placeholder="Nhập mã số sinh viên"
+                                required>
+                            </b-input>
+                        </b-field>
 
-    export default {
+                        <b-field label="Tài khoản">
+                            <b-input
+                                type="email"
+                                v-model="newUsername"
+                                :value="newUsername"
+                                placeholder="Sửa tài khoản"
+                                required>
+                            </b-input>
+                        </b-field>
+
+                        <b-field label="Mã khóa học">
+                            <b-input
+                                type="text"
+                                v-model="newCourseID"
+                                :value="newCourseID"
+                                placeholder="Sửa mã khóa học"
+                                required>
+                            </b-input>
+                        </b-field>
+
+                        <b-field label="Ngày sinh">
+                            <b-datepicker
+                                placeholder="Chọn ngày sinh"
+                                v-model="newDob"
+                                :value="newDob" editable required>
+                            </b-datepicker>
+                        </b-field>
+
+                        <b-field label="Giới tính">
+                            <b-select placeholder="Chọn giới tính" v-model="newGender" :value="newGender" required>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </b-select>
+                        </b-field>
+                    </section>
+
+                    <footer class="modal-card-foot">
+                        <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
+                        <button class="button is-primary" type="submit">Cập nhật</button>
+                    </footer>
+                </div>
+            </form>
+        `,
         data() {
             return {
-                data: [],
+                newStudentID: this.currentStudentID,
+                newFullname: this.currentFullname,
+                newUsername: this.currentUsername,
+                newCourseID: this.currentCourseID,
+                newDob: this.currentDob,
+                newGender: this.currentGender,
+            };
+        },
+        methods: {
+            async updateStudentData() {
+                try {
+                    // console.log(moment(this.newDob).format('MM/DD/YYYY'));
+                    const update = await axios({
+                        method: 'put',
+                        url: '/record/update-record',
+                        headers: {
+                            'Authorization': authHeader(),
+                        },
+                        data: {
+                            currentStudentID: this.currentStudentID,
+                            StudentID: this.newStudentID,
+                            Fullname: this.newFullname,
+                            Username: this.newUsername,
+                            CourseID: this.newCourseID,
+                            Dob: moment(this.newDob).format('YYYY-MM-DD'),
+                            Gender: this.newGender,
+                        },
+                    });
+                    if (update.status === 200) {
+                        this.$parent.close();
+                        this.$buefy.notification.open({
+                            duration: 1000,
+                            message: `Đã cập nhật tài khoản ${this.newStudentID} thành công.`,
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                        });
+                    }
+
+                } catch (e) {
+                    if (e['message'].includes('400')) {
+                        this.$buefy.notification.open({
+                            duration: 1000,
+                            message: 'HTTP Status 400: Kiểm tra lại, dữ liệu bạn nhập đang có vấn đề!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                        })
+                    }
+                    else if (e['message'].includes('401')) {
+                        this.$buefy.notification.open({
+                            duration: 1000,
+                            message: 'HTTP Status 401: Không được quyền sử dụng!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                        })
+                    }
+                }
+            },
+        },
+    };
+    export default {
+        components: {
+            editUserForm,
+        },
+        data() {
+            return {
+                student_record: [],
                 total: 0,
                 loading: false,
                 sortField: 'ID',
                 sortOrder: 'desc',
                 defaultSortOrder: 'desc',
                 page: 1,
-                per_page: 5
+                per_page: 5,
             }
         },
         methods: {
@@ -296,46 +446,102 @@
                         'Authorization': authHeader(),
                     }
                 }).then((response) => {
-                        // api.themoviedb.org manage max 1000 pages
-                        console.log(response);
-                        this.data = [];
-                        // let currentTotal = response.data.total_results;
-                        // if (data.total_results / this.perPage > 1000) {
-                        //     currentTotal = this.perPage * 1000
-                        // }
+                        this.student_record = [];
                         this.total = response.data.total_results;
-                        console.log(response.data.records);
                         response.data.records.forEach((item) => {
-                            this.data.push(item);
+                            this.student_record.push(item);
                         });
-                        console.log(this.data);
+                        // console.log(this.data);
                         this.loading = false
                     })
                     .catch((error) => {
-                        this.data = [];
+                        this.student_record = [];
                         this.total = 0;
                         this.loading = false;
                         throw error
                     })
             },
             /*
-        * Handle page-change event
-        */
+              * Handle page-change event
+            */
             onPageChange(page) {
                 this.page = page;
                 this.getRecordData();
             },
             /*
-        * Handle sort event
-        */
+              * Handle sort event
+            */
             onSort(field, order) {
                 this.sortField = field;
                 this.sortOrder = order;
-                this.getRecordData()
+                this.getRecordData();
             },
             /*
-        * Type style in relation to the value
-        */
+              * Handle delete record event
+            */
+            async onDelete(recordID) {
+                this.$buefy.dialog.confirm({
+                    title: 'Xóa tài khoản',
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> tài khoản ${recordID}? Đã làm thì tự chịu đấy.`,
+                    confirmText: 'Xóa!',
+                    cancelText: 'Bỏ qua',
+                    type: 'is-danger',
+                    hasIcon: true,
+                    onConfirm: async () => {
+                        try {
+                            const removeData = await axios({
+                                url: '/record/remove-record',
+                                method: 'delete',
+                                headers: {
+                                    'Authorization': authHeader(),
+                                },
+                                data: {
+                                    StudentID: recordID,
+                                },
+                            });
+                            if (removeData.status === 200) {
+                                this.$buefy.notification.open({
+                                  duration: 1000,
+                                  message: `Đã xóa tài khoản ${recordID} thành công.`,
+                                  position: 'is-bottom-right',
+                                  type: 'is-success',
+                                });
+                            }
+                            this.getRecordData();
+                        } catch (e) {
+                            if (e['message'].includes('401')) {
+                                this.$buefy.notification.open({
+                                  duration: 1500,
+                                  message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                  position: 'is-bottom-right',
+                                  type: 'is-danger',
+                                })
+                            }
+                        }
+                    },
+                });
+            },
+            onEdit(record) {
+                // console.log(record.Dob);
+                // console.log(new Date(moment(record.Dob).format('MM/DD/YYYY')));
+                this.$buefy.modal.open({
+                    parent: this,
+                    component: editUserForm,
+                    props: {
+                        currentStudentID: record.ID,
+                        currentFullname: record.Fullname,
+                        currentUsername: record.Username,
+                        currentCourseID: record.CourseID,
+                        currentDob: new Date(moment(record.Dob).format('MM/DD/YYYY')),
+                        currentGender: record.Gender,
+                    },
+                    hasModalCard: true,
+                    customClass: 'custom-class custom-class-2',
+                });
+            },
+            /*
+              * Type style in relation to the value
+            */
             type(value) {
                 const number = parseFloat(value);
                 if (number < 6) {

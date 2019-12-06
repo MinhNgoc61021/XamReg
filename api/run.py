@@ -19,6 +19,7 @@ app.config['SECRET_KEY'] = 'IsBLK8lCfYOF7VHNflxkSg'
 api = Api(app)
 CORS(app)
 
+
 # create new admin here, change the username, password
 @app.route('/init_admin')
 def init_admin():
