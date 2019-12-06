@@ -60,7 +60,6 @@ def update_record(current_user):
         newStudentID = new_update.get('StudentID')
         newUsername = new_update.get('Username')
         newFullname = new_update.get('Fullname')
-        newPassword = new_update.get('Password')
         newCourseID = new_update.get('CourseID')
         newDob = new_update.get('Dob')
         newGender = new_update.get('Gender')
@@ -80,19 +79,17 @@ def update_record(current_user):
         checkFullname = re.search('\s', str(newFullname))
         checkDob = re.search('([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))',
                              str(newDob))
-        checkPassword = re.search('(?=.{8,})', str(newPassword))
         checkGender = re.search('(Nam|Nữ)', str(newGender))
         checkCourseID = re.search('^[K|k][1-9][0-9][A-Za-z]+[1-9]*', str(newCourseID))
 
         print(checkID, flush=True)
         print(checkUsername, flush=True)
         print(checkFullname, flush=True)
-        print(checkPassword, flush=True)
         print(checkGender, flush=True)
         print(checkDob, flush=True)
         print(checkCourseID, flush=True)
 
-        if (checkID is not None) and (checkUsername is not None) and (checkFullname is not None) and (checkDob is not None) and (checkPassword is not None) and (
+        if (checkID is not None) and (checkUsername is not None) and (checkFullname is not None) and (checkDob is not None) and (
                 checkGender is not None) and (checkCourseID is not None):
             print('OK1', flush=True)
             User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob, newGender)

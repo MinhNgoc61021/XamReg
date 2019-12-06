@@ -26,6 +26,7 @@ Session = sessionmaker(bind=engine)
 # User persistent class
 class User(Base):
     __tablename__ = 'user'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
 
     ID = Column(String(45), primary_key=True)
     Username = Column(String(45), nullable=False, unique=True)
@@ -164,6 +165,8 @@ class User(Base):
 # Subject persistent class
 class Subject(Base):
     __tablename__ = 'subject'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
     SubjectID = Column(String(45),
                        primary_key=True)
     SubjectTitle = Column(String(45),
@@ -191,12 +194,13 @@ class Subject(Base):
 # student status class
 class Student_Status(Base):
     __tablename__ = 'student_status'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
 
     StatusID = Column(Integer,
                       primary_key=True,
                       autoincrement=True)
     StudentID = Column(String(45),
-                       ForeignKey('user.ID'),
+                       ForeignKey('user.ID', onupdate="cascade"),
                        nullable=False)
     SubjectID = Column(String(45),
                        ForeignKey('subject.SubjectID'),
@@ -231,6 +235,8 @@ class Student_Status(Base):
 
 class Semester_Examination(Base):
     __tablename__ = 'semester_examination'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
     SemID = Column(Integer,
                    primary_key=True,
                    autoincrement=True)
@@ -254,6 +260,8 @@ class Semester_Examination(Base):
 # Shift persistent class
 class Shift(Base):
     __tablename__ = 'shift'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
     ShiftID = Column(Integer,
                      primary_key=True,
                      autoincrement=True)
@@ -299,6 +307,8 @@ class Shift(Base):
 # Exam_Room persistent class
 class Exam_Room(Base):
     __tablename__ = 'exam_room'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
     RoomID = Column(Integer,
                     primary_key=True,
                     autoincrement=True)
@@ -333,7 +343,7 @@ class Exam_Room(Base):
             sess.close()
 
 
-###############Relationship######################
+############### Relationship ######################
 # relationship() uses the foreign key relationships between the two tables to determine the nature of this linkage
 # Determining that it is many to one.
 # This corresponds to a parent-child or associative table relationship.
@@ -342,7 +352,7 @@ class Exam_Room(Base):
 
 User.student_status = relationship('Student_Status',
                                    order_by=Student_Status.StudentID,
-                                   back_populates='User', cascade="save-update, all, delete, delete-orphan")
+                                   back_populates='User', cascade="all, delete, delete-orphan")
 
 Subject.student_status = relationship('Student_Status',
                                       order_by=Student_Status.SubjectID,

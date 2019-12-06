@@ -28,6 +28,9 @@ def upload(auth):
         max_row = sheet.max_row
         # get max column count
         max_column = sheet.max_column
+
+        print(max_row, flush=True)
+        print(max_column, flush=True)
         # When the excel file are included with student, subject info & status
         if max_column == 8:
             # set excel_data to get data in order to create new account, subject, qualification for students to SQLAlchemy
@@ -110,7 +113,7 @@ def upload(auth):
                 ID = re.search('\d{8}', str(excel_data['ID']).replace(' ', ''))
                 fullname = re.search('\s', str(excel_data['fullname']))
                 print(str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')), flush=True)
-                dob = re.search('^(((0)[1-9])|((1)[0-2]))(\/)([0-2][0-9]|(3)[0-1])(\/)\d{4}',
+                dob = re.search('(((0)[1-9])|((1)[0-2]))(\/)([0-2][0-9]|(3)[0-1])(\/)\d{4}',
                                 str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')))
                 gender = re.search('(Nam|Nữ)', str(excel_data['gender']))
                 courseID = re.search('^[K|k][1-9][0-9][A-Za-z]+[1-9]*', excel_data['courseID'])
@@ -164,6 +167,8 @@ def upload(auth):
                         # add qualified and unqualified students to database
                         init_qualified_student = Student_Status.create(str(excel_data['ID']).replace(' ', ''),
                                                                        excel_data['subjectID'], excel_data['status'])
+                        if init_qualified_student is False:
+                            return jsonify({'status': 'error'}), 400
                     else:
                         return jsonify({'status': 'error'}), 400
                 else:

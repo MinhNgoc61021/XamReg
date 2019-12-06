@@ -319,17 +319,6 @@
                             </b-input>
                         </b-field>
 
-                        <b-field label="Mật khẩu">
-                            <b-input
-                                type="password"
-                                v-model="newPassword"
-                                :value="newPassword"
-                                password-reveal
-                                placeholder="Sửa mật khẩu"
-                                required>
-                            </b-input>
-                        </b-field>
-
                         <b-field label="Mã khóa học">
                             <b-input
                                 type="text"
@@ -344,8 +333,8 @@
                             <b-datepicker
                                 placeholder="Chọn ngày sinh"
                                 v-model="newDob"
-                                :value="newDob" editable>
-                            </b-datepicker required>
+                                :value="newDob" editable required>
+                            </b-datepicker>
                         </b-field>
 
                         <b-field label="Giới tính">
@@ -368,7 +357,6 @@
                 newStudentID: this.currentStudentID,
                 newFullname: this.currentFullname,
                 newUsername: this.currentUsername,
-                newPassword: '',
                 newCourseID: this.currentCourseID,
                 newDob: this.currentDob,
                 newGender: this.currentGender,
@@ -389,7 +377,6 @@
                             StudentID: this.newStudentID,
                             Fullname: this.newFullname,
                             Username: this.newUsername,
-                            Password: this.newPassword,
                             CourseID: this.newCourseID,
                             Dob: moment(this.newDob).format('YYYY-MM-DD'),
                             Gender: this.newGender,
@@ -406,9 +393,22 @@
                     }
 
                 } catch (e) {
-
-                }
-                finally {
+                    if (e['message'].includes('400')) {
+                        this.$buefy.notification.open({
+                            duration: 1000,
+                            message: 'HTTP Status 400: Kiểm tra lại, dữ liệu bạn nhập đang có vấn đề!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                        })
+                    }
+                    else if (e['message'].includes('401')) {
+                        this.$buefy.notification.open({
+                            duration: 1000,
+                            message: 'HTTP Status 401: Không được quyền sử dụng!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                        })
+                    }
                 }
             },
         },
