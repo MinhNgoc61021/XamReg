@@ -265,6 +265,7 @@
 <script>
     import axios from 'axios'
     import {authHeader} from "../../../api/jwt_handling";
+
     export default {
         data() {
             return {

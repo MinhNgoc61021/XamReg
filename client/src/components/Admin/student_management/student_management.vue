@@ -10,7 +10,7 @@
             <b-tab-item label="Nhập (Import)" icon-pack="fas" icon="file-import">
               <component v-bind:is="import_insert"/>
             </b-tab-item>
-            <b-tab-item label="Xem & Cập nhật danh sách sinh viên" icon-pack="fas" icon="user-edit" style="margin: 50px;">
+            <b-tab-item label="Xem & Chỉnh sửa danh sách sinh viên" icon-pack="fas" icon="user-edit" style="margin: 50px;">
               <component v-bind:is="record_management"/>
             </b-tab-item>
         </b-tabs>

@@ -21,7 +21,7 @@ def upload(auth):
         print(request.files['student_list_excel'], flush=True)
         # load file
         excel_file = load_workbook(request.files['student_list_excel'])
-          # select Danh sách sinh viên.xlsx
+        # select Danh sách sinh viên.xlsx
         sheet = excel_file.active
 
         # get max row count
@@ -55,11 +55,11 @@ def upload(auth):
                     fullname = re.search('\s', str(excel_data['fullname']))
                     dob = re.search('^(((0)[1-9])|((1)[0-2]))(\/)([0-2][0-9]|(3)[0-1])(\/)\d{4}',
                                     str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')))
-                    gender = re.search('[Nam|Nữ]', str(excel_data['gender']))
+                    gender = re.search('(Nam|Nữ)', str(excel_data['gender']))
                     courseID = re.search('^[K|k]{1}[1-9][0-9][[A-Za-z]+[1-9]*$', str(excel_data['courseID']))
                     subjectID = re.search('^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})',
                                               str(excel_data['subjectID']))
-                    status = re.search('[Qualified|Unqualified]', excel_data['status'])
+                    status = re.search('(Qualified|Unqualified)', excel_data['status'])
                     # print(ID, flush=True)
                     # print(fullname, flush=True)
                     # print(dob, flush=True)
@@ -113,7 +113,7 @@ def upload(auth):
                 print(str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')), flush=True)
                 dob = re.search('^(((0)[1-9])|((1)[0-2]))(\/)([0-2][0-9]|(3)[0-1])(\/)\d{4}',
                                     str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')))
-                gender = re.search('[Nam|Nữ]', str(excel_data['gender']))
+                gender = re.search('(Nam|Nữ)', str(excel_data['gender']))
                 courseID = re.search('^[K|k]{1}[1-9][0-9][[A-Za-z]+[1-9]*$', str(excel_data['courseID']))
                 # print(ID, flush=True)
                 # print(fullname, flush=True)
@@ -159,7 +159,7 @@ def upload(auth):
                     # check validation
                     subjectID = re.search('^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})',
                                             str(excel_data['subjectID']))
-                    status = re.search('[Qualified|Unqualified]', excel_data['status'])
+                    status = re.search('(Qualified|Unqualified)', excel_data['status'])
 
                     if (subjectID is not None) and (status is not None):
                         init_subject = Subject.create(excel_data['subjectID'],

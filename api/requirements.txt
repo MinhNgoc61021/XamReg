@@ -9,3 +9,4 @@ pyexcel-xlsx
 mysqlclient
 PyJWT
 marshmallow-sqlalchemy
+sqlalchemy-filters

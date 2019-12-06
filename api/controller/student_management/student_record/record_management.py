@@ -5,15 +5,34 @@ from flask import (
     request,
     jsonify
 )
-from db.entity_db import User, Subject, Student_Status
+from db.entity_db import session, User, Subject, Student_Status
 from controller.authentication.auth import token_required
-import re
-from flask_sqlalchemy import BaseQuery
+from db.entity_db import User
+import json
 
 record_management = Blueprint('record_management', __name__, url_prefix='/record')
 
 
-@record_management.route('/get_user/<int:page_num>', methods=['GET'])
-def get_student_record(page_num):
-    record = BaseQuery(User).paginate(page=page_num, per_page=5, error_out=True)
-    return record.items
+@record_management.route('/student-records', methods=['GET'])
+@token_required
+def get_student_record(current_user):
+    try:
+        page_index = request.args.get('page_index')
+        per_page = request.args.get('per_page')
+        sort_order = request.args.get('sort_order')
+        sort_field = request.args.get('sort_field')
+        print(sort_order, flush=True)
+        print(sort_field, flush=True)
+        # FYI: User.getRecord function return a tuple, [0] is the records data, and [1] is the pagination data
+        record = User.getRecord(page_index, per_page, sort_field, sort_order)
+        print(record[1], flush=True)
+
+        return jsonify({ 'records': record[0],
+                         'page_number': record[1].page_number,
+                         'page_size': record[1].page_size,
+                         'num_pages': record[1].num_pages,
+                         'total_results': record[1].total_results,
+                         })
+
+    except:
+        return {'status': 'bad-request'}, 400
