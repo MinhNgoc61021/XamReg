@@ -1,8 +1,8 @@
-'use strict'
+'use strict';
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
 
-const path = require('path')
+const path = require('path');
 
 module.exports = {
   dev: {
@@ -12,11 +12,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/auth/': {
-          target: 'http://api:5000',
+          target: 'http://api:5000', // if it is localhost:5000, which means the client(front-end side) will roast itself inside its own container. Because there is nothing here.
           changeOrigin: true,
       },
       '/auth/register': {
-          target: 'http://api:5000', // if it is localhost:5000, which means the client(front-end side) will roast itself inside its own container. Because there is nothing here.
+          target: 'http://api:5000',
           changeOrigin: true,
       },
       '/handling/upload': {
@@ -31,10 +31,22 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/remove-record': {
+      '/record/remove-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/record/update-student-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/student-status-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/remove-student-status-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      }
     },
 
     // Various Dev Server settings

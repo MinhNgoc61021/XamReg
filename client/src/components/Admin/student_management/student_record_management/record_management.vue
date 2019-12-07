@@ -1,247 +1,57 @@
-<!--<template>-->
-<!--    <section>-->
-
-<!--        <b-table-->
-<!--            :data="data"-->
-<!--            ref="table"-->
-<!--            detailed-->
-<!--            hoverable-->
-<!--            custom-detail-row-->
-<!--            :opened-detailed="['Board Games']"-->
-<!--            :default-sort="['name', 'asc']"-->
-<!--            detail-key="name"-->
-<!--            @details-open="(row, index) => $buefy.toast.open(`Expanded ${row.name}`)"-->
-<!--            :show-detail-icon="false">-->
-
-<!--            <template slot-scope="props">-->
-<!--                <b-table-column-->
-<!--                    field="name"-->
-<!--                    :visible="columnsVisible['name'].display"-->
-<!--                    :label="columnsVisible['name'].title"-->
-<!--                    width="300"-->
-<!--                    sortable-->
-<!--                >-->
-<!--                    <template v-if="showDetailIcon">-->
-<!--                        {{ props.row.name }}-->
-<!--                    </template>-->
-<!--                    <template v-else>-->
-<!--                        <a @click="toggle(props.row)">-->
-<!--                            {{ props.row.name }}-->
-<!--                        </a>-->
-<!--                    </template>-->
-<!--                </b-table-column>-->
-
-<!--                <b-table-column-->
-<!--                    field="sold"-->
-<!--                    :visible="columnsVisible['sold'].display"-->
-<!--                    :label="columnsVisible['sold'].title"-->
-<!--                    sortable-->
-<!--                    centered-->
-<!--                >-->
-<!--                    {{ props.row.sold }}-->
-<!--                </b-table-column>-->
-
-<!--                <b-table-column-->
-<!--                    field="available"-->
-<!--                    :visible="columnsVisible['available'].display"-->
-<!--                    :label="columnsVisible['available'].title"-->
-<!--                    sortable-->
-<!--                    centered-->
-<!--                >-->
-<!--                    {{ props.row.available }}-->
-<!--                </b-table-column>-->
-
-<!--                <b-table-column-->
-<!--                    :visible="columnsVisible['cleared'].display"-->
-<!--                    :label="columnsVisible['cleared'].title"-->
-<!--                    centered-->
-<!--                >-->
-<!--                    <span :class="-->
-<!--                            [-->
-<!--                                'tag',-->
-<!--                                {'is-danger': props.row.sold / props.row.available <= 0.45},-->
-<!--                                {'is-success': props.row.sold / props.row.available > 0.45}-->
-<!--                            ]">-->
-<!--                        {{ Math.round((props.row.sold / props.row.available) * 100) }}%-->
-<!--                    </span>-->
-<!--                </b-table-column>-->
-<!--            </template>-->
-
-<!--            <template slot="detail" slot-scope="props">-->
-<!--                <tr v-for="item in props.row.items" :key="item.name">-->
-<!--                    <td v-if="showDetailIcon"></td>-->
-<!--                    <td v-show="columnsVisible['name'].display" >&nbsp;&nbsp;&nbsp;&nbsp;{{ item.name }}</td>-->
-<!--                    <td v-show="columnsVisible['sold'].display" class="has-text-centered">{{ item.sold }}</td>-->
-<!--                    <td v-show="columnsVisible['available'].display" class="has-text-centered">{{ item.available }}</td>-->
-<!--                    <td v-show="columnsVisible['cleared'].display" class="has-text-centered">-->
-<!--                        <span :class="-->
-<!--                            [-->
-<!--                                'tag',-->
-<!--                                {'is-danger': item.sold / item.available <= 0.45},-->
-<!--                                {'is-success': item.sold / item.available > 0.45}-->
-<!--                            ]">-->
-<!--                            {{ Math.round((item.sold / item.available) * 100) }}%-->
-<!--                        </span>-->
-<!--                    </td>-->
-<!--                </tr>-->
-<!--            </template>-->
-<!--        </b-table>-->
-
-<!--    </section>-->
-<!--</template>-->
-
-<!--<script>-->
-<!--    export default {-->
-<!--        data() {-->
-<!--            return {-->
-<!--                data: [-->
-<!--                    {-->
-<!--                        name: 'Board Games',-->
-<!--                        sold: 131,-->
-<!--                        available: 301,-->
-<!--                        items: [-->
-<!--                            {-->
-<!--                                name: 'Monopoly',-->
-<!--                                sold: 57,-->
-<!--                                available: 100-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'Scrabble',-->
-<!--                                sold: 23,-->
-<!--                                available: 84-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'Chess',-->
-<!--                                sold: 37,-->
-<!--                                available: 61-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'Battleships',-->
-<!--                                sold: 14,-->
-<!--                                available: 56-->
-<!--                            }-->
-<!--                        ]-->
-<!--                    },-->
-<!--                    {-->
-<!--                        name: 'Jigsaws & Puzzles',-->
-<!--                        sold: 88,-->
-<!--                        available: 167,-->
-<!--                        items: [-->
-<!--                            {-->
-<!--                                name: 'World Map',-->
-<!--                                sold: 31,-->
-<!--                                available: 38-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'London',-->
-<!--                                sold: 23,-->
-<!--                                available: 29-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'Sharks',-->
-<!--                                sold: 20,-->
-<!--                                available: 44-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'Disney',-->
-<!--                                sold: 14,-->
-<!--                                available: 56-->
-<!--                            }-->
-<!--                        ]-->
-<!--                    },-->
-<!--                    {-->
-<!--                        name: 'Books',-->
-<!--                        sold: 434,-->
-<!--                        available: 721,-->
-<!--                        items: [-->
-<!--                            {-->
-<!--                                name: 'Hamlet',-->
-<!--                                sold: 101,-->
-<!--                                available: 187-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'The Lord Of The Rings',-->
-<!--                                sold: 85,-->
-<!--                                available: 156-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'To Kill a Mockingbird',-->
-<!--                                sold: 78,-->
-<!--                                available: 131-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'Catch-22',-->
-<!--                                sold: 73,-->
-<!--                                available: 98-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'Frankenstein',-->
-<!--                                sold: 51,-->
-<!--                                available: 81-->
-<!--                            },-->
-<!--                            {-->
-<!--                                name: 'Alice\'s Adventures In Wonderland',-->
-<!--                                sold: 46,-->
-<!--                                available: 68-->
-<!--                            }-->
-<!--                        ]-->
-<!--                    }-->
-<!--                ],-->
-<!--                columnsVisible: {-->
-<!--                    name: { title: 'Name', display: true },-->
-<!--                    sold: { title: 'Stock Sold', display: true },-->
-<!--                    available: { title: 'Stock Available', display: true },-->
-<!--                    cleared: { title: 'Stock Cleared', display: true },-->
-<!--                },-->
-<!--                showDetailIcon: false-->
-<!--            }-->
-<!--        },-->
-<!--        methods: {-->
-<!--            toggle(row) {-->
-<!--                this.$refs.table.toggleDetails(row)-->
-<!--            }-->
-<!--        }-->
-<!--    }-->
-<!--</script>-->
-
-
-
-
 <template>
     <section>
-        <div class="control">
-        <button
-          :class="{'is-loading': loading}"
-          class="button"
-          @click="getRecordData"
-        >
-          <b-icon
-            size="is-small"
-            icon="sync"/>
-          <span>Refresh</span>
-          </button>
-        </div>
-        <b-table
-            :data="data"
-            :loading="loading"
+        <b-field grouped group-multiline>
+            <b-button
+              :class="{'is-loading': student.loading}"
+              class="button"
+              @click="getStudentRecordData"
+            >
+              <b-icon
+                size="is-small"
+                icon="sync"/>
+              <span>Làm mới</span>
+            </b-button>
 
+            <b-select v-model="student.per_page">
+              <option value="5">5 dòng/trang</option>
+              <option value="10">10 dòng/trang</option>
+              <option value="15">15 dòng/trang</option>
+              <option value="20">20 dòng/trang</option>
+            </b-select>
+
+            <b-autocomplete
+                v-model="student.ID_Search"
+                placeholder="Tìm kiếm theo MSSV"
+                icon="search"
+                expanded>
+            </b-autocomplete>
+        </b-field>
+        <b-table
+            :data="student.student_record"
+            :loading="student.loading"
             paginated
             backend-pagination
-            :total="total"
-            :per-page="per_page"
-            @page-change="onPageChange"
+            detailed
+            :total="student.total"
+            :per-page="student.per_page"
+            @page-change="onStudentPageChange"
             aria-next-label="Next page"
             aria-previous-label="Previous page"
             aria-page-label="Page"
             aria-current-label="Current page"
             backend-sorting
             hoverable
-            :default-sort-direction="defaultSortOrder"
-            :default-sort="[sortField, sortOrder]"
-            @sort="onSort">
+            detail-key="ID"
+            :opened-detailed="student_status.ID_Index"
+            :default-sort-direction="student.defaultSortOrder"
+            :default-sort="[student.sortField, student.sortOrder]"
+            @sort="onStudentSort"
+            @details-open="(row, index) => { student_status.currentStudentID = row.ID ; getStudent_Subject(); closeOtherDetails(row, index) }"
+            @details-close="(row, index) => { student_status.student_subject_record = [] }"
+            :show-detail-icon="true">
 
             <template slot-scope="props">
-                <b-table-column field="ID" label="ID" sortable>
+                <b-table-column field="ID" label="MSSV" sortable>
                     {{ props.row.ID }}
                 </b-table-column>
 
@@ -255,7 +65,7 @@
 
                 <b-table-column field="Dob" label="Ngày sinh" sortable>
                     <span class="tag is-success">
-                     {{ props.row.Dob }}
+                     {{ formatDate(props.row.Dob) }}
                     </span>
                 </b-table-column>
 
@@ -268,13 +78,75 @@
                 </b-table-column>
 
                 <b-table-column field="Gender" label="Giới tính" sortable>
-                     {{ props.row.Gender }}
+                     <span>
+                        <b-icon pack="fas"
+                            :icon="props.row.Gender === 'Nam' ? 'mars' : 'venus'">
+                        </b-icon>
+                        {{ props.row.Gender }}
+                    </span>
                 </b-table-column>
 
-                <b-table-column field="Action" width="120">
-                    <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onEdit(props.row)"></b-button>
-                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onDelete(props.row.ID)"></b-button>
+                <b-table-column field="Action" width="90">
+                    <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onStudentEdit(props.row)"></b-button>
+                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStudentDelete(props.row.ID)"></b-button>
                 </b-table-column>
+            </template>
+            <template slot="detail" slot-scope="props">
+                <b-field grouped group-multiline>
+                  <b-button
+                    :class="{'is-loading': student_status.loading}"
+                    class="button"
+                    @click="getStudent_Subject(props.row)"
+                  >
+                    <b-icon
+                      size="is-small"
+                      icon="sync"/>
+                  </b-button>
+                  <b-select v-model="student_status.status_type">
+                    <option value="Qualified" >Đủ điều kiện thi</option>
+                    <option value="Unqualified">Không đủ điều kiện thi</option>
+                  </b-select>
+                </b-field>
+                <b-field v-if="student_status.student_subject_record.length > 0" grouped group-multiline>
+                  <b-table
+                    :data="student_status.student_subject_record"
+                    :loading="student_status.loading"
+                    paginated
+                    backend-pagination
+                    :total="student_status.total"
+                    :per-page="student_status.per_page"
+                    @page-change="onStatusPageChange"
+                    aria-next-label="Next page"
+                    aria-previous-label="Previous page"
+                    aria-page-label="Page"
+                    aria-current-label="Current page"
+                    backend-sorting
+                    bordered
+                    narrowed
+                    hoverable
+                    detail-key="ID"
+                    :default-sort-direction="student_status.defaultSortOrder"
+                    :default-sort="[student_status.sortField, student_status.sortOrder]"
+                    @sort="onStatusSort">
+                    <template slot-scope="props">
+                      <b-table-column field="SubjectID" label="Mã môn" sortable>
+                        {{ props.row.SubjectID }}
+                      </b-table-column>
+                      <b-table-column field="SubjectTitle" label="Tên môn" sortable>
+                        {{ props.row.SubjectTitle }}
+                      </b-table-column>
+
+                      <b-table-column field="Action">
+                        <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row.SubjectID)"></b-button>
+                      </b-table-column>
+                    </template>
+                  </b-table>
+                </b-field>
+                <b-field v-else>
+                  <b-message type="is-danger" has-icon>
+                    Hiện tại sinh viên này chưa có thông tin về danh sách này, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b>!
+                  </b-message>
+                </b-field>
             </template>
         </b-table>
     </section>
@@ -282,80 +154,116 @@
 
 <script>
     import axios from 'axios'
-    import {authHeader} from "../../../api/jwt_handling";
-
+    import { authHeader } from "../../../api/jwt_handling";
+    import moment from 'moment/moment';
+    import edit_student_form from "./edit/editStudent_modal_form";
+    /*
+     student edit data form
+    */
     export default {
+        components: {
+            edit_student_form,
+        },
         data() {
             return {
-                data: [],
-                total: 0,
-                loading: false,
-                sortField: 'ID',
-                sortOrder: 'desc',
-                defaultSortOrder: 'desc',
-                page: 1,
-                per_page: 5
+                student: { // This is used to for student info
+                    student_record: [],
+                    total: 0,
+                    loading: false,
+                    sortField: 'ID',
+                    sortOrder: 'desc',
+                    defaultSortOrder: 'desc',
+                    page: 1,
+                    per_page: 5,
+                    ID_Search: '',
+                },
+                student_status: { // This is used to for student subject status
+                    student_subject_record: [],
+                    currentStudentID: '',
+                    total: 0,
+                    loading: false,
+                    sortField: 'SubjectID',
+                    sortOrder: 'desc',
+                    defaultSortOrder: 'desc',
+                    page: 1,
+                    per_page: 5,
+                    ID_Search: '',
+                    status_type: 'Qualified',
+                    ID_Index: [], // ID_Index is used for expand event
+                }
             }
         },
         methods: {
             /*
-             * Load async record data
+             * Change formatDate
             */
-            getRecordData() {
-                this.loading = true;
-                axios.get('/record/student-records', {
-                    params: {
-                        page_index: this.page,
-                        per_page: this.per_page,
-                        sort_field: this.sortField,
-                        sort_order: this.sortOrder
-                    },
-                    headers: {
-                        'Authorization': authHeader(),
-                    }
-                }).then((response) => {
-                        // api.themoviedb.org manage max 1000 pages
-                        // console.log(response);
-                        this.data = [];
-                        // let currentTotal = response.data.total_results;
-                        // if (data.total_results / this.perPage > 1000) {
-                        //     currentTotal = this.perPage * 1000
-                        // }
-                        this.total = response.data.total_results;
-                        // console.log(response.data.records);
+            formatDate(date) {
+
+                return moment(date).format('MM/DD/YYYY');
+            },
+            /*
+             * Load async student info record
+            */
+            async getStudentRecordData() {
+                this.student.loading = true;
+                try {
+                    const response = await axios({
+                        url: '/record/student-records',
+                        params: {
+                            page_index: this.student.page,
+                            per_page: this.student.per_page,
+                            sort_field: this.student.sortField,
+                            sort_order: this.student.sortOrder
+                        },
+                        headers: {
+                            'Authorization': authHeader(),
+                        }
+                    });
+                    if (response.status === 200) {
+                        this.student.student_record = [];
+                        this.student.total = response.data.total_results;
                         response.data.records.forEach((item) => {
-                            this.data.push(item);
+                            this.student.student_record.push(item);
                         });
                         // console.log(this.data);
-                        this.loading = false
-                    })
-                    .catch((error) => {
-                        this.data = [];
-                        this.total = 0;
-                        this.loading = false;
-                        throw error
-                    })
+                        this.student.loading = false
+                    }
+                } catch (error) {
+                    this.student.student_record = [];
+                    this.student.total = 0;
+                    this.loading = false;
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Không thể lấy được dữ liệu bảng!',
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                    });
+                    throw error;
+
+                }
             },
             /*
-              * Handle page-change event
+              * Handle student info record page-change event
             */
-            onPageChange(page) {
-                this.page = page;
-                this.getRecordData();
+            onStudentPageChange(page) {
+                this.student.page = page;
+                this.getStudentRecordData();
             },
             /*
-              * Handle sort event
+              * Handle student info record sort event
             */
-            onSort(field, order) {
-                this.sortField = field;
-                this.sortOrder = order;
-                this.getRecordData()
+            onStudentSort(field, order) {
+                this.student.sortField = field;
+                this.student.sortOrder = order;
+                this.getStudentRecordData();
             },
-            async onDelete(recordID) {
-                console.log(recordID);
+            /*
+              * Handle delete student info record event
+            */
+            async onStudentDelete(recordID) {
                 this.$buefy.dialog.confirm({
                     title: 'Xóa tài khoản',
-                    message: `Bạn có chắc chắn là muốn <b>xóa</b> tài khoản ${recordID}? Đã làm thì tự chịu đấy.`,
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> tài khoản của sinh viên có MSSV ${recordID} này không? Đã làm thì tự chịu đấy.`,
                     confirmText: 'Xóa!',
                     cancelText: 'Bỏ qua',
                     type: 'is-danger',
@@ -363,32 +271,57 @@
                     onConfirm: async () => {
                         try {
                             const removeData = await axios({
-                                url: '/record/remove-record',
+                                url: '/record/remove-student-record',
                                 method: 'delete',
                                 headers: {
                                     'Authorization': authHeader(),
                                 },
                                 data: {
-                                    studentID: recordID,
+                                    delStudentID: recordID,
                                 },
                             });
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
-                                  duration: 1000,
-                                  message: `Đã xóa tài khoản ${recordID} thành công.`,
+                                  duration: 2000,
+                                  message: `Đã xóa tài khoản có MSSV <b>${recordID}</b> thành công.`,
                                   position: 'is-bottom-right',
                                   type: 'is-success',
                                 });
                             }
-                            this.getRecordData();
+                            this.getStudentRecordData();
                         } catch (e) {
-                            console.log(e);
+                            if (e['message'].includes('401')) {
+                                this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                  position: 'is-bottom-right',
+                                  type: 'is-danger',
+                                })
+                            }
                         }
                     },
                 });
             },
-            async onEdit(record) {
-                console.log(record.ID)
+            /*
+              * Handle edit student info record event
+            */
+            onStudentEdit(record) {
+                // console.log(record.Dob);
+                // console.log(new Date(moment(record.Dob).format('MM/DD/YYYY')));
+                this.$buefy.modal.open({
+                    parent: this,
+                    component: edit_student_form,
+                    props: {
+                        currentStudentID: record.ID,
+                        currentFullname: record.Fullname,
+                        currentUsername: record.Username,
+                        currentCourseID: record.CourseID,
+                        currentDob: new Date(moment(record.Dob).format('MM/DD/YYYY')),
+                        currentGender: record.Gender,
+                    },
+                    hasModalCard: true,
+                    customClass: 'custom-class custom-class-2',
+                });
             },
             /*
               * Type style in relation to the value
@@ -402,88 +335,117 @@
                 } else if (number >= 8) {
                     return 'is-success'
                 }
-            }
-        },
-        filters: {
-            /**
-        * Filter to truncate string, accepts a length parameter
-        */
-            truncate(value, length) {
-                return value.length > length
-                    ? value.substr(0, length) + '...'
-                    : value
-            }
+            },
+            /*
+              * Handle student status record page-change event
+            */
+            onStatusPageChange(page) {
+                this.student_status.page = page;
+                this.getStudent_Subject();
+            },
+            /*
+              * Handle edit student status record event
+            */
+            onStatusSort(field, order) {
+                this.student_status.sortField = field;
+                this.student_status.sortOrder = order;
+                this.getStudent_Subject();
+            },
+            /*
+              * Handle delete student status record event
+            */
+            async onStatusDelete(SubjectID) {
+              this.$buefy.dialog.confirm({
+                    title: 'Xóa môn',
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> môn học ${SubjectID} của sinh viên có MSSV ${this.student_status.currentStudentID} này không? Đã làm thì tự chịu đấy.`,
+                    confirmText: 'Xóa!',
+                    cancelText: 'Bỏ qua',
+                    type: 'is-danger',
+                    hasIcon: true,
+                    onConfirm: async () => {
+                        try {
+                            const removeData = await axios({
+                                url: '/record/remove-student-status-record',
+                                method: 'delete',
+                                headers: {
+                                    'Authorization': authHeader(),
+                                },
+                                data: {
+                                    delStudentID: this.student_status.currentStudentID,
+                                    delSubjectID: SubjectID,
+                                },
+                            });
+                            if (removeData.status === 200) {
+                                this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: `Đã xóa thành công môn học ${SubjectID}của sinh viên có MSSV <b>${this.student_status.currentStudentID}</b>.`,
+                                  position: 'is-bottom-right',
+                                  type: 'is-success',
+                                });
+                            }
+                            this.getStudent_Subject();
+                        } catch (e) {
+                            if (e['message'].includes('401')) {
+                                this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                  position: 'is-bottom-right',
+                                  type: 'is-danger',
+                                })
+                            }
+                        }
+                    },
+                });
+            },
+            async getStudent_Subject() {
+                this.student_status.loading = true;
+                try {
+                    const response = await axios({
+                        url: '/record/student-status-records',
+                        params: {
+                            StudentID: this.student_status.currentStudentID,
+                            type: this.student_status.status_type,
+                            page_index: this.student_status.page,
+                            per_page: this.student_status.per_page,
+                            sort_field: this.student_status.sortField,
+                            sort_order: this.student_status.sortOrder,
+                        },
+                        headers: {
+                            'Authorization': authHeader(),
+                        }
+                    });
+                    if (response.status === 200) {
+                        console.log(response);
+                        this.student_status.student_subject_record = [];
+                        this.student_status.total = response.data.total_results;
+                        response.data.records.forEach((item) => {
+                            this.student_status.student_subject_record.push(item);
+                        });
+                        this.student_status.loading = false;
+                    }
+                } catch (error) {
+                    this.student_status.student_subject_record = [];
+                    this.student_status.total = 0;
+                    this.student_status.loading = false;
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: `Không thể lấy được dữ liệu môn học của sinh viên có MSSV ${this.student_status.currentStudentID} này!`,
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                    });
+                    throw error
+                }
+            },
+            /*
+              * Handle expand event for student status
+            */
+            closeOtherDetails(row) {
+                this.student_status.ID_Index = [row.ID];
+                // console.log(this.student_status.ID_Index);
+            },
         },
         mounted() {
-            this.getRecordData();
+            this.getStudentRecordData();
         }
     }
 </script>
-
-<!--<template>-->
-<!--    <section>-->
-<!--        <button class="button is-primary is-medium"-->
-<!--            @click="isComponentModalActive = true">-->
-<!--            Launch component modal-->
-<!--        </button>-->
-
-<!--        <b-modal :active.sync="isComponentModalActive"-->
-<!--            has-modal-card full-screen :can-cancel="false">-->
-<!--            <modal-form v-bind="formProps"></modal-form>-->
-<!--        </b-modal>-->
-<!--    </section>-->
-<!--</template>-->
-
-<!--<script>-->
-<!--    const ModalForm = {-->
-<!--        props: ['email', 'password'],-->
-<!--        template: `-->
-<!--            <div class="modal-card" style="width: auto">-->
-<!--                <header class="modal-card-head">-->
-<!--                    <p class="modal-card-title">Login</p>-->
-<!--                </header>-->
-<!--                <section class="modal-card-body">-->
-<!--                    <b-field label="Email">-->
-<!--                        <b-input-->
-<!--                            type="email"-->
-<!--                            :value="email"-->
-<!--                            placeholder="Your email"-->
-<!--                            required>-->
-<!--                        </b-input>-->
-<!--                    </b-field>-->
-
-<!--                    <b-field label="Password">-->
-<!--                        <b-input-->
-<!--                            type="password"-->
-<!--                            :value="password"-->
-<!--                            password-reveal-->
-<!--                            placeholder="Your password"-->
-<!--                            required>-->
-<!--                        </b-input>-->
-<!--                    </b-field>-->
-
-<!--                    <b-checkbox>Remember me</b-checkbox>-->
-<!--                </section>-->
-<!--                <footer class="modal-card-foot">-->
-<!--                    <button class="button" type="button" @click="$parent.close()">Close</button>-->
-<!--                    <button class="button is-primary">Login</button>-->
-<!--                </footer>-->
-<!--            </div>-->
-<!--        `-->
-<!--    }-->
-
-<!--    export default {-->
-<!--        components: {-->
-<!--            ModalForm-->
-<!--        },-->
-<!--        data() {-->
-<!--            return {-->
-<!--                isComponentModalActive: false,-->
-<!--                formProps: {-->
-<!--                    email: 'evan@you.com',-->
-<!--                    password: 'testing'-->
-<!--                }-->
-<!--            }-->
-<!--        }-->
-<!--    }-->
-<!--</script>-->
