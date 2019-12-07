@@ -191,6 +191,27 @@ class Subject(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def getRecord(cls, studentID, status_type, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Subject).join(
+                Student_Status).filter(Student_Status.StudentID == studentID,
+                                       Student_Status.Status == status_type).order_by(
+                getattr(
+                    getattr(Student_Status, sort_field), sort_order)())
+
+            # record_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return subject_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
 
 # student status class
 class Student_Status(Base):
@@ -227,26 +248,6 @@ class Student_Status(Base):
                 return True
             else:
                 return False
-        except:
-            sess.rollback()
-            raise
-        finally:
-            sess.close()
-
-    @classmethod
-    def getRecord(cls, studentID, status_type, page_index, per_page, sort_field, sort_order):
-        sess = Session()
-        try:
-            record_query = sess.query(Student_Status, Subject).filter(Student_Status.StudentID == studentID,
-                                                             Student_Status.Status == status_type).order_by(getattr(
-                getattr(User, sort_field), sort_order)())
-
-            # user_query is the user object and get_record_pagination is the index data
-            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
-                                                                   page_size=int(per_page))
-
-            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
-            return subject_schema.dump(record_query, many=True), get_record_pagination
         except:
             sess.rollback()
             raise

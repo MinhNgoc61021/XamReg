@@ -40,17 +40,12 @@
             backend-sorting
             hoverable
             detail-key="ID"
+            :opened-detailed="student_status.ID_Index"
             :default-sort-direction="student.defaultSortOrder"
             :default-sort="[student.sortField, student.sortOrder]"
             @sort="onStudentSort"
-            @details-open="(row) => $buefy.toast.open({
-             message: `Chi tiết thông tin của sinh viên ${row.Fullname} (MSSV: ${row.ID})`,
-             type: 'is-success',
-            })"
-            @details-close="(row) => $buefy.toast.open({
-             message: `Đóng`,
-             type: 'is-danger',
-            })"
+            @details-open="(row, index) => { getSubject(row); closeOtherDetails(row, index) }"
+            @details-close="(row, index) => { student_status.student_subject_record = [] }"
             :show-detail-icon="true">
 
             <template slot-scope="props">
@@ -89,14 +84,29 @@
                     </span>
                 </b-table-column>
 
-                <b-table-column field="Action" width="120">
+                <b-table-column field="Action" width="90">
                     <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onStudentEdit(props.row)"></b-button>
-                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row.ID)"></b-button>
+                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStudentDelete(props.row.ID)"></b-button>
                 </b-table-column>
             </template>
 
-            <template slot="detail" slot-scope="props">
-                <b-field grouped group-multiline>
+                <template slot="detail" slot-scope="props">
+                  <b-field grouped group-multiline>
+                      <b-button
+                      :class="{'is-loading': student_status.loading}"
+                      class="button"
+                      @click="getSubject(props.row)"
+                    >
+                      <b-icon
+                        size="is-small"
+                        icon="sync"/>
+                    </b-button>
+                    <b-select v-model="student_status.status_type">
+                      <option value="Qualified" >Đủ điều kiện thi</option>
+                      <option value="Unqualified">Không đủ điều kiện thi</option>
+                    </b-select>
+                  </b-field>
+                <b-field v-if="student_status.student_subject_record.length > 0" grouped group-multiline>
                     <b-table
                         :data="student_status.student_subject_record"
                         :loading="student_status.loading"
@@ -127,12 +137,16 @@
                                  {{ props.row.SubjectTitle }}
                             </b-table-column>
 
-                            <b-table-column field="Action" width="120">
-                                <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onStatusEdit(props.row)"></b-button>
+                            <b-table-column field="Action">
                                 <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row.StudentID, props.row.SubjectID)"></b-button>
                             </b-table-column>
                         </template>
                     </b-table>
+                </b-field>
+                <b-field v-else>
+                  <b-message type="is-danger" has-icon>
+                    Hiện tại sinh viên này chưa có thông tin về danh sách này, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b>!
+                  </b-message>
                 </b-field>
             </template>
         </b-table>
@@ -168,13 +182,14 @@
                     student_subject_record: [],
                     total: 0,
                     loading: false,
-                    sortField: 'Subject',
+                    sortField: 'SubjectID',
                     sortOrder: 'desc',
                     defaultSortOrder: 'desc',
                     page: 1,
                     per_page: 5,
                     ID_Search: '',
-                    status_type: 'Qualified'
+                    status_type: 'Qualified',
+                    ID_Index: [],
                 }
             }
         },
@@ -287,6 +302,10 @@
                     },
                 });
             },
+            closeOtherDetails(row) {
+                this.student_status.ID_Index = [row.ID];
+                console.log(this.student_status.ID_Index);
+            },
             onStudentEdit(record) {
                 // console.log(record.Dob);
                 // console.log(new Date(moment(record.Dob).format('MM/DD/YYYY')));
@@ -330,8 +349,9 @@
             onStatusEdit() {
 
             },
-            async getSubject(ID) {
-                this.loading = true;
+            async getSubject(row, index) {
+                this.student_status.loading = true;
+                console.log(this.student_status.ID_Index);
                 try {
                     const response = await axios({
                         url: '/record/student-subject-records',
@@ -340,7 +360,7 @@
                             per_page: this.student_status.per_page,
                             sort_field: this.student_status.sortField,
                             sort_order: this.student_status.sortOrder,
-                            currentStudentID: ID,
+                            currentStudentID: row.ID,
                             type: this.student_status.status_type,
                         },
                         headers: {
@@ -348,12 +368,18 @@
                         }
                     });
                     if (response.status === 200) {
-                        console.log(response.data);
+                        console.log(response)
+                        this.student_status.student_subject_record = [];
+                        this.student_status.total = response.data.total_results;
+                        response.data.records.forEach((item) => {
+                            this.student_status.student_subject_record.push(item);
+                        });
+                        this.student_status.loading = false;
                     }
                 } catch (error) {
-                    this.student_subject_record = [];
-                    this.total = 0;
-                    this.loading = false;
+                    this.student_status.student_subject_record = [];
+                    this.student_status.total = 0;
+                    this.student_status.loading = false;
                     this.$buefy.notification.open({
                         duration: 2000,
                         message: `Không thể lấy được dữ liệu môn học của sinh viên có MSSV ${ID} này!`,
