@@ -46,6 +46,10 @@ module.exports = {
       '/record/remove-student-status-record': {
           target: 'http://api:5000',
           changeOrigin: true,
+      },
+      '/record/search-student-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
       }
     },
 
