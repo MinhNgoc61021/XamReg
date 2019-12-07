@@ -6,7 +6,7 @@ from flask import (
     jsonify
 )
 from controller.authentication.auth import token_required
-from db.entity_db import User, Subject
+from db.entity_db import User, Subject, Student_Status
 import re
 
 student_record_management = Blueprint('student_record_management', __name__, url_prefix='/record')
@@ -37,11 +37,11 @@ def get_student_info_record(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
-@student_record_management.route('/student-subject-records', methods=['GET'])
+@student_record_management.route('/student-status-records', methods=['GET'])
 @token_required
 def get_subject_status_record(current_user):
     try:
-        studentID = request.args.get('currentStudentID')
+        studentID = request.args.get('StudentID')
         status_type = request.args.get('type')
         page_index = request.args.get('page_index')
         per_page = request.args.get('per_page')
@@ -71,22 +71,36 @@ def get_subject_status_record(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
-@student_record_management.route('/remove-record', methods=['DELETE'])
+@student_record_management.route('/remove-student-record', methods=['DELETE'])
 @token_required
-def remove_record(current_user):
+def remove_student_info_record(current_user):
     try:
         # print(request.get_json('studentID'), flush=True)
         record = request.get_json()
-        studentID = record.get('StudentID')
+        studentID = record.get('delStudentID')
         User.delRecord(str(studentID))
         return jsonify({'status': 'success'}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
 
 
-@student_record_management.route('/update-record', methods=['PUT'])
+@student_record_management.route('/remove-student-status-record', methods=['DELETE'])
 @token_required
-def update_record(current_user):
+def remove_subject_record(current_user):
+    try:
+        # print(request.get_json('studentID'), flush=True)
+        record = request.get_json()
+        studentID = record.get('delStudentID')
+        subjectID = record.get('delSubjectID')
+        Student_Status.delRecord(str(studentID), str(subjectID))
+        return jsonify({'status': 'success'}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@student_record_management.route('/update-student-record', methods=['PUT'])
+@token_required
+def update_student_info_record(current_user):
     try:
         new_update = request.get_json()
         currentStudentID = new_update.get('currentStudentID')

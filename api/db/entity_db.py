@@ -199,7 +199,7 @@ class Subject(Base):
                 Student_Status).filter(Student_Status.StudentID == studentID,
                                        Student_Status.Status == status_type).order_by(
                 getattr(
-                    getattr(Student_Status, sort_field), sort_order)())
+                    getattr(Subject, sort_field), sort_order)())
 
             # record_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
@@ -248,6 +248,19 @@ class Student_Status(Base):
                 return True
             else:
                 return False
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def delRecord(cls, studentID, subjectID):
+        sess = Session()
+        try:
+            status = sess.query(Student_Status).filter(Student_Status.StudentID == studentID, Student_Status.SubjectID == subjectID).one()
+            sess.delete(status)
+            sess.commit()
         except:
             sess.rollback()
             raise

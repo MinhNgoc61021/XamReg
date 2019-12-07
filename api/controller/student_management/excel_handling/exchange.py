@@ -167,11 +167,9 @@ def upload(auth):
                             Subject.create(excel_data['subjectID'],
                                            excel_data['subjectTitle'])
                             # add qualified and unqualified students to database
-                            init_qualified_student = Student_Status.create(str(excel_data['ID']).replace(' ', ''),
+                            Student_Status.create(str(excel_data['ID']).replace(' ', ''),
                                                                            excel_data['subjectID'],
                                                                            excel_data['status'])
-                            if init_qualified_student is False:
-                                return jsonify({'status': 'bad-request'}), 400
                         else:
                             return jsonify({'status': 'bad-request'}), 400
                     else:

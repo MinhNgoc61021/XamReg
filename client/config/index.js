@@ -31,15 +31,19 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/remove-record': {
+      '/record/remove-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/update-record': {
+      '/record/update-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/student-subject-records': {
+      '/record/student-status-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/remove-student-status-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       }

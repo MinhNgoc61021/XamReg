@@ -11,12 +11,14 @@
                 icon="sync"/>
               <span>Làm mới</span>
             </b-button>
+
             <b-select v-model="student.per_page">
               <option value="5">5 dòng/trang</option>
               <option value="10">10 dòng/trang</option>
               <option value="15">15 dòng/trang</option>
               <option value="20">20 dòng/trang</option>
             </b-select>
+
             <b-autocomplete
                 v-model="student.ID_Search"
                 placeholder="Tìm kiếm theo MSSV"
@@ -44,7 +46,7 @@
             :default-sort-direction="student.defaultSortOrder"
             :default-sort="[student.sortField, student.sortOrder]"
             @sort="onStudentSort"
-            @details-open="(row, index) => { getSubject(row); closeOtherDetails(row, index) }"
+            @details-open="(row, index) => { student_status.currentStudentID = row.ID ; getStudent_Subject(); closeOtherDetails(row, index) }"
             @details-close="(row, index) => { student_status.student_subject_record = [] }"
             :show-detail-icon="true">
 
@@ -89,59 +91,56 @@
                     <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStudentDelete(props.row.ID)"></b-button>
                 </b-table-column>
             </template>
-
-                <template slot="detail" slot-scope="props">
-                  <b-field grouped group-multiline>
-                      <b-button
-                      :class="{'is-loading': student_status.loading}"
-                      class="button"
-                      @click="getSubject(props.row)"
-                    >
-                      <b-icon
-                        size="is-small"
-                        icon="sync"/>
-                    </b-button>
-                    <b-select v-model="student_status.status_type">
-                      <option value="Qualified" >Đủ điều kiện thi</option>
-                      <option value="Unqualified">Không đủ điều kiện thi</option>
-                    </b-select>
-                  </b-field>
+            <template slot="detail" slot-scope="props">
+                <b-field grouped group-multiline>
+                  <b-button
+                    :class="{'is-loading': student_status.loading}"
+                    class="button"
+                    @click="getStudent_Subject(props.row)"
+                  >
+                    <b-icon
+                      size="is-small"
+                      icon="sync"/>
+                  </b-button>
+                  <b-select v-model="student_status.status_type">
+                    <option value="Qualified" >Đủ điều kiện thi</option>
+                    <option value="Unqualified">Không đủ điều kiện thi</option>
+                  </b-select>
+                </b-field>
                 <b-field v-if="student_status.student_subject_record.length > 0" grouped group-multiline>
-                    <b-table
-                        :data="student_status.student_subject_record"
-                        :loading="student_status.loading"
-                        paginated
-                        backend-pagination
-                        :total="student_status.total"
-                        :per-page="student_status.per_page"
-                        @page-change="onStatusPageChange"
-                        aria-next-label="Next page"
-                        aria-previous-label="Previous page"
-                        aria-page-label="Page"
-                        aria-current-label="Current page"
-                        backend-sorting
-                        bordered
-                        narrowed
-                        hoverable
-                        detail-key="ID"
-                        :default-sort-direction="student_status.defaultSortOrder"
-                        :default-sort="[student_status.sortField, student_status.sortOrder]"
-                        @sort="onStatusSort">
+                  <b-table
+                    :data="student_status.student_subject_record"
+                    :loading="student_status.loading"
+                    paginated
+                    backend-pagination
+                    :total="student_status.total"
+                    :per-page="student_status.per_page"
+                    @page-change="onStatusPageChange"
+                    aria-next-label="Next page"
+                    aria-previous-label="Previous page"
+                    aria-page-label="Page"
+                    aria-current-label="Current page"
+                    backend-sorting
+                    bordered
+                    narrowed
+                    hoverable
+                    detail-key="ID"
+                    :default-sort-direction="student_status.defaultSortOrder"
+                    :default-sort="[student_status.sortField, student_status.sortOrder]"
+                    @sort="onStatusSort">
+                    <template slot-scope="props">
+                      <b-table-column field="SubjectID" label="Mã môn" sortable>
+                        {{ props.row.SubjectID }}
+                      </b-table-column>
+                      <b-table-column field="SubjectTitle" label="Tên môn" sortable>
+                        {{ props.row.SubjectTitle }}
+                      </b-table-column>
 
-                        <template slot-scope="props">
-                            <b-table-column field="ID" label="Mã môn" sortable>
-                                {{ props.row.SubjectID }}
-                            </b-table-column>
-
-                            <b-table-column field="Fullname" label="Tên môn" sortable>
-                                 {{ props.row.SubjectTitle }}
-                            </b-table-column>
-
-                            <b-table-column field="Action">
-                                <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row.StudentID, props.row.SubjectID)"></b-button>
-                            </b-table-column>
-                        </template>
-                    </b-table>
+                      <b-table-column field="Action">
+                        <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row.SubjectID)"></b-button>
+                      </b-table-column>
+                    </template>
+                  </b-table>
                 </b-field>
                 <b-field v-else>
                   <b-message type="is-danger" has-icon>
@@ -167,7 +166,7 @@
         },
         data() {
             return {
-                student: {
+                student: { // This is used to for student info
                     student_record: [],
                     total: 0,
                     loading: false,
@@ -178,8 +177,9 @@
                     per_page: 5,
                     ID_Search: '',
                 },
-                student_status: {
+                student_status: { // This is used to for student subject status
                     student_subject_record: [],
+                    currentStudentID: '',
                     total: 0,
                     loading: false,
                     sortField: 'SubjectID',
@@ -189,7 +189,7 @@
                     per_page: 5,
                     ID_Search: '',
                     status_type: 'Qualified',
-                    ID_Index: [],
+                    ID_Index: [], // ID_Index is used for expand event
                 }
             }
         },
@@ -202,7 +202,7 @@
                 return moment(date).format('MM/DD/YYYY');
             },
             /*
-             * Load async record data
+             * Load async student info record
             */
             async getStudentRecordData() {
                 this.student.loading = true;
@@ -243,14 +243,14 @@
                 }
             },
             /*
-              * Handle page-change event
+              * Handle student info record page-change event
             */
             onStudentPageChange(page) {
                 this.student.page = page;
                 this.getStudentRecordData();
             },
             /*
-              * Handle sort event
+              * Handle student info record sort event
             */
             onStudentSort(field, order) {
                 this.student.sortField = field;
@@ -258,7 +258,7 @@
                 this.getStudentRecordData();
             },
             /*
-              * Handle delete record event
+              * Handle delete student info record event
             */
             async onStudentDelete(recordID) {
                 this.$buefy.dialog.confirm({
@@ -271,13 +271,13 @@
                     onConfirm: async () => {
                         try {
                             const removeData = await axios({
-                                url: '/record/remove-record',
+                                url: '/record/remove-student-record',
                                 method: 'delete',
                                 headers: {
                                     'Authorization': authHeader(),
                                 },
                                 data: {
-                                    StudentID: recordID,
+                                    delStudentID: recordID,
                                 },
                             });
                             if (removeData.status === 200) {
@@ -302,10 +302,9 @@
                     },
                 });
             },
-            closeOtherDetails(row) {
-                this.student_status.ID_Index = [row.ID];
-                console.log(this.student_status.ID_Index);
-            },
+            /*
+              * Handle edit student info record event
+            */
             onStudentEdit(record) {
                 // console.log(record.Dob);
                 // console.log(new Date(moment(record.Dob).format('MM/DD/YYYY')));
@@ -337,38 +336,86 @@
                     return 'is-success'
                 }
             },
-            onStatusPageChange() {
-
+            /*
+              * Handle student status record page-change event
+            */
+            onStatusPageChange(page) {
+                this.student_status.page = page;
+                this.getStudent_Subject();
             },
-            onStatusSort() {
-
+            /*
+              * Handle edit student status record event
+            */
+            onStatusSort(field, order) {
+                this.student_status.sortField = field;
+                this.student_status.sortOrder = order;
+                this.getStudent_Subject();
             },
-            onStatusDelete() {
-
+            /*
+              * Handle delete student status record event
+            */
+            async onStatusDelete(SubjectID) {
+              this.$buefy.dialog.confirm({
+                    title: 'Xóa tài khoản',
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> môn học ${SubjectID} của sinh viên có MSSV ${this.student_status.currentStudentID} này không? Đã làm thì tự chịu đấy.`,
+                    confirmText: 'Xóa!',
+                    cancelText: 'Bỏ qua',
+                    type: 'is-danger',
+                    hasIcon: true,
+                    onConfirm: async () => {
+                        try {
+                            const removeData = await axios({
+                                url: '/record/remove-student-status-record',
+                                method: 'delete',
+                                headers: {
+                                    'Authorization': authHeader(),
+                                },
+                                data: {
+                                    delStudentID: this.student_status.currentStudentID,
+                                    delSubjectID: SubjectID,
+                                },
+                            });
+                            if (removeData.status === 200) {
+                                this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: `Đã xóa thành công môn học ${SubjectID}của sinh viên có MSSV <b>${this.student_status.currentStudentID}</b>.`,
+                                  position: 'is-bottom-right',
+                                  type: 'is-success',
+                                });
+                            }
+                            this.getStudent_Subject();
+                        } catch (e) {
+                            if (e['message'].includes('401')) {
+                                this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                  position: 'is-bottom-right',
+                                  type: 'is-danger',
+                                })
+                            }
+                        }
+                    },
+                });
             },
-            onStatusEdit() {
-
-            },
-            async getSubject(row, index) {
+            async getStudent_Subject() {
                 this.student_status.loading = true;
-                console.log(this.student_status.ID_Index);
                 try {
                     const response = await axios({
-                        url: '/record/student-subject-records',
+                        url: '/record/student-status-records',
                         params: {
+                            StudentID: this.student_status.currentStudentID,
+                            type: this.student_status.status_type,
                             page_index: this.student_status.page,
                             per_page: this.student_status.per_page,
                             sort_field: this.student_status.sortField,
                             sort_order: this.student_status.sortOrder,
-                            currentStudentID: row.ID,
-                            type: this.student_status.status_type,
                         },
                         headers: {
                             'Authorization': authHeader(),
                         }
                     });
                     if (response.status === 200) {
-                        console.log(response)
+                        console.log(response);
                         this.student_status.student_subject_record = [];
                         this.student_status.total = response.data.total_results;
                         response.data.records.forEach((item) => {
@@ -382,12 +429,19 @@
                     this.student_status.loading = false;
                     this.$buefy.notification.open({
                         duration: 2000,
-                        message: `Không thể lấy được dữ liệu môn học của sinh viên có MSSV ${ID} này!`,
+                        message: `Không thể lấy được dữ liệu môn học của sinh viên có MSSV ${this.student_status.currentStudentID} này!`,
                         position: 'is-bottom-right',
                         type: 'is-danger',
                     });
                     throw error
                 }
+            },
+            /*
+              * Handle expand event for student status
+            */
+            closeOtherDetails(row) {
+                this.student_status.ID_Index = [row.ID];
+                // console.log(this.student_status.ID_Index);
             },
         },
         mounted() {

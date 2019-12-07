@@ -89,7 +89,7 @@
                   // console.log(moment(this.newDob).format('MM/DD/YYYY'));
                   const update = await axios({
                       method: 'put',
-                      url: '/record/update-record',
+                      url: '/record/update-student-record',
                       headers: {
                           'Authorization': authHeader(),
                       },
