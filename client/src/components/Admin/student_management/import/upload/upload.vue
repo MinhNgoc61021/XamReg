@@ -103,6 +103,14 @@
                               type: 'is-warning',
                             })
                         }
+                        else {
+                            this.$buefy.notification.open({
+                              duration: 2500,
+                              message: 'Lỗi không thể tải file lên hệ thống!',
+                              position: 'is-bottom-right',
+                              type: 'is-danger',
+                            })
+                        }
                     } finally {
                         formData.delete('student_list_excel')
                     }

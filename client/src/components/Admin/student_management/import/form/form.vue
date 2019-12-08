@@ -106,6 +106,14 @@
                           type: 'is-danger',
                       })
                   }
+                  else {
+                      this.$buefy.notification.open({
+                          duration: 2500,
+                          message: `Không thể tạo được dữ liệu!`,
+                          position: 'is-bottom-right',
+                          type: 'is-danger',
+                      })
+                  }
               }
           },
       },
