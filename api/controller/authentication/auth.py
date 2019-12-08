@@ -60,18 +60,16 @@ def token_required(f):
 def register():
     if request.method == 'POST':
         user_form = request.get_json()
-
         username = user_form.get('username')
-        check_username = re.search('[!#$%^&*()='',.?":{}|<>]', str(username))
+        check_username = re.search('[!#$%^&*()='',?";:{}|<>]', str(username))
         password = user_form.get('password')
-        check_password = re.search('[!#$%^&*()='',.?":{}|<>]', str(password))
+        check_password = re.search('[!#$%^&*()='',?";:{}|<>]', str(password))
         if (check_username is None) and (check_password is None):
             check_user = User.check_register(username, password)
             if check_user == 'Not found':
                 return jsonify({'status': 'fail'})
             else:
-                print(check_user[0], flush=True)
-                Log.create(check_user[0]['ID'], 'Đăng nhập vào hệ thống.', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                Log.create(str(check_user[0]['ID']), 'Đăng nhập vào hệ thống.', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
                 token = jwt.encode({
                     'sub': username,  # representing username

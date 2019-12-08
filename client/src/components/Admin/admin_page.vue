@@ -32,7 +32,7 @@
                   </b-navbar-item>
                   <hr class="dropdown-divider" aria-role="menuitem">
                   <b-navbar-item>
-                    <b-icon icon-pack="fas" icon="user"></b-icon>
+                    <b-icon icon-pack="fas" icon="lock"></b-icon>
                     <span>Cập nhật mật khẩu</span>
                   </b-navbar-item>
                   <b-navbar-item v-on:click="admin_signOut()" >
@@ -63,14 +63,10 @@
 </template>
 
 <script>
-  import Register_form from '../Register/register.vue';
   import  { mapState, mapActions, mapMutations } from 'vuex';
 
   export default {
       name: 'Admin_Page',
-      components: {
-          Register_form,
-      },
       computed: {
           ...mapState([
               'user', 'ID', 'fullname', 'userStatus', 'current_location',

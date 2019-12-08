@@ -79,13 +79,16 @@ class User(Base):
     def check_register(cls, username, password):
         sess = Session()
         try:
-            check = sess.query(User).filter(User.Username == username).scalar()
+            check = sess.query(User).filter(User.Username == str(username)).scalar()
+            print(check.Username, flush=True)
             if check is not None:
                 if check_password_hash(check.Password, str(password)) is True:
                     if check.Role_Type == 'Admin':
                         return user_schema.dump(check), 'Admin'
-                    else:
+                    elif check.Role_Type == 'Student':
                         return user_schema.dump(check), 'Student'
+                else:
+                    return 'Not found'
             else:
                 return 'Not found'
         except:

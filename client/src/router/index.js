@@ -31,26 +31,41 @@ export const router = new Router({
 
 
 router.beforeEach ((to, from, next) => {
-    // redirect to register page if not logged in and trying to access a restricted page
+
+    // redirect to register page if not logged in or trying to access a restricted page
+    // redirect to admin page if the user is an admin
     const publicPages = ['/register'];
+    const adminPage = ['/admin-page', '/student-management', '/schedule-management', '/log-management', '/subject-management', '/upload'];
+    const studentPage = ['/student-page'];
     const authRequired = !publicPages.includes(to.path);
     const loggedIn = getToken(localStorage.getItem('user'));
+
+    // When logging in
     if (loggedIn) {
       if (loggedIn.type === 'Admin') {
-        if (!authRequired) { // When there is register page
+        if (!authRequired) { // When location is register page
           return next('/admin-page');
-        } else { //Move to a new hook
+        }
+        else if (studentPage.includes(to.path)) { // When location is student-page
+          return next('/admin-page');
+        }
+        else { // Move to a new hook
           return next();
         }
       }
-      if (loggedIn.type === 'Student') {
-        if (!authRequired) { // When there is register page
+      else if (loggedIn.type === 'Student') {
+        if (!authRequired) { // When location is register page
           return next('/student-page');
-        } else { // Move to a new hook
+        }
+        else if (adminPage.includes(to.path)) { // When location is student-page
+          return next('/student-page');
+        }
+        else { // Move to a new hook
           return next();
         }
       }
     }
+    // When not logging in
     else if (!loggedIn) {
       if (authRequired) { // When there is no register page
         return next('/register');
