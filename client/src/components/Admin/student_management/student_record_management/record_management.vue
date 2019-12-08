@@ -470,7 +470,7 @@
                         }
                     });
                     if (response.status === 200) {
-                        console.log(response);
+                        // console.log(response);
                         this.student_status.student_subject_record = [];
                         this.student_status.total = response.data.total_results;
                         response.data.records.forEach((item) => {

@@ -146,9 +146,7 @@ class User(Base):
             sess.query(User).filter_by(ID=currentStudentID).update(
                 {User.ID: newStudentID, User.Username: newUsername, User.Fullname: newFullname,
                  User.CourseID: newCourseID, User.Dob: newDob, User.Gender: newGender})
-            print('OK3', flush=True)
             sess.commit()
-            print('OK4', flush=True)
         except:
             sess.rollback()
             raise
@@ -443,7 +441,7 @@ class Log(Base):
                 print(item, flush=True)
             # user_query is the user object and get_record_pagination is the index data
             log_query, get_record_pagination = apply_pagination(log_query, page_number=int(page_index),
-                                                         page_size=int(per_page))
+                                                                page_size=int(per_page))
             print('OK3', flush=True)
             # many=True if user_query is a collection of many results, so that record will be serialized to a list.
             return log_schema.dump(log_query, many=True), get_record_pagination

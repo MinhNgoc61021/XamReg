@@ -22,6 +22,7 @@
               type="email"
               v-model="newUsername"
               :value="newUsername"
+              maxlength="19"
               patterns="^\d{8}@vnu.edu.vn$"
               validation-message="Nhập đúng tài khoản"
               placeholder="Sửa tài khoản"
@@ -54,7 +55,8 @@
             <b-datepicker
               placeholder="Chọn ngày sinh"
               v-model="newDob"
-              :value="newDob" required>
+              :value="newDob"
+              required>
             </b-datepicker>
           </b-field>
           <b-field label="Giới tính">

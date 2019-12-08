@@ -68,15 +68,18 @@ def create_new_studnet(current_user):
                 checkGender is not None) and (checkCourseID is not None):
             print('OK1', flush=True)
 
-
-            newStudent = User.create(newStudentID, newStudentID + '@vnu.edu.vn', newStudentID, newFullname, newDob, newGender, newCourseID, 'Student')
+            newStudent = User.create(newStudentID, newStudentID + '@vnu.edu.vn', newStudentID, newFullname, newDob,
+                                     newGender, newCourseID, 'Student')
             print('OK2', flush=True)
             if newStudent is False:
-                return jsonify({'status': 'bad-request'}), 400
+                return jsonify({'status': 'already-exist'}), 200
             else:
                 return jsonify({'status': 'success'}), 200
+        else:
+            return jsonify({'status': 'bad-request'}), 400
     except:
         return jsonify({'status': 'bad-request'}), 400
+
 
 @student_record_management.route('/search-student-record', methods=['GET'])
 @token_required

@@ -25,7 +25,8 @@
             <b-input v-model="newStudent.CourseID" placeholder="Hãy nhập mã khóa học"
                      validation-message="Nhập đúng khóa học"
                      patterns="(^[K|k][1-9][0-9][A-Za-z]+[1-9]*)"
-                     required></b-input>
+                     required>
+            </b-input>
         </b-field>
 
         <b-field label="Giới tính">
@@ -79,12 +80,22 @@
                      }
                   });
                   if (response.status === 200) {
-                      this.$buefy.notification.open({
-                          duration: 2500,
-                          message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã được tạo thành công!`,
-                          position: 'is-bottom-right',
-                          type: 'is-success',
-                      });
+                      if (response.data.status === 'success') {
+                          this.$buefy.notification.open({
+                              duration: 2500,
+                              message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã được tạo thành công!`,
+                              position: 'is-bottom-right',
+                              type: 'is-success',
+                          });
+                      }
+                      else {
+                          this.$buefy.notification.open({
+                              duration: 2500,
+                              message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã tồn tại trước đó!`,
+                              position: 'is-bottom-right',
+                              type: 'is-warning',
+                          });
+                      }
                   }
               } catch (e) {
                   if (e['message'].includes('400')) {
