@@ -54,7 +54,9 @@ def create_new_studnet(current_user):
         print(newGender, flush=True)
         # check validation
         checkStudentID = re.search('^\d{8}$', str(newStudentID).replace(' ', ''))
-        checkFullname = re.search('^[a-zA-Z]+', str(newFullname))
+        checkFullname = re.search("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
+                                  "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+                                  "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s]+$", str(newFullname))
         checkDob = re.search('([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))',
                              str(newDob))
         checkGender = re.search('(Nam|Nữ)', str(newGender))
@@ -192,7 +194,9 @@ def update_student_info_record(current_user):
         # check validation
         checkID = re.search('^\d{8}$', str(newStudentID).replace(' ', ''))
         checkUsername = re.search('^\d{8}@vnu.edu.vn$', str(newUsername))
-        checkFullname = re.search('^[a-zA-Z]+', str(newFullname))
+        checkFullname = re.search("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
+                                  "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+                                  "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s]+$", str(newFullname))
         checkDob = re.search('([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))',
                              str(newDob))
         checkGender = re.search('(Nam|Nữ)', str(newGender))

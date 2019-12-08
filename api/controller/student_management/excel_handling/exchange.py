@@ -55,7 +55,9 @@ def upload(current_user):
                 # add students to database
                 # check validation
                 ID = re.search('^\d{8}$', str(excel_data['ID']).replace(' ', ''))
-                fullname = re.search('[a-zA-Z]+', str(excel_data['fullname']))
+                fullname = re.search("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
+                                     "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+                                     "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s]+$", str(excel_data['fullname']))
                 dob = re.search('^(((0)[1-9])|((1)[0-2]))(\/)([0-2][0-9]|(3)[0-1])(\/)\d{4}',
                                 str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')))
                 gender = re.search('(Nam|Nữ)', str(excel_data['gender']))
@@ -111,7 +113,9 @@ def upload(current_user):
                 # add students to database
                 # check validation
                 ID = re.search('^\d{8}$', str(excel_data['ID']).replace(' ', ''))
-                fullname = re.search('[a-zA-Z]+', str(excel_data['fullname']))
+                fullname = re.search("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
+                                     "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+                                     "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s]+$", str(excel_data['fullname']))
                 print(str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')), flush=True)
                 dob = re.search('(((0)[1-9])|((1)[0-2]))(\/)([0-2][0-9]|(3)[0-1])(\/)\d{4}',
                                 str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')))
@@ -169,8 +173,8 @@ def upload(current_user):
                                            excel_data['subjectTitle'])
                             # add qualified and unqualified students to database
                             Student_Status.create(str(excel_data['ID']).replace(' ', ''),
-                                                                           excel_data['subjectID'],
-                                                                           excel_data['status'])
+                                                  excel_data['subjectID'],
+                                                  excel_data['status'])
                         else:
                             return jsonify({'status': 'bad-request'}), 400
                     else:

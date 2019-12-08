@@ -8,6 +8,7 @@ import upload from "../components/Admin/student_management/import/upload/upload"
 import student_management from "../components/Admin/student_management/student_management";
 import schedule_management from "../components/Admin/schedule_management/schedule_management";
 import log_management from "../components/Admin/log_management/log_management";
+import subject_management from "../components/Admin/subject_management/subject_management";
 import { getToken } from "../components/api/jwt_handling";
 Vue.use(VeeValidate);
 Vue.use(Router);
@@ -19,7 +20,8 @@ export const router = new Router({
     { path: '/admin-page', name: 'admin', component: Admin_Page, redirect: '/student-management',
       children: [ { path: '/student-management', component: student_management },
                   { path: '/schedule-management', component: schedule_management },
-                  { path: '/log-management', component: log_management } ]
+                  { path: '/log-management', component: log_management },
+                  { path: '/subject-management', component: subject_management }, ]
     },
     { path: '/student-page', name: 'student', component: Student_Page },
     { path: '/upload', name: 'upload', component: upload },

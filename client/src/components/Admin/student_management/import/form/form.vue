@@ -101,7 +101,7 @@
                   if (e['message'].includes('400')) {
                       this.$buefy.notification.open({
                           duration: 2500,
-                          message: `HTTP Status 400: Kiểm tra lại, dữ liệu bạn nhập đang có vấn đề!`,
+                          message: `Kiểm tra lại, dữ liệu bạn nhập đang có vấn đề!`,
                           position: 'is-bottom-right',
                           type: 'is-danger',
                       })

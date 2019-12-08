@@ -111,7 +111,7 @@
                   if (response.status === 200) {
                       this.log_data = [];
                       this.total = response.data.total_results;
-                      console.log(response.data.log_records);
+                      // console.log(response.data.log_records);
                       response.data.log_records.forEach((item) => {
                           this.log_data.push(item);
                       });

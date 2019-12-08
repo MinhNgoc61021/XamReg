@@ -1,11 +1,13 @@
 <template>
-
+  
 </template>
+
 <script>
     export default {
-        name: "schedule_management"
+        name: "subject_management"
     }
 </script>
 
 <style scoped>
+
 </style>

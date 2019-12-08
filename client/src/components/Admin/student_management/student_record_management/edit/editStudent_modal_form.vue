@@ -132,7 +132,7 @@
                   if (e['message'].includes('400')) {
                       this.$buefy.notification.open({
                           duration: 2000,
-                          message: 'HTTP Status 400: Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                          message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
                           position: 'is-bottom-right',
                           type: 'is-danger',
                       });
@@ -140,7 +140,7 @@
                   else if (e['message'].includes('401')) {
                       this.$buefy.notification.open({
                           duration: 2000,
-                          message: 'HTTP Status 401: Không được quyền sử dụng!',
+                          message: 'Không được quyền sử dụng!',
                           position: 'is-bottom-right',
                           type: 'is-danger',
                       });

@@ -16,7 +16,7 @@
               <b-navbar-item tag="router-link" :to="{ path: '/schedule-management' }" class="routing-link">
                   Quản lý lịch thi
               </b-navbar-item>
-              <b-navbar-item tag="router-link" :to="{ path: '/student-management' }" class="routing-link">
+              <b-navbar-item tag="router-link" :to="{ path: '/subject-management' }" class="routing-link">
                   Quản lý môn thi
               </b-navbar-item>
               <b-navbar-item tag="router-link" :to="{ path: '/log-management' }" class="routing-link">
@@ -33,7 +33,7 @@
                   <hr class="dropdown-divider" aria-role="menuitem">
                   <b-navbar-item>
                     <b-icon icon-pack="fas" icon="user"></b-icon>
-                    <span>Cập nhật thông tin người dùng</span>
+                    <span>Cập nhật mật khẩu</span>
                   </b-navbar-item>
                   <b-navbar-item v-on:click="admin_signOut()" >
                     <b-icon icon-pack="fas" icon="sign-out-alt"></b-icon>
@@ -63,20 +63,13 @@
 </template>
 
 <script>
-  import student_management from './student_management/student_management.vue';
-  import schedule_management from './schedule_management/schedule_management.vue';
   import Register_form from '../Register/register.vue';
   import  { mapState, mapActions, mapMutations } from 'vuex';
+
   export default {
       name: 'Admin_Page',
       components: {
           Register_form,
-          student_management, schedule_management,
-      },
-      data() {
-          return {
-              component: student_management,
-          }
       },
       computed: {
           ...mapState([
