@@ -113,6 +113,7 @@
                 </b-table-column>
             </template>
             <template slot="detail" slot-scope="props">
+                <h4 class="title is-4">Danh sách môn học</h4>
                 <b-field grouped group-multiline>
                   <b-button
                     :class="{'is-loading': student_status.loading}"

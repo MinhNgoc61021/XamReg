@@ -69,7 +69,7 @@
       name: 'Admin_Page',
       computed: {
           ...mapState([
-              'user', 'ID', 'fullname', 'userStatus', 'current_location',
+              'user', 'ID', 'fullname', 'userStatus'
           ]),
       },
       methods: {

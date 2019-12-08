@@ -439,9 +439,7 @@ class Log(Base):
         try:
             log_query = sess.query(Log).order_by(getattr(
                 getattr(Log, sort_field), sort_order)())
-            print('OK2', flush=True)
-            for item in log_query:
-                print(item, flush=True)
+
             # user_query is the user object and get_record_pagination is the index data
             log_query, get_record_pagination = apply_pagination(log_query, page_number=int(page_index),
                                                                 page_size=int(per_page))

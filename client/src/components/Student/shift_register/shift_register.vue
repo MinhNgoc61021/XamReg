@@ -1,7 +1,5 @@
 <template>
       <div>
-          <h1 class="title is-3">Quản lý nhật ký</h1>
-          <h2 class="subtitle is-6">Xem, quản lý hành vi, hoạt động của từng người dùng</h2>
           <b-field grouped group-multiline>
               <b-button
                 :class="{'is-loading': loading}"
@@ -69,7 +67,8 @@
   import { authHeader } from "../../api/jwt_handling";
 
   export default {
-      name: 'log_management',
+      name: "shift_register",
+      props: ['StudentID'],
       data() {
           return {
               log_data: [],

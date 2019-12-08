@@ -10,18 +10,6 @@
               </b-navbar-item>
           </template>
           <template slot="start">
-<!--              <b-navbar-item tag="router-link" :to="{ path: '/student-management' }" class="routing-link">-->
-<!--                  Quản lý sinh viên-->
-<!--              </b-navbar-item>-->
-<!--              <b-navbar-item tag="router-link" :to="{ path: '/schedule-management' }" class="routing-link">-->
-<!--                  Quản lý lịch thi-->
-<!--              </b-navbar-item>-->
-<!--              <b-navbar-item tag="router-link" :to="{ path: '/subject-management' }" class="routing-link">-->
-<!--                  Quản lý môn thi-->
-<!--              </b-navbar-item>-->
-<!--              <b-navbar-item tag="router-link" :to="{ path: '/log-management' }" class="routing-link">-->
-<!--                  Quản lý nhật ký-->
-<!--              </b-navbar-item>-->
           </template>
 
           <template slot="end">
@@ -47,7 +35,18 @@
 
     <!--content-->
     <div class="hero-body">
-          <router-view></router-view>
+        <h1 class="title is-3">Đăng ký thi</h1>
+        <h2 class="subtitle is-6">Đăng ký dự thi ca thi theo học phần của sinh viên</h2>
+        <b-tabs type="is-toggle" expanded>
+          <b-tab-item label="Đăng ký dự thi" icon-pack="fas" icon="calendar-check">
+            <shift_register :student-i-d="ID">
+
+            </shift_register>
+          </b-tab-item>
+          <b-tab-item label="Kiểm tra & xuất (Export) phiếu dự thi" icon-pack="fas" icon="file-export">
+
+          </b-tab-item>
+        </b-tabs>
     </div>
     <!--content-->
 
@@ -63,10 +62,13 @@
 </template>
 
 <script>
-  import  { mapState, mapActions, mapMutations } from 'vuex';
-
+  import { mapState, mapActions, mapMutations } from 'vuex';
+  import shift_register from "./shift_register/shift_register";
   export default {
       name: 'Student_Page',
+      components: {
+          shift_register,
+      },
       computed: {
           ...mapState([
               'user', 'ID', 'fullname', 'userStatus', 'current_location',

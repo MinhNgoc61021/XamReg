@@ -20,10 +20,8 @@ def get_log_records(current_user):
         per_page = request.args.get('per_page')
         sort_order = request.args.get('sort_order')
         sort_field = request.args.get('sort_field')
-        # print(sort_order, flush=True)
-        # print(sort_field, flush=True)
+
         # FYI: User.getRecord function return a tuple, [0] is the records data, and [1] is the pagination data
-        print('OK1', flush=True)
         log_record = Log.getLog(page_index, per_page, sort_field, sort_order)
 
         return jsonify({'status': 'success',
