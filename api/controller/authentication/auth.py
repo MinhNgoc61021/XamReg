@@ -7,7 +7,7 @@ from flask import (
     jsonify
 )
 from flask_cors import CORS
-from db.entity_db import User
+from db.entity_db import User, Log
 import jwt
 from datetime import datetime, timedelta
 from functools import wraps
@@ -23,7 +23,6 @@ CORS(authentication)
 # Validate that the JWT is not expired, which PyJWT takes care of by throwing a ExpiredSignatureError if it is no longer valid
 # Validate that the JWT is a valid token, which PyJWT also takes care of by throwing a InvalidTokenError if it is not valid
 # If all is valid then the associated user is queried from the database and returned to the function the decorator is wrapping
-
 def token_required(f):
     @wraps(f)
     def _verify(*args, **kwargs):
@@ -71,13 +70,16 @@ def register():
             if check_user == 'Not found':
                 return jsonify({'status': 'fail'})
             else:
+                print(check_user[0], flush=True)
+                Log.create(check_user[0]['ID'], 'Đăng nhập vào hệ thống.', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
                 token = jwt.encode({
                     'sub': username,  # representing username
                     'iat': datetime.utcnow(),  # issued at timestamp in seconds
                     'exp': datetime.utcnow() + timedelta(minutes=90)},  # the time in which the token will expire as seconds
                     current_app.config['SECRET_KEY'])
                 return jsonify({'status': 'success',
-                                'type': check_user,
+                                'type': check_user[1],
                                 'message': 'login successful',
                                 'token': token.decode('UTF-8')})
         else:

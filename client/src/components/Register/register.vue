@@ -5,17 +5,17 @@
 <!--        <h3 id="title">Đăng Nhập</h3>-->
 <!--        <strong>Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</strong>-->
 <!--        <a-form-item :validate-status="userNameError() ? 'error' : ''" :help="userNameError() || ''">-->
-<!--          <a-input-->
+<!--          <a-form-->
 <!--            v-decorator="[-->
 <!--              'username',-->
 <!--              { rules: [{ required: true, message: 'Hãy nhập username của bạn!' }] },-->
 <!--            ]"-->
 <!--            placeholder="Hãy nhập username của bạn">-->
 <!--            <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />-->
-<!--          </a-input>-->
+<!--          </a-form>-->
 <!--        </a-form-item>-->
 <!--        <a-form-item :validate-status="passwordError() ? 'error' : ''" :help="passwordError() || ''">-->
-<!--          <a-input-->
+<!--          <a-form-->
 <!--            v-decorator="[-->
 <!--              'password',-->
 <!--              { rules: [{ required: true, message: 'Hãy nhập mật khẩu của bạn!' }] },-->
@@ -24,7 +24,7 @@
 <!--            placeholder="Hãy nhập mật khẩu của bạn"-->
 <!--          >-->
 <!--            <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)" />-->
-<!--          </a-input>-->
+<!--          </a-form>-->
 <!--        </a-form-item>-->
 <!--        <a-form-item>-->
 <!--          <a-button type="primary" html-type="submit" :disabled="hasErrors(form.getFieldsError())">-->

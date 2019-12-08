@@ -31,6 +31,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/record/create-student-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/record/remove-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
@@ -50,7 +54,11 @@ module.exports = {
       '/record/search-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
-      }
+      },
+      '/log/log-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
     },
 
     // Various Dev Server settings

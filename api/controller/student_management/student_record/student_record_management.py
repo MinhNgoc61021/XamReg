@@ -6,7 +6,8 @@ from flask import (
     jsonify
 )
 from controller.authentication.auth import token_required
-from db.entity_db import User, Subject, Student_Status
+from db.entity_db import User, Subject, Student_Status, Log
+import datetime
 import re
 
 student_record_management = Blueprint('student_record_management', __name__, url_prefix='/record')
@@ -36,6 +37,46 @@ def get_student_info_record(current_user):
     except:
         return jsonify({'status': 'bad-request'}), 400
 
+
+@student_record_management.route('/create-student-record', methods=['POST'])
+@token_required
+def create_new_studnet(current_user):
+    try:
+        newStudentID = request.get_json().get('newStudentID')
+        newFullname = request.get_json().get('newFullname')
+        newCourseID = request.get_json().get('newCourseID')
+        newDob = request.get_json().get('newDob')
+        newGender = request.get_json().get('newGender')
+        print(newStudentID, flush=True)
+        print(newFullname, flush=True)
+        print(newCourseID, flush=True)
+        print(newDob, flush=True)
+        print(newGender, flush=True)
+        # check validation
+        checkStudentID = re.search('^\d{8}$', str(newStudentID).replace(' ', ''))
+        checkFullname = re.search('^[a-zA-Z]+', str(newFullname))
+        checkDob = re.search('([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))',
+                             str(newDob))
+        checkGender = re.search('(Nam|Nữ)', str(newGender))
+        checkCourseID = re.search('^[K|k][1-9][0-9][A-Za-z]+[1-9]*', str(newCourseID))
+        Log.create(current_user['ID'],
+                   'Tạo thêm sinh viên có MSSV: ' + newStudentID + ' vào hệ thống.',
+                   datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+        if (checkStudentID is not None) and (checkFullname is not None) and (
+                checkDob is not None) and (
+                checkGender is not None) and (checkCourseID is not None):
+            print('OK1', flush=True)
+
+
+            newStudent = User.create(newStudentID, newStudentID + '@vnu.edu.vn', newStudentID, newFullname, newDob, newGender, newCourseID, 'Student')
+            print('OK2', flush=True)
+            if newStudent is False:
+                return jsonify({'status': 'bad-request'}), 400
+            else:
+                return jsonify({'status': 'success'}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
 
 @student_record_management.route('/search-student-record', methods=['GET'])
 @token_required
@@ -96,6 +137,10 @@ def remove_student_info_record(current_user):
         record = request.get_json()
         studentID = record.get('delStudentID')
         User.delRecord(str(studentID))
+        Log.create(current_user['ID'],
+                   'Xóa thông tin của sinh viên có MSSV: ' + studentID + ' khỏi hệ thống.',
+                   datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
         return jsonify({'status': 'success'}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
@@ -110,6 +155,10 @@ def remove_subject_record(current_user):
         studentID = record.get('delStudentID')
         subjectID = record.get('delSubjectID')
         Student_Status.delRecord(str(studentID), str(subjectID))
+        Log.create(current_user['ID'],
+                   'Xóa mã môn ' + subjectID + ' của sinh viên có MSSV: ' + studentID + ' khỏi hệ thống.',
+                   datetime.datetime.now())
+
         return jsonify({'status': 'success'}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
@@ -138,9 +187,9 @@ def update_student_info_record(current_user):
         # print(newGender, flush=True)
 
         # check validation
-        checkID = re.search('\d{8}', str(newStudentID).replace(' ', ''))
-        checkUsername = re.search('^\d{8}\@vnu.edu.vn$', str(newUsername))
-        checkFullname = re.search('\s', str(newFullname))
+        checkID = re.search('^\d{8}$', str(newStudentID).replace(' ', ''))
+        checkUsername = re.search('^\d{8}@vnu.edu.vn$', str(newUsername))
+        checkFullname = re.search('^[a-zA-Z]+', str(newFullname))
         checkDob = re.search('([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))',
                              str(newDob))
         checkGender = re.search('(Nam|Nữ)', str(newGender))
@@ -157,8 +206,12 @@ def update_student_info_record(current_user):
                 checkDob is not None) and (
                 checkGender is not None) and (checkCourseID is not None) and (
                 newStudentID == newUsername.split('@')[0]):
-            print('OK1', flush=True)
+            #  print('OK1', flush=True)
             User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob, newGender)
+            Log.create(current_user['ID'],
+                       'Cập nhật thông tin của sinh viên vào hệ thống.',
+                       datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
             return jsonify({'status': 'success'}), 200
         else:
             return jsonify({'status': 'bad-request'}), 400

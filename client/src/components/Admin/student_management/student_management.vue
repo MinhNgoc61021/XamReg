@@ -15,8 +15,6 @@
             </b-tab-item>
         </b-tabs>
     </section>
-    <section>
-    </section>
   </div>
 </template>
 <script>

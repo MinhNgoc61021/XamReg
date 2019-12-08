@@ -16,6 +16,12 @@
               <b-navbar-item tag="router-link" :to="{ path: '/schedule-management' }" class="routing-link">
                   Quản lý lịch thi
               </b-navbar-item>
+              <b-navbar-item tag="router-link" :to="{ path: '/student-management' }" class="routing-link">
+                  Quản lý môn thi
+              </b-navbar-item>
+              <b-navbar-item tag="router-link" :to="{ path: '/log-management' }" class="routing-link">
+                  Quản lý nhật ký
+              </b-navbar-item>
           </template>
 
           <template slot="end">

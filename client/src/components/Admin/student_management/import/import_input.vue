@@ -8,23 +8,23 @@
         </b-tab-item>
         <b-tab-item label="Nhập bằng form" icon-pack="fas" icon="keyboard">
           <keep-alive>
-            <component v-bind:is="input"/>
+            <component v-bind:is="form"/>
           </keep-alive>
         </b-tab-item>
     </b-tabs>
 </template>
 <script>
     import upload from './upload/upload';
-    import input from './input/input';
+    import form from './form/form';
 
     export default {
         name: "import",
         components: {
-          upload, input
+          upload, form
         },
         data() {
             return {
-              upload, input
+              upload, form
             }
         }
     }

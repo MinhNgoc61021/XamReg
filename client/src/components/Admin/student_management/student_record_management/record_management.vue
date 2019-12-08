@@ -224,8 +224,7 @@
              * Change formatDate
             */
             formatDate(date) {
-
-                return moment(date).format('MM/DD/YYYY');
+                return moment(date).format('L');
             },
             /*
              * Load async student info record
@@ -258,7 +257,7 @@
                 } catch (error) {
                     this.student.student_record = [];
                     this.student.total = 0;
-                    this.loading = false;
+                    this.student.loading = false;
                     this.$buefy.notification.open({
                         duration: 2000,
                         message: 'Không thể lấy được dữ liệu bảng!',
@@ -369,7 +368,7 @@
                         },
                     }).then((response) => {
                         if (response.status === 200) {
-                            console.log(response.data.search_results);
+                            // console.log(response.data.search_results);
                             response.data.search_results.forEach((item) => {
                                 this.search.searchResults.push(item);
                             });
@@ -377,11 +376,11 @@
                         }
 
                     }).catch((error) => {
-                        this.student.searchResults = [];
-                        this.loading = false;
+                        this.search.searchResults = [];
+                        this.search.searchLoading = false;
                         this.$buefy.notification.open({
                             duration: 2000,
-                            message: 'Không thể lấy được dữ liệu!',
+                            message: 'Không thể tìm được dữ liệu!',
                             position: 'is-bottom-right',
                             type: 'is-danger',
                         });
@@ -390,19 +389,6 @@
                 }
 
             }, 500),
-            /*
-              * Type style in relation to the value
-            */
-            type(value) {
-                const number = parseFloat(value);
-                if (number < 6) {
-                    return 'is-danger'
-                } else if (number >= 6 && number < 8) {
-                    return 'is-warning'
-                } else if (number >= 8) {
-                    return 'is-success'
-                }
-            },
             /*
               * Handle student status record page-change event
             */

@@ -5,15 +5,12 @@
             <p class="modal-card-title">Form chỉnh sửa</p>
         </header>
         <section class="modal-card-body">
-          <b-field label="MSSV">
+          <b-field label="ID">
             <b-input
               type="text"
-              v-model="newStudentID"
-              :value="newStudentID"
-              maxlength="8"
-              validation-message="Nhập đúng MSSV"
-              pattern="^\d{8}$"
-              placeholder="Nhập mã số sinh viên"
+              v-model="newID"
+              :value="newID"
+              placeholder="Nhập ID"
               required>
             </b-input>
           </b-field>
@@ -22,8 +19,15 @@
               type="email"
               v-model="newUsername"
               :value="newUsername"
-              patterns="^\d{8}@vnu.edu.vn$"
-              validation-message="Nhập đúng tài khoản"
+              placeholder="Sửa tài khoản"
+              required>
+            </b-input>
+          </b-field>
+          <b-field label="Mật khẩu">
+            <b-input
+              type="email"
+              v-model="newUsername"
+              :value="newUsername"
               placeholder="Sửa tài khoản"
               required>
             </b-input>
@@ -32,8 +36,6 @@
             <b-input
               type="text"
               v-model="newFullname"
-              patterns="[a-zA-Z]+"
-              validation-message="Nhập đúng họ và tên"
               :value="newFullname"
               placeholder="Sửa họ và tên"
               required>
@@ -43,8 +45,6 @@
             <b-input
               type="text"
               v-model="newCourseID"
-              patterns="(^[K|k][1-9][0-9][A-Za-z]+[1-9]*)"
-              validation-message="Nhập đúng khóa học"
               :value="newCourseID"
               placeholder="Sửa mã khóa học"
               required>
@@ -76,8 +76,8 @@
 
 <script>
   import axios from 'axios';
-  import { authHeader } from "../../../../api/jwt_handling";
   import moment from 'moment/moment';
+  import {authHeader} from "../api/jwt_handling";
 
   export default {
       name: "edit_student_form",
@@ -93,11 +93,6 @@
           }
       },
       methods: {
-          usernameConstraint() {
-              console.log(this.newUsername);
-              this.newUsername = this.newStudentID + '@vnu.edu.vn';
-              console.log(this.newUsername);
-          },
           async updateStudentData() {
               try {
                   // console.log(moment(this.newDob).format('MM/DD/YYYY'));
