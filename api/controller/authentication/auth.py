@@ -11,7 +11,7 @@ from db.entity_db import User
 import jwt
 from datetime import datetime, timedelta
 from functools import wraps
-
+import re
 authentication = Blueprint('auth', __name__, url_prefix='/auth')
 # create a blueprint is like creating a package
 # ie: Sign In for authentication
@@ -61,21 +61,27 @@ def token_required(f):
 def register():
     if request.method == 'POST':
         user_form = request.get_json()
+
         username = user_form.get('username')
+        check_username = re.search('[!#$%^&*()='',.?":{}|<>]', str(username))
         password = user_form.get('password')
-        check_user = User.check_register(username, password)
-        if check_user == 'Not found':
-            return jsonify({'status': 'fail'})
+        check_password = re.search('[!#$%^&*()='',.?":{}|<>]', str(password))
+        if (check_username is None) and (check_password is None):
+            check_user = User.check_register(username, password)
+            if check_user == 'Not found':
+                return jsonify({'status': 'fail'})
+            else:
+                token = jwt.encode({
+                    'sub': username,  # representing username
+                    'iat': datetime.utcnow(),  # issued at timestamp in seconds
+                    'exp': datetime.utcnow() + timedelta(minutes=90)},  # the time in which the token will expire as seconds
+                    current_app.config['SECRET_KEY'])
+                return jsonify({'status': 'success',
+                                'type': check_user,
+                                'message': 'login successful',
+                                'token': token.decode('UTF-8')})
         else:
-            token = jwt.encode({
-                'sub': username,  # representing username
-                'iat': datetime.utcnow(),  # issued at timestamp in seconds
-                'exp': datetime.utcnow() + timedelta(minutes=90)},  # the time in which the token will expire as seconds
-                current_app.config['SECRET_KEY'])
-            return jsonify({'status': 'success',
-                            'type': check_user,
-                            'message': 'login successful',
-                            'token': token.decode('UTF-8')})
+            return jsonify({'status': 'Unauthorized'}), 401
 
 
 @authentication.route('/get-user', methods=['GET'])

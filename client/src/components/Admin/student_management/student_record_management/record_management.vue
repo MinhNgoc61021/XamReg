@@ -20,10 +20,31 @@
             </b-select>
 
             <b-autocomplete
-                v-model="student.ID_Search"
-                placeholder="Tìm kiếm theo MSSV"
+                :data="search.searchResults"
+                placeholder="Tìm kiếm bằng MSSV"
                 icon="search"
+                field="ID"
+                :loading="search.searchLoading"
+                @typing="onStudentSearch"
+                @select="option => student.student_record = [option]"
                 expanded>
+              <template slot-scope="props">
+                    <div class="media">
+                        <div class="media-left">
+                          <b-icon icon-pack="fas" icon="user-circle"></b-icon>
+                        </div>
+                        <div class="media-content">
+                            <b>MSSV: </b>{{ props.option.ID }}
+                            <br>
+                            <b>Họ và tên: </b>{{ props.option.Fullname }}
+                            <br>
+                            <small>
+                                Ngày sinh: {{ formatDate(props.option.Dob) }},
+                                Khóa: <b>{{ props.option.CourseID }}</b>
+                            </small>
+                        </div>
+                    </div>
+                </template>
             </b-autocomplete>
         </b-field>
         <b-table
@@ -73,7 +94,7 @@
                      {{ props.row.CourseID }}
                 </b-table-column>
 
-                <b-table-column field="Role_Type" label="Quyền" sortable>
+                <b-table-column field="Role_Type" label="Chức vụ" sortable>
                      {{ props.row.Role_Type }}
                 </b-table-column>
 
@@ -157,6 +178,8 @@
     import { authHeader } from "../../../api/jwt_handling";
     import moment from 'moment/moment';
     import edit_student_form from "./edit/editStudent_modal_form";
+    import debounce from 'lodash/debounce';
+
     /*
      student edit data form
     */
@@ -175,7 +198,7 @@
                     defaultSortOrder: 'desc',
                     page: 1,
                     per_page: 5,
-                    ID_Search: '',
+
                 },
                 student_status: { // This is used to for student subject status
                     student_subject_record: [],
@@ -187,10 +210,13 @@
                     defaultSortOrder: 'desc',
                     page: 1,
                     per_page: 5,
-                    ID_Search: '',
                     status_type: 'Qualified',
                     ID_Index: [], // ID_Index is used for expand event
-                }
+                },
+                search: {
+                    searchResults: [],
+                    searchLoading: false,
+                },
             }
         },
         methods: {
@@ -209,6 +235,7 @@
                 try {
                     const response = await axios({
                         url: '/record/student-records',
+                        method: 'get',
                         params: {
                             page_index: this.student.page,
                             per_page: this.student.per_page,
@@ -323,6 +350,46 @@
                     customClass: 'custom-class custom-class-2',
                 });
             },
+            onStudentSearch: debounce(function (ID) {
+                this.search.searchLoading = true;
+                if (ID.length > 8  || ID.length === 0) {
+                    this.search.searchResults = [];
+                    this.search.searchLoading = false;
+                }
+                else {
+                    this.search.searchResults = [];
+                    axios({
+                        url: '/record/search-student-record',
+                        method: 'get',
+                        headers: {
+                            'Authorization': authHeader(),
+                        },
+                        params: {
+                            searchID: ID,
+                        },
+                    }).then((response) => {
+                        if (response.status === 200) {
+                            console.log(response.data.search_results);
+                            response.data.search_results.forEach((item) => {
+                                this.search.searchResults.push(item);
+                            });
+                            this.search.searchLoading = false;
+                        }
+
+                    }).catch((error) => {
+                        this.student.searchResults = [];
+                        this.loading = false;
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Không thể lấy được dữ liệu!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                        });
+                        throw error;
+                    });
+                }
+
+            }, 500),
             /*
               * Type style in relation to the value
             */
@@ -383,7 +450,6 @@
                                   type: 'is-success',
                                 });
                             }
-                            this.getStudent_Subject();
                         } catch (e) {
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
@@ -393,6 +459,8 @@
                                   type: 'is-danger',
                                 })
                             }
+                        } finally {
+                            this.getStudent_Subject();
                         }
                     },
                 });
@@ -402,6 +470,7 @@
                 try {
                     const response = await axios({
                         url: '/record/student-status-records',
+                        method: 'get',
                         params: {
                             StudentID: this.student_status.currentStudentID,
                             type: this.student_status.status_type,

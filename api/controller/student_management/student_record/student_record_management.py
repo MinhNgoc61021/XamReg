@@ -37,6 +37,23 @@ def get_student_info_record(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
+@student_record_management.route('/search-student-record', methods=['GET'])
+@token_required
+def get_student_info_search(current_user):
+    try:
+        searchID = request.args.get('searchID')
+        check = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchID))
+        if check is None:
+            searchResults = User.searchStudentRecord(searchID)
+            return jsonify({'status': 'success',
+                            'search_results': searchResults,
+                            }), 200
+        else:
+            return jsonify({'status': 'bad-request'}), 400
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
 @student_record_management.route('/student-status-records', methods=['GET'])
 @token_required
 def get_subject_status_record(current_user):

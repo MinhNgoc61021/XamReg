@@ -54,6 +54,18 @@ class User(Base):
             sess.close()
 
     @classmethod
+    def searchStudentRecord(cls, studentID):
+        sess = Session()
+        try:
+            user = sess.query(User).filter(User.ID.like(studentID+'%'))
+            return user_schema.dump(user, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
     def getRecord(cls, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
