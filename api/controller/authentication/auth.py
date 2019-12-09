@@ -65,7 +65,6 @@ def register():
     if request.method == 'POST':
         user_form = request.get_json()
         username = user_form.get('username')
-        print()
         check_username = re.search('[!#$%^&*()='',?";:{}|<>]', str(username))
         password = user_form.get('password')
         check_password = re.search('[!#$%^&*()='',?";:{}|<>]', str(password))

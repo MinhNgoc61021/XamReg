@@ -60,11 +60,10 @@
         </section>
       </b-tab-item>
       <b-tab-item label="Kiểm tra & xuất (Export) phiếu dự thi" icon-pack="fas" icon="file-export">
-        
+        <div>{{ studentid }}</div>
       </b-tab-item>
     </b-tabs>
   </div>
-
 </template>
 
 <script>
@@ -74,7 +73,7 @@
 
   export default {
       name: "shift_register",
-      props: ['StudentID'],
+      props: ['studentid'],
       data() {
           return {
               log_data: [],
@@ -136,22 +135,24 @@
             /*
             * Handle page-change event
             */
-            onPageChange(page) {
-                this.page = page;
-                this.getLogRecordData()
-            },
-            /*
-            * Handle sort event
-            */
-            onSort(field, order) {
-                this.sortField = field;
-                this.sortOrder = order;
-                this.getLogRecordData()
-            },
-        },
-
-        mounted() {
-            this.getLogRecordData()
-        }
-    }
+          onPageChange(page) {
+              this.page = page;
+              this.getLogRecordData()
+          },
+          /*
+          * Handle sort event
+          */
+          onSort(field, order) {
+              this.sortField = field;
+              this.sortOrder = order;
+              this.getLogRecordData()
+          },
+      },
+      mounted() {
+          this.getLogRecordData()
+      },
+      created() {
+          console.log(Number(this.studentid));
+      }
+  }
 </script>

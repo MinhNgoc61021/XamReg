@@ -5,23 +5,17 @@
       <b-navbar mobile-burger fixed-top style="max-width: 1200px; margin: auto" shadow>
           <template slot="brand">
               <b-navbar-item title="ExamReg">
-                  <img src="static/img/favicon-32x32.png"
+                  <img :src="'/static/img/favicon-32x32.png'"
                    alt="ExamReg">
               </b-navbar-item>
           </template>
 
           <template slot="start">
-              <b-navbar-item tag="router-link" :to="{ path: '/student-management' }" class="routing-link">
-                  Quản lý sinh viên
+              <b-navbar-item tag="router-link" :to="{ path: '/student-home' }" class="routing-link">
+                  Trang chủ
               </b-navbar-item>
-              <b-navbar-item tag="router-link" :to="{ path: '/schedule-management' }" class="routing-link">
-                  Quản lý lịch thi
-              </b-navbar-item>
-              <b-navbar-item tag="router-link" :to="{ path: '/subject-management' }" class="routing-link">
-                  Quản lý môn thi
-              </b-navbar-item>
-              <b-navbar-item tag="router-link" :to="{ path: '/log-management' }" class="routing-link">
-                  Quản lý nhật ký
+              <b-navbar-item tag="router-link" :to="{ name: 'shift_register', params: { studentid: ID } }" class="routing-link">
+                  Đăng ký ca thi
               </b-navbar-item>
           </template>
 
@@ -48,7 +42,7 @@
 
     <!--content-->
     <div class="hero-body">
-
+      <router-view></router-view>
     </div>
     <!--content-->
 
@@ -73,13 +67,10 @@
       },
       computed: {
           ...mapState([
-              'user', 'ID', 'fullname', 'userStatus', 'current_location',
+              'ID', 'fullname', 'userStatus'
           ]),
       },
       methods: {
-          ...mapMutations([
-              'setCurrentLocation',
-          ]),
           ...mapActions([
               'SignOut', 'GetUserData'
           ]),

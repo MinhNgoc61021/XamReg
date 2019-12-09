@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { apiService } from '../components/api/api_service.js';
 import { router } from '../router/index.js';
+import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex);
 
 const userData = localStorage.getItem('user');
@@ -14,6 +15,7 @@ export const store = new Vuex.Store ({
     fullname: '',
     isNotExist: false,
   },
+  plugins: [createPersistedState()],
   mutations: {
         signInSuccess(state, user) {
             state.userStatus = { signedIn: true };
@@ -65,5 +67,5 @@ export const store = new Vuex.Store ({
   },
   getters: {
 
-  }
+  },
 });

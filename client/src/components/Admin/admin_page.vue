@@ -5,7 +5,7 @@
       <b-navbar mobile-burger fixed-top style="max-width: 1200px; margin: auto" shadow>
           <template slot="brand">
               <b-navbar-item title="ExamReg">
-                  <img src="static/img/favicon-32x32.png"
+                  <img :src="'/static/img/favicon-32x32.png'"
                    alt="ExamReg">
               </b-navbar-item>
           </template>
