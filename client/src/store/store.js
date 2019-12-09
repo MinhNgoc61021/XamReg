@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { apiService } from '../components/api/api_service.js';
 import { router } from '../router/index.js';
+import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex);
 
 const userData = localStorage.getItem('user');
@@ -12,18 +13,20 @@ export const store = new Vuex.Store ({
     userStatus: userState,
     ID: '',
     fullname: '',
-    userExistence: false,
+    isNotExist: false,
   },
+  plugins: [createPersistedState()],
   mutations: {
         signInSuccess(state, user) {
             state.userStatus = { signedIn: true };
+            state.isNotExist = false;
         },
         getUserData(state, data) {
             state.ID = data.ID;
             state.fullname = data.Fullname;
         },
         signInFailure(state) {
-            state.userExistence = true;
+            state.isNotExist = true;
         },
         signOut(state) {
           state.userStatus = {};
@@ -34,15 +37,14 @@ export const store = new Vuex.Store ({
         apiService.signIn(username, password)
           .then(
             (response) => {
-              console.log(response);
               if (response.type === 'Admin') {
                 context.commit('signInSuccess', response.token);
                 //console.log(user.token);
-                router.push('/admin-page');
+                router.push('/admin');
               }
               else if (response.type === 'Student'){
                 context.commit('signInSuccess', response.token);
-                router.push('/student-page');
+                router.push('/student');
               }
               else if (response.status === 'fail') {
                 context.commit('signInFailure');
@@ -65,5 +67,5 @@ export const store = new Vuex.Store ({
   },
   getters: {
 
-  }
+  },
 });

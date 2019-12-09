@@ -1,10 +1,10 @@
 <template>
-    <div>DIP FAKE</div>
+  
 </template>
 
 <script>
     export default {
-        name: 'student-page'
+        name: "subject_management"
     }
 </script>
 

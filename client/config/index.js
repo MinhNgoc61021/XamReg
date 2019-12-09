@@ -6,20 +6,15 @@ const path = require('path');
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/auth/': {
-          target: 'http://api:5000',
-          changeOrigin: true,
-      },
-      '/auth/register': {
           target: 'http://api:5000', // if it is localhost:5000, which means the client(front-end side) will roast itself inside its own container. Because there is nothing here.
           changeOrigin: true,
       },
-      '/handling/upload': {
+      '/auth/register': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
@@ -27,15 +22,39 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/handling/upload': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/record/student-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/remove-record': {
+      '/record/create-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/update-record': {
+      '/record/remove-student-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/update-student-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/student-status-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/remove-student-status-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/search-student-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/log/log-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },

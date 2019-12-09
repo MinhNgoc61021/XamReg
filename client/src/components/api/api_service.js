@@ -25,25 +25,18 @@ function signIn(username, password) {
 }
 
 async function getUserData() {
-    if (isValidJwt()) {
-      try {
-        const response = await axios({
-          method: 'get',
-          url: '/auth/get-user',
-          headers: { 'Authorization': authHeader() },
-        });
-        if (response.status === 200) {
-          return response;
-        }
-      } catch (err) {
-        return err;
-      }
+  try {
+    const response = await axios({
+      method: 'get',
+      url: '/auth/get-user',
+      headers: { 'Authorization': authHeader() },
+    });
+    if (response.status === 200) {
+      return response;
     }
-    else {
-      alert('User is expired');
-      localStorage.removeItem('user');
-      await router.push('/register');
-    }
+  } catch (err) {
+    return err;
+  }
 }
 
 
