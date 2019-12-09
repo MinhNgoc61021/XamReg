@@ -38,11 +38,11 @@ export const store = new Vuex.Store ({
               if (response.type === 'Admin') {
                 context.commit('signInSuccess', response.token);
                 //console.log(user.token);
-                router.push('/admin-page');
+                router.push('/admin');
               }
               else if (response.type === 'Student'){
                 context.commit('signInSuccess', response.token);
-                router.push('/student-page');
+                router.push('/student');
               }
               else if (response.status === 'fail') {
                 context.commit('signInFailure');

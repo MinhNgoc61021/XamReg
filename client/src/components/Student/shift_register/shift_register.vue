@@ -1,64 +1,70 @@
 <template>
-      <div>
-          <b-field grouped group-multiline>
-              <b-button
-                :class="{'is-loading': loading}"
-                class="button"
-                @click="getLogRecordData"
-              >
-                <b-icon
-                  size="is-small"
-                  icon="sync"/>
-                <span>Làm mới</span>
-              </b-button>
-            <b-select v-model="perPage">
-              <option value="5">5 dòng/trang</option>
-              <option value="10">10 dòng/trang</option>
-              <option value="15">15 dòng/trang</option>
-              <option value="20">20 dòng/trang</option>
-            </b-select>
-          </b-field>
-          <section id="tab-action">
-              <b-table
-                  :data="log_data"
-                  :loading="loading"
-                  paginated
-                  backend-pagination
-                  :total="total"
-                  :per-page="perPage"
-                  @page-change="onPageChange"
-                  aria-next-label="Next page"
-                  aria-previous-label="Previous page"
-                  aria-page-label="Page"
-                  aria-current-label="Current page"
-                  hoverable
-                  backend-sorting
-                  :default-sort-direction="defaultSortOrder"
-                  :default-sort="[sortField, sortOrder]"
-                  @sort="onSort">
-                  <template slot-scope="props">
-                    <b-table-column field="LogID" label="ID" sortable>
-                        {{ props.row.LogID }}
-                    </b-table-column>
+  <div class="container">
+    <h1 class="title is-3">Đăng ký thi</h1>
+    <h2 class="subtitle is-6">Đăng ký dự thi ca thi theo học phần của sinh viên</h2>
+    <b-tabs type="is-toggle" expanded>
+      <b-tab-item label="Đăng ký dự thi" icon-pack="fas" icon="calendar-check">
+        <b-field grouped group-multiline>
+    <b-button
+      :class="{'is-loading': loading}"
+      class="button"
+      @click="getLogRecordData"
+    >
+      <b-icon
+        size="is-small"
+        icon="sync"/>
+      <span>Làm mới</span>
+    </b-button>
+    <b-select v-model="perPage">
+      <option value="5">5 dòng/trang</option>
+      <option value="10">10 dòng/trang</option>
+      <option value="15">15 dòng/trang</option>
+      <option value="20">20 dòng/trang</option>
+    </b-select>
+  </b-field>
+        <section id="tab-action">
+          <b-table
+            :data="log_data"
+            :loading="loading"
+            paginated
+            backend-pagination
+            :total="total"
+            :per-page="perPage"
+            @page-change="onPageChange"
+            aria-next-label="Next page"
+            aria-previous-label="Previous page"
+            aria-page-label="Page"
+            aria-current-label="Current page"
+            hoverable
+            backend-sorting
+            :default-sort-direction="defaultSortOrder"
+            :default-sort="[sortField, sortOrder]"
+            @sort="onSort">
+            <template slot-scope="props">
+              <b-table-column field="LogID" label="ID" sortable>
+                {{ props.row.LogID }}
+              </b-table-column>
+              <b-table-column field="UserID" label="Người dùng" sortable>
+                {{ props.row.User }}
+              </b-table-column>
+              <b-table-column field="Action" label="Hành động" sortable>
+                {{ props.row.Action }}
+              </b-table-column>
+              <b-table-column field="Created_At" label="Thời gian" sortable>
+                <span class="tag is-success">
+                  {{ formatDate(props.row.Created_At) }}
+                </span>
+              </b-table-column>
+            </template>
+          </b-table>
+        </section>
+      </b-tab-item>
+      <b-tab-item label="Kiểm tra & xuất (Export) phiếu dự thi" icon-pack="fas" icon="file-export">
+        
+      </b-tab-item>
+    </b-tabs>
+  </div>
 
-                    <b-table-column field="UserID" label="Người dùng" sortable>
-                         {{ props.row.User }}
-                    </b-table-column>
-
-                    <b-table-column field="Action" label="Hành động" sortable>
-                        {{ props.row.Action }}
-                    </b-table-column>
-
-                    <b-table-column field="Created_At" label="Thời gian" sortable>
-                        <span class="tag is-success">
-                          {{ formatDate(props.row.Created_At) }}
-                        </span>
-                    </b-table-column>
-
-                  </template>
-              </b-table>
-          </section>
-      </div>
 </template>
 
 <script>

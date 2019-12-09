@@ -178,7 +178,7 @@
     import axios from 'axios'
     import { authHeader } from "../../../api/jwt_handling";
     import moment from 'moment/moment';
-    import edit_student_form from "./edit/editStudent_modal_form";
+    import edit_student_form from "./edit/edit_student_modal_form";
     import debounce from 'lodash/debounce';
 
     /*
