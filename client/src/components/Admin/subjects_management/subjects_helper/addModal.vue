@@ -33,7 +33,7 @@
 <script>
     export default {
         name: "ModalAddForm",
-        props:data,
+        props: [subject],
         methods:{
             addOn(){
 
