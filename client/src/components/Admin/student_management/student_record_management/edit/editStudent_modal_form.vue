@@ -95,11 +95,6 @@
           }
       },
       methods: {
-          usernameConstraint() {
-              console.log(this.newUsername);
-              this.newUsername = this.newStudentID + '@vnu.edu.vn';
-              console.log(this.newUsername);
-          },
           async updateStudentData() {
               try {
                   // console.log(moment(this.newDob).format('MM/DD/YYYY'));

@@ -12,11 +12,11 @@ import jwt
 from datetime import datetime, timedelta
 from functools import wraps
 import re
+from controller.time_conversion.asia_timezone import set_custom_log_time
 authentication = Blueprint('auth', __name__, url_prefix='/auth')
 # create a blueprint is like creating a package
 # ie: Sign In for authentication
 CORS(authentication)
-
 
 # Explain token_required function
 # Ensure it contains the "Authorization" header with a string that looks like a JWT token
@@ -69,7 +69,7 @@ def register():
             if check_user == 'Not found':
                 return jsonify({'status': 'fail'})
             else:
-                Log.create(str(check_user[0]['ID']), 'Đăng nhập vào hệ thống.', datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
+                Log.create(str(check_user[0]['ID']), 'Đăng nhập vào hệ thống.', set_custom_log_time())
 
                 token = jwt.encode({
                     'sub': username,  # representing username

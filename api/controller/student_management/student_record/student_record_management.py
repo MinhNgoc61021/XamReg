@@ -7,7 +7,7 @@ from flask import (
 )
 from controller.authentication.auth import token_required
 from db.entity_db import User, Subject, Student_Status, Log
-import datetime
+from controller.time_conversion.asia_timezone import set_custom_log_time
 import re
 
 student_record_management = Blueprint('student_record_management', __name__, url_prefix='/record')
@@ -63,7 +63,7 @@ def create_new_student(current_user):
         checkCourseID = re.search('^[K|k][1-9][0-9][A-Za-z]+[1-9]*', str(newCourseID))
         Log.create(current_user['ID'],
                    'Tạo thêm sinh viên có MSSV: ' + newStudentID + ' vào hệ thống.',
-                   datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
+                   set_custom_log_time())
 
         if (checkStudentID is not None) and (checkFullname is not None) and (
                 checkDob is not None) and (
@@ -142,7 +142,7 @@ def remove_student_info_record(current_user):
         User.delRecord(str(studentID))
         Log.create(current_user['ID'],
                    'Xóa thông tin của sinh viên có MSSV: ' + studentID + ' khỏi hệ thống.',
-                   datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
+                   set_custom_log_time)
 
         return jsonify({'status': 'success'}), 200
     except:
@@ -160,7 +160,7 @@ def remove_subject_record(current_user):
         Student_Status.delRecord(str(studentID), str(subjectID))
         Log.create(current_user['ID'],
                    'Xóa mã môn ' + subjectID + ' của sinh viên có MSSV: ' + studentID + ' khỏi hệ thống.',
-                   datetime.datetime.utcnow())
+                   set_custom_log_time())
 
         return jsonify({'status': 'success'}), 200
     except:
@@ -215,7 +215,7 @@ def update_student_info_record(current_user):
             User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob, newGender)
             Log.create(current_user['ID'],
                        'Cập nhật thông tin của sinh viên vào hệ thống.',
-                       datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
+                       set_custom_log_time())
 
             return jsonify({'status': 'success'}), 200
         else:

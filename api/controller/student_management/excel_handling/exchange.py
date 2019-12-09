@@ -8,7 +8,7 @@ from flask import (
 from db.entity_db import User, Subject, Student_Status, Log
 from openpyxl import load_workbook
 from controller.authentication.auth import token_required
-import datetime
+from controller.time_conversion.asia_timezone import set_custom_log_time
 import re
 
 excel_handling = Blueprint('import_export', __name__, url_prefix='/handling')
@@ -188,7 +188,7 @@ def upload(current_user):
 
         Log.create(current_user['ID'],
                    'Tải dữ liệu file Excel lên hệ thống.',
-                   datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
+                   set_custom_log_time())
 
         # when the loop ends, which means all the data has been saved successfully
         return jsonify({'status': 'success'}), 200

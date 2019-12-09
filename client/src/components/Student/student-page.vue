@@ -41,7 +41,6 @@
         <b-tabs type="is-toggle" expanded>
           <b-tab-item label="Đăng ký dự thi" icon-pack="fas" icon="calendar-check">
             <shift_register :student-i-d="ID">
-
             </shift_register>
           </b-tab-item>
           <b-tab-item label="Kiểm tra & xuất (Export) phiếu dự thi" icon-pack="fas" icon="file-export">
