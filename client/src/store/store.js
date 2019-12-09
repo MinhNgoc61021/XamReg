@@ -34,7 +34,6 @@ export const store = new Vuex.Store ({
         apiService.signIn(username, password)
           .then(
             (response) => {
-              console.log(response);
               if (response.type === 'Admin') {
                 context.commit('signInSuccess', response.token);
                 //console.log(user.token);

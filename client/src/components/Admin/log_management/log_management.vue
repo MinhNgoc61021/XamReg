@@ -1,5 +1,5 @@
 <template>
-      <div>
+      <div class="container">
           <h1 class="title is-3">Quản lý nhật ký</h1>
           <h2 class="subtitle is-6">Xem, quản lý hành vi, hoạt động của từng người dùng</h2>
           <b-field grouped group-multiline>

@@ -188,7 +188,7 @@ def upload(current_user):
 
         Log.create(current_user['ID'],
                    'Tải dữ liệu file Excel lên hệ thống.',
-                   datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                   datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
 
         # when the loop ends, which means all the data has been saved successfully
         return jsonify({'status': 'success'}), 200

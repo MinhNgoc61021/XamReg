@@ -40,7 +40,7 @@ def get_student_info_record(current_user):
 
 @student_record_management.route('/create-student-record', methods=['POST'])
 @token_required
-def create_new_studnet(current_user):
+def create_new_student(current_user):
     try:
         newStudentID = request.get_json().get('newStudentID')
         newFullname = request.get_json().get('newFullname')
@@ -63,16 +63,14 @@ def create_new_studnet(current_user):
         checkCourseID = re.search('^[K|k][1-9][0-9][A-Za-z]+[1-9]*', str(newCourseID))
         Log.create(current_user['ID'],
                    'Tạo thêm sinh viên có MSSV: ' + newStudentID + ' vào hệ thống.',
-                   datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                   datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
 
         if (checkStudentID is not None) and (checkFullname is not None) and (
                 checkDob is not None) and (
                 checkGender is not None) and (checkCourseID is not None):
-            print('OK1', flush=True)
 
             newStudent = User.create(newStudentID, newStudentID + '@vnu.edu.vn', newStudentID, newFullname, newDob,
                                      newGender, newCourseID, 'Student')
-            print('OK2', flush=True)
             if newStudent is False:
                 return jsonify({'status': 'already-exist'}), 200
             else:
@@ -144,7 +142,7 @@ def remove_student_info_record(current_user):
         User.delRecord(str(studentID))
         Log.create(current_user['ID'],
                    'Xóa thông tin của sinh viên có MSSV: ' + studentID + ' khỏi hệ thống.',
-                   datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                   datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
 
         return jsonify({'status': 'success'}), 200
     except:
@@ -162,7 +160,7 @@ def remove_subject_record(current_user):
         Student_Status.delRecord(str(studentID), str(subjectID))
         Log.create(current_user['ID'],
                    'Xóa mã môn ' + subjectID + ' của sinh viên có MSSV: ' + studentID + ' khỏi hệ thống.',
-                   datetime.datetime.now())
+                   datetime.datetime.utcnow())
 
         return jsonify({'status': 'success'}), 200
     except:
@@ -217,7 +215,7 @@ def update_student_info_record(current_user):
             User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob, newGender)
             Log.create(current_user['ID'],
                        'Cập nhật thông tin của sinh viên vào hệ thống.',
-                       datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                       datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
 
             return jsonify({'status': 'success'}), 200
         else:

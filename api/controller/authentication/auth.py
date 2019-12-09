@@ -69,7 +69,7 @@ def register():
             if check_user == 'Not found':
                 return jsonify({'status': 'fail'})
             else:
-                Log.create(str(check_user[0]['ID']), 'Đăng nhập vào hệ thống.', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                Log.create(str(check_user[0]['ID']), 'Đăng nhập vào hệ thống.', datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
 
                 token = jwt.encode({
                     'sub': username,  # representing username

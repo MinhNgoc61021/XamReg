@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h1 class="title is-3">Quản lý sinh viên</h1>
     <h2 class="subtitle is-6">Cập nhật, quản lý tài khoản và thông tin của sinh viên</h2>
     <section id="tab-action">

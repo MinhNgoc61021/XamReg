@@ -80,7 +80,6 @@ class User(Base):
         sess = Session()
         try:
             check = sess.query(User).filter(User.Username == str(username)).scalar()
-            print(check.Username, flush=True)
             if check is not None:
                 if check_password_hash(check.Password, str(password)) is True:
                     if check.Role_Type == 'Admin':

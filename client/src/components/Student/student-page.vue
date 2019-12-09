@@ -35,6 +35,7 @@
 
     <!--content-->
     <div class="hero-body">
+      <div class="container">
         <h1 class="title is-3">Đăng ký thi</h1>
         <h2 class="subtitle is-6">Đăng ký dự thi ca thi theo học phần của sinh viên</h2>
         <b-tabs type="is-toggle" expanded>
@@ -47,6 +48,7 @@
 
           </b-tab-item>
         </b-tabs>
+      </div>
     </div>
     <!--content-->
 
