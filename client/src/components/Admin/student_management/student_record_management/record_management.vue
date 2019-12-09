@@ -261,7 +261,7 @@
                     this.student.loading = false;
                     this.$buefy.notification.open({
                         duration: 2000,
-                        message: 'Không thể lấy được dữ liệu bảng!',
+                        message: 'Không thể lấy được dữ liệu sinh viên!',
                         position: 'is-bottom-right',
                         type: 'is-danger',
                         hasIcon: true

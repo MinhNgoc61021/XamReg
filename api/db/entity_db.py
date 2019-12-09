@@ -295,8 +295,7 @@ class Semester_Examination(Base):
     __table_args__ = {'mysql_engine': 'InnoDB'}
 
     SemID = Column(Integer,
-                   primary_key=True,
-                   autoincrement=True)
+                   primary_key=True)
     SemTitle = Column(String(200),
                       nullable=False)
 
@@ -320,8 +319,7 @@ class Shift(Base):
     __table_args__ = {'mysql_engine': 'InnoDB'}
 
     ShiftID = Column(Integer,
-                     primary_key=True,
-                     autoincrement=True)
+                     primary_key=True)
     Date_Start = Column(Date,
                         nullable=False)
     Start_At = Column(Time,
@@ -334,7 +332,7 @@ class Shift(Base):
     SemID = Column(Integer,
                    ForeignKey('semester_examination.SemID'),
                    nullable=False)
-    Semester_Examination = relationship("Semester_Examination",
+    Semester_Examination = relationship('Semester_Examination',
                                         back_populates="shift")
 
     @classmethod
@@ -361,6 +359,26 @@ class Shift(Base):
             sess.close()
 
 
+class Student_Shift(Base):
+    __tablename__ = 'student_shift'
+
+    RegisterID = Column(Integer,
+                        primary_key=True)
+    StudentID = Column(String(45),
+                       ForeignKey('user.ID'),
+                       onupdate=True,
+                       nullable=False)
+    ShiftID = Column(Integer,
+                     ForeignKey('shift.ShiftID'),
+                     onupdate=True,
+                     nullable=False)
+    __table_args__ = (UniqueConstraint('StudentID', 'ShiftID', name='Student_Shift_UC'),
+                      )
+    Shift = relationship('Shift',
+                         back_populates='student_shift')
+    Student = relationship('User',
+                           back_populates='student_shift')
+
 
 # Exam_Room persistent class
 class Exam_Room(Base):
@@ -368,8 +386,7 @@ class Exam_Room(Base):
     __table_args__ = {'mysql_engine': 'InnoDB'}
 
     RoomID = Column(Integer,
-                    primary_key=True,
-                    autoincrement=True)
+                    primary_key=True)
     RoomName = Column(String(45),
                       nullable=False)
     Computer_Number = Column(Integer,
@@ -377,7 +394,8 @@ class Exam_Room(Base):
     ShiftID = Column(Integer,
                      ForeignKey('shift.ShiftID'),
                      nullable=False)
-    Shift = relationship("Shift", back_populates="exam_room")
+    Shift = relationship("Shift",
+                         back_populates="exam_room")
 
     @classmethod
     def create(cls, roomid, shiftid, room_name, computer_number):
@@ -453,7 +471,7 @@ class Log(Base):
             sess.close()
 
 
-############### Relationship ######################
+# ------------ Relationship ----------- #
 # relationship() uses the foreign key relationships between the two tables to determine the nature of this linkage
 # Determining that it is many to one.
 # This corresponds to a parent-child or associative table relationship.
@@ -463,29 +481,39 @@ class Log(Base):
 User.student_status = relationship('Student_Status',
                                    order_by=Student_Status.StudentID,
                                    back_populates='User',
-                                   cascade="all, delete, delete-orphan")
+                                   cascade='all, delete, delete-orphan')
 
 User.log = relationship('Log',
                         order_by=Log.UserID,
                         back_populates='User',
-                        cascade="all, delete, delete-orphan")
+                        cascade='all, delete, delete-orphan')
 
 Subject.student_status = relationship('Student_Status',
                                       order_by=Student_Status.SubjectID,
                                       back_populates='Subject',
-                                      cascade="all, delete, delete-orphan")
+                                      cascade='all, delete, delete-orphan')
 
-Shift.exam_room = relationship("Exam_Room",
-                               back_populates="Shift",
-                               cascade="all, delete, delete-orphan")
+Shift.exam_room = relationship('Exam_Room',
+                               back_populates='Shift',
+                               cascade='all, delete, delete-orphan')
 
-Semester_Examination.shift = relationship("Shift",
-                                          back_populates="Semester_Examination",
-                                          cascade="all, delete, delete-orphan")
+Semester_Examination.shift = relationship('Shift',
+                                          back_populates='Semester_Examination',
+                                          cascade='all, delete, delete-orphan')
 
-Subject.shift = relationship("Shift",
-                             back_populates="Subject",
-                             cascade="all, delete, delete-orphan")
+Subject.shift = relationship('Shift',
+                             back_populates='Subject',
+                             cascade='all, delete, delete-orphan')
+
+Shift.student_shift = relationship('Student_Shift',
+                                   order_by=Shift.ShiftID,
+                                   back_populates='Shift',
+                                   cascade='all, delete, delete-orphan', single_parent=true)
+
+User.student_shift = relationship('Student_Shift',
+                                  order_by=User.ID,
+                                  back_populates='Student',
+                                  cascade='all, delete, delete-orphan', single_parent=true)
 
 # Each Table object is a member of larger collection known as MetaData
 # This object is available using the .metadata attribute of declarative base class.

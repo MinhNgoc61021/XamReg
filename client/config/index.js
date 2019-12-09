@@ -18,11 +18,11 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/handling/upload': {
+      '/auth/get-user': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/auth/get-user': {
+      '/handling/upload': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
