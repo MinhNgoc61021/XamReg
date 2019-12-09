@@ -1,3 +1,8 @@
+import re
+from datetime import datetime, timedelta
+from functools import wraps
+
+import jwt
 from flask import (
     Blueprint,
     # Blueprint is a way to organize a group of related views and other code
@@ -7,16 +12,15 @@ from flask import (
     jsonify
 )
 from flask_cors import CORS
-from db.entity_db import User, Log
-import jwt
-from datetime import datetime, timedelta
-from functools import wraps
-import re
+
 from controller.time_conversion.asia_timezone import set_custom_log_time
+from db.entity_db import User, Log
+
 authentication = Blueprint('auth', __name__, url_prefix='/auth')
 # create a blueprint is like creating a package
 # ie: Sign In for authentication
 CORS(authentication)
+
 
 # Explain token_required function
 # Ensure it contains the "Authorization" header with a string that looks like a JWT token
@@ -61,6 +65,7 @@ def register():
     if request.method == 'POST':
         user_form = request.get_json()
         username = user_form.get('username')
+        print()
         check_username = re.search('[!#$%^&*()='',?";:{}|<>]', str(username))
         password = user_form.get('password')
         check_password = re.search('[!#$%^&*()='',?";:{}|<>]', str(password))
@@ -74,7 +79,8 @@ def register():
                 token = jwt.encode({
                     'sub': username,  # representing username
                     'iat': datetime.utcnow(),  # issued at timestamp in seconds
-                    'exp': datetime.utcnow() + timedelta(minutes=90)},  # the time in which the token will expire as seconds
+                    'exp': datetime.utcnow() + timedelta(minutes=90)},
+                    # the time in which the token will expire as seconds
                     current_app.config['SECRET_KEY'])
                 return jsonify({'status': 'success',
                                 'type': check_user[1],
@@ -90,5 +96,3 @@ def get_user(current_user):
     return jsonify({'status': 'success', 'ID': current_user['ID'],
                     'Fullname': current_user['Fullname'],
                     }), 200
-
-

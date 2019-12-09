@@ -124,6 +124,7 @@
                       message: 'Không thể lấy được dữ liệu nhật ký!',
                       position: 'is-bottom-right',
                       type: 'is-danger',
+                      hasIcon: true
                   });
                   throw error;
               }

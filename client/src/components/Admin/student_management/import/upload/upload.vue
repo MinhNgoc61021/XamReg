@@ -26,7 +26,7 @@
             <span v-for="(file, index) in dropFiles"
                 :key="index"
                 class="tag is-primary" >
-                {{file.name}}
+                {{ file.name }}
                 <button class="delete is-small"
                     type="button"
                     @click="deleteDropFile(index)">
@@ -74,6 +74,7 @@
                               message: `Dữ liệu sinh viên từ file <b>${file.name}</b> đã được tạo thành công!`,
                               position: 'is-bottom-right',
                               type: 'is-success',
+                              hasIcon: true
                           });
                       }
                     } catch (e) {
@@ -81,34 +82,38 @@
                         console.log(e);
                         if (e['message'].includes('400')) {
                             this.$buefy.notification.open({
-                              duration: 2500,
-                              message: `Kiểm tra lại, dữ liệu bạn nhập trong file <b>${file.name}</b> đang có vấn đề!`,
-                              position: 'is-bottom-right',
-                              type: 'is-danger',
+                                duration: 2500,
+                                message: `Kiểm tra lại, dữ liệu bạn nhập trong file <b>${file.name}</b> đang có vấn đề!`,
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
                             })
                         }
                         else if (e['message'].includes('401')) {
                             this.$buefy.notification.open({
-                              duration: 2500,
-                              message: 'Không được quyền sử dụng!',
-                              position: 'is-bottom-right',
-                              type: 'is-danger',
+                                duration: 2500,
+                                message: 'Không được quyền sử dụng!',
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
                             })
                         }
                         else if (e['message'].includes('403')) {
                             this.$buefy.notification.open({
-                              duration: 2500,
-                              message: 'Đối với nhập danh sách tình trang môn học của sinh viên, hãy đảm bảo là tài khoản của sinh viên đó đã tồn tại sẵn!',
-                              position: 'is-bottom-right',
-                              type: 'is-warning',
+                                duration: 2500,
+                                message: 'Đối với nhập danh sách tình trang môn học của sinh viên, hãy đảm bảo là tài khoản của sinh viên đó đã tồn tại sẵn!',
+                                position: 'is-bottom-right',
+                                type: 'is-warning',
+                                hasIcon: true
                             })
                         }
                         else {
                             this.$buefy.notification.open({
-                              duration: 2500,
-                              message: 'Lỗi không thể tải file lên hệ thống!',
-                              position: 'is-bottom-right',
-                              type: 'is-danger',
+                                duration: 2500,
+                                message: 'Lỗi không thể tải file lên hệ thống!',
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
                             })
                         }
                     } finally {

@@ -69,7 +69,7 @@
 
         <footer class="modal-card-foot">
           <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
-          <button class="button is-primary" type="submit">Cập nhật</button>
+          <button class="button is-primary" type="submit" @submit="closeModal()">Cập nhật</button>
         </footer>
       </div>
   </form>
@@ -115,31 +115,18 @@
                       },
                   });
                   if (update.status === 200) {
+                      this.$emit('loadStudentData', 200);
                       this.$parent.close();
-                      this.$buefy.notification.open({
-                          duration: 2000,
-                          message: `Đã cập nhật tài khoản của sinh viên có MSSV: <b>${this.newStudentID}</b> thành công.`,
-                          position: 'is-bottom-right',
-                          type: 'is-success',
-                      });
                   }
               } catch (e) {
                   if (e['message'].includes('400')) {
-                      this.$buefy.notification.open({
-                          duration: 2000,
-                          message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
-                          position: 'is-bottom-right',
-                          type: 'is-danger',
-                      });
+                      this.$emit('loadStudentData', 400);
                   }
                   else if (e['message'].includes('401')) {
-                      this.$buefy.notification.open({
-                          duration: 2000,
-                          message: 'Không được quyền sử dụng!',
-                          position: 'is-bottom-right',
-                          type: 'is-danger',
-                      });
+                      this.$emit('loadStudentData', 401);
                   }
+              } finally {
+
               }
           },
       },

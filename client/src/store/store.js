@@ -12,18 +12,19 @@ export const store = new Vuex.Store ({
     userStatus: userState,
     ID: '',
     fullname: '',
-    userExistence: false,
+    isNotExist: false,
   },
   mutations: {
         signInSuccess(state, user) {
             state.userStatus = { signedIn: true };
+            state.isNotExist = false;
         },
         getUserData(state, data) {
             state.ID = data.ID;
             state.fullname = data.Fullname;
         },
         signInFailure(state) {
-            state.userExistence = true;
+            state.isNotExist = true;
         },
         signOut(state) {
           state.userStatus = {};

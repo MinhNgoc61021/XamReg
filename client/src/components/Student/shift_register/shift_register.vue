@@ -135,8 +135,8 @@
                 this.getLogRecordData()
             },
             /*
-        * Handle sort event
-        */
+            * Handle sort event
+            */
             onSort(field, order) {
                 this.sortField = field;
                 this.sortOrder = order;

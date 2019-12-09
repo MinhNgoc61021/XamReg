@@ -264,6 +264,7 @@
                         message: 'Không thể lấy được dữ liệu bảng!',
                         position: 'is-bottom-right',
                         type: 'is-danger',
+                        hasIcon: true
                     });
                     throw error;
 
@@ -309,20 +310,22 @@
                             });
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
-                                  duration: 2000,
-                                  message: `Đã xóa tài khoản có MSSV <b>${recordID}</b> thành công.`,
-                                  position: 'is-bottom-right',
-                                  type: 'is-success',
+                                    duration: 2000,
+                                    message: `Đã xóa tài khoản có MSSV <b>${recordID}</b> thành công.`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
                                 });
                             }
                             this.getStudentRecordData();
                         } catch (e) {
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
-                                  duration: 2000,
-                                  message: 'HTTP Status 401: Không được quyền sử dụng!',
-                                  position: 'is-bottom-right',
-                                  type: 'is-danger',
+                                    duration: 2000,
+                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
                                 })
                             }
                         }
@@ -348,6 +351,39 @@
                     },
                     hasModalCard: true,
                     customClass: 'custom-class custom-class-2',
+                    canCancel: false,
+                    events: {
+                        'loadStudentData': (http_status) => {
+                            if (http_status === 200) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `Đã cập nhật tài khoản của sinh viên thành công!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                                this.getStudentRecordData();
+                            }
+                            else if(http_status === 400) {
+                                 this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                 });
+                            }
+                            else if (http_status === 401) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                });
+                            }
+                        }
+                    }
                 });
             },
             onStudentSearch: debounce(function (ID) {
@@ -384,6 +420,7 @@
                             message: 'Không thể tìm được dữ liệu!',
                             position: 'is-bottom-right',
                             type: 'is-danger',
+                            hasIcon: true
                         });
                         throw error;
                     });
@@ -398,7 +435,7 @@
                 this.getStudent_Subject();
             },
             /*
-              * Handle edit student status record event
+              * Handle sort student status record event
             */
             onStatusSort(field, order) {
                 this.student_status.sortField = field;
@@ -431,19 +468,21 @@
                             });
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
-                                  duration: 2000,
-                                  message: `Đã xóa thành công môn học ${SubjectID}của sinh viên có MSSV <b>${this.student_status.currentStudentID}</b>.`,
-                                  position: 'is-bottom-right',
-                                  type: 'is-success',
+                                    duration: 2000,
+                                    message: `Đã xóa thành công môn học ${SubjectID}của sinh viên có MSSV <b>${this.student_status.currentStudentID}</b>.`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
                                 });
                             }
                         } catch (e) {
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
-                                  duration: 2000,
-                                  message: 'HTTP Status 401: Không được quyền sử dụng!',
-                                  position: 'is-bottom-right',
-                                  type: 'is-danger',
+                                    duration: 2000,
+                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
                                 })
                             }
                         } finally {
@@ -488,6 +527,7 @@
                         message: `Không thể lấy được dữ liệu môn học của sinh viên có MSSV ${this.student_status.currentStudentID} này!`,
                         position: 'is-bottom-right',
                         type: 'is-danger',
+                        hasIcon: true
                     });
                     throw error
                 }

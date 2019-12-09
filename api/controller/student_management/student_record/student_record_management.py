@@ -142,7 +142,7 @@ def remove_student_info_record(current_user):
         User.delRecord(str(studentID))
         Log.create(current_user['ID'],
                    'Xóa thông tin của sinh viên có MSSV: ' + studentID + ' khỏi hệ thống.',
-                   set_custom_log_time)
+                   set_custom_log_time())
 
         return jsonify({'status': 'success'}), 200
     except:

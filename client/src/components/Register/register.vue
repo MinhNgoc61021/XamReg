@@ -4,21 +4,21 @@
 <!--        <b-checkbox v-model="hasError">Show errors</b-checkbox>-->
       <h3 class="title is-3">Đăng nhập</h3>
       <p class="subtitle is-6">Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</p>
-      <form @submit="handleSubmit">
+      <form @submit.prevent="handleSubmit">
         <b-field label="Username"
-            :type="{ 'is-danger': hasError, 'is-danger': userExistence }"
+            :type="{ 'is-danger': hasError, 'is-danger': isNotExist   }"
             :message="[{ 'Username chưa được đánh': hasError },
-                      {'Tài khoản không tồn tại hoặc mật khẩu sai': userExistence },
+                      {'Tài khoản không tồn tại hoặc mật khẩu sai': isNotExist },
                       ]">
-            <b-input placeholder="Hãy nhập username" v-model="username"></b-input>
+            <b-input placeholder="Hãy nhập username" v-model="username" required></b-input>
         </b-field>
 
         <b-field label="Password"
-            :type="{ 'is-danger': hasError, 'is-danger': userExistence }"
+            :type="{ 'is-danger': hasError, 'is-danger': isNotExist }"
             :message="[{ 'Mật khẩu chưa được đánh': hasError },
-                      {'Tài khoản không tồn tại hoặc mật khẩu sai': userExistence },
+                      {'Tài khoản không tồn tại hoặc mật khẩu sai': isNotExist },
                       ]">
-            <b-input placeholder="Hãy nhập mật khẩu" v-model="password" type="password"></b-input>
+            <b-input placeholder="Hãy nhập mật khẩu" v-model="password" type="password" required></b-input>
         </b-field>
         <div class="buttons">
             <b-button native-type="submit">Đăng nhập</b-button>
@@ -38,28 +38,37 @@
                 hasError: false,
                 username: '',
                 password: '',
-                isNotExist: false,
             }
         },
         computed: {
             ...mapState([
-                'userExistence'
+                'isNotExist'
             ]),
         },
         methods: {
             ...mapActions([
                 'SignIn'
             ]),
-            handleSubmit(e) {
-              e.preventDefault();
-              if (this.username.length < 5 || this.password.length < 5) {
-                  this.hasError = true;
+            handleSubmit() {
+              try {
+                  if (this.username.length < 5 || this.password.length < 5) {
+                      this.hasError = true;
+                  }
+                  else {
+                      this.hasError = false;
+                      const { username, password } = this;
+                      this.SignIn( { username, password } );
+                  }
+              } catch (e) {
+                  this.$buefy.notification.open({
+                      duration: 2000,
+                      message: 'Không thể kết nối đến hệ thống!',
+                      position: 'is-bottom-right',
+                      type: 'is-danger',
+                      hasIcon: true
+                    });
               }
-              else {
-                  this.hasError = false;
-                  const { username, password } = this;
-                  this.SignIn( { username, password } );
-              }
+
             },
         }
     }
