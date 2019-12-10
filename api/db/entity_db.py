@@ -146,8 +146,13 @@ class User(Base):
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
             sess.query(User).filter_by(ID=currentStudentID).update(
-                {User.ID: newStudentID, User.Username: newUsername, User.Fullname: newFullname,
-                 User.CourseID: newCourseID, User.Dob: newDob, User.Gender: newGender})
+                {User.ID: newStudentID,
+                 User.Password: generate_password_hash(newStudentID),
+                 User.Username: newUsername,
+                 User.Fullname: newFullname,
+                 User.CourseID: newCourseID,
+                 User.Dob: newDob,
+                 User.Gender: newGender})
             sess.commit()
         except:
             sess.rollback()
@@ -213,7 +218,7 @@ class Subject(Base):
             sess.close()
 
     @classmethod
-    def getRecord(cls, studentID, status_type, page_index, per_page, sort_field, sort_order):
+    def getSubjectStatusRecord(cls, studentID, status_type, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
             record_query = sess.query(Subject).join(
@@ -357,6 +362,10 @@ class Shift(Base):
             raise
         finally:
             sess.close()
+
+    @classmethod
+    def get_shift_by_subject(cls, SubjectID):
+        return 'Nothing'
 
 
 class Student_Shift(Base):
@@ -506,12 +515,12 @@ Subject.shift = relationship('Shift',
                              cascade='all, delete, delete-orphan')
 
 Shift.student_shift = relationship('Student_Shift',
-                                   order_by=Shift.ShiftID,
+                                   order_by=Student_Shift.ShiftID,
                                    back_populates='Shift',
                                    cascade='all, delete, delete-orphan', single_parent=true)
 
 User.student_shift = relationship('Student_Shift',
-                                  order_by=User.ID,
+                                  order_by=Student_Shift.StudentID,
                                   back_populates='Student',
                                   cascade='all, delete, delete-orphan', single_parent=true)
 

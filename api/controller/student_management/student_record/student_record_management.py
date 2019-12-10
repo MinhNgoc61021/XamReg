@@ -10,6 +10,7 @@ from db.entity_db import User, Subject, Student_Status, Log
 from controller.time_conversion.asia_timezone import set_custom_log_time
 import re
 
+# student record management for admin
 student_record_management = Blueprint('student_record_management', __name__, url_prefix='/record')
 
 
@@ -117,7 +118,7 @@ def get_subject_status_record(current_user):
         print(sort_field, flush=True)
 
         # FYI: User.getRecord function return a tuple, [0] is the records data, and [1] is the pagination data
-        record = Subject.getRecord(studentID, status_type, page_index, per_page, sort_field, sort_order)
+        record = Subject.getSubjectStatusRecord(studentID, status_type, page_index, per_page, sort_field, sort_order)
         print(record[1], flush=True)
         print(record[0], flush=True)
         return jsonify({'status': 'success',

@@ -82,7 +82,7 @@
   import moment from 'moment/moment';
 
   export default {
-      name: "edit_student_form",
+      name: "edit_student_modal_form",
       props: ['currentStudentID','currentFullname', 'currentUsername', 'currentCourseID' , 'currentDob', 'currentGender'],
       data() {
           return {
@@ -115,15 +115,15 @@
                       },
                   });
                   if (update.status === 200) {
-                      this.$emit('loadStudentData', 200);
+                      this.$emit('editStatus', 200);
                       this.$parent.close();
                   }
               } catch (e) {
                   if (e['message'].includes('400')) {
-                      this.$emit('loadStudentData', 400);
+                      this.$emit('editStatus', 400);
                   }
                   else if (e['message'].includes('401')) {
-                      this.$emit('loadStudentData', 401);
+                      this.$emit('editStatus', 401);
                   }
               } finally {
 

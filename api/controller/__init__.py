@@ -4,6 +4,7 @@ from controller.authentication.auth import authentication
 from controller.student_management.excel_handling.exchange import excel_handling
 from controller.student_management.student_record.student_record_management import student_record_management
 from controller.log_management.log import log_management
+from controller.shift_register.register import shift_register
 
 
 def create_app():
@@ -13,4 +14,5 @@ def create_app():
     app.register_blueprint(student_record_management)
     app.register_blueprint(authentication)
     app.register_blueprint(excel_handling)
+    app.register_blueprint(shift_register)
     return app

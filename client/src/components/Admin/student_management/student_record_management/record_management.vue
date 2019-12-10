@@ -353,7 +353,7 @@
                     customClass: 'custom-class custom-class-2',
                     canCancel: false,
                     events: {
-                        'loadStudentData': (http_status) => {
+                        'editStatus': (http_status) => {
                             if (http_status === 200) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
