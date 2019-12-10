@@ -5,9 +5,10 @@ from flask import (
     request,
     jsonify
 )
-from db.entity_db import User, Subject, Student_Status
+from db.entity_db import User, Subject, Student_Status, Log
 from openpyxl import load_workbook
 from controller.authentication.auth import token_required
+from controller.time_conversion.asia_timezone import set_custom_log_time
 import re
 
 excel_handling = Blueprint('import_export', __name__, url_prefix='/handling')
@@ -16,7 +17,7 @@ excel_handling = Blueprint('import_export', __name__, url_prefix='/handling')
 # to get excel data
 @excel_handling.route('/upload', methods=['POST'])
 @token_required
-def upload(auth):
+def upload(current_user):
     try:
         print(request.files['student_list_excel'], flush=True)
         # load file
@@ -53,8 +54,10 @@ def upload(auth):
 
                 # add students to database
                 # check validation
-                ID = re.search('\d{8}', str(excel_data['ID']).replace(' ', ''))
-                fullname = re.search('\s', str(excel_data['fullname']))
+                ID = re.search('^\d{8}$', str(excel_data['ID']).replace(' ', ''))
+                fullname = re.search("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
+                                     "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+                                     "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s]+$", str(excel_data['fullname']))
                 dob = re.search('^(((0)[1-9])|((1)[0-2]))(\/)([0-2][0-9]|(3)[0-1])(\/)\d{4}',
                                 str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')))
                 gender = re.search('(Nam|Nữ)', str(excel_data['gender']))
@@ -109,8 +112,10 @@ def upload(auth):
 
                 # add students to database
                 # check validation
-                ID = re.search('\d{8}', str(excel_data['ID']).replace(' ', ''))
-                fullname = re.search('\s', str(excel_data['fullname']))
+                ID = re.search('^\d{8}$', str(excel_data['ID']).replace(' ', ''))
+                fullname = re.search("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
+                                     "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+                                     "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s]+$", str(excel_data['fullname']))
                 print(str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')), flush=True)
                 dob = re.search('(((0)[1-9])|((1)[0-2]))(\/)([0-2][0-9]|(3)[0-1])(\/)\d{4}',
                                 str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')))
@@ -153,7 +158,7 @@ def upload(auth):
                     excel_data[index] = sheet.cell(row=i, column=j).value
 
                 print(excel_data, flush=True)
-                ID = re.search('\d{8}', str(excel_data['ID']).replace(' ', ''))
+                ID = re.search('^\d{8}$', str(excel_data['ID']).replace(' ', ''))
                 if ID is not None:
                     check_student = User.isExist(str(excel_data['ID']).replace(' ', ''))
                     if check_student is True:
@@ -168,8 +173,8 @@ def upload(auth):
                                            excel_data['subjectTitle'])
                             # add qualified and unqualified students to database
                             Student_Status.create(str(excel_data['ID']).replace(' ', ''),
-                                                                           excel_data['subjectID'],
-                                                                           excel_data['status'])
+                                                  excel_data['subjectID'],
+                                                  excel_data['status'])
                         else:
                             return jsonify({'status': 'bad-request'}), 400
                     else:
@@ -180,6 +185,10 @@ def upload(auth):
                     return jsonify({'status': 'bad-request'}), 400
         else:
             return jsonify({'status': 'bad-request'}), 400
+
+        Log.create(current_user['ID'],
+                   'Tải dữ liệu file Excel lên hệ thống.',
+                   set_custom_log_time())
 
         # when the loop ends, which means all the data has been saved successfully
         return jsonify({'status': 'success'}), 200

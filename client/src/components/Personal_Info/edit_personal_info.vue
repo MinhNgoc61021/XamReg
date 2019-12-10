@@ -5,16 +5,25 @@
             <p class="modal-card-title">Form chỉnh sửa</p>
         </header>
         <section class="modal-card-body">
-          <b-field label="MSSV">
+          <b-field label="ID">
             <b-input
               type="text"
-              v-model="newStudentID"
-              :value="newStudentID"
-              placeholder="Nhập mã số sinh viên"
+              v-model="newID"
+              :value="newID"
+              placeholder="Nhập ID"
               required>
             </b-input>
           </b-field>
           <b-field label="Tài khoản">
+            <b-input
+              type="email"
+              v-model="newUsername"
+              :value="newUsername"
+              placeholder="Sửa tài khoản"
+              required>
+            </b-input>
+          </b-field>
+          <b-field label="Mật khẩu">
             <b-input
               type="email"
               v-model="newUsername"
@@ -45,7 +54,7 @@
             <b-datepicker
               placeholder="Chọn ngày sinh"
               v-model="newDob"
-              :value="newDob" editable required>
+              :value="newDob" required>
             </b-datepicker>
           </b-field>
           <b-field label="Giới tính">
@@ -67,8 +76,8 @@
 
 <script>
   import axios from 'axios';
-  import { authHeader } from "../../../../api/jwt_handling";
   import moment from 'moment/moment';
+  import {authHeader} from "../api/jwt_handling";
 
   export default {
       name: "edit_student_form",

@@ -6,7 +6,6 @@ const path = require('path');
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
@@ -19,15 +18,19 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/handling/upload': {
-          target: 'http://api:5000',
-          changeOrigin: true,
-      },
       '/auth/get-user': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/handling/upload': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/record/student-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/record/create-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
@@ -51,11 +54,17 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+
       '/subject-info/subject-records': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+
+      '/log/log-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-    },
+    }
 
     // Various Dev Server settings
     host: '0.0.0.0', // can be overwritten by process.env.HOST

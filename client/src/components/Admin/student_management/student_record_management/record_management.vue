@@ -113,6 +113,7 @@
                 </b-table-column>
             </template>
             <template slot="detail" slot-scope="props">
+                <h4 class="title is-4">Danh sách môn học</h4>
                 <b-field grouped group-multiline>
                   <b-button
                     :class="{'is-loading': student_status.loading}"
@@ -177,7 +178,7 @@
     import axios from 'axios'
     import { authHeader } from "../../../api/jwt_handling";
     import moment from 'moment/moment';
-    import edit_student_form from "./edit/editStudent_modal_form";
+    import edit_student_form from "./edit/edit_student_modal_form";
     import debounce from 'lodash/debounce';
 
     /*
@@ -224,8 +225,7 @@
              * Change formatDate
             */
             formatDate(date) {
-
-                return moment(date).format('MM/DD/YYYY');
+                return moment(date).format('L');
             },
             /*
              * Load async student info record
@@ -258,12 +258,13 @@
                 } catch (error) {
                     this.student.student_record = [];
                     this.student.total = 0;
-                    this.loading = false;
+                    this.student.loading = false;
                     this.$buefy.notification.open({
                         duration: 2000,
-                        message: 'Không thể lấy được dữ liệu bảng!',
+                        message: 'Không thể lấy được dữ liệu sinh viên!',
                         position: 'is-bottom-right',
                         type: 'is-danger',
+                        hasIcon: true
                     });
                     throw error;
 
@@ -309,20 +310,22 @@
                             });
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
-                                  duration: 2000,
-                                  message: `Đã xóa tài khoản có MSSV <b>${recordID}</b> thành công.`,
-                                  position: 'is-bottom-right',
-                                  type: 'is-success',
+                                    duration: 2000,
+                                    message: `Đã xóa tài khoản có MSSV <b>${recordID}</b> thành công.`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
                                 });
                             }
                             this.getStudentRecordData();
                         } catch (e) {
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
-                                  duration: 2000,
-                                  message: 'HTTP Status 401: Không được quyền sử dụng!',
-                                  position: 'is-bottom-right',
-                                  type: 'is-danger',
+                                    duration: 2000,
+                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
                                 })
                             }
                         }
@@ -348,6 +351,39 @@
                     },
                     hasModalCard: true,
                     customClass: 'custom-class custom-class-2',
+                    canCancel: false,
+                    events: {
+                        'loadStudentData': (http_status) => {
+                            if (http_status === 200) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `Đã cập nhật tài khoản của sinh viên thành công!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                                this.getStudentRecordData();
+                            }
+                            else if(http_status === 400) {
+                                 this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                 });
+                            }
+                            else if (http_status === 401) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                });
+                            }
+                        }
+                    }
                 });
             },
             onStudentSearch: debounce(function (ID) {
@@ -369,7 +405,7 @@
                         },
                     }).then((response) => {
                         if (response.status === 200) {
-                            console.log(response.data.search_results);
+                            // console.log(response.data.search_results);
                             response.data.search_results.forEach((item) => {
                                 this.search.searchResults.push(item);
                             });
@@ -377,32 +413,20 @@
                         }
 
                     }).catch((error) => {
-                        this.student.searchResults = [];
-                        this.loading = false;
+                        this.search.searchResults = [];
+                        this.search.searchLoading = false;
                         this.$buefy.notification.open({
                             duration: 2000,
-                            message: 'Không thể lấy được dữ liệu!',
+                            message: 'Không thể tìm được dữ liệu!',
                             position: 'is-bottom-right',
                             type: 'is-danger',
+                            hasIcon: true
                         });
                         throw error;
                     });
                 }
 
             }, 500),
-            /*
-              * Type style in relation to the value
-            */
-            type(value) {
-                const number = parseFloat(value);
-                if (number < 6) {
-                    return 'is-danger'
-                } else if (number >= 6 && number < 8) {
-                    return 'is-warning'
-                } else if (number >= 8) {
-                    return 'is-success'
-                }
-            },
             /*
               * Handle student status record page-change event
             */
@@ -411,7 +435,7 @@
                 this.getStudent_Subject();
             },
             /*
-              * Handle edit student status record event
+              * Handle sort student status record event
             */
             onStatusSort(field, order) {
                 this.student_status.sortField = field;
@@ -444,19 +468,21 @@
                             });
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
-                                  duration: 2000,
-                                  message: `Đã xóa thành công môn học ${SubjectID}của sinh viên có MSSV <b>${this.student_status.currentStudentID}</b>.`,
-                                  position: 'is-bottom-right',
-                                  type: 'is-success',
+                                    duration: 2000,
+                                    message: `Đã xóa thành công môn học ${SubjectID}của sinh viên có MSSV <b>${this.student_status.currentStudentID}</b>.`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
                                 });
                             }
                         } catch (e) {
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
-                                  duration: 2000,
-                                  message: 'HTTP Status 401: Không được quyền sử dụng!',
-                                  position: 'is-bottom-right',
-                                  type: 'is-danger',
+                                    duration: 2000,
+                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
                                 })
                             }
                         } finally {
@@ -484,7 +510,7 @@
                         }
                     });
                     if (response.status === 200) {
-                        console.log(response);
+                        // console.log(response);
                         this.student_status.student_subject_record = [];
                         this.student_status.total = response.data.total_results;
                         response.data.records.forEach((item) => {
@@ -501,6 +527,7 @@
                         message: `Không thể lấy được dữ liệu môn học của sinh viên có MSSV ${this.student_status.currentStudentID} này!`,
                         position: 'is-bottom-right',
                         type: 'is-danger',
+                        hasIcon: true
                     });
                     throw error
                 }

@@ -21,17 +21,26 @@ CORS(app)
 
 
 # create new admin here, change the username, password
-@app.route('/init_admin')
-def init_admin():
-    check_user = User.isExist('NamPham')
-    # check_user_role = User_Role.isExist(check_user.UserID)
-    if check_user:
-        return 'OK, an admin has already been created.'
-    else:
-        # fullname = 'Nguyễn Ngọc Minh'
-        # print(fullname, flush=True)
-        add_admin = User.create('Admin69', 'NamPham', '12345', 'PCN', '1999-12-18',
-                                'Male', 'INTAdmin', 'Admin')
+#@app.route('/init_admin')
+#def init_admin():
+#<<<<<<< HEAD
+#    check_user = User.isExist('NamPham')
+#=======
+#    check_user = User.isExist('IAMLEGEND')
+#>>>>>>> Minh_Ngoc
+#    # check_user_role = User_Role.isExist(check_user.UserID)
+#    if check_user:
+#        return 'OK, an admin has already been created.'
+#    else:
+#        # fullname = 'Nguyễn Ngọc Minh'
+#        # print(fullname, flush=True)
+#<<<<<<< HEAD
+#        add_admin = User.create('Admin69', 'NamPham', '12345', 'PCN', '1999-12-18',
+#                                'Male', 'INTAdmin', 'Admin')
+#=======
+#        add_admin = User.create('Admin2', 'IAMLEGEND', '12345', 'Nguyễn Ngọc Minh', '1999-12-18',
+#                                'Nam', 'Admin', 'Admin')
+#>>>>>>> Minh_Ngoc
 
 
 # @app.route('/hello')
