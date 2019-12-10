@@ -50,7 +50,11 @@ module.exports = {
       '/record/search-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
-      }
+      },
+      '/subject-info/subject-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
     },
 
     // Various Dev Server settings

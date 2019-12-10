@@ -30,7 +30,7 @@ def init_admin():
     else:
         # fullname = 'Nguyễn Ngọc Minh'
         # print(fullname, flush=True)
-        add_admin = User.create('Admin69', 'MinhNgoc', '12345', 'Nguyễn Mĩnh Ngháo', '1999-12-18',
+        add_admin = User.create('Admin69', 'NamPham', '12345', 'PCN', '1999-12-18',
                                 'Male', 'INTAdmin', 'Admin')
 
 
