@@ -219,8 +219,7 @@ class Subject(Base):
             record_query = sess.query(Subject).join(
                 Student_Status).filter(Student_Status.StudentID == studentID,
                                        Student_Status.Status == status_type).order_by(
-                getattr(
-                    getattr(Subject, sort_field), sort_order)())
+                getattr(getattr(Subject, sort_field), sort_order)())
 
             # record_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
@@ -379,6 +378,54 @@ class Student_Shift(Base):
     Student = relationship('User',
                            back_populates='student_shift')
 
+#"Cache" tp store room data that are not assigned a shift
+class Exam_Room_Cache(Base):
+    __tablename__ = 'exam_room_cache'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    RoomcacheID = Column(Integer,
+                    primary_key=True)
+    RoomcacheName = Column(String(45),
+                      nullable=False)
+    Maxcapacity = Column(Integer,
+                             nullable=False)
+
+    @classmethod
+    def create(cls, roomid, room_name, computer_number):
+        sess = Session()
+        try:
+            if sess.query(Exam_Room_Cache).filter(Exam_Room_Cache.RoomcacheID == roomid).scalar() is None:
+                new_room = Exam_Room_Cache(RoomcacheID=roomid,
+                                     RoomcacheName=room_name,
+                                     Maxcapacity=computer_number)
+                sess.add(new_room)
+                sess.commit()
+                return True
+            else:
+                return False
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getRecord_cache(cls, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Exam_Room_Cache).order_by(getattr(
+                getattr(Exam_Room_Cache, sort_field), sort_order)())
+
+            # user_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return room_cache_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
 
 # Exam_Room persistent class
 class Exam_Room(Base):
@@ -418,6 +465,24 @@ class Exam_Room(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def getRecord(cls, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Exam_Room).order_by(getattr(
+                getattr(Exam_Room, sort_field), sort_order)())
+
+            # user_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return room_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
 
 # Log persistent class
 class Log(Base):
@@ -551,15 +616,21 @@ class ExamRoomSchema(ModelSchema):
         model = Exam_Room
         # optionally attach a Session
         # to use for deserialization
-        # sqla_session = session
+        sqla_session = scoped_session
 
+class ExamRoomCacheSchema(ModelSchema):
+    class Meta:
+        model = Exam_Room_Cache
+        # optionally attach a Session
+        # to use for deserialization
+        sqla_session = scoped_session
 
 class ShiftSchema(ModelSchema):
     class Meta:
         model = Shift
         # optionally attach a Session
         # to use for deserialization
-        # sqla_session = session
+        # sqla_session = scoped_session
 
 
 class SemesterExaminationSchema(ModelSchema):
@@ -567,7 +638,7 @@ class SemesterExaminationSchema(ModelSchema):
         model = Semester_Examination
         # optionally attach a Session
         # to use for deserialization
-        # sqla_session = session
+        # sqla_session = scoped_session
 
 
 class LogSchema(ModelSchema):
@@ -575,7 +646,7 @@ class LogSchema(ModelSchema):
         model = Log
         # optionally attach a Session
         # to use for deserialization
-        # sqla_session = session
+        # sqla_session = scoped_session
 
 
 # only=[] takes specific columns
@@ -586,3 +657,7 @@ subject_schema = SubjectSchema()
 student_status_schema = StudentStatusSchema()
 
 log_schema = LogSchema()
+
+room_schema = ExamRoomSchema()
+
+room_cache_schema = ExamRoomCacheSchema()

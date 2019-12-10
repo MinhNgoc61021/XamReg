@@ -58,6 +58,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/room/room-cache-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      }
     },
 
     // Various Dev Server settings

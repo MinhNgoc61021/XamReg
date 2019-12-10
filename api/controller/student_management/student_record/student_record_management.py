@@ -109,12 +109,12 @@ def get_subject_status_record(current_user):
         sort_order = request.args.get('sort_order')
         sort_field = request.args.get('sort_field')
 
-        print(studentID, flush=True)
-        print(status_type, flush=True)
-        print(page_index, flush=True)
-        print(per_page, flush=True)
-        print(sort_order, flush=True)
-        print(sort_field, flush=True)
+        # print(studentID, flush=True)
+        # print(status_type, flush=True)
+        # print(page_index, flush=True)
+        # print(per_page, flush=True)
+        # print(sort_order, flush=True)
+        # print(sort_field, flush=True)
 
         # FYI: User.getRecord function return a tuple, [0] is the records data, and [1] is the pagination data
         record = Subject.getRecord(studentID, status_type, page_index, per_page, sort_field, sort_order)

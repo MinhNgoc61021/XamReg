@@ -11,6 +11,7 @@ import log_management from "../components/Admin/log_management/log_management";
 import subject_management from "../components/Admin/subject_management/subject_management";
 import home_page from "../components/Student/home_page";
 import shift_register from "../components/Student/shift_register/shift_register";
+import exam_room_management from "../components/Admin/exam_room_management/exam_room_management"
 import { getToken } from "../components/api/jwt_handling";
 import {store} from "../store/store";
 Vue.use(VeeValidate);
@@ -24,7 +25,8 @@ export const router = new Router({
       children: [ { path: '/student-management', component: student_management },
                   { path: '/schedule-management', component: schedule_management },
                   { path: '/log-management', component: log_management },
-                  { path: '/subject-management', component: subject_management }, ]
+                  { path: '/subject-management', component: subject_management },
+                  { path: '/exam-room-management', component: exam_room_management },]
     },
     { path: '/student', name: 'student', component: Student_Page, redirect: '/student-home',
       children: [ { path: '/student-home', component: home_page },
