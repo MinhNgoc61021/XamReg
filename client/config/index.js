@@ -11,60 +11,75 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/auth/': {
-          target: 'http://api:5000', // if it is localhost:5000, which means the client(front-end side) will roast itself inside its own container. Because there is nothing here.
-          changeOrigin: true,
+        target: 'http://api:5000', // if it is localhost:5000, which means the client(front-end side) will roast itself inside its own container. Because there is nothing here.
+        changeOrigin: true,
       },
       '/auth/register': {
-          target: 'http://api:5000',
-          changeOrigin: true,
+        target: 'http://api:5000',
+        changeOrigin: true,
       },
       '/auth/get-user': {
-          target: 'http://api:5000',
-          changeOrigin: true,
+        target: 'http://api:5000',
+        changeOrigin: true,
       },
       '/handling/upload': {
-          target: 'http://api:5000',
-          changeOrigin: true,
+        target: 'http://api:5000',
+        changeOrigin: true,
       },
       '/record/student-records': {
-          target: 'http://api:5000',
-          changeOrigin: true,
+        target: 'http://api:5000',
+        changeOrigin: true,
       },
       '/record/create-student-record': {
-          target: 'http://api:5000',
-          changeOrigin: true,
+        target: 'http://api:5000',
+        changeOrigin: true,
       },
       '/record/remove-student-record': {
-          target: 'http://api:5000',
-          changeOrigin: true,
+        target: 'http://api:5000',
+        changeOrigin: true,
       },
       '/record/update-student-record': {
-          target: 'http://api:5000',
-          changeOrigin: true,
+        target: 'http://api:5000',
+        changeOrigin: true,
       },
       '/record/student-status-records': {
-          target: 'http://api:5000',
-          changeOrigin: true,
+        target: 'http://api:5000',
+        changeOrigin: true,
       },
       '/record/remove-student-status-record': {
-          target: 'http://api:5000',
-          changeOrigin: true,
+        target: 'http://api:5000',
+        changeOrigin: true,
       },
       '/record/search-student-record': {
-          target: 'http://api:5000',
-          changeOrigin: true,
-      },
-
-      '/subject-info/subject-records': {
         target: 'http://api:5000',
         changeOrigin: true,
       },
 
-      '/log/log-records': {
-          target: 'http://api:5000',
-          changeOrigin: true,
+      '/subject/subject-records': {
+        target: 'http://api:5000',
+        changeOrigin: true,
       },
-    }
+      '/subject/create-subject': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/subject/edit-subject': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/subject/remove-subject': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/subject/search-subject': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/log/log-records': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+    },
 
     // Various Dev Server settings
     host: '0.0.0.0', // can be overwritten by process.env.HOST

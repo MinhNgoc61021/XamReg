@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import register from '@/components/Register/register';
 import VeeValidate from 'vee-validate'
 import admin_page from "../components/Admin/admin_page";
-import Student_Page from '../components/Student/student-page';
+import student_page from "../components/Student/student_page";
 import upload from "../components/Admin/student_management/import/upload/upload";
 import student_management from "../components/Admin/student_management/student_management";
 import schedule_management from "../components/Admin/schedule_management/schedule_management";
@@ -21,13 +21,13 @@ export const router = new Router({
   mode: 'history',
   routes: [
     { path: '/register', name: 'register', component: register },
-    { path: '/admin', name: 'admin', component: Admin_Page, redirect: '/student-management',
+    { path: '/admin', name: 'admin', component: admin_page, redirect: '/student-management',
       children: [ { path: '/student-management', component: student_management },
                   { path: '/schedule-management', component: schedule_management },
                   { path: '/log-management', component: log_management },
                   { path: '/subjects-management', component: subjects_management }, ]
     },
-    { path: '/student', name: 'student', component: Student_Page, redirect: '/student-home',
+    { path: '/student', name: 'student', component: student_page, redirect: '/student-home',
       children: [ { path: '/student-home', component: home_page },
                   { path: '/shift-register/:studentid', component: shift_register, name: 'shift_register' , props: true } ]
     },

@@ -11,7 +11,7 @@ from sqlalchemy_filters import apply_pagination
 
 engine = create_engine('mysql+mysqldb://root:baloney1@db/xamreg?charset=utf8mb4',
                        echo=True,
-                       pool_size=5, pool_pre_ping=True)
+                       pool_size=5)
 # echo is to set up SQLAlchemy logging
 
 
@@ -195,6 +195,46 @@ class Subject(Base):
                           nullable=False)
 
     @classmethod
+    def searchSubjectRecord(cls, SubjectID):
+        sess = Session()
+        try:
+            subject = sess.query(Subject).filter(Subject.SubjectID.like(SubjectID + '%'))
+            return subject_schema.dump(subject, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def delRecord(cls, subjectID):
+        sess = Session()
+        try:
+            subject = sess.query(Subject).filter_by(SubjectID=subjectID).one()
+            sess.delete(subject)
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def updateRecord(cls, currentSubjectID, newSubjectID, newSubjectTitle):
+        sess = Session()
+        try:
+            # A dictionary of key - values with key being the attribute to be updated, and value being the new
+            # contents of attribute
+            sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
+                {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
     def create(cls, subjectID, subjectTitle):
         sess = Session()
         try:
@@ -213,7 +253,46 @@ class Subject(Base):
             sess.close()
 
     @classmethod
-    def getRecord(cls, studentID, status_type, page_index, per_page, sort_field, sort_order):
+    def getRecord(cls, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(User).filter(text('Role_Type = :type')).params(type='Student').order_by(getattr(
+                getattr(User, sort_field), sort_order)())
+
+            # user_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return user_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+
+    @classmethod
+    def getSubjectRecord(cls,page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Subject).order_by(
+                getattr(
+                    getattr(Subject, sort_field), sort_order)())
+
+            # record_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return subject_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getSubjectStatusRecord(cls, studentID, status_type, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
             record_query = sess.query(Subject).join(
