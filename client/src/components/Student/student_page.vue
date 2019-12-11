@@ -15,7 +15,7 @@
                   Trang chủ
               </b-navbar-item>
               <b-navbar-item tag="router-link" :to="{ name: 'shift_register', params: { studentid: ID } }" class="routing-link">
-                  Đăng ký ca thi
+                  Đăng ký dự thi
               </b-navbar-item>
           </template>
 

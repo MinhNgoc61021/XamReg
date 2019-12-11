@@ -54,14 +54,67 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/subject/subject-records': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/subject/create-subject': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/subject/edit-subject': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/subject/remove-subject': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/subject/search-subject': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
       '/log/log-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/create-new-semester': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/add-subject-semester': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/remove-semester-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/subject-semester-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/semester-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
       '/room/room-cache-records': {
           target: 'http://api:5000',
           changeOrigin: true,
+      },
+      '/room/room-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/room/update-room-record':{
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/room/remove-room-record':{
+          target: 'http://api:5000',
+          changeOrigin: true,
       }
+
     },
 
     // Various Dev Server settings

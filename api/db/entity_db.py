@@ -218,6 +218,25 @@ class Subject(Base):
             sess.close()
 
     @classmethod
+    def getSubjectRecord(cls, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Subject).order_by(
+                getattr(
+                    getattr(Subject, sort_field), sort_order)())
+
+            # record_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return subject_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
     def getSubjectStatusRecord(cls, studentID, status_type, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
@@ -238,8 +257,48 @@ class Subject(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def delRecord(cls, subjectID):
+        sess = Session()
+        try:
+            subject = sess.query(Subject).filter_by(SubjectID=subjectID).one()
+            sess.delete(subject)
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
 
-# student status class
+    @classmethod
+    def updateRecord(cls, currentSubjectID, newSubjectID, newSubjectTitle):
+        sess = Session()
+        try:
+            # A dictionary of key - values with key being the attribute to be updated, and value being the new
+            # contents of attribute
+            sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
+                {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def searchSubjectRecord(cls, SubjectID):
+        sess = Session()
+        try:
+            subject = sess.query(Subject).filter(Subject.SubjectID.like(SubjectID + '%'))
+            return subject_schema.dump(subject, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+
+# Student_Status persistent class
 class Student_Status(Base):
     __tablename__ = 'student_status'
     __table_args__ = {'mysql_engine': 'InnoDB'}
@@ -251,7 +310,7 @@ class Student_Status(Base):
                        ForeignKey('user.ID', onupdate="cascade"),
                        nullable=False)
     SubjectID = Column(String(45),
-                       ForeignKey('subject.SubjectID'),
+                       ForeignKey('subject.SubjectID', onupdate="cascade"),
                        nullable=False)
     Status = Column(String(45),
                     nullable=False)
@@ -295,6 +354,7 @@ class Student_Status(Base):
             sess.close()
 
 
+# Semester_Examination persistent class
 class Semester_Examination(Base):
     __tablename__ = 'semester_examination'
     __table_args__ = {'mysql_engine': 'InnoDB'}
@@ -305,17 +365,103 @@ class Semester_Examination(Base):
                       nullable=False)
 
     @classmethod
-    def create(cls, semid, semtitle):
+    def create(cls, newSemesterTitle):
         sess = Session()
-        if sess.query(Semester_Examination).filter(Semester_Examination.SemID == semid).scalar() is None:
-            new_semester = Semester_Examination(SemID=semid,
-                                                SemTitle=semtitle)
-            sess.add(new_semester)
-            sess.commit()
+        try:
+            if sess.query(Semester_Examination).filter(
+                    Semester_Examination.SemTitle == newSemesterTitle).scalar() is None:
+                new_semester = Semester_Examination(SemTitle=newSemesterTitle)
+                sess.add(new_semester)
+                sess.commit()
+                sess.close()
+                return True
+            else:
+                return False
+        except:
+            sess.rollback()
+            raise
+        finally:
             sess.close()
-            return True
-        else:
-            return False
+
+    @classmethod
+    def getRecord(cls):
+        sess = Session()
+        try:
+            semester_list = sess.query(Semester_Examination)
+            return semester_examination_schema.dump(semester_list, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def delRecord(cls, semID, semTitle):
+        sess = Session()
+        try:
+            semester = sess.query(Semester_Examination).filter_by(SemID=semID, SemTitle=semTitle).one()
+            sess.delete(semester)
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+
+# Subject_Semester persistent class
+class Subject_Semester(Base):
+    __tablename__ = 'subject_semester'
+
+    Sem_SubID = Column(Integer,
+                       primary_key=True)
+    SubjectID = Column(String(45),
+                       ForeignKey('subject.SubjectID', onupdate="cascade"),
+                       nullable=False)
+    SemesterID = Column(Integer,
+                        ForeignKey('semester_examination.SemID', onupdate="cascade"),
+                        nullable=False)
+    Subject = relationship('Subject',
+                           back_populates='subject_semester')
+    Semester_Examination = relationship('Semester_Examination',
+                                        back_populates='subject_semester')
+
+    @classmethod
+    def create(cls, subjectID, semesterID):
+        sess = Session()
+        try:
+            if sess.query(Subject_Semester).filter(Subject_Semester.SubjectID == subjectID,
+                                                   Subject_Semester.SemesterID == semesterID).scalar() is None:
+                new_semester_subject = Subject_Semester(SubjectID=subjectID,
+                                                        SemesterID=semesterID)
+                sess.add(new_semester_subject)
+                sess.commit()
+                sess.close()
+                return True
+            else:
+                return False
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getRecord(cls, semID, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        record_query = sess.query(Subject).join(Subject_Semester).filter(
+            Subject_Semester.SemesterID == semID).order_by(getattr(
+            getattr(Subject, sort_field), sort_order)())
+
+        record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                               page_size=int(per_page))
+
+        return subject_schema.dump(record_query, many=True), get_record_pagination
+        # except:
+        #     sess.rollback()
+        #     raise
+        # finally:
+        #     sess.close()
 
 
 # Shift persistent class
@@ -330,27 +476,19 @@ class Shift(Base):
     Start_At = Column(Time,
                       nullable=False)
     SubjectID = Column(String(45),
-                       ForeignKey('subject.SubjectID'),
+                       ForeignKey('subject.SubjectID', onupdate="cascade"),
                        nullable=False)
     Subject = relationship("Subject",
                            back_populates="shift")
-    SemID = Column(Integer,
-                   ForeignKey('semester_examination.SemID'),
-                   nullable=False)
-    Semester_Examination = relationship('Semester_Examination',
-                                        back_populates="shift")
 
     @classmethod
-    def create(cls, shiftid, subjectid, semid, start_at, date_start):
+    def create(cls, shiftid, subjectid, start_at, date_start):
         sess = Session()
         try:
             if sess.query(Shift).filter(Shift.ShiftID == shiftid,
-                                        Shift.SubjectID == subjectid,
-                                        Shift.SemID == semid).scalar() is None:
+                                        Shift.SubjectID == subjectid).scalar() is None:
                 new_shift = Shift(ShiftID=shiftid,
-                                  SubjectID=subjectid,
                                   Start_At=start_at,
-                                  SemID=semid,
                                   Date_Start=date_start)
                 sess.add(new_shift)
                 sess.commit()
@@ -374,12 +512,10 @@ class Student_Shift(Base):
     RegisterID = Column(Integer,
                         primary_key=True)
     StudentID = Column(String(45),
-                       ForeignKey('user.ID'),
-                       onupdate=True,
+                       ForeignKey('user.ID', onupdate="cascade"),
                        nullable=False)
     ShiftID = Column(Integer,
-                     ForeignKey('shift.ShiftID'),
-                     onupdate=True,
+                     ForeignKey('shift.ShiftID', onupdate="cascade"),
                      nullable=False)
     __table_args__ = (UniqueConstraint('StudentID', 'ShiftID', name='Student_Shift_UC'),
                       )
@@ -398,24 +534,17 @@ class Exam_Room(Base):
                     primary_key=True)
     RoomName = Column(String(45),
                       nullable=False)
-    Computer_Number = Column(Integer,
-                             nullable=False)
-    ShiftID = Column(Integer,
-                     ForeignKey('shift.ShiftID'),
-                     nullable=False)
-    Shift = relationship("Shift",
-                         back_populates="exam_room")
+    Maxcapacity = Column(Integer,
+                         nullable=False)
 
     @classmethod
-    def create(cls, roomid, shiftid, room_name, computer_number):
+    def create(cls, roomid, room_name, maxcapacity):
         sess = Session()
         try:
-            if sess.query(Exam_Room).filter(Exam_Room.ShiftID == shiftid,
-                                            Exam_Room.RoomID == roomid).scalar() is None:
+            if sess.query(Exam_Room).filter(Exam_Room.RoomID == roomid).scalar() is None:
                 new_room = Exam_Room(RoomID=roomid,
-                                     ShiftID=shiftid,
                                      RoomName=room_name,
-                                     Computer_Number=computer_number)
+                                     Maxcapacity=maxcapacity)
                 sess.add(new_room)
                 sess.commit()
                 return True
@@ -426,6 +555,94 @@ class Exam_Room(Base):
             raise
         finally:
             sess.close()
+
+    @classmethod
+    def getRecord(cls, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Exam_Room).order_by(getattr(
+                getattr(Exam_Room, sort_field), sort_order)())
+            print('ok1', flush=True)
+            # user_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+            print('ok2', flush=True)
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return room_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def updateRecord(cls, currentRoomID, newRoomID, newRoomName, newMaxcapacity):
+        sess = Session()
+        try:
+            # A dictionary of key - values with key being the attribute to be updated, and value being the new
+            # contents of attribute
+            sess.query(Exam_Room).filter_by(RoomID=currentRoomID).update(
+                {Exam_Room.RoomID: newRoomID, Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def delRecord(cls, roomID):
+        sess = Session()
+        try:
+            room = sess.query(Exam_Room).filter(Exam_Room.RoomID == roomID).one()
+            sess.delete(room)
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+
+# Shift_Exam_Room persistent class
+class Shift_ExamRoom(Base):
+    __tablename__ = 'shift_examroom'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    ID = Column(Integer,
+                primary_key=True)
+    RoomID = Column(Integer,
+                    ForeignKey('exam_room.RoomID', onupdate='cascade'),
+                    nullable=False)
+    ShiftID = Column(Integer,
+                     ForeignKey('shift.ShiftID', onupdate='cascade'),
+                     nullable=False)
+    Room = relationship('Exam_Room',
+                        back_populates='shift_examroom')
+    Shift = relationship('Shift',
+                         back_populates='shift_examroom')
+
+
+# @classmethod
+# def create(cls, roomid, shiftid, room_name, computer_number):
+#     sess = Session()
+#     try:
+#         if sess.query(Exam_Room).filter(Exam_Room.ShiftID == shiftid,
+#                                         Exam_Room.RoomID == roomid).scalar() is None:
+#             new_room = Exam_Room(RoomID=roomid,
+#                                  ShiftID=shiftid,
+#                                  RoomName=room_name,
+#                                  Computer_Number=computer_number)
+#             sess.add(new_room)
+#             sess.commit()
+#             return True
+#         else:
+#             return False
+#     except:
+#         sess.rollback()
+#         raise
+#     finally:
+#         sess.close()
 
 
 # Log persistent class
@@ -443,7 +660,8 @@ class Log(Base):
                     nullable=False)
     Created_At = Column(DateTime,
                         nullable=False)
-    User = relationship("User", back_populates="log")
+    User = relationship("User",
+                        back_populates="log")
 
     @classmethod
     def create(cls, userID, action, created_at):
@@ -492,23 +710,15 @@ User.student_status = relationship('Student_Status',
                                    back_populates='User',
                                    cascade='all, delete, delete-orphan')
 
-User.log = relationship('Log',
-                        order_by=Log.UserID,
-                        back_populates='User',
-                        cascade='all, delete, delete-orphan')
-
 Subject.student_status = relationship('Student_Status',
                                       order_by=Student_Status.SubjectID,
                                       back_populates='Subject',
                                       cascade='all, delete, delete-orphan')
 
-Shift.exam_room = relationship('Exam_Room',
-                               back_populates='Shift',
-                               cascade='all, delete, delete-orphan')
-
-Semester_Examination.shift = relationship('Shift',
-                                          back_populates='Semester_Examination',
-                                          cascade='all, delete, delete-orphan')
+User.log = relationship('Log',
+                        order_by=Log.UserID,
+                        back_populates='User',
+                        cascade='all, delete, delete-orphan')
 
 Subject.shift = relationship('Shift',
                              back_populates='Subject',
@@ -523,6 +733,25 @@ User.student_shift = relationship('Student_Shift',
                                   order_by=Student_Shift.StudentID,
                                   back_populates='Student',
                                   cascade='all, delete, delete-orphan', single_parent=true)
+
+Subject.subject_semester = relationship('Subject_Semester',
+                                        order_by=Subject_Semester.SubjectID,
+                                        back_populates='Subject',
+                                        cascade='all, delete, delete-orphan')
+
+Semester_Examination.subject_semester = relationship('Subject_Semester',
+                                                     order_by=Subject_Semester.SemesterID,
+                                                     back_populates='Semester_Examination',
+                                                     cascade='all, delete, delete-orphan')
+Exam_Room.shift_examroom = relationship('Shift_ExamRoom',
+                                        order_by=Shift_ExamRoom.RoomID,
+                                        back_populates='Room',
+                                        cascade='all, delete, delete-orphan')
+
+Shift.shift_examroom = relationship('Shift_ExamRoom',
+                                    order_by=Shift_ExamRoom.ShiftID,
+                                    back_populates='Shift',
+                                    cascade='all, delete, delete-orphan')
 
 # Each Table object is a member of larger collection known as MetaData
 # This object is available using the .metadata attribute of declarative base class.
@@ -550,7 +779,15 @@ class StudentStatusSchema(ModelSchema):
         model = Student_Status
         # optionally attach a Session
         # to use for deserialization
-        sqla_session = scoped_session
+        # sqla_session = scoped_session
+
+
+class SubjectSemesterSchema(ModelSchema):
+    class Meta:
+        model = Subject_Semester
+        # optionally attach a Session
+        # to use for deserialization
+        # sqla_session = scoped_session
 
 
 class ExamRoomSchema(ModelSchema):
@@ -592,4 +829,8 @@ subject_schema = SubjectSchema()
 
 student_status_schema = StudentStatusSchema()
 
+semester_examination_schema = SemesterExaminationSchema()
+
 log_schema = LogSchema()
+
+room_schema = ExamRoomSchema()
