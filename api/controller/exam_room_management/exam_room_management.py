@@ -6,23 +6,27 @@ from flask import (
     jsonify
 )
 from controller.authentication.auth import token_required
-from db.entity_db import User, Subject, Exam_Room, Shift, Exam_Room_Cache
+from db.entity_db import User, Subject, Exam_Room, Log
+from controller.time_conversion.asia_timezone import set_custom_log_time
 import re
 
 exam_room_management = Blueprint('exam_room_management', __name__, url_prefix='/room')
 
-@exam_room_management.route('/room-cache-records', methods=['GET'])
+
+@exam_room_management.route('/room-records', methods=['GET'])
 @token_required
-def get_room_cache_record(current_room):
+def get_room_record(current_user):
     try:
         page_index = request.args.get('page_index')
         per_page = request.args.get('per_page')
         sort_order = request.args.get('sort_order')
         sort_field = request.args.get('sort_field')
-        # print(sort_order, flush=True)
-        # print(sort_field, flush=True)
-        # FYI: User.getRecord function return a tuple, [0] is the records data, and [1] is the pagination data
-        record = Exam_Room_Cache.getRecord_cache(page_index, per_page, sort_field, sort_order)
+        print(sort_order, flush=True)
+        print(sort_field, flush=True)
+        print(page_index, flush=True)
+        print(per_page, flush=True)
+
+        record = Exam_Room.getRecord(page_index, per_page, sort_field, sort_order)
 
         return jsonify({'status': 'success',
                         'records': record[0],
@@ -32,5 +36,51 @@ def get_room_cache_record(current_room):
                         'total_results': record[1].total_results,
                         }), 200
 
+
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@exam_room_management.route('/update-room-record', methods=['PUT'])
+@token_required
+def update_room_record(current_user):
+    try:
+        new_update = request.get_json()
+        currentRoomID = new_update.get('currentRoomID')
+        newRoomID = new_update.get('RoomID')
+        newRoomName = new_update.get('RoomName')
+        newMaxcapacity = new_update.get('Maxcapacity')
+
+        # print(currentStudentID, flush=True)
+        # print(newStudentID, flush=True)
+        # print(newUsername, flush=True)
+        # print(newFullname, flush=True)
+
+        Exam_Room.updateRecord(currentRoomID, newRoomID, newRoomName, newMaxcapacity)
+        Log.create(current_user['ID'],
+                   'Cập nhật thông tin của phòng thi ' + newRoomName,
+                   set_custom_log_time())
+
+        return jsonify({'status': 'success'}), 200
+
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@exam_room_management.route('/remove-room-record', methods=['DELETE'])
+@token_required
+def remove_subject_record(current_user):
+    try:
+        # print(request.get_json('studentID'), flush=True)
+        record = request.get_json()
+        roomID = record.get('delRoomID')
+        roomName = record.get('delRoomName')
+
+        Exam_Room.delRecord(str(roomID))
+        Log.create(current_user['ID'],
+                   'Xóa phòng thi ' + roomName + ".",
+                   set_custom_log_time())
+
+        return jsonify({'status': 'success'}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400

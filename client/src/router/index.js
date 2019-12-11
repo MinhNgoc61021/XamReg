@@ -8,7 +8,7 @@ import upload from "../components/Admin/student_management/import/upload/upload"
 import student_management from "../components/Admin/student_management/student_management";
 import schedule_management from "../components/Admin/schedule_management/schedule_management";
 import log_management from "../components/Admin/log_management/log_management";
-import subject_management from "../components/Admin/subject_management/subject_management";
+import subjects_management from "../components/Admin/subjects_management/subjects_management";
 import home_page from "../components/Student/home_page";
 import shift_register from "../components/Student/shift_register/shift_register";
 import exam_room_management from "../components/Admin/exam_room_management/exam_room_management"
@@ -25,7 +25,7 @@ export const router = new Router({
       children: [ { path: '/student-management', component: student_management },
                   { path: '/schedule-management', component: schedule_management },
                   { path: '/log-management', component: log_management },
-                  { path: '/subject-management', component: subject_management },
+                  { path: '/subject-management', component: subjects_management },
                   { path: '/exam-room-management', component: exam_room_management },]
     },
     { path: '/student', name: 'student', component: Student_Page, redirect: '/student-home',

@@ -378,82 +378,26 @@ class Student_Shift(Base):
     Student = relationship('User',
                            back_populates='student_shift')
 
-#"Cache" tp store room data that are not assigned a shift
-class Exam_Room_Cache(Base):
-    __tablename__ = 'exam_room_cache'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
-    RoomcacheID = Column(Integer,
-                    primary_key=True)
-    RoomcacheName = Column(String(45),
-                      nullable=False)
-    Maxcapacity = Column(Integer,
-                             nullable=False)
 
-    @classmethod
-    def create(cls, roomid, room_name, computer_number):
-        sess = Session()
-        try:
-            if sess.query(Exam_Room_Cache).filter(Exam_Room_Cache.RoomcacheID == roomid).scalar() is None:
-                new_room = Exam_Room_Cache(RoomcacheID=roomid,
-                                     RoomcacheName=room_name,
-                                     Maxcapacity=computer_number)
-                sess.add(new_room)
-                sess.commit()
-                return True
-            else:
-                return False
-        except:
-            sess.rollback()
-            raise
-        finally:
-            sess.close()
-
-    @classmethod
-    def getRecord_cache(cls, page_index, per_page, sort_field, sort_order):
-        sess = Session()
-        try:
-            record_query = sess.query(Exam_Room_Cache).order_by(getattr(
-                getattr(Exam_Room_Cache, sort_field), sort_order)())
-
-            # user_query is the user object and get_record_pagination is the index data
-            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
-                                                                   page_size=int(per_page))
-
-            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
-            return room_cache_schema.dump(record_query, many=True), get_record_pagination
-        except:
-            sess.rollback()
-            raise
-        finally:
-            sess.close()
-
-# Exam_Room persistent class
+# table store room data that are not assigned a shift
 class Exam_Room(Base):
     __tablename__ = 'exam_room'
     __table_args__ = {'mysql_engine': 'InnoDB'}
-
     RoomID = Column(Integer,
                     primary_key=True)
     RoomName = Column(String(45),
                       nullable=False)
-    Computer_Number = Column(Integer,
-                             nullable=False)
-    ShiftID = Column(Integer,
-                     ForeignKey('shift.ShiftID'),
-                     nullable=False)
-    Shift = relationship("Shift",
-                         back_populates="exam_room")
+    Maxcapacity = Column(Integer,
+                         nullable=False)
 
     @classmethod
-    def create(cls, roomid, shiftid, room_name, computer_number):
+    def create(cls, roomid, room_name, maxcapacity):
         sess = Session()
         try:
-            if sess.query(Exam_Room).filter(Exam_Room.ShiftID == shiftid,
-                                            Exam_Room.RoomID == roomid).scalar() is None:
+            if sess.query(Exam_Room).filter(Exam_Room.RoomID == roomid).scalar() is None:
                 new_room = Exam_Room(RoomID=roomid,
-                                     ShiftID=shiftid,
                                      RoomName=room_name,
-                                     Computer_Number=computer_number)
+                                     Maxcapacity=maxcapacity)
                 sess.add(new_room)
                 sess.commit()
                 return True
@@ -471,6 +415,86 @@ class Exam_Room(Base):
         try:
             record_query = sess.query(Exam_Room).order_by(getattr(
                 getattr(Exam_Room, sort_field), sort_order)())
+            print('ok1', flush = True)
+            # user_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+            print('ok2', flush = True)
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return room_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def updateRecord(cls, currentRoomID, newRoomID, newRoomName, newMaxcapacity):
+        sess = Session()
+        try:
+            # A dictionary of key - values with key being the attribute to be updated, and value being the new
+            # contents of attribute
+            sess.query(Exam_Room).filter_by(RoomID=currentRoomID).update(
+                {Exam_Room.RoomID: newRoomID, Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def delRecord(cls, roomID):
+        sess = Session()
+        try:
+            room = sess.query(Exam_Room).filter(Exam_Room.RoomID == roomID).one()
+            sess.delete(room)
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+
+# Exam_Room persistent class #chưa nối với table Exam_Room
+class Exam_Room__Shift(Base):
+    __tablename__ = 'exam_room__shift'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+
+    RoomID = Column(Integer,
+                    primary_key=True)
+    ShiftID = Column(Integer,
+                     ForeignKey('shift.ShiftID'),
+                     nullable=False)
+    Shift = relationship("Shift",
+                         back_populates="exam_room__shift")
+
+    @classmethod
+    def create(cls, roomid, shiftid):
+        sess = Session()
+        try:
+            if sess.query(Exam_Room__Shift).filter(Exam_Room__Shift.ShiftID == shiftid,
+                                                   Exam_Room__Shift.RoomID == roomid).scalar() is None:
+                new_row = Exam_Room__Shift(RoomID=roomid,
+                                           ShiftID=shiftid)
+                sess.add(new_row)
+                sess.commit()
+                return True
+            else:
+                return False
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getRecord(cls, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Exam_Room__Shift).order_by(getattr(
+                getattr(Exam_Room__Shift, sort_field), sort_order)())
 
             # user_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
@@ -483,6 +507,7 @@ class Exam_Room(Base):
             raise
         finally:
             sess.close()
+
 
 # Log persistent class
 class Log(Base):
@@ -558,9 +583,9 @@ Subject.student_status = relationship('Student_Status',
                                       back_populates='Subject',
                                       cascade='all, delete, delete-orphan')
 
-Shift.exam_room = relationship('Exam_Room',
-                               back_populates='Shift',
-                               cascade='all, delete, delete-orphan')
+Shift.exam_room__shift = relationship('Exam_Room__Shift',
+                                      back_populates='Shift',
+                                      cascade='all, delete, delete-orphan')
 
 Semester_Examination.shift = relationship('Shift',
                                           back_populates='Semester_Examination',
@@ -616,14 +641,8 @@ class ExamRoomSchema(ModelSchema):
         model = Exam_Room
         # optionally attach a Session
         # to use for deserialization
-        sqla_session = scoped_session
+        # sqla_session = scoped_session
 
-class ExamRoomCacheSchema(ModelSchema):
-    class Meta:
-        model = Exam_Room_Cache
-        # optionally attach a Session
-        # to use for deserialization
-        sqla_session = scoped_session
 
 class ShiftSchema(ModelSchema):
     class Meta:
@@ -659,5 +678,3 @@ student_status_schema = StudentStatusSchema()
 log_schema = LogSchema()
 
 room_schema = ExamRoomSchema()
-
-room_cache_schema = ExamRoomCacheSchema()

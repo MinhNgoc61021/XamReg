@@ -58,7 +58,15 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/room/room-cache-records': {
+      '/room/room-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/room/update-room-record':{
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/room/remove-room-record':{
           target: 'http://api:5000',
           changeOrigin: true,
       }
