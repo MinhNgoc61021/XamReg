@@ -106,6 +106,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/schedule/remove-shift-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/schedule/shift-records': {
           target: 'http://api:5000',
           changeOrigin: true,

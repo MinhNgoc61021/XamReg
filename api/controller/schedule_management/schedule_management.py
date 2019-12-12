@@ -138,25 +138,24 @@ def get_semester_subject(current_user):
 @schedule_management.route('/create-new-shift', methods=['POST'])
 @token_required
 def add_shift(current_user):
-        newShift = request.get_json()
-        exam_roomID = newShift.get('RoomID')
-        subjectID = newShift.get('SubjectID')
-        date_start = newShift.get('Date_Start')
-        start_at = newShift.get('Start_At')
-        print(newShift, flush=True)
-        print(subjectID, flush=True)
-        print(date_start, flush=True)
-        print(start_at, flush=True)
-        print(exam_roomID, flush=True)
-        newShift = Shift.create(subjectID, date_start, start_at, exam_roomID)
-        if newShift is False:
-            return jsonify({'status': 'already-exist'}), 200
-        else:
-            Log.create(current_user['ID'],
-                       'Thêm ca thi mới vào môn thi có mã ' + str(subjectID) + ' trong hệ thống.',
-                       set_custom_log_time())
-            return jsonify({'status': 'success'}), 200
-
+    newShift = request.get_json()
+    exam_roomID = newShift.get('RoomID')
+    subjectID = newShift.get('SubjectID')
+    date_start = newShift.get('Date_Start')
+    start_at = newShift.get('Start_At')
+    print(newShift, flush=True)
+    print(subjectID, flush=True)
+    print(date_start, flush=True)
+    print(start_at, flush=True)
+    print(exam_roomID, flush=True)
+    newShift = Shift.create(subjectID, date_start, start_at, exam_roomID)
+    if newShift is False:
+        return jsonify({'status': 'already-exist'}), 200
+    else:
+        Log.create(current_user['ID'],
+                   'Thêm ca thi mới vào môn thi có mã ' + str(subjectID) + ' trong hệ thống.',
+                   set_custom_log_time())
+        return jsonify({'status': 'success'}), 200
 
 
 @schedule_management.route('/shift-records', methods=['GET'])
@@ -184,5 +183,25 @@ def get_shift(current_user):
                         'num_pages': record[1].num_pages,
                         'total_results': record[1].total_results,
                         }), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@schedule_management.route('/remove-shift-record', methods=['DELETE'])
+@token_required
+def remove_shift(current_user):
+    try:
+        record = request.get_json()
+        delShiftID = record.get('delShiftID')
+        currentSubjectID = record.get('currentSubjectID')
+        print(delShiftID, flush=True)
+        print(currentSubjectID, flush=True)
+        Shift.delRecord(str(delShiftID))
+        Log.create(current_user['ID'],
+                   'Xóa ca thi có mã số ' + str(delShiftID) + ' trong môn thi có mã ' +
+                       currentSubjectID + ' ra khỏi hệ thống.',
+                   set_custom_log_time())
+
+        return jsonify({'status': 'success'}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400

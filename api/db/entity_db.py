@@ -2,7 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import *
 from flask_bcrypt import generate_password_hash, check_password_hash
-from marshmallow_sqlalchemy import ModelSchema
+from marshmallow_sqlalchemy import *
 
 # create_engine connect to examrag model
 
@@ -866,7 +866,7 @@ semester_examination_schema = SemesterExaminationSchema()
 
 shift_schema = ShiftSchema()
 
-examroom_schema =ExamRoomSchema()
+examroom_schema = ExamRoomSchema()
 
 log_schema = LogSchema()
 

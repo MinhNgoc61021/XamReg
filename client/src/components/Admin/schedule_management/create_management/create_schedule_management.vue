@@ -659,7 +659,7 @@
                 this.$buefy.modal.open({
                     parent: this,
                     component: new_shift,
-                    props: { currentSubjectID: this.subject.currentSemesterSubjectID},
+                    props: { currentSubjectID: this.subject.currentSemesterSubjectID },
                     hasModalCard: true,
                     customClass: 'custom-class custom-class-2',
                     canCancel: false,
@@ -754,7 +754,50 @@
                 })
             },
             onShiftDelete(ID) {
-
+                this.$buefy.dialog.confirm({
+                    title: 'Xóa kỳ thi',
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> ca thi có mã ${ID} này không? Đã làm thì tự chịu đấy.`,
+                    confirmText: 'Xóa!',
+                    cancelText: 'Bỏ qua',
+                    type: 'is-danger',
+                    hasIcon: true,
+                    onConfirm: async () => {
+                        try {
+                            const removeData = await axios({
+                                url: '/schedule/remove-shift-record',
+                                method: 'delete',
+                                headers: {
+                                    'Authorization': authHeader(),
+                                },
+                                data: {
+                                    currentSubjectID: this.subject.currentSemesterSubjectID,
+                                    delShiftID: ID,
+                                },
+                            });
+                            if (removeData.status === 200) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `Đã xóa kỳ thi <b>${record.SemTitle}</b> thành công.`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                            }
+                        } catch (e) {
+                            if (e['message'].includes('401')) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                })
+                            }
+                        } finally {
+                            this.getShiftRecordData();
+                        }
+                    },
+                });
             },
             destroySemesterData() { // destroy subject data for scalability when closing accordion
                 this.subject.semester_subject_record_data = [];
