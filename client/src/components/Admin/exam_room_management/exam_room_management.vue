@@ -218,8 +218,7 @@
                 });
           },
           onRoomEdit(record) {
-                // console.log(record.Dob);
-                // console.log(new Date(moment(record.Dob).format('MM/DD/YYYY')));
+
                 this.$buefy.modal.open({
                     parent: this,
                     component: editRoomModal,

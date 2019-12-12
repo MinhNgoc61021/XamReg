@@ -391,12 +391,11 @@ class Exam_Room(Base):
                          nullable=False)
 
     @classmethod
-    def create(cls, roomid, room_name, maxcapacity):
+    def create(cls, room_name, maxcapacity):
         sess = Session()
         try:
-            if sess.query(Exam_Room).filter(Exam_Room.RoomID == roomid).scalar() is None:
-                new_room = Exam_Room(RoomID=roomid,
-                                     RoomName=room_name,
+            if sess.query(Exam_Room).filter(Exam_Room.RoomName.lower() == room_name.lower()).scalar() is None:
+                new_room = Exam_Room(RoomName=room_name,
                                      Maxcapacity=maxcapacity)
                 sess.add(new_room)
                 sess.commit()

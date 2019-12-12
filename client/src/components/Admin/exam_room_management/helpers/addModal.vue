@@ -5,15 +5,6 @@
             <p class="modal-card-title">Form thêm phòng thi</p>
         </header>
         <section class="modal-card-body">
-          <b-field label="Mã số phòng thi">
-            <b-input
-              type="number"
-              v-model="newRoomID"
-              :value="newRoomID"
-              placeholder="Nhập mã số phòng thi"
-              required>
-            </b-input>
-          </b-field>
           <b-field label="Tên phòng thi">
             <b-input
               v-model="newRoomName"
@@ -28,6 +19,7 @@
               type="number"
               v-model="newMaxcapacity"
               :value="newMaxcapacity"
+              pattern="^\d$"
               placeholder="Nhập số lượng chỗ thi"
               required>
             </b-input>
@@ -65,7 +57,6 @@
                           'Authorization': authHeader(),
                       },
                       data: {
-                          newRoomID: this.newRoomID,
                           newRoomName: this.newRoomName,
                           newMaxcapacity: this.newMaxcapacity,
                       },
