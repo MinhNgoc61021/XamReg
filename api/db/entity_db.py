@@ -450,19 +450,33 @@ class Subject_Semester(Base):
     @classmethod
     def getRecord(cls, semID, page_index, per_page, sort_field, sort_order):
         sess = Session()
-        record_query = sess.query(Subject).join(Subject_Semester).filter(
-            Subject_Semester.SemesterID == semID).order_by(getattr(
-            getattr(Subject, sort_field), sort_order)())
+        try:
+            record_query = sess.query(Subject).join(Subject_Semester).filter(
+                Subject_Semester.SemesterID == semID).order_by(getattr(
+                getattr(Subject, sort_field), sort_order)())
 
-        record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
-                                                               page_size=int(per_page))
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
 
-        return subject_schema.dump(record_query, many=True), get_record_pagination
-        # except:
-        #     sess.rollback()
-        #     raise
-        # finally:
-        #     sess.close()
+            return subject_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def delRecord(cls, semID, subjectID):
+        sess = Session()
+        try:
+            subject_semester = sess.query(Subject_Semester).filter_by(SemesterID=semID, SubjectID=subjectID).one()
+            sess.delete(subject_semester)
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
 
 
 # Subject_Shift persistent class
@@ -490,7 +504,7 @@ class Shift(Base):
         sess = Session()
         try:
             if sess.query(Shift).filter(Shift.SubjectID == subjectID, Shift.Date_Start == date_start,
-                                        Shift.Start_At == start_at).scalar() is None:
+                                        Shift.Start_At == start_at, Shift.Exam_RoomID == exam_roomID).scalar() is None:
 
                 newShift = Shift(SubjectID=subjectID,
                                  Exam_RoomID=exam_roomID,
@@ -511,7 +525,7 @@ class Shift(Base):
     def getRecord(cls, subjectID, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
-            record_query = sess.query(Shift).filter(SubjectID=subjectID).order_by(
+            record_query = sess.query(Shift).join(Exam_Room).filter(Shift.SubjectID == subjectID).order_by(
                 getattr(
                     getattr(Shift, sort_field), sort_order)())
 
@@ -531,7 +545,7 @@ class Shift(Base):
     def delRecord(cls, shiftID):
         sess = Session()
         try:
-            shift = sess.query(Shift).filter_by(ShiftID=shiftID).one()
+            shift = sess.query(Shift).filter(Shift.ShiftID == shiftID).one()
             sess.delete(shift)
             sess.commit()
         except:
@@ -546,7 +560,7 @@ class Shift(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Shift).filter_by(ShiftID=currentShiftID, SubjectID=currentsubjectID).update(
+            sess.query(Shift).filter(Shift.ShiftID == currentShiftID, Shift.SubjectID == currentsubjectID).update(
                 {Shift.Date_Start: new_date_start,
                  Shift.Start_At: new_start_at,
                  Shift.Exam_RoomID: new_exam_roomID})
@@ -577,6 +591,7 @@ class Student_Shift(Base):
     Student = relationship('User',
                            back_populates='student_shift')
 
+
 # Exam Room persistent class
 class Exam_Room(Base):
     __tablename__ = 'exam_room'
@@ -594,8 +609,8 @@ class Exam_Room(Base):
         try:
             if sess.query(Exam_Room).filter(Exam_Room.RoomName == room_name).scalar() is None:
                 new_room = Exam_Room(
-                                     RoomName=room_name,
-                                     Maxcapacity=maxcapacity)
+                    RoomName=room_name,
+                    Maxcapacity=maxcapacity)
                 sess.add(new_room)
                 sess.commit()
                 return True
@@ -613,11 +628,11 @@ class Exam_Room(Base):
         try:
             record_query = sess.query(Exam_Room).order_by(getattr(
                 getattr(Exam_Room, sort_field), sort_order)())
-            print('ok1', flush = True)
+            print('ok1', flush=True)
             # user_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
                                                                    page_size=int(per_page))
-            print('ok2', flush = True)
+            print('ok2', flush=True)
             # many=True if user_query is a collection of many results, so that record will be serialized to a list.
             return room_schema.dump(record_query, many=True), get_record_pagination
         except:
@@ -742,10 +757,12 @@ User.log = relationship('Log',
                         cascade='all, delete, delete-orphan')
 
 Exam_Room.shift = relationship('Shift',
+                               order_by=Shift.Exam_RoomID,
                                back_populates='Exam_Room',
                                cascade='all, delete, delete-orphan')
 
 Subject.shift = relationship('Shift',
+                             order_by=Shift.SubjectID,
                              back_populates='Subject',
                              cascade='all, delete, delete-orphan')
 
@@ -819,7 +836,7 @@ class ShiftSchema(ModelSchema):
         model = Shift
         # optionally attach a Session
         # to use for deserialization
-        sqla_session = scoped_session
+        # sqla_session = scoped_session
 
 
 class SemesterExaminationSchema(ModelSchema):
@@ -848,6 +865,8 @@ student_status_schema = StudentStatusSchema()
 semester_examination_schema = SemesterExaminationSchema()
 
 shift_schema = ShiftSchema()
+
+examroom_schema =ExamRoomSchema()
 
 log_schema = LogSchema()
 

@@ -1,27 +1,27 @@
 <template>
   <div>
     <b-field grouped group-multiline>
-            <b-button
-              :class="{'is-loading': semester.create_loading}"
-              icon-pack="fas" icon-left="plus-square"
-              @click="addNewSemester">
-              <span>Tạo kỳ thi</span>
-            </b-button>
-            <b-button
-              class="button"
-              @click="getSemesterRecordData"
-            >
-              <b-icon
-                size="is-small"
-                icon="sync"/>
-              <span>Làm mới</span>
-            </b-button>
-            <b-field :message="[{ 'Kỳ thi chưa đánh': hasSemesterError },]">
-              <b-input v-model="semester.newSemester" placeholder="Nhập tiêu đề kỳ thi" expanded>
-              </b-input>
-            </b-field>
-
-        </b-field>
+      <b-button
+        class="button"
+        :class="{'is-loading': semester.loading}"
+        @click="getSemesterRecordData"
+      >
+        <b-icon
+          size="is-small"
+          icon="sync"/>
+        <span>Làm mới</span>
+      </b-button>
+      <b-field :message="[{ 'Kỳ thi chưa đánh': hasSemesterError },]" expanded>
+        <b-input v-model="semester.newSemester" placeholder="Nhập tiêu đề để tạo kỳ thi" >
+        </b-input>
+      </b-field>
+      <b-button
+        :class="{'is-loading': semester.create_loading}"
+        icon-pack="fas" icon-left="plus-square"
+        @click="addNewSemester">
+        <span>Tạo kỳ thi</span>
+      </b-button>
+    </b-field>
     <section>
       <div v-if="semester.semester_record_data.length > 0">
         <b-collapse
@@ -45,29 +45,29 @@
                 </div>
             </div>
               <div class="card-content">
+                <h2 class="subtitle is-6">Danh sách môn thi</h2>
                 <b-field grouped group-multiline>
                     <b-autocomplete
-                    :data="subject.searchResults"
-                    v-model="semester.SemesterSubjectID"
-                    placeholder="Nhập tên môn"
-                    field="SubjectID"
-                    :loading="subject.search_loading"
-                    @typing="onSubjectSearch"
-                    @select="option => { semester.SemesterSubjectID = [option].SubjectID}"
-                    expanded>
-                    <template slot-scope="props">
-                      <div class="media">
-                          <div class="media-left">
-                            <b-icon icon-pack="fas" icon="book"></b-icon>
-                          </div>
-                          <div class="media-content">
-                              <b>Mã môn học: </b>{{ props.option.SubjectID }}
-                              <br>
-                              <b>Tên môn học: </b>{{ props.option.SubjectTitle }}
-                          </div>
-                      </div>
-                    </template>
-                  </b-autocomplete>
+                      :data="subject.searchResults"
+                      placeholder="Nhập mã môn"
+                      field="SubjectID"
+                      :loading="subject.search_loading"
+                      @typing="onSubjectSearch"
+                      @select="option => { semester.SemesterSubjectID = option.SubjectID}"
+                      expanded>
+                      <template slot-scope="props">
+                        <div class="media">
+                            <div class="media-left">
+                              <b-icon icon-pack="fas" icon="book"></b-icon>
+                            </div>
+                            <div class="media-content">
+                                <b>Mã môn học: </b>{{ props.option.SubjectID }}
+                                <br>
+                                <b>Tên môn học: </b>{{ props.option.SubjectTitle }}
+                            </div>
+                        </div>
+                      </template>
+                    </b-autocomplete>
                   <b-button
                     type="is-primary"
                     :class="{'is-loading': semester.create_loading}"
@@ -75,7 +75,7 @@
                     <span>Thêm Môn</span>
                   </b-button>
                 </b-field>
-                <div class="content">
+                <div>
                   <div v-if="subject.semester_subject_record_data.length === 0" >
                     <b-message type="is-danger" has-icon>
                       Hiện tại chưa có thông tin về môn thi, bạn hãy nhập vào môn thi!
@@ -104,8 +104,8 @@
                         :default-sort-direction="subject.defaultSortOrder"
                         :default-sort="[subject.sortField, subject.sortOrder]"
                         @sort="onSemesterSubjectSort"
-                        @details-open="(row, index) => { subject.currentSemesterSubjectID = row.SubjectID ; getSubjectShiftRecordData(); closeOtherDetails(row, index) }"
-                        @details-close="(row, index) => { subject_shift.subject_shift_record_data = [] }"
+                        @details-open="(row, index) => { subject.currentSemesterSubjectID = row.SubjectID ; getShiftRecordData(); closeOtherDetails(row, index) }"
+                        @details-close="(row, index) => { shift.subject_shift_record_data = [] }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
                             <b-table-column field="SubjectID" label="Mã môn" sortable width="90">
@@ -124,25 +124,32 @@
                             <h4 class="title is-4">Danh sách ca thi</h4>
                             <b-field grouped group-multiline>
                               <b-button
-                                :class="{'is-loading': subject_shift.loading}"
+                                :class="{'is-loading': shift.shift_loading}"
                                 class="button"
-                                @click="getSubjectShiftRecordData(props.row)"
+                                @click="getShiftRecordData(props.row)"
                               >
                                 <b-icon
                                   size="is-small"
                                   icon="sync"/>
                               </b-button>
+                              <b-button
+                                class="button"
+                                @click="addNewShift"
+                                icon-pack="fas" icon-left="plus-square"
+                              >
+                                <span>Tạo ca thi</span>
+                              </b-button>
                             </b-field>
 
                             <!--subject_shift-->
-                            <b-field v-if="subject_shift.subject_shift_record_data.length > 0" grouped group-multiline>
+                            <b-field v-if="shift.subject_shift_record_data.length > 0" grouped group-multiline>
                               <b-table
-                                :data="subject_shift.subject_shift_record_data"
-                                :loading="subject_shift.loading"
+                                :data="shift.subject_shift_record_data"
+                                :loading="shift.loading"
                                 paginated
                                 backend-pagination
-                                :total="subject_shift.total"
-                                :per-page="subject_shift.per_page"
+                                :total="shift.total"
+                                :per-page="shift.per_page"
                                 @page-change="onShiftPageChange"
                                 aria-next-label="Next page"
                                 aria-previous-label="Previous page"
@@ -153,26 +160,37 @@
                                 narrowed
                                 hoverable
                                 detail-key="ID"
-                                :default-sort-direction="student_status.defaultSortOrder"
-                                :default-sort="[student_status.sortField, student_status.sortOrder]"
-                                @sort="onStatusSort">
+                                :default-sort-direction="shift.defaultSortOrder"
+                                :default-sort="[shift.sortField, shift.sortOrder]"
+                                @sort="onShiftSort">
                                 <template slot-scope="props">
-                                  <b-table-column field="SubjectID" label="Mã môn" sortable>
-                                    {{ props.row.SubjectID }}
+
+                                  <b-table-column field="ShiftID" label="Mã môn" width="100" sortable>
+                                    {{ props.row.ShiftID }}
                                   </b-table-column>
-                                  <b-table-column field="SubjectTitle" label="Tên môn" sortable>
-                                    {{ props.row.SubjectTitle }}
+                                  <b-table-column field="Date_Start" label="Ngày thi" width="100" sortable>
+                                    {{ props.row.Date_Start }}
+                                  </b-table-column>
+                                  <b-table-column field="Start_At" label="Thời gian thi" width="100" sortable>
+                                    {{ props.row.Start_At }}
+                                  </b-table-column>
+                                  <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
+                                    {{ props.row.RoomName }}
+                                  </b-table-column>
+                                  <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
+                                    {{ props.row.Maxcapacity }}
                                   </b-table-column>
 
-                                  <b-table-column field="Action">
-                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row.SubjectID)"></b-button>
+                                  <b-table-column field="Action" width="90">
+                                    <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onShiftEdit(props.row)"></b-button>
+                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onShiftDelete(props.row.ShiftID)"></b-button>
                                   </b-table-column>
                                 </template>
                               </b-table>
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại môn này chưa có ca thi, bạn hãy nhập vào ca thi!
+                                Hiện tại chưa có dự liệu ca thi, bạn hãy nhập vào ca thi!
                               </b-message>
                             </b-field>
 
@@ -200,6 +218,9 @@
     import axios from 'axios';
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
+    import semester_edit from "./edit/semester_edit";
+    import shift_edit from "./edit/shift_edit";
+    import new_shift from "./create/shift_create";
 
     export default {
         name: 'create_management',
@@ -224,9 +245,12 @@
                     page: 1,
                     per_page: 5,
                     ID_Index: [],
+                    currentSemesterSubjectID: '',
                 },
-                subject_shift: {
+                shift: {
                     subject_shift_record_data: [],
+                    date_start: '',
+                    start_at: '',
                     total: 0,
                     shift_loading: false,
                     search_loading: false,
@@ -240,7 +264,7 @@
                 },
                 isOpen: null,
                 collapses: [],
-                currentSemID: '',
+                currentSemID: '', // current opening semesterID
                 hasSemesterError: false,
                 hasSubjectError: false,
             }
@@ -255,7 +279,7 @@
                         this.hasSemesterError = false;
                         this.semester.create_loading = true;
                         const response = await axios({
-                            url: '/schedule/add-new-semester',
+                            url: '/schedule/create-new-semester',
                             method: 'post',
                             headers: {
                                 'Authorization': authHeader(),
@@ -312,7 +336,7 @@
             async onSemesterDelete(record) {
                 this.$buefy.dialog.confirm({
                     title: 'Xóa kỳ thi',
-                    message: `Bạn có chắc chắn là muốn <b>xóa</b> kỳ thi ${record.SemTitle} này không? Đã làm thì tự chịu đấy.`,
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> ${record.SemTitle} này không? Đã làm thì tự chịu đấy.`,
                     confirmText: 'Xóa!',
                     cancelText: 'Bỏ qua',
                     type: 'is-danger',
@@ -392,7 +416,7 @@
                 this.subject.subject_loading = true;
                 try {
                     const response = await axios({
-                        url: '/schedule/subject-semester-records',
+                        url: '/schedule/semester-subject-records',
                         method: 'get',
                         params: {
                             SemID: this.currentSemID,
@@ -429,40 +453,87 @@
                 }
             },
             async onSemesterSubjectDelete(SubjectID) {
-
+                console.log(SubjectID);
+                console.log(this.currentSemID);
+                this.$buefy.dialog.confirm({
+                    title: 'Xóa kỳ thi',
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> môn thi có mã số ${SubjectID} này không? Đã làm thì tự chịu đấy.`,
+                    confirmText: 'Xóa!',
+                    cancelText: 'Bỏ qua',
+                    type: 'is-danger',
+                    hasIcon: true,
+                    onConfirm: async () => {
+                        try {
+                            const removeData = await axios({
+                                url: '/schedule/remove-semester-subject-record',
+                                method: 'delete',
+                                headers: {
+                                    'Authorization': authHeader(),
+                                },
+                                data: {
+                                    semID: this.currentSemID,
+                                    delSubjectID: SubjectID,
+                                },
+                            });
+                            if (removeData.status === 200) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `Đã xóa môn thi có mã số <b>${SubjectID}</b> thành công.`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                            }
+                        } catch (e) {
+                            if (e['message'].includes('401')) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                })
+                            }
+                        } finally {
+                            this.getSemesterSubjectRecordData();
+                        }
+                    },
+                });
             },
-            async getSubjectShiftRecordData() {
-                this.subject_shift.search_loading = true;
+            async getShiftRecordData() {
+                this.shift.shift_loading = true;
                 try {
                     const response = await axios({
                         url: '/schedule/shift-records',
                         method: 'get',
                         params: {
-                            page_index: this.subject_shift.page,
-                            per_page: this.subject_shift.per_page,
-                            sort_field: this.subject_shift.sortField,
-                            sort_order: this.subject_shift.sortOrder
+                            subjectID: this.subject.currentSemesterSubjectID,
+                            page_index: this.shift.page,
+                            per_page: this.shift.per_page,
+                            sort_field: this.shift.sortField,
+                            sort_order: this.shift.sortOrder
                         },
                         headers: {
                             'Authorization': authHeader(),
                         }
                     });
+                    console.log(response.data.shift_records);
                     if (response.status === 200) {
-                        this.subject_shift.subject_shift_record_data = [];
-                        this.subject_shift.total = response.data.total_results;
-                        response.data.subject_shift_records.forEach((item) => {
-                            this.subject_shift.subject_shift_record_data.push(item);
+                        this.shift.subject_shift_record_data = [];
+                        this.shift.total = response.data.total_results;
+                        response.data.shift_records.forEach((item) => {
+                            this.shift.subject_shift_record_data.push(item);
                         });
                         // console.log(this.data);
-                        this.subject_shift.shift_loading = false
+                        this.shift.shift_loading = false
                     }
                 } catch (error) {
-                    this.subject_shift.student_record = [];
-                    this.subject_shift.total = 0;
-                    this.subject_shift.shift_loading = false;
+                    this.shift.student_record = [];
+                    this.shift.total = 0;
+                    this.shift.shift_loading = false;
                     this.$buefy.notification.open({
                         duration: 2000,
-                        message: 'Không thể lấy được dữ liệu sinh viên!',
+                        message: 'Không thể lấy được dữ liệu ca thi!',
                         position: 'is-bottom-right',
                         type: 'is-danger',
                         hasIcon: true
@@ -489,7 +560,7 @@
                        this.hasSubjectError = false;
                        this.semester.create_loading = true;
                        const response = await axios({
-                           url: '/schedule/add-subject-semester',
+                           url: '/schedule/create-subject-semester',
                            method: 'post',
                            headers: {
                                'Authorization': authHeader(),
@@ -584,6 +655,107 @@
               });
             }
           }, 500),
+            async addNewShift() {
+                this.$buefy.modal.open({
+                    parent: this,
+                    component: new_shift,
+                    props: { currentSubjectID: this.subject.currentSemesterSubjectID},
+                    hasModalCard: true,
+                    customClass: 'custom-class custom-class-2',
+                    canCancel: false,
+                    events: {
+                       'loadShifts': (http_status) => {
+                         if (http_status === 200) {
+                           this.$buefy.notification.open({
+                             duration: 2000,
+                             message: `Đã tạo ca thi thành công!`,
+                             position: 'is-bottom-right',
+                             type: 'is-success',
+                             hasIcon: true
+                           });
+                           this.getShiftRecordData();
+                         }
+                         else if (http_status === 400) {
+                           this.$buefy.notification.open({
+                             duration: 2000,
+                             message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                             position: 'is-bottom-right',
+                             type: 'is-danger',
+                             hasIcon: true
+                           });
+                         }
+                         else if (http_status === 401) {
+                           this.$buefy.notification.open({
+                             duration: 2000,
+                             message: 'Không được quyền sử dụng!',
+                             position: 'is-bottom-right',
+                             type: 'is-danger',
+                             hasIcon: true
+                           });
+                         }
+                       }
+                    }
+                })
+            },
+            onShiftSort(field, order) {
+                this.shift.sortField = field;
+                this.shift.sortOrder = order;
+                this.getShiftRecordData();
+            },
+            onShiftPageChange(page) {
+                this.shift.page = page;
+                this.getShiftRecordData();
+            },
+            onShiftEdit(record) {
+                this.$buefy.modal.open({
+                   parent: this,
+                   component: shift_edit,
+                   props: {
+                       currentShiftID: record.ShiftID,
+                       currentStart_At: record.Start_At,
+                       currentDate_Start: record.Date_Start,
+                       currentRoomID: record.Date_Start,
+                   },
+                   hasModalCard: true,
+                   customClass: 'custom-class custom-class-2',
+                   canCancel: false,
+                   events: {
+                     'loadSubjects': (http_status) => {
+                       if (http_status === 200) {
+                         this.$buefy.notification.open({
+                           duration: 2000,
+                           message: `Đã sửa đổi thành công!`,
+                           position: 'is-bottom-right',
+                           type: 'is-success',
+                           hasIcon: true
+                         });
+                         this.getShiftRecordData();
+                       }
+                       else if (http_status === 400) {
+                         this.$buefy.notification.open({
+                           duration: 2000,
+                           message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                           position: 'is-bottom-right',
+                           type: 'is-danger',
+                           hasIcon: true
+                         });
+                       }
+                       else if (http_status === 401) {
+                         this.$buefy.notification.open({
+                           duration: 2000,
+                           message: 'Không được quyền sử dụng!',
+                           position: 'is-bottom-right',
+                           type: 'is-danger',
+                           hasIcon: true
+                         });
+                        }
+                      }
+                   }
+                })
+            },
+            onShiftDelete(ID) {
+
+            },
             destroySemesterData() { // destroy subject data for scalability when closing accordion
                 this.subject.semester_subject_record_data = [];
             },

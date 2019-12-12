@@ -78,11 +78,11 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/add-new-semester': {
+      '/schedule/create-new-semester': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/add-subject-semester': {
+      '/schedule/semester-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
@@ -90,15 +90,23 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/subject-semester-records': {
+      '/schedule/semester-subject-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/create-subject-semester': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/remove-semester-subject-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/create-new-shift': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
       '/schedule/shift-records': {
-          target: 'http://api:5000',
-          changeOrigin: true,
-      },
-      '/schedule/semester-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },

@@ -14,7 +14,7 @@ from controller.time_conversion.asia_timezone import set_custom_log_time
 schedule_management = Blueprint('schedule_management', __name__, url_prefix='/schedule')
 
 
-@schedule_management.route('/add-new-semester', methods=['POST'])
+@schedule_management.route('/create-new-semester', methods=['POST'])
 @token_required
 def add_semester(current_user):
     try:
@@ -68,7 +68,7 @@ def get_semester(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
-@schedule_management.route('/add-subject-semester', methods=['POST'])
+@schedule_management.route('/create-subject-semester', methods=['POST'])
 @token_required
 def add_subject_semester(current_user):
     try:
@@ -89,7 +89,24 @@ def add_subject_semester(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
-@schedule_management.route('/subject-semester-records', methods=['GET'])
+@schedule_management.route('/remove-semester-subject-record', methods=['DELETE'])
+@token_required
+def remove_semester_subject(current_user):
+    try:
+        record = request.get_json()
+        semID = record.get('semID')
+        subjectID = record.get('delSubjectID')
+        Subject_Semester.delRecord(semID, subjectID)
+        Log.create(current_user['ID'],
+                   'Xóa môn thi có mã môn ' + subjectID + ' trong kỳ thi có mã ' + str(semID) + ' ra khỏi hệ thống.',
+                   set_custom_log_time())
+
+        return jsonify({'status': 'success'}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@schedule_management.route('/semester-subject-records', methods=['GET'])
 @token_required
 def get_semester_subject(current_user):
     try:
@@ -118,32 +135,35 @@ def get_semester_subject(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
-@schedule_management.route('/add-new-shift', methods=['POST'])
+@schedule_management.route('/create-new-shift', methods=['POST'])
+@token_required
 def add_shift(current_user):
-    try:
         newShift = request.get_json()
-        subjectID = newShift.get('subjectID')
+        exam_roomID = newShift.get('RoomID')
+        subjectID = newShift.get('SubjectID')
         date_start = newShift.get('Date_Start')
         start_at = newShift.get('Start_At')
-        exam_roomID = newShift.get('Exam_RoomID')
+        print(newShift, flush=True)
+        print(subjectID, flush=True)
+        print(date_start, flush=True)
+        print(start_at, flush=True)
+        print(exam_roomID, flush=True)
         newShift = Shift.create(subjectID, date_start, start_at, exam_roomID)
         if newShift is False:
             return jsonify({'status': 'already-exist'}), 200
         else:
             Log.create(current_user['ID'],
-                       'Thêm ca thi mới vào môn thi' + str(subjectID) + ' vào hệ thống.',
+                       'Thêm ca thi mới vào môn thi có mã ' + str(subjectID) + ' trong hệ thống.',
                        set_custom_log_time())
             return jsonify({'status': 'success'}), 200
 
-    except:
-        return jsonify({'status': 'bad-request'}), 400
 
 
 @schedule_management.route('/shift-records', methods=['GET'])
 @token_required
 def get_shift(current_user):
     try:
-        subjectID = request.args.get('SubjectID')
+        subjectID = request.args.get('subjectID')
         page_index = request.args.get('page_index')
         per_page = request.args.get('per_page')
         sort_order = request.args.get('sort_order')

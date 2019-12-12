@@ -38,7 +38,7 @@
             </b-select>
         </b-field>
           <div class="buttons" style="float: right;">
-            <button class="button is-primary" type="submit" outlined>Cập nhật</button>
+            <button class="button" type="submit" outlined>Tạo</button>
           </div>
       </form>
     </section>

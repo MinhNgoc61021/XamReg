@@ -4,7 +4,7 @@
     <h2 class="subtitle is-6">Cập nhật, quản lý thông tin của phòng thi</h2>
     <b-field grouped group-multiline>
       <b-button icon-pack="fas" icon-left="plus-square" outlined @click.prevent="onRoomAdd">
-                Thêm phòng thi
+        Thêm phòng thi
       </b-button>
 
       <b-button
@@ -35,58 +35,69 @@
         expanded>
           <template slot-scope="props">
             <div class="media">
-              <div class="media-left">
-                <b-icon icon-pack="fas" icon="user-circle"></b-icon>
-              </div>
+<!--              <div class="media-left">-->
+<!--                <b-icon icon-pack="fas" icon="user-circle"></b-icon>-->
+<!--              </div>-->
               <div class="media-content">
+                <b>Mã phòng: </b>{{ props.option.RoomID }}
+                <br>
                 <b>Tên phòng: </b>{{ props.option.RoomName }}
               </div>
             </div>
           </template>
       </b-autocomplete>
     </b-field>
-    <b-table
-      :data="exam_room_list"
-      :loading="loading"
-      paginated
-      backend-pagination
-      :total="total"
-      :per-page="per_page"
-      @page-change="onPageChange"
-      aria-next-label="Next page"
-      aria-previous-label="Previous page"
-      aria-page-label="Page"
-      aria-current-label="Current page"
-      backend-sorting
-      hoverable
-      :default-sort-direction="defaultSortOrder"
-      :default-sort="[sortField, sortOrder]"
-      @sort="onRoomSort">
+    <b-field v-if="exam_room_list.length > 0">
+      <b-table
+        :data="exam_room_list"
+        :loading="loading"
+        paginated
+        backend-pagination
+        :total="total"
+        :per-page="per_page"
+        @page-change="onPageChange"
+        aria-next-label="Next page"
+        aria-previous-label="Previous page"
+        aria-page-label="Page"
+        aria-current-label="Current page"
+        backend-sorting
+        hoverable
+        :default-sort-direction="defaultSortOrder"
+        :default-sort="[sortField, sortOrder]"
+        @sort="onRoomSort">
 
-        <template slot-scope="props">
-          <b-table-column field="RoomID" label="Phòng thi số" width="100" sortable>
-            {{ props.row.RoomID }}
-          </b-table-column>
-          <b-table-column field="RoomName" label="Tên phòng thi" width="100" sortable>
-            {{ props.row.RoomName }}
-          </b-table-column>
-          <b-table-column field="Maxcapacity" label="Số lượng chỗ" width="100" sortable>
-            {{ props.row.Maxcapacity }}
-          </b-table-column>
-           <b-table-column field="Action" width="90">
-            <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onRoomEdit(props.row)"></b-button>
-            <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row)"></b-button>
-          </b-table-column>
-        </template>
-    </b-table>
+          <template slot-scope="props">
+            <b-table-column field="RoomID" label="Phòng thi số" width="100" sortable>
+              {{ props.row.RoomID }}
+            </b-table-column>
+            <b-table-column field="RoomName" label="Tên phòng thi" width="100" sortable>
+              {{ props.row.RoomName }}
+            </b-table-column>
+            <b-table-column field="Maxcapacity" label="Số lượng chỗ" width="100" sortable>
+              <span class="is-primary">
+                {{ props.row.Maxcapacity }}
+              </span>
+            </b-table-column>
+             <b-table-column field="Action" width="90">
+              <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onRoomEdit(props.row)"></b-button>
+              <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row)"></b-button>
+            </b-table-column>
+          </template>
+      </b-table>
+    </b-field>
+    <b-field v-else>
+      <b-message type="is-danger" has-icon>
+        Hiện tại chưa có dự liệu phòng thi, bạn hãy nhập vào phòng thi!
+      </b-message>
+    </b-field>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
   import { authHeader } from "../../api/jwt_handling";
-  import editRoomModal from "./helpers/edit";
-  import addRoomModal from "./helpers/add";
+  import editRoomModal from "./helpers/exam_room_edit";
+  import addRoomModal from "./helpers/exam_room_create";
   import debounce from 'lodash/debounce';
 
     export default {
@@ -143,7 +154,7 @@
                   this.loading = false;
                   this.$buefy.notification.open({
                     duration: 2000,
-                    message: 'Không thể load được dữ liệu phòng thi, xin hãy đăng nhập lại dưới quyền admin',
+                    message: 'Không thể lấy được dự liệu phòng thi!',
                     position: 'is-bottom-right',
                     type: 'is-danger',
                     hasIcon: true

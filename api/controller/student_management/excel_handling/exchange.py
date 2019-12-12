@@ -63,7 +63,7 @@ def upload(current_user):
                                 str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')))
                 gender = re.search('(Nam|Nữ)', str(excel_data['gender']))
                 courseID = re.search('^[K|k][1-9][0-9][A-Za-z]+[1-9]*', str(excel_data['courseID']))
-                subjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3}))',
+                subjectID = re.search('([A-Z]|[a-z]{3})([0-9]{4})',
                                       str(excel_data['subjectID']))
                 status = re.search('(Qualified|Unqualified)', excel_data['status'])
                 # print(ID, flush=True)
@@ -165,7 +165,7 @@ def upload(current_user):
                     if check_student is True:
                         # add subject to database
                         # check validation
-                        subjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3}))',
+                        subjectID = re.search('([A-Z]|[a-z]{3})([0-9]{4})',
                                               str(excel_data['subjectID']))
                         status = re.search('(Qualified|Unqualified)', excel_data['status'])
 
