@@ -92,8 +92,8 @@
 <script>
     import axios from 'axios'
     import { authHeader} from "../../api/jwt_handling";
-    import subject_edit from "./subject_edit";
-    import subject_create from "./subject_create";
+    import subject_edit from "./edit/subject_edit";
+    import subject_create from "./create/subject_create";
     import debounce from 'lodash/debounce';
     export default {
         name: "subjects_management",
