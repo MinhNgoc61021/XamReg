@@ -1,33 +1,52 @@
 <template>
   <div>
     <h1 class="title is-3">Quản lý phòng thi</h1>
-    <h2 class="subtitle is-6">Cập nhật, quản lý tài khoản và thông tin của phòng thi</h2><br>
-    <b-button icon-pack="fas" icon-left="plus-square" outlined @click.prevent="onRoomAdd">
+    <h2 class="subtitle is-6">Cập nhật, quản lý thông tin của phòng thi</h2>
+    <b-field grouped group-multiline>
+      <b-button icon-pack="fas" icon-left="plus-square" outlined @click.prevent="onRoomAdd">
                 Thêm phòng thi
-    </b-button>
-    <b-autocomplete
-      :data="search.searchResults"
-      placeholder="Tìm kiếm bằng tên phòng"
-      icon="search"
-      field="RoomName"
-      :loading="search.searchLoading"
-      @typing="onRoomSearch"
-      @select="option => exam_room_list = [option]"
-      expanded>
-        <template slot-scope="props">
-          <div class="media">
-            <div class="media-left">
-              <b-icon icon-pack="fas" icon="user-circle"></b-icon>
+      </b-button>
+
+      <b-button
+        class="button"
+        @click="getRoomRecord"
+        :class="{'is-loading': loading}"
+      >
+        <b-icon
+          size="is-small"
+          icon="sync"/>
+        <span>Làm mới</span>
+      </b-button>
+      <b-select v-model="per_page">
+        <option value="5">5 dòng/trang</option>
+        <option value="10">10 dòng/trang</option>
+        <option value="15">15 dòng/trang</option>
+        <option value="20">20 dòng/trang</option>
+      </b-select>
+
+      <b-autocomplete
+        :data="search.searchResults"
+        placeholder="Tìm kiếm bằng tên phòng"
+        icon="search"
+        field="RoomName"
+        :loading="search.searchLoading"
+        @typing="onRoomSearch"
+        @select="option => exam_room_list = [option]"
+        expanded>
+          <template slot-scope="props">
+            <div class="media">
+              <div class="media-left">
+                <b-icon icon-pack="fas" icon="user-circle"></b-icon>
+              </div>
+              <div class="media-content">
+                <b>Tên phòng: </b>{{ props.option.RoomName }}
+              </div>
             </div>
-            <div class="media-content">
-              <b>RoomName: </b>{{ props.option.RoomName }}<br>
-            </div>
-          </div>
-        </template>
-    </b-autocomplete>
+          </template>
+      </b-autocomplete>
+    </b-field>
     <b-table
       :data="exam_room_list"
-      :bordered="true"
       :loading="loading"
       paginated
       backend-pagination
@@ -39,18 +58,19 @@
       aria-page-label="Page"
       aria-current-label="Current page"
       backend-sorting
+      hoverable
       :default-sort-direction="defaultSortOrder"
       :default-sort="[sortField, sortOrder]"
       @sort="onRoomSort">
 
         <template slot-scope="props">
-          <b-table-column field="RoomID" label="Phòng thi số" width="100">
+          <b-table-column field="RoomID" label="Phòng thi số" width="100" sortable>
             {{ props.row.RoomID }}
           </b-table-column>
-          <b-table-column field="RoomName" label="Tên phòng thi" width="100">
+          <b-table-column field="RoomName" label="Tên phòng thi" width="100" sortable>
             {{ props.row.RoomName }}
           </b-table-column>
-          <b-table-column field="Maxcapacity" label="Số lượng chỗ" width="100">
+          <b-table-column field="Maxcapacity" label="Số lượng chỗ" width="100" sortable>
             {{ props.row.Maxcapacity }}
           </b-table-column>
            <b-table-column field="Action" width="90">
@@ -65,8 +85,8 @@
 <script>
   import axios from 'axios'
   import { authHeader } from "../../api/jwt_handling";
-  import editRoomModal from "./helpers/editModal";
-  import addRoomModal from "./helpers/addModal";
+  import editRoomModal from "./helpers/edit";
+  import addRoomModal from "./helpers/add";
   import debounce from 'lodash/debounce';
 
     export default {
@@ -84,7 +104,7 @@
               sortOrder: 'desc',
               defaultSortOrder: 'asc',
               page: 1,
-              per_page: 2,
+              per_page: 5,
               search: {
                     searchResults: [],
                     searchLoading: false,

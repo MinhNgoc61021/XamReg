@@ -8,6 +8,7 @@ from flask import (
 from controller.authentication.auth import token_required
 from db.entity_db import Log
 
+# Log management for admin
 log_management = Blueprint('log_management', __name__, url_prefix='/log')
 
 

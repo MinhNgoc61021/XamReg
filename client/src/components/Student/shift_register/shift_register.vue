@@ -1,158 +1,56 @@
 <template>
-  <div class="container">
-    <h1 class="title is-3">Đăng ký thi</h1>
-    <h2 class="subtitle is-6">Đăng ký dự thi ca thi theo học phần của sinh viên</h2>
-    <b-tabs type="is-toggle" expanded>
-      <b-tab-item label="Đăng ký dự thi" icon-pack="fas" icon="calendar-check">
-        <b-field grouped group-multiline>
-    <b-button
-      :class="{'is-loading': loading}"
-      class="button"
-      @click="getLogRecordData"
-    >
-      <b-icon
-        size="is-small"
-        icon="sync"/>
-      <span>Làm mới</span>
-    </b-button>
-    <b-select v-model="perPage">
-      <option value="5">5 dòng/trang</option>
-      <option value="10">10 dòng/trang</option>
-      <option value="15">15 dòng/trang</option>
-      <option value="20">20 dòng/trang</option>
-    </b-select>
-  </b-field>
-        <section id="tab-action">
-          <b-table
-            :data="log_data"
-            :loading="loading"
-            paginated
-            backend-pagination
-            :total="total"
-            :per-page="perPage"
-            @page-change="onPageChange"
-            aria-next-label="Next page"
-            aria-previous-label="Previous page"
-            aria-page-label="Page"
-            aria-current-label="Current page"
-            hoverable
-            backend-sorting
-            :default-sort-direction="defaultSortOrder"
-            :default-sort="[sortField, sortOrder]"
-            @sort="onSort">
-            <template slot-scope="props">
-              <b-table-column field="LogID" label="ID" sortable>
-                {{ props.row.LogID }}
-              </b-table-column>
-              <b-table-column field="UserID" label="Người dùng" sortable>
-                {{ props.row.User }}
-              </b-table-column>
-              <b-table-column field="Action" label="Hành động" sortable>
-                {{ props.row.Action }}
-              </b-table-column>
-              <b-table-column field="Created_At" label="Thời gian" sortable>
-                <span class="tag is-success">
-                  {{ formatDate(props.row.Created_At) }}
-                </span>
-              </b-table-column>
-            </template>
-          </b-table>
-        </section>
-      </b-tab-item>
-      <b-tab-item label="Kiểm tra & xuất (Export) phiếu dự thi" icon-pack="fas" icon="file-export">
-        <div>{{ studentid }}</div>
-      </b-tab-item>
-    </b-tabs>
-  </div>
+    <div class="container">
+        <h1 class="title is-3">Đăng ký thi</h1>
+        <h2 class="subtitle is-6">Sinh viên đăng ký ca thi mà sinh viên đủ điều kiện dự thi và đang còn chỗ trống</h2>
+        <b-collapse
+            class="card"
+            v-for="(collapse, index) of collapses"
+            :key="index"
+            :open="isOpen === index"
+            @open="isOpen = index">
+            <div
+                slot="trigger"
+                slot-scope="props"
+                class="card-header"
+                role="button">
+                <p class="card-header-title">
+                    {{ collapse.title }}
+                </p>
+                <a class="card-header-icon">
+                    <b-icon
+                        :icon="props.open ? 'menu-down' : 'menu-up'">
+                    </b-icon>
+                </a>
+            </div>
+            <div class="card-content">
+                <div class="content">
+                    {{ collapse.text }}
+                </div>
+            </div>
+        </b-collapse>
+    </div>
 </template>
 
 <script>
-  import axios from 'axios';
-  import moment from 'moment/moment';
-  import { authHeader } from "../../api/jwt_handling";
-
-  export default {
-      name: "shift_register",
-      props: ['studentid'],
-      data() {
-          return {
-              log_data: [],
-              total: 0,
-              loading: false,
-              sortField: 'Created_At',
-              sortOrder: 'desc',
-              defaultSortOrder: 'desc',
-              page: 1,
-              perPage: 20
-          }
-      },
-      methods: {
-          formatDate(date) {
-                return moment(date).format("L, LTS");
-          },
-          /*
-            * Load async log info record
-           */
-          async getLogRecordData() {
-              this.loading = true;
-              try {
-                  const response = await axios({
-                      url: '/log/log-records',
-                      method: 'get',
-                      params: {
-                          page_index: this.page,
-                          per_page: this.perPage,
-                          sort_field: this.sortField,
-                          sort_order: this.sortOrder
-                      },
-                      headers: {
-                          'Authorization': authHeader(),
-                      }
-                  });
-                  if (response.status === 200) {
-                      this.log_data = [];
-                      this.total = response.data.total_results;
-                      // console.log(response.data.log_records);
-                      response.data.log_records.forEach((item) => {
-                          this.log_data.push(item);
-                      });
-                      // console.log(this.data);
-                      this.loading = false
-                  }
-              } catch (error) {
-                  this.log_data = [];
-                  this.total = 0;
-                  this.loading = false;
-                  this.$buefy.notification.open({
-                      duration: 2000,
-                      message: 'Không thể lấy được dữ liệu nhật ký!',
-                      position: 'is-bottom-right',
-                      type: 'is-danger',
-                  });
-                  throw error;
-              }
-          },
-            /*
-            * Handle page-change event
-            */
-          onPageChange(page) {
-              this.page = page;
-              this.getLogRecordData()
-          },
-          /*
-          * Handle sort event
-          */
-          onSort(field, order) {
-              this.sortField = field;
-              this.sortOrder = order;
-              this.getLogRecordData()
-          },
-      },
-      mounted() {
-          this.getLogRecordData()
-      },
-      created() {
-          console.log(Number(this.studentid));
-      }
-  }
+    export default {
+        data() {
+            return {
+                isOpen: 0,
+                collapses: [
+                {
+                    title: 'Title 1',
+                    text: 'Text 1'
+                },
+                {
+                    title: 'Title 2',
+                    text: 'Text 2'
+                },
+                {
+                    title: 'Title 3',
+                    text: 'Text 3'
+                }
+                ]
+            }
+        }
+    }
 </script>
