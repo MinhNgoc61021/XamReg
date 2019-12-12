@@ -46,7 +46,6 @@
             </div>
               <div class="card-content">
                 <b-field grouped group-multiline>
-                  <b-field :message="[{ 'Môn thi chưa đánh': hasSubjectError },]">
                     <b-autocomplete
                     :data="subject.searchResults"
                     v-model="semester.SemesterSubjectID"
@@ -69,7 +68,6 @@
                       </div>
                     </template>
                   </b-autocomplete>
-                  </b-field>
                   <b-button
                     type="is-primary"
                     :class="{'is-loading': semester.create_loading}"
