@@ -42,7 +42,7 @@
               <template slot-scope="props">
                     <div class="media">
                         <div class="media-left">
-                          <b-icon icon-pack="fas" icon="file-search"></b-icon>
+                          <b-icon icon-pack="fas" icon="book"></b-icon>
                         </div>
                         <div class="media-content">
                             <b>Mã môn học: </b>{{ props.option.SubjectID }}
@@ -84,7 +84,6 @@
             </b-table-column>
           </template>
         </b-table>
-
 
     </section>
   </div>
@@ -163,7 +162,7 @@
           },
           onSubjectSearch: debounce(function (SubjectID) {
             this.search.searchLoading = true;
-            if (SubjectID.length > 7 || SubjectID.length === 0) {
+            if (SubjectID.length > 15 || SubjectID.length === 0) {
               this.search.searchResults = [];
               this.search.searchLoading = false;
             }

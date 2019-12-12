@@ -23,6 +23,7 @@ def create_semester(current_user):
                                   'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
                                   'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s-]+$', newSemesterTitle)
         print(newSemesterTitle, flush=True)
+
         if checkSemester is None:
             return jsonify({'status': 'bad-request'}), 400
         else:
@@ -71,14 +72,19 @@ def get_semester(current_user):
 @token_required
 def add_subject_semester(current_user):
     try:
-        newSubjectSemester = request.get_json()
-        semID = newSubjectSemester.get('semID')
-        subjectID = newSubjectSemester.get('subjectID')
-        Subject_Semester.create(str(subjectID), str(semID))
-        Log.create(current_user['ID'],
-                   'Thêm môn ' + subjectID + ' vào kỳ thi có mã ' + str(semID) + ' vào hệ thống.',
-                   set_custom_log_time())
-        return jsonify({'status': 'success'}), 200
+        SubjectSemester = request.get_json()
+        semID = SubjectSemester.get('semID')
+        subjectID = SubjectSemester.get('subjectID')
+        newSubjectSemester = Subject_Semester.create(str(subjectID), str(semID))
+
+        if newSubjectSemester is False:
+            return jsonify({'status': 'already-exist'}), 200
+        else:
+            Log.create(current_user['ID'],
+                       'Thêm môn ' + subjectID + ' vào kỳ thi có mã ' + str(semID) + ' vào hệ thống.',
+                       set_custom_log_time())
+            return jsonify({'status': 'success'}), 200
+
     except:
         return jsonify({'status': 'bad-request'}), 400
 

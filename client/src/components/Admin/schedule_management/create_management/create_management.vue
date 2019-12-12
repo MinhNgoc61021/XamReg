@@ -46,14 +46,34 @@
             </div>
               <div class="card-content">
                 <b-field grouped group-multiline>
-                  <b-field :message="[{ 'Tên môn chưa đánh': hasSubjectError }]">
-                    <b-input v-model="semester.SemesterSubjectID" placeholder="Nhập tên môn">
-                    </b-input>
+                  <b-field :message="[{ 'Môn thi chưa đánh': hasSubjectError },]">
+                    <b-autocomplete
+                    :data="subject.searchResults"
+                    v-model="semester.SemesterSubjectID"
+                    placeholder="Nhập tên môn"
+                    field="SubjectID"
+                    :loading="subject.search_loading"
+                    @typing="onSubjectSearch"
+                    @select="option => { semester.SemesterSubjectID = [option].SubjectID}"
+                    expanded>
+                    <template slot-scope="props">
+                      <div class="media">
+                          <div class="media-left">
+                            <b-icon icon-pack="fas" icon="book"></b-icon>
+                          </div>
+                          <div class="media-content">
+                              <b>Mã môn học: </b>{{ props.option.SubjectID }}
+                              <br>
+                              <b>Tên môn học: </b>{{ props.option.SubjectTitle }}
+                          </div>
+                      </div>
+                    </template>
+                  </b-autocomplete>
                   </b-field>
                   <b-button
                     type="is-primary"
                     :class="{'is-loading': semester.create_loading}"
-                    @click="addNewSubject()">
+                    @click="addNewSubject">
                     <span>Thêm Môn</span>
                   </b-button>
                 </b-field>
@@ -177,8 +197,10 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  import {authHeader} from "../../../api/jwt_handling";
+    import axios from 'axios';
+    import {authHeader} from "../../../api/jwt_handling";
+    import debounce from 'lodash/debounce';
+
     export default {
         name: 'create_management',
         data() {
@@ -194,6 +216,8 @@
                     semester_subject_record_data: [], // subject semester data
                     total: 0,
                     subject_loading: false,
+                    search_loading: false,
+                    searchResults: [],
                     sortField: 'SubjectID',
                     sortOrder: 'desc',
                     defaultSortOrder: 'desc',
@@ -394,12 +418,12 @@
             async onSemesterSubjectDelete(SubjectID) {
 
             },
-            async onSemesterSubjectSort(field, order) {
+            onSemesterSubjectSort(field, order) {
                 this.subject.sortField = field;
                 this.subject.sortOrder = order;
                 this.getSemesterSubjectRecordData();
             },
-            async onSemesterSubjectPageChange(page) {
+            onSemesterSubjectPageChange(page) {
                 this.subject.page = page;
                 this.getSemesterSubjectRecordData();
             },
@@ -469,8 +493,46 @@
                    }
                 }
             },
-
-            async destroySemesterData() { // destroy subject data for scalability when closing accordion
+            onSubjectSearch: debounce(function (SubjectID) {
+              this.subject.search_loading = true;
+              if (SubjectID.length > 15 || SubjectID.length === 0) {
+                this.subject.searchResults = [];
+                this.subject.search_loading = false;
+              }
+              else {
+                this.subject.searchResults = [];
+                axios({
+                  url: '/subject/search-subject',
+                  method: 'get',
+                  headers: {
+                    'Authorization': authHeader(),
+                  },
+                  params: {
+                    searchID: SubjectID,
+                  },
+                }).then((response) => {
+                  if (response.status === 200) {
+                    // console.log(response.data.search_results);
+                    response.data.search_results.forEach((item) => {
+                      this.subject.searchResults.push(item);
+                    });
+                    this.subject.search_loading = false;
+                  }
+                }).catch((error) => {
+                  this.subject.searchResults = [];
+                  this.subject.search_loading = false;
+                  this.$buefy.notification.open({
+                    duration: 2000,
+                    message: 'Không thể tìm được dữ liệu!',
+                    position: 'is-bottom-right',
+                    type: 'is-danger',
+                    hasIcon: true
+                  });
+                  throw error;
+              });
+            }
+          }, 500),
+            destroySemesterData() { // destroy subject data for scalability when closing accordion
                 this.subject.semester_subject_record_data = [];
             },
             closeOtherDetails(row) {
