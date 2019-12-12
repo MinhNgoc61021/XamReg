@@ -13,13 +13,6 @@
               <span>Tạo môn</span>
             </b-button>
 
-            <b-select v-model="subject_info.per_page">
-              <option value="5">5 dòng/trang</option>
-              <option value="10">10 dòng/trang</option>
-              <option value="15">15 dòng/trang</option>
-              <option value="20">20 dòng/trang</option>
-            </b-select>
-
             <b-button
               class="button"
               @click="getSubjectsInfo"
@@ -29,6 +22,13 @@
                 icon="sync"/>
               <span>Làm mới</span>
             </b-button>
+
+            <b-select v-model="subject_info.per_page">
+              <option value="5">5 dòng/trang</option>
+              <option value="10">10 dòng/trang</option>
+              <option value="15">15 dòng/trang</option>
+              <option value="20">20 dòng/trang</option>
+            </b-select>
 
             <b-autocomplete
                 :data="search.searchResults"
@@ -72,13 +72,13 @@
           @sort="onStatusSort"
         >
           <template slot-scope="props" style="width: 500px">
-            <b-table-column field="SubjectID" label="Mã môn học" sortable>
+            <b-table-column field="SubjectID" label="Mã môn học" sortable width="200px">
               {{props.row.SubjectID}}
             </b-table-column>
-            <b-table-column field="SubjectTitle" label="Tên môn học" sortable>
+            <b-table-column field="SubjectTitle" label="Tên môn học" sortable  width="200px">
               {{props.row.SubjectTitle}}
             </b-table-column>
-            <b-table-column field="Action">
+            <b-table-column field="Action"  width="90px">
               <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onStatusEdit(props.row)"></b-button>
               <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row)"></b-button>
             </b-table-column>
@@ -92,7 +92,7 @@
 <script>
     import axios from 'axios'
     import { authHeader} from "../../api/jwt_handling";
-    import subject_edit from "./subject_create";
+    import subject_edit from "./subject_edit";
     import subject_create from "./subject_create";
     import debounce from 'lodash/debounce';
     export default {

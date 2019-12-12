@@ -52,7 +52,7 @@ router.beforeEach ((to, from, next) => {
     // redirect to admin page if the user is an admin
     // redirect to student page if the user is a student
     const publicPages = ['/register'];
-    const adminPage = ['/admin', '/student-management', '/schedule-management', '/log-management', '/subject-management', '/upload'];
+    const adminPage = ['/admin', '/student-management', '/schedule-management', '/log-management', '/subject-management', '/exam-room-management'];
     const studentPage = ['/student', '/student-home', '/shift-register'];
     const authRequired = !publicPages.includes(to.path);
     const loggedIn = getToken(localStorage.getItem('user'));

@@ -11,7 +11,7 @@
             type="text"
             v-model="newSubjectID"
             :value="newSubjectID"
-            maxlength="8"
+            maxlength="15"
             validation-message="Nhập đúng mã môn học"
             pattern="(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3}))"
             placeholder="Nhập mã môn học"
@@ -31,12 +31,12 @@
           >
           </b-input>
         </b-field>
+      </section>
 
-        <footer class="modal-card-foot">
+      <footer class="modal-card-foot">
           <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
           <button class="button is-primary" type="submit">Cập nhật</button>
-        </footer>
-      </section>
+      </footer>
     </div>
   </form>
 </template>
