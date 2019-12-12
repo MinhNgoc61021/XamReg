@@ -78,7 +78,7 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/create-new-semester': {
+      '/schedule/add-new-semester': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
@@ -94,11 +94,11 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/semester-records': {
+      '/schedule/shift-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/room/room-cache-records': {
+      '/schedule/semester-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
@@ -113,8 +113,15 @@ module.exports = {
       '/room/remove-room-record':{
           target: 'http://api:5000',
           changeOrigin: true,
-      }
-
+      },
+      '/room/create-room-records':{
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/room/search-room-record':{
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
     },
 
     // Various Dev Server settings

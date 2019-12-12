@@ -2,7 +2,12 @@
   <div>
     <b-field grouped group-multiline>
             <b-button
-              :class="{'is-loading': semester.loading}"
+              :class="{'is-loading': semester.create_loading}"
+              icon-pack="fas" icon-left="plus-square"
+              @click="addNewSemester">
+              <span>Tạo kỳ thi</span>
+            </b-button>
+            <b-button
               class="button"
               @click="getSemesterRecordData"
             >
@@ -15,12 +20,7 @@
               <b-input v-model="semester.newSemester" placeholder="Nhập tiêu đề kỳ thi" expanded>
               </b-input>
             </b-field>
-            <b-button
-              type="is-primary"
-              :class="{'is-loading': semester.create_loading}"
-              @click="addNewSemester">
-              <span>Tạo kỳ thi</span>
-            </b-button>
+
         </b-field>
     <section>
       <div v-if="semester.semester_record_data.length > 0">
@@ -104,13 +104,15 @@
                         :default-sort-direction="subject.defaultSortOrder"
                         :default-sort="[subject.sortField, subject.sortOrder]"
                         @sort="onSemesterSubjectSort"
+                        @details-open="(row, index) => { subject.currentSemesterSubjectID = row.SubjectID ; getSubjectShiftRecordData(); closeOtherDetails(row, index) }"
+                        @details-close="(row, index) => { subject_shift.subject_shift_record_data = [] }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
-                            <b-table-column field="SubjectID" label="Mã môn" sortable>
+                            <b-table-column field="SubjectID" label="Mã môn" sortable width="90">
                                 {{ props.row.SubjectID }}
                             </b-table-column>
 
-                            <b-table-column field="SubjectTitle" label="Tên môn" sortable>
+                            <b-table-column field="SubjectTitle" label="Tên môn" sortable width="90">
                                  {{ props.row.SubjectTitle }}
                             </b-table-column>
 
@@ -118,64 +120,64 @@
                                 <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onSemesterSubjectDelete(props.row.SubjectID)"></b-button>
                             </b-table-column>
                         </template>
-<!--                        <template slot="detail" slot-scope="props">-->
-<!--                            <h4 class="title is-4">Danh sách môn học</h4>-->
-<!--                            <b-field grouped group-multiline>-->
-<!--                              <b-button-->
-<!--                                :class="{'is-loading': student_status.loading}"-->
-<!--                                class="button"-->
-<!--                                @click="getStudent_Subject(props.row)"-->
-<!--                              >-->
-<!--                                <b-icon-->
-<!--                                  size="is-small"-->
-<!--                                  icon="sync"/>-->
-<!--                              </b-button>-->
-<!--                              <b-select v-model="student_status.status_type">-->
-<!--                                <option value="Qualified" >Đủ điều kiện thi</option>-->
-<!--                                <option value="Unqualified">Không đủ điều kiện thi</option>-->
-<!--                              </b-select>-->
-<!--                            </b-field>-->
-<!--                            <b-field v-if="student_status.student_subject_record.length > 0" grouped group-multiline>-->
-<!--                              <b-table-->
-<!--                                :data="student_status.student_subject_record"-->
-<!--                                :loading="student_status.loading"-->
-<!--                                paginated-->
-<!--                                backend-pagination-->
-<!--                                :total="student_status.total"-->
-<!--                                :per-page="student_status.per_page"-->
-<!--                                @page-change="onStatusPageChange"-->
-<!--                                aria-next-label="Next page"-->
-<!--                                aria-previous-label="Previous page"-->
-<!--                                aria-page-label="Page"-->
-<!--                                aria-current-label="Current page"-->
-<!--                                backend-sorting-->
-<!--                                bordered-->
-<!--                                narrowed-->
-<!--                                hoverable-->
-<!--                                detail-key="ID"-->
-<!--                                :default-sort-direction="student_status.defaultSortOrder"-->
-<!--                                :default-sort="[student_status.sortField, student_status.sortOrder]"-->
-<!--                                @sort="onStatusSort">-->
-<!--                                <template slot-scope="props">-->
-<!--                                  <b-table-column field="SubjectID" label="Mã môn" sortable>-->
-<!--                                    {{ props.row.SubjectID }}-->
-<!--                                  </b-table-column>-->
-<!--                                  <b-table-column field="SubjectTitle" label="Tên môn" sortable>-->
-<!--                                    {{ props.row.SubjectTitle }}-->
-<!--                                  </b-table-column>-->
+                        <template slot="detail" slot-scope="props">
+                            <h4 class="title is-4">Danh sách ca thi</h4>
+                            <b-field grouped group-multiline>
+                              <b-button
+                                :class="{'is-loading': subject_shift.loading}"
+                                class="button"
+                                @click="getSubjectShiftRecordData(props.row)"
+                              >
+                                <b-icon
+                                  size="is-small"
+                                  icon="sync"/>
+                              </b-button>
+                            </b-field>
 
-<!--                                  <b-table-column field="Action">-->
-<!--                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row.SubjectID)"></b-button>-->
-<!--                                  </b-table-column>-->
-<!--                                </template>-->
-<!--                              </b-table>-->
-<!--                            </b-field>-->
-<!--                          <b-field v-else>-->
-<!--                            <b-message type="is-danger" has-icon>-->
-<!--                              Hiện tại sinh viên này chưa có thông tin về danh sách này, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b>!-->
-<!--                            </b-message>-->
-<!--                          </b-field>-->
-<!--                        </template>-->
+                            <!--subject_shift-->
+                            <b-field v-if="subject_shift.subject_shift_record_data.length > 0" grouped group-multiline>
+                              <b-table
+                                :data="subject_shift.subject_shift_record_data"
+                                :loading="subject_shift.loading"
+                                paginated
+                                backend-pagination
+                                :total="subject_shift.total"
+                                :per-page="subject_shift.per_page"
+                                @page-change="onShiftPageChange"
+                                aria-next-label="Next page"
+                                aria-previous-label="Previous page"
+                                aria-page-label="Page"
+                                aria-current-label="Current page"
+                                backend-sorting
+                                bordered
+                                narrowed
+                                hoverable
+                                detail-key="ID"
+                                :default-sort-direction="student_status.defaultSortOrder"
+                                :default-sort="[student_status.sortField, student_status.sortOrder]"
+                                @sort="onStatusSort">
+                                <template slot-scope="props">
+                                  <b-table-column field="SubjectID" label="Mã môn" sortable>
+                                    {{ props.row.SubjectID }}
+                                  </b-table-column>
+                                  <b-table-column field="SubjectTitle" label="Tên môn" sortable>
+                                    {{ props.row.SubjectTitle }}
+                                  </b-table-column>
+
+                                  <b-table-column field="Action">
+                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row.SubjectID)"></b-button>
+                                  </b-table-column>
+                                </template>
+                              </b-table>
+                            </b-field>
+                            <b-field v-else>
+                              <b-message type="is-danger" has-icon>
+                                Hiện tại môn này chưa có ca thi, bạn hãy nhập vào ca thi!
+                              </b-message>
+                            </b-field>
+
+                            <!--subject_shift-->
+                        </template>
                     </b-table>
                     <!--Semester Subject Record-->
 
@@ -223,6 +225,19 @@
                     per_page: 5,
                     ID_Index: [],
                 },
+                subject_shift: {
+                    subject_shift_record_data: [],
+                    total: 0,
+                    shift_loading: false,
+                    search_loading: false,
+                    searchResults: [],
+                    sortField: 'ShiftID',
+                    sortOrder: 'desc',
+                    defaultSortOrder: 'desc',
+                    page: 1,
+                    per_page: 5,
+                    ID_Index: [],
+                },
                 isOpen: null,
                 collapses: [],
                 currentSemID: '',
@@ -240,7 +255,7 @@
                         this.hasSemesterError = false;
                         this.semester.create_loading = true;
                         const response = await axios({
-                            url: '/schedule/create-new-semester',
+                            url: '/schedule/add-new-semester',
                             method: 'post',
                             headers: {
                                 'Authorization': authHeader(),
@@ -416,6 +431,45 @@
             async onSemesterSubjectDelete(SubjectID) {
 
             },
+            async getSubjectShiftRecordData() {
+                this.subject_shift.search_loading = true;
+                try {
+                    const response = await axios({
+                        url: '/schedule/shift-records',
+                        method: 'get',
+                        params: {
+                            page_index: this.subject_shift.page,
+                            per_page: this.subject_shift.per_page,
+                            sort_field: this.subject_shift.sortField,
+                            sort_order: this.subject_shift.sortOrder
+                        },
+                        headers: {
+                            'Authorization': authHeader(),
+                        }
+                    });
+                    if (response.status === 200) {
+                        this.subject_shift.subject_shift_record_data = [];
+                        this.subject_shift.total = response.data.total_results;
+                        response.data.subject_shift_records.forEach((item) => {
+                            this.subject_shift.subject_shift_record_data.push(item);
+                        });
+                        // console.log(this.data);
+                        this.subject_shift.shift_loading = false
+                    }
+                } catch (error) {
+                    this.subject_shift.student_record = [];
+                    this.subject_shift.total = 0;
+                    this.subject_shift.shift_loading = false;
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Không thể lấy được dữ liệu sinh viên!',
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+                    throw error;
+                }
+            },
             onSemesterSubjectSort(field, order) {
                 this.subject.sortField = field;
                 this.subject.sortOrder = order;
@@ -534,7 +588,7 @@
                 this.subject.semester_subject_record_data = [];
             },
             closeOtherDetails(row) {
-                this.subject.ID_Index = [row.ID];
+                this.subject.ID_Index = [row.SubjectID];
                 // console.log(this.student_status.ID_Index);
             },
         },

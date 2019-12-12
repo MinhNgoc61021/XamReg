@@ -1,10 +1,52 @@
 <template>
   <div>
     <h1 class="title is-3">Quản lý phòng thi</h1>
-    <h2 class="subtitle is-6">Cập nhật, quản lý tài khoản và thông tin của sinh viên</h2>
+    <h2 class="subtitle is-6">Cập nhật, quản lý thông tin của phòng thi</h2>
+    <b-field grouped group-multiline>
+      <b-button icon-pack="fas" icon-left="plus-square" outlined @click.prevent="onRoomAdd">
+                Thêm phòng thi
+      </b-button>
+
+      <b-button
+        class="button"
+        @click="getRoomRecord"
+        :class="{'is-loading': loading}"
+      >
+        <b-icon
+          size="is-small"
+          icon="sync"/>
+        <span>Làm mới</span>
+      </b-button>
+      <b-select v-model="per_page">
+        <option value="5">5 dòng/trang</option>
+        <option value="10">10 dòng/trang</option>
+        <option value="15">15 dòng/trang</option>
+        <option value="20">20 dòng/trang</option>
+      </b-select>
+
+      <b-autocomplete
+        :data="search.searchResults"
+        placeholder="Tìm kiếm bằng tên phòng"
+        icon="search"
+        field="RoomName"
+        :loading="search.searchLoading"
+        @typing="onRoomSearch"
+        @select="option => exam_room_list = [option]"
+        expanded>
+          <template slot-scope="props">
+            <div class="media">
+              <div class="media-left">
+                <b-icon icon-pack="fas" icon="user-circle"></b-icon>
+              </div>
+              <div class="media-content">
+                <b>Tên phòng: </b>{{ props.option.RoomName }}
+              </div>
+            </div>
+          </template>
+      </b-autocomplete>
+    </b-field>
     <b-table
       :data="exam_room_list"
-      :bordered="true"
       :loading="loading"
       paginated
       backend-pagination
@@ -16,17 +58,19 @@
       aria-page-label="Page"
       aria-current-label="Current page"
       backend-sorting
+      hoverable
       :default-sort-direction="defaultSortOrder"
-      :default-sort="[sortField, sortOrder]">
+      :default-sort="[sortField, sortOrder]"
+      @sort="onRoomSort">
 
         <template slot-scope="props">
-          <b-table-column field="RoomID" label="Phòng thi số" width="100">
+          <b-table-column field="RoomID" label="Phòng thi số" width="100" sortable>
             {{ props.row.RoomID }}
           </b-table-column>
-          <b-table-column field="RoomName" label="Tên phòng thi" width="100">
+          <b-table-column field="RoomName" label="Tên phòng thi" width="100" sortable>
             {{ props.row.RoomName }}
           </b-table-column>
-          <b-table-column field="Maxcapacity" label="Số lượng chỗ" width="100">
+          <b-table-column field="Maxcapacity" label="Số lượng chỗ" width="100" sortable>
             {{ props.row.Maxcapacity }}
           </b-table-column>
            <b-table-column field="Action" width="90">
@@ -34,8 +78,6 @@
             <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row)"></b-button>
           </b-table-column>
         </template>
-
-      <button></button>
     </b-table>
   </div>
 </template>
@@ -44,21 +86,29 @@
   import axios from 'axios'
   import { authHeader } from "../../api/jwt_handling";
   import editRoomModal from "./helpers/edit";
+  import addRoomModal from "./helpers/add";
+  import debounce from 'lodash/debounce';
+
     export default {
         name: "exam_room_management",
         components:{
-          editRoomModal
+          editRoomModal,
+          addRoomModal
         },
         data(){
           return{
-            exam_room_list: [],
-            total: 0,
-            loading: false,
-            sortField: 'RoomID',
-            sortOrder: 'desc',
-            defaultSortOrder: 'asc',
-            page: 1,
-            per_page: 2,
+              exam_room_list: [],
+              total: 0,
+              loading: false,
+              sortField: 'RoomID',
+              sortOrder: 'desc',
+              defaultSortOrder: 'asc',
+              page: 1,
+              per_page: 5,
+              search: {
+                    searchResults: [],
+                    searchLoading: false,
+              },
           }
         },
         methods: {
@@ -104,6 +154,86 @@
           onPageChange(page){
             this.page = page;
             this.getRoomRecord()
+          },
+          onRoomSearch: debounce(function (roomName) {
+                this.search.searchLoading = true;
+                if (roomName.length === 0) {
+                    this.search.searchResults = [];
+                    this.search.searchLoading = false;
+                }
+                else {
+                    this.search.searchResults = [];
+                    axios({
+                        url: '/room/search-room-record',
+                        method: 'get',
+                        headers: {
+                            'Authorization': authHeader(),
+                        },
+                        params: {
+                            searchName: roomName,
+                        },
+                    }).then((response) => {
+                        if (response.status === 200) {
+                            // console.log(response.data.search_results);
+                            response.data.search_results.forEach((item) => {
+                                this.search.searchResults.push(item);
+                            });
+                            this.search.searchLoading = false;
+                        }
+                    }).catch((error) => {
+                        this.search.searchResults = [];
+                        this.search.searchLoading = false;
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Không thể tìm được dữ liệu!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        });
+                        throw error;
+                    });
+                }
+            }, 500),
+          onRoomAdd(){
+                this.$buefy.modal.open({
+                    parent: this,
+                    component: addRoomModal,
+                    hasModalCard: true,
+                    customClass: 'custom-class custom-class-2',
+                    canCancel: false,
+                    events: {
+                        'loadRoomData': (http_status) => {
+                            if (http_status === 200) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `Đã thêm thành công!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                                this.getRoomRecord();
+                            }
+                            else if(http_status === 400) {
+                                 this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                 });
+                            }
+                            else if (http_status === 401) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                });
+                            }
+                        }
+                    }
+                });
           },
           onRoomEdit(record) {
                 // console.log(record.Dob);
@@ -198,12 +328,14 @@
                     },
                 });
             },
+          onRoomSort(field, order) {
+                this.sortField = field;
+                this.sortOrder = order;
+                this.getRoomRecord();
+            },
         },
       mounted(){
           this.getRoomRecord()
       }
     }
 </script>
-
-<style scoped>
-</style>

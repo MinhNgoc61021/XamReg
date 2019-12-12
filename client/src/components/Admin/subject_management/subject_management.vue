@@ -15,7 +15,8 @@
 
             <b-button
               class="button"
-              @click="getSubjectsInfo"
+              @click="getSubjectInfo"
+              :class="{'is-loading': subject_info.loading}"
             >
               <b-icon
                 size="is-small"
@@ -45,9 +46,8 @@
                           <b-icon icon-pack="fas" icon="book"></b-icon>
                         </div>
                         <div class="media-content">
-                            <b>Mã môn học: </b>{{ props.option.SubjectID }}
-                            <br>
-                            <b>Tên môn học: </b>{{ props.option.SubjectTitle }}
+                          <div><b>Mã môn học: </b>{{ props.option.SubjectID }}</div>
+                          <div><b>Tên môn học: </b>{{ props.option.SubjectTitle }}</div>
                         </div>
                     </div>
                 </template>
@@ -96,7 +96,7 @@
     import subject_create from "./create/subject_create";
     import debounce from 'lodash/debounce';
     export default {
-        name: "subjects_management",
+        name: "subject_management",
         component: {
           subject_edit,
         },
@@ -119,7 +119,7 @@
           }
         },
         methods: {
-          async getSubjectsInfo() {
+          async getSubjectInfo() {
             this.subject_info.loading = true;
             try {
               const response = await axios({
@@ -158,7 +158,7 @@
           },
           onSubjectPageChange(page) {
             this.subject_info.page = page;
-            this.getSubjectsInfo();
+            this.getSubjectInfo();
           },
           onSubjectSearch: debounce(function (SubjectID) {
             this.search.searchLoading = true;
@@ -202,7 +202,7 @@
           onStatusSort(field, order) {
                 this.subject_info.sortField = field;
                 this.subject_info.sortOrder = order;
-                this.getSubjectsInfo();
+                this.getSubjectInfo();
           },
           createSubject() {
             this.$buefy.modal.open({
@@ -221,7 +221,7 @@
                        type: 'is-success',
                        hasIcon: true
                      });
-                     this.getSubjectsInfo();
+                     this.getSubjectInfo();
                    }
                    else if (http_status === 400) {
                      this.$buefy.notification.open({
@@ -285,7 +285,7 @@
                     })
                   }
                 } finally {
-                  this.getSubjectsInfo();
+                  this.getSubjectInfo();
                 }
               },
             });
@@ -312,7 +312,7 @@
                        type: 'is-success',
                        hasIcon: true
                      });
-                     this.getSubjectsInfo();
+                     this.getSubjectInfo();
                    }
                    else if (http_status === 400) {
                      this.$buefy.notification.open({
@@ -338,7 +338,7 @@
           }
         },
       mounted() {
-          this.getSubjectsInfo();
+          this.getSubjectInfo();
       }
     }
 </script>
