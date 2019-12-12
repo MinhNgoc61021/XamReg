@@ -456,6 +456,18 @@ class Exam_Room(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def searchRoomRecord(cls, roomName):
+        sess = Session()
+        try:
+            room = sess.query(Exam_Room).filter(Exam_Room.RoomName.like(roomName + '%'))
+            return room_schema.dump(room, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
 
 # Exam_Room persistent class #chưa nối với table Exam_Room
 class Exam_Room__Shift(Base):

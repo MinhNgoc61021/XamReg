@@ -69,7 +69,15 @@ module.exports = {
       '/room/remove-room-record':{
           target: 'http://api:5000',
           changeOrigin: true,
-      }
+      },
+      '/room/create-room-records':{
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/room/search-room-record':{
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
     },
 
     // Various Dev Server settings

@@ -12,6 +12,29 @@ import re
 
 exam_room_management = Blueprint('exam_room_management', __name__, url_prefix='/room')
 
+@exam_room_management.route('/create-room-records', methods=['POST'])
+@token_required
+def create_room_record(current_user):
+    try:
+        newRoomID = request.get_json().get('newRoomID')
+        newRoomName = request.get_json().get('newRoomName')
+        newMaxcapacity = request.get_json().get('newMaxcapacity')
+
+        print(newRoomID, flush=True)
+        print(newRoomName, flush=True)
+        print(newMaxcapacity, flush=True)
+        # check validation
+        Log.create(current_user['ID'],
+                   'Tạo thêm phòng thi ' + newRoomName,
+                   set_custom_log_time())
+
+        newRoom = Exam_Room.create(newRoomID, newRoomName, newMaxcapacity)
+        if newRoom is False:
+            return jsonify({'status': 'already-exist'}), 200
+        else:
+            return jsonify({'status': 'success'}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
 
 @exam_room_management.route('/room-records', methods=['GET'])
 @token_required
@@ -82,5 +105,21 @@ def remove_subject_record(current_user):
                    set_custom_log_time())
 
         return jsonify({'status': 'success'}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+@exam_room_management.route('/search-room-record', methods=['GET'])
+@token_required
+def get_student_info_search(current_user):
+    try:
+        searchName = request.args.get('searchName')
+        check = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchName))
+        if check is None:
+            searchResults = Exam_Room.searchRoomRecord(searchName)
+            return jsonify({'status': 'success',
+                            'search_results': searchResults,
+                            }), 200
+        else:
+            return jsonify({'status': 'bad-request'}), 400
     except:
         return jsonify({'status': 'bad-request'}), 400
