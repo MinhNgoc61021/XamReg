@@ -464,6 +464,60 @@ class Subject_Semester(Base):
         # finally:
         #     sess.close()
 
+# Subject_Semester persistent class
+class Subject_Semester(Base):
+    __tablename__ = 'subject_semester'
+
+    Sem_SubID = Column(Integer,
+                       primary_key=True)
+    SubjectID = Column(String(45),
+                       ForeignKey('subject.SubjectID', onupdate="cascade"),
+                       nullable=False)
+    SemesterID = Column(Integer,
+                        ForeignKey('semester_examination.SemID', onupdate="cascade"),
+                        nullable=False)
+    Subject = relationship('Subject',
+                           back_populates='subject_semester')
+    Semester_Examination = relationship('Semester_Examination',
+                                        back_populates='subject_semester')
+
+    @classmethod
+    def create(cls, subjectID, semesterID):
+        sess = Session()
+        try:
+            if sess.query(Subject_Semester).filter(Subject_Semester.SubjectID == subjectID,
+                                                   Subject_Semester.SemesterID == semesterID).scalar() is None:
+                new_semester_subject = Subject_Semester(SubjectID=subjectID,
+                                                        SemesterID=semesterID)
+                sess.add(new_semester_subject)
+                sess.commit()
+                sess.close()
+                return True
+            else:
+                return False
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getRecord(cls, semID, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        record_query = sess.query(Subject).join(Subject_Semester).filter(
+            Subject_Semester.SemesterID == semID).order_by(getattr(
+            getattr(Subject, sort_field), sort_order)())
+
+        record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                               page_size=int(per_page))
+
+        return subject_schema.dump(record_query, many=True), get_record_pagination
+        # except:
+        #     sess.rollback()
+        #     raise
+        # finally:
+        #     sess.close()
+
 
 # Subject_Shift persistent class
 class Shift(Base):
@@ -518,7 +572,6 @@ class Shift(Base):
             # record_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
                                                                    page_size=int(per_page))
-
             # many=True if user_query is a collection of many results, so that record will be serialized to a list.
             return shift_schema.dump(record_query, many=True), get_record_pagination
         except:
@@ -577,12 +630,10 @@ class Student_Shift(Base):
     Student = relationship('User',
                            back_populates='student_shift')
 
-
-# Exam_Room persistent class
+# Exam Room persistent class
 class Exam_Room(Base):
     __tablename__ = 'exam_room'
     __table_args__ = {'mysql_engine': 'InnoDB'}
-
     RoomID = Column(Integer,
                     primary_key=True)
     RoomName = Column(String(45),
@@ -591,11 +642,11 @@ class Exam_Room(Base):
                          nullable=False)
 
     @classmethod
-    def create(cls, roomid, room_name, maxcapacity):
+    def create(cls, room_name, maxcapacity):
         sess = Session()
         try:
-            if sess.query(Exam_Room).filter(Exam_Room.RoomID == roomid).scalar() is None:
-                new_room = Exam_Room(RoomID=roomid,
+            if sess.query(Exam_Room).filter(Exam_Room.RoomName == room_name).scalar() is None:
+                new_room = Exam_Room(
                                      RoomName=room_name,
                                      Maxcapacity=maxcapacity)
                 sess.add(new_room)
@@ -615,11 +666,11 @@ class Exam_Room(Base):
         try:
             record_query = sess.query(Exam_Room).order_by(getattr(
                 getattr(Exam_Room, sort_field), sort_order)())
-            print('ok1', flush=True)
+            print('ok1', flush = True)
             # user_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
                                                                    page_size=int(per_page))
-            print('ok2', flush=True)
+            print('ok2', flush = True)
             # many=True if user_query is a collection of many results, so that record will be serialized to a list.
             return room_schema.dump(record_query, many=True), get_record_pagination
         except:
@@ -650,6 +701,18 @@ class Exam_Room(Base):
             room = sess.query(Exam_Room).filter(Exam_Room.RoomID == roomID).one()
             sess.delete(room)
             sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def searchRoomRecord(cls, roomName):
+        sess = Session()
+        try:
+            room = sess.query(Exam_Room).filter(Exam_Room.RoomName.like(roomName + '%'))
+            return room_schema.dump(room, many=True)
         except:
             sess.rollback()
             raise

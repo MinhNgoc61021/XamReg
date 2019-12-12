@@ -4,7 +4,7 @@
         <b-field label="MSSV">
             <b-input v-model="newStudent.StudentID" placeholder="Hãy nhập mã số sinh viên"
                      required maxlength="8"
-                     alidation-message="Nhập đúng MSSV"
+                     validation-message="Nhập đúng MSSV"
                      pattern="^\d{8}$">
             </b-input>
         </b-field>

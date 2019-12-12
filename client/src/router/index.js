@@ -7,13 +7,13 @@ import student_page from "../components/Student/student_page";
 import upload from "../components/Admin/student_management/import/upload/upload";
 import student_management from "../components/Admin/student_management/student_management";
 import schedule_management from "../components/Admin/schedule_management/schedule_management";
-import subjects_management from "../components/Admin/subjects_management/subjects_management";
 import log_management from "../components/Admin/log_management/log_management";
-import home_page from "../components/Student/home_page";
 import shift_register from "../components/Student/shift_register/shift_register";
-
+import subject_management from "../components/Admin/subject_management/subject_management";
+import student_home_page from "../components/Student/home_page";
+import shift_register from "../components/Student/shift_register/shift_register";
+import exam_room_management from "../components/Admin/exam_room_management/exam_room_management"
 import { getToken } from "../components/api/jwt_handling";
-import {store} from "../store/store";
 Vue.use(VeeValidate);
 Vue.use(Router);
 
@@ -25,16 +25,27 @@ export const router = new Router({
       children: [ { path: '/student-management', component: student_management },
                   { path: '/schedule-management', component: schedule_management },
                   { path: '/log-management', component: log_management },
-                  { path: '/subjects-management', component: subjects_management }, ]
+                  { path: '/subject-management', component: subject_management },
+                  { path: '/exam-room-management', component: exam_room_management },],
     },
-    { path: '/student', name: 'student', component: student_page, redirect: '/student-home',
-      children: [ { path: '/student-home', component: home_page },
-                  { path: '/shift-register/:studentid', component: shift_register, name: 'shift_register' , props: true } ]
+    { path: '/student', name: 'student', component: Student_Page, redirect: '/student-home',
+      children: [ { path: '/student-home', component: student_home_page },
+                  { path: '/shift-register/:studentid', component: shift_register, name: 'shift_register' , props: true,
+                    beforeEnter (to, from, next)  {
+                        if (getToken(localStorage.getItem('user')).type === 'Admin') {
+                            return next('/admin');
+                        }
+                        else {
+                          return next();
+                        }
+                    }
+                  } ],
     },
     { path: '/upload', name: 'upload', component: upload },
     { path: '/*', redirect: '/register'},
   ],
 });
+
 
 router.beforeEach ((to, from, next) => {
 
@@ -42,7 +53,7 @@ router.beforeEach ((to, from, next) => {
     // redirect to admin page if the user is an admin
     // redirect to student page if the user is a student
     const publicPages = ['/register'];
-    const adminPage = ['/admin', '/student-management', '/schedule-management', '/log-management', '/subject-management', '/upload'];
+    const adminPage = ['/admin', '/student-management', '/schedule-management', '/log-management', '/subject-management', '/exam-room-management'];
     const studentPage = ['/student', '/student-home', '/shift-register'];
     const authRequired = !publicPages.includes(to.path);
     const loggedIn = getToken(localStorage.getItem('user'));

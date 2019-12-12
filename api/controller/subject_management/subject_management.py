@@ -7,7 +7,7 @@ from flask import (
 )
 from controller.authentication.auth import token_required
 from controller.time_conversion.asia_timezone import set_custom_log_time
-from db.entity_db import User, Subject, Student_Status, Log
+from db.entity_db import Subject, Log
 import re
 
 subject_management = Blueprint('subject_management', __name__, url_prefix='/subject')

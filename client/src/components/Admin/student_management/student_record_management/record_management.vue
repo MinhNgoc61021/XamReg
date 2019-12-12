@@ -199,7 +199,6 @@
                     defaultSortOrder: 'desc',
                     page: 1,
                     per_page: 5,
-
                 },
                 student_status: { // This is used to for student subject status
                     student_subject_record: [],
@@ -353,7 +352,7 @@
                     customClass: 'custom-class custom-class-2',
                     canCancel: false,
                     events: {
-                        'loadStudentData': (http_status) => {
+                        'editStatus': (http_status) => {
                             if (http_status === 200) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
@@ -469,7 +468,7 @@
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `Đã xóa thành công môn học ${SubjectID}của sinh viên có MSSV <b>${this.student_status.currentStudentID}</b>.`,
+                                    message: `Đã xóa thành công môn học ${SubjectID} của sinh viên có MSSV <b>${this.student_status.currentStudentID}</b>!`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
                                     hasIcon: true
