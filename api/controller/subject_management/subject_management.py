@@ -72,7 +72,7 @@ def edit_subject(current_user):
         newSubjectTitle = request.get_json().get('SubjectTitle')
         print(newSubjectID, flush=True)
         print(newSubjectTitle, flush=True)
-        validateSubjectID = re.search('([A-Z]{3})([0-9]{4})', str(newSubjectID))
+        validateSubjectID = re.search('([A-Z]|[a-z]{3})([0-9]{4})', str(newSubjectID))
         if validateSubjectID is not None:
             success = Subject.updateRecord(currentSubjectID, newSubjectID, newSubjectTitle)
             Log.create(current_user['ID'],

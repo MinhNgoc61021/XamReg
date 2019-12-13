@@ -47,7 +47,8 @@
                 </template>
             </b-autocomplete>
         </b-field>
-        <b-table
+        <b-field v-if="student.student_record.length > 0">
+          <b-table
             :data="student.student_record"
             :loading="student.loading"
             paginated
@@ -171,6 +172,12 @@
                 </b-field>
             </template>
         </b-table>
+        </b-field>
+        <b-field v-else>
+          <b-message type="is-danger" has-icon>
+            Hiện tại chưa có dự liệu sinh viên, bạn hãy nhập vào sinh viên!
+          </b-message>
+        </b-field>
     </section>
 </template>
 
@@ -178,7 +185,7 @@
     import axios from 'axios'
     import { authHeader } from "../../../api/jwt_handling";
     import moment from 'moment/moment';
-    import edit_student_form from "./edit/edit_student_modal_form";
+    import edit_student_form from "./edit/student_edit";
     import debounce from 'lodash/debounce';
 
     /*
@@ -321,7 +328,7 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true

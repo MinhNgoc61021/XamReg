@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import register from '@/components/Register/register';
+import register from '../components/Register/register';
 import VeeValidate from 'vee-validate'
 import admin_page from "../components/Admin/admin_page";
 import student_page from "../components/Student/student_page";
