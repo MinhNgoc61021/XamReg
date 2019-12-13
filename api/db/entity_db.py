@@ -490,12 +490,12 @@ class Shift(Base):
             sess.close()
 
     @classmethod
-    def updateRecord(cls, currentShiftID, currentSubjectID, new_date_start, new_start_at, new_end_at):
+    def updateRecord(cls, ShiftID, currentSubjectID, new_date_start, new_start_at, new_end_at):
         sess = Session()
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Shift).filter(Shift.ShiftID == currentShiftID, Shift.SubjectID == currentSubjectID).update(
+            sess.query(Shift).filter(Shift.ShiftID == ShiftID, Shift.SubjectID == currentSubjectID).update(
                 {Shift.Date_Start: new_date_start,
                  Shift.Start_At: new_start_at,
                  Shift.End_At: new_end_at})

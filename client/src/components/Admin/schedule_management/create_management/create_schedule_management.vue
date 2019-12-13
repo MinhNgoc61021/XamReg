@@ -94,7 +94,9 @@
                               {{ props.row.Subject }}
                             </b-table-column>
                             <b-table-column field="Date_Start" label="Ngày thi" width="100" sortable>
-                              {{ props.row.Date_Start }}
+                              <span class="tag is-success">
+                                {{ formatDate(props.row.Date_Start) }}
+                              </span>
                             </b-table-column>
                             <b-table-column field="Start_At" label="Thời gian bắt đầu" width="100" sortable>
                               {{ props.row.Start_At }}
@@ -135,7 +137,7 @@
                               <b-button
                                 :class="{'is-loading': room.room_loading}"
                                 class="button"
-                                @click="getRoomRecord()"
+                                @click="getRoomRecord"
                               >
                                 <b-icon
                                   size="is-small"
@@ -174,7 +176,7 @@
                                 @sort="onRoomSort">
                                 <template slot-scope="props">
 
-                                  <b-table-column field="RoomID" label="Mã môn" width="100" sortable>
+                                  <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
                                     {{ props.row.RoomID }}
                                   </b-table-column>
                                   <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
@@ -185,7 +187,7 @@
                                   </b-table-column>
 
                                   <b-table-column field="Action" width="90">
-                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row.RoomID)"></b-button>
+                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row.Room_ShiftID)"></b-button>
                                   </b-table-column>
                                 </template>
                               </b-table>
@@ -272,6 +274,9 @@
             }
         },
         methods: {
+            formatDate(date) {
+                return moment(date).format('L');
+            },
             async addNewSemester() {
                 if (this.semester.newSemester.length === 0) {
                     this.hasSemesterError = true;
@@ -323,7 +328,7 @@
                         } else if (e['message'].includes('401')) {
                             this.$buefy.notification.open({
                                 duration: 2000,
-                                message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                message: 'Không được quyền sử dụng!',
                                 position: 'is-bottom-right',
                                 type: 'is-danger',
                                 hasIcon: true
@@ -369,7 +374,7 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true
@@ -595,7 +600,7 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true
@@ -658,7 +663,7 @@
                         } else if (e['message'].includes('401')) {
                             this.$buefy.notification.open({
                                 duration: 2000,
-                                message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                message: 'Không được quyền sử dụng!',
                                 position: 'is-bottom-right',
                                 type: 'is-danger',
                                 hasIcon: true
@@ -719,10 +724,10 @@
                 this.room.sortOrder = order;
                 this.getRoomRecord();
             }, // xong
-            onRoomDelete(ID) {
+            async onRoomDelete(ID) {
                 this.$buefy.dialog.confirm({
                     title: 'Xóa kỳ thi',
-                    message: `Bạn có chắc chắn là muốn <b>xóa</b> ca thi có mã ${ID} này không? Đã làm thì tự chịu đấy.`,
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> phòng thi có mã ${ID} này không? Đã làm thì tự chịu đấy.`,
                     confirmText: 'Xóa!',
                     cancelText: 'Bỏ qua',
                     type: 'is-danger',
@@ -737,13 +742,13 @@
                                 },
                                 data: {
                                     currentShiftID: this.currentShiftID,
-                                    delShiftID: ID,
+                                    delRoomID: ID,
                                 },
                             });
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `Đã xóa kỳ thi <b>${record.SemTitle}</b> thành công.`,
+                                    message: `Đã xóa phòng thi có mã ${ID}`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
                                     hasIcon: true
@@ -753,7 +758,7 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true
@@ -803,7 +808,7 @@
                         throw error;
                     });
                 }
-            }, 500),
+            }, 500), // xong
             destroySemesterData() { // destroy subject data for scalability when closing accordion
                 this.shift.shift_record_data = [];
             },

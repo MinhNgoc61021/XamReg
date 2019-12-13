@@ -96,6 +96,33 @@ def create_shift(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
+@schedule_management.route('/edit-shift ', methods=['put'])
+@token_required
+def edit_shift(current_user):
+    try:
+        edit_shift = request.get_json()
+        shiftID = edit_shift.get('ShiftID')
+        new_subjectID = edit_shift.get('newSubjectID')
+        new_date_start = edit_shift.get('newDate_Start')
+        new_start_at = edit_shift.get('newStart_At')
+        new_end_at = edit_shift.get('newEnd_At')
+        newShift = Shift.updateRecord(str(shiftID),
+                                str(new_subjectID),
+                                new_date_start,
+                                new_start_at,
+                                new_end_at)
+        if newShift is not None:
+            Log.create(current_user['ID'],
+                       'Thay đổi thông tin ca thi có mã ' + str(shiftID),
+                       set_custom_log_time())
+            return jsonify({'status': 'success'}), 200
+        else:
+            print('Mã môn không hợp lệ', flush=True)
+            return jsonify({'status': 'bad-request'}), 400
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
 @schedule_management.route('/remove-shift', methods=['DELETE'])
 @token_required
 def remove_shift(current_user):
@@ -174,17 +201,17 @@ def create_room(current_user):
 @schedule_management.route('/remove-room', methods=['DELETE'])
 @token_required
 def remove_room(current_user):
-    try:
         record = request.get_json()
-        shiftID = record.get('delShiftID')
-        Room_Shift.delRecord(shiftID)
+
+        room_shiftID = record.get('delRoomID')
+        currentShiftID = record.get('currentShiftID')
+        print(room_shiftID, flush=True)
+        print(currentShiftID, flush=True)
+        Room_Shift.delRecord(room_shiftID)
         Log.create(current_user['ID'],
-                   'Xoá phòng thi có mã ' + str(shiftID) + ' ra khỏi hệ thống.',
+                   'Xoá phòng thi có mã ' + str(room_shiftID) + ' ra khỏi ca thi có mã ' + str(currentShiftID) + ' hệ thống.',
                    set_custom_log_time())
 
-        return jsonify({'status': 'success'}), 200
-    except:
-        return jsonify({'status': 'bad-request'}), 400
 
 
 @schedule_management.route('/room-records', methods=['GET'])

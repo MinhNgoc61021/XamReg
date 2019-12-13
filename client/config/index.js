@@ -26,31 +26,31 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/student-records': {
+      '/student/student-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/create-student-record': {
+      '/student/create-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/remove-student-record': {
+      '/student/remove-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/update-student-record': {
+      '/student/update-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/student-status-records': {
+      '/student/student-status-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/remove-student-status-record': {
+      '/student/remove-student-status-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/record/search-student-record': {
+      '/student/search-student-record': {
           target: 'http://api:5000',
           changeOrigin: true,
       },

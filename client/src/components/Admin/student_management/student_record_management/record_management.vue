@@ -240,7 +240,7 @@
                 this.student.loading = true;
                 try {
                     const response = await axios({
-                        url: '/record/student-records',
+                        url: '/student/student-records',
                         method: 'get',
                         params: {
                             page_index: this.student.page,
@@ -305,7 +305,7 @@
                     onConfirm: async () => {
                         try {
                             const removeData = await axios({
-                                url: '/record/remove-student-record',
+                                url: '/student/remove-student-record',
                                 method: 'delete',
                                 headers: {
                                     'Authorization': authHeader(),
@@ -401,7 +401,7 @@
                 else {
                     this.search.searchResults = [];
                     axios({
-                        url: '/record/search-student-record',
+                        url: '/student/search-student-record',
                         method: 'get',
                         headers: {
                             'Authorization': authHeader(),
@@ -462,7 +462,7 @@
                     onConfirm: async () => {
                         try {
                             const removeData = await axios({
-                                url: '/record/remove-student-status-record',
+                                url: '/student/remove-student-status-record',
                                 method: 'delete',
                                 headers: {
                                     'Authorization': authHeader(),
@@ -485,7 +485,7 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true
@@ -501,7 +501,7 @@
                 this.student_status.loading = true;
                 try {
                     const response = await axios({
-                        url: '/record/student-status-records',
+                        url: '/student/student-status-records',
                         method: 'get',
                         params: {
                             StudentID: this.student_status.currentStudentID,

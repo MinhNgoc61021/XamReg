@@ -33,6 +33,7 @@
           <b-field label="Giờ bắt đầu thi">
               <b-timepicker
                   v-model="Start_At"
+                  :value="Start_At"
                   placeholder="Hãy nhập giờ thi"
                   icon="clock" required>
               </b-timepicker>
@@ -56,13 +57,13 @@
 
     export default {
         name: "shift_edit",
-        props: ['currentSubjectID'],
+        props: ['currentShiftID', 'currentStart_At', 'currentDate_Start', 'currentRoomID'],
         data() {
           return {
               SubjectID: this.currentSubjectID,
               newRoomID: '',
-              Date_Start: null,
-              Start_At: null,
+              Date_Start: this.currentDate_Start,
+              Start_At: this.currentStart_At,
               search: {
                     searchResults: [],
                     searchLoading: false,
