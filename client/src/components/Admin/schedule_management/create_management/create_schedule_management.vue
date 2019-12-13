@@ -60,7 +60,7 @@
                       Hiện tại chưa có thông tin về ca thi trong <b>{{ collapse.SemTitle }}</b>, bạn hãy nhập vào ca thi!
                     </b-message>
                   </b-field>
-                  <b-field group-multiline v-else>
+                  <b-field expanded v-else>
 
                     <!--Shift Record-->
                     <b-table
@@ -114,7 +114,7 @@
                         <!--Room-->
                         <template slot="detail" slot-scope="props">
                             <h4 class="title is-4">Danh sách phòng thi</h4>
-                            <b-field  grouped group-multiline>
+                            <b-field  expanded>
                               <b-button
                                 :class="{'is-loading': room.room_loading}"
                                 class="button"
@@ -124,16 +124,15 @@
                                   size="is-small"
                                   icon="sync"/>
                               </b-button>
-                              <b-field :message="[{ 'Kỳ thi chưa đánh': hasRoomError },]">
-                                <b-autocomplete width="300"
+                              <b-autocomplete clear-on-select
                                   :data="room.searchResults"
-                                  placeholder="Tìm kiếm để nhập phòng thi"
+                                  placeholder="Tìm kiếm để chọn phòng thi"
                                   icon="search"
                                   field="RoomName"
                                   :loading="room.search_loading"
                                   @typing="onRoomSearch"
-                                  @select="option => { room.roomID = option.RoomID }"
-                                  >
+                                  @select="option => { room.select_search = [option]; addNewRoom() }"
+                                   expanded>
                                     <template slot-scope="props">
                                       <div class="media">
                                         <div class="media-content">
@@ -142,16 +141,7 @@
                                       </div>
                                     </template>
                                 </b-autocomplete>
-                              </b-field>
-                              <b-button
-                                class="button"
-                                @click="addNewRoom"
-                                icon-pack="fas" icon-left="plus-square"
-                              >
-                                <span>Thêm phòng thi</span>
-                              </b-button>
                             </b-field>
-
                             <!--shift-->
                             <b-field v-if="room.room_record_data.length > 0" grouped group-multiline>
                               <b-table
@@ -200,7 +190,6 @@
 
                             <!--shift-->
                         </template>
-
                     </b-table>
                     <!--Shift Record-->
 
@@ -251,7 +240,7 @@
                     ID_Index: [],
                 },
                 room: {
-                    roomID: null,
+                    select_search: Object,
                     room_record_data: [],
                     total: 0,
                     searchResults: [],
@@ -418,6 +407,9 @@
                     throw error;
                 }
             }, // xong
+            async onSemesterEdit() {
+
+            },
             async addNewShift() {
                 this.$buefy.modal.open({
                     parent: this,
@@ -612,68 +604,61 @@
                 });
             }, // xong
             async addNewRoom() {
-                if (this.room.roomID === null) {
-                    this.hasRoomError = true;
-                }
-                else {
-                     try {
-                        this.room.room_loading = true;
-                        const response = await axios({
-                            url: '/schedule/create-room',
-                            method: 'post',
-                            headers: {
-                                'Authorization': authHeader(),
-                            },
-                            data: {
-                                roomID: this.room.roomID,
-                                shiftID: this.currentShiftID,
-                            },
-                        });
-                        if (response.status === 200) {
-                            this.room.room_loading = false;
-                            if (response.data.status === 'success') {
-                                this.$buefy.notification.open({
-                                    duration: 2000,
-                                    message: `Đã thêm phòng thi thành công.`,
-                                    position: 'is-bottom-right',
-                                    type: 'is-success',
-                                    hasIcon: true
-                                });
-                            } else {
-                                this.$buefy.notification.open({
-                                    duration: 2000,
-                                    message: `Phòng thi đã tồn tại từ trước.`,
-                                    position: 'is-bottom-right',
-                                    type: 'is-warning',
-                                    hasIcon: true
-                                });
-                            }
-                        }
-                    } catch (e) {
+                try {
+                    this.room.room_loading = true;
+                    const response = await axios({
+                        url: '/schedule/create-room',
+                        method: 'post',
+                        headers: {
+                            'Authorization': authHeader(),
+                        },
+                        data: {
+                            roomID: this.room.select_search[0].RoomID,
+                            shiftID: this.currentShiftID,
+                        },
+                    });
+                    if (response.status === 200) {
                         this.room.room_loading = false;
-                        if (e['message'].includes('400')) {
+                        if (response.data.status === 'success') {
                             this.$buefy.notification.open({
                                 duration: 2000,
-                                message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                                message: `Đã thêm phòng thi thành công.`,
                                 position: 'is-bottom-right',
-                                type: 'is-danger',
+                                type: 'is-success',
                                 hasIcon: true
-                            })
-                        } else if (e['message'].includes('401')) {
+                            });
+                        } else {
                             this.$buefy.notification.open({
                                 duration: 2000,
-                                message: 'Không được quyền sử dụng!',
+                                message: `Phòng thi đã tồn tại từ trước.`,
                                 position: 'is-bottom-right',
-                                type: 'is-danger',
+                                type: 'is-warning',
                                 hasIcon: true
-                            })
+                            });
                         }
                     }
-                    finally {
-                         this.hasRoomError = false;
-                         this.room.roomID = null;
-                         this.getRoomRecord();
+                } catch (e) {
+                    this.room.room_loading = false;
+                    if (e['message'].includes('400')) {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
+                    } else if (e['message'].includes('401')) {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Không được quyền sử dụng!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
                     }
+                }
+                finally {
+                    this.getRoomRecord();
                 }
             },
             async getRoomRecord() {

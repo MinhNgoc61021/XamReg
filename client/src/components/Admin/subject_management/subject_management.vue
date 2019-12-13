@@ -151,10 +151,11 @@
               this.subject_info.total = 0;
               this.subject_info.loading = false;
               this.$buefy.notification.open({
-                duration: 2000,
-                message: 'Không thể lấy được dữ liệu về môn thi!',
-                position: 'is-bottom-right',
-                type: 'is-danger',
+                  duration: 2000,
+                  message: 'Không thể lấy được dữ liệu về môn thi!',
+                  position: 'is-bottom-right',
+                  type: 'is-danger',
+                  hasIcon: true,
               });
               throw error;
             }

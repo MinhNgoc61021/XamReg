@@ -29,7 +29,7 @@ export const router = new Router({
     },
     { path: '/student', name: 'student', component: student_page, redirect: '/student-home',
       children: [ { path: '/student-home', component: student_home_page },
-                  { path: '/shift-register/:studentid', component: shift_register, name: 'shift_register' , props: true,
+                  { path: '/shift-register/:studentid', component: shift_register, name: 'shift-register' , props: true,
                     beforeEnter (to, from, next)  {
                         if (getToken(localStorage.getItem('user')).type === 'Admin') {
                             return next('/admin');
