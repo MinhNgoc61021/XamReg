@@ -100,7 +100,7 @@
     import subject_create from "./subject_create";
     import debounce from 'lodash/debounce';
     export default {
-        name: "subjects_management",
+        name: "subject_management",
         component: {
           subject_edit,
         },

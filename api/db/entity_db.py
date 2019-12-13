@@ -464,60 +464,6 @@ class Subject_Semester(Base):
         # finally:
         #     sess.close()
 
-# Subject_Semester persistent class
-class Subject_Semester(Base):
-    __tablename__ = 'subject_semester'
-
-    Sem_SubID = Column(Integer,
-                       primary_key=True)
-    SubjectID = Column(String(45),
-                       ForeignKey('subject.SubjectID', onupdate="cascade"),
-                       nullable=False)
-    SemesterID = Column(Integer,
-                        ForeignKey('semester_examination.SemID', onupdate="cascade"),
-                        nullable=False)
-    Subject = relationship('Subject',
-                           back_populates='subject_semester')
-    Semester_Examination = relationship('Semester_Examination',
-                                        back_populates='subject_semester')
-
-    @classmethod
-    def create(cls, subjectID, semesterID):
-        sess = Session()
-        try:
-            if sess.query(Subject_Semester).filter(Subject_Semester.SubjectID == subjectID,
-                                                   Subject_Semester.SemesterID == semesterID).scalar() is None:
-                new_semester_subject = Subject_Semester(SubjectID=subjectID,
-                                                        SemesterID=semesterID)
-                sess.add(new_semester_subject)
-                sess.commit()
-                sess.close()
-                return True
-            else:
-                return False
-        except:
-            sess.rollback()
-            raise
-        finally:
-            sess.close()
-
-    @classmethod
-    def getRecord(cls, semID, page_index, per_page, sort_field, sort_order):
-        sess = Session()
-        record_query = sess.query(Subject).join(Subject_Semester).filter(
-            Subject_Semester.SemesterID == semID).order_by(getattr(
-            getattr(Subject, sort_field), sort_order)())
-
-        record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
-                                                               page_size=int(per_page))
-
-        return subject_schema.dump(record_query, many=True), get_record_pagination
-        # except:
-        #     sess.rollback()
-        #     raise
-        # finally:
-        #     sess.close()
-
 
 # Subject_Shift persistent class
 class Shift(Base):
@@ -572,6 +518,7 @@ class Shift(Base):
             # record_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
                                                                    page_size=int(per_page))
+
             # many=True if user_query is a collection of many results, so that record will be serialized to a list.
             return shift_schema.dump(record_query, many=True), get_record_pagination
         except:
