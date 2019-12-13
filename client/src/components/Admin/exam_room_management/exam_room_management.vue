@@ -4,7 +4,7 @@
     <h2 class="subtitle is-6">Cập nhật, quản lý thông tin của phòng thi</h2>
     <b-field grouped group-multiline>
       <b-button icon-pack="fas" icon-left="plus-square" outlined @click.prevent="onRoomAdd">
-        Thêm phòng thi
+        Tạo phòng thi
       </b-button>
 
       <b-button
@@ -35,9 +35,6 @@
         expanded>
           <template slot-scope="props">
             <div class="media">
-<!--              <div class="media-left">-->
-<!--                <b-icon icon-pack="fas" icon="user-circle"></b-icon>-->
-<!--              </div>-->
               <div class="media-content">
                 <b>Mã phòng: </b>{{ props.option.RoomID }}
                 <br>

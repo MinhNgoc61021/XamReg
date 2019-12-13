@@ -29,7 +29,7 @@
             v-for="(collapse, index) of semester.semester_record_data"
             :key="index"
             :open="isOpen === index"
-            @open="() => { isOpen = index; currentSemID = collapse.SemID ;  getSemesterSubjectRecordData() }"
+            @open="() => { isOpen = index; currentSemID = collapse.SemID ;  getShiftRecordData() }"
             @close="destroySemesterData()"
             >
             <div
@@ -45,88 +45,97 @@
                 </div>
             </div>
               <div class="card-content">
-                <h2 class="subtitle is-6">Danh sách môn thi</h2>
+                <h4 class="title is-4">Danh sách ca thi</h4>
                 <b-field grouped group-multiline>
-                    <b-autocomplete
-                      :data="subject.searchResults"
-                      placeholder="Nhập mã môn"
-                      field="SubjectID"
-                      :loading="subject.search_loading"
-                      @typing="onSubjectSearch"
-                      @select="option => { semester.SemesterSubjectID = option.SubjectID}"
-                      expanded>
-                      <template slot-scope="props">
-                        <div class="media">
-                            <div class="media-left">
-                              <b-icon icon-pack="fas" icon="book"></b-icon>
-                            </div>
-                            <div class="media-content">
-                                <b>Mã môn học: </b>{{ props.option.SubjectID }}
-                                <br>
-                                <b>Tên môn học: </b>{{ props.option.SubjectTitle }}
-                            </div>
-                        </div>
-                      </template>
-                    </b-autocomplete>
                   <b-button
                     type="is-primary"
-                    :class="{'is-loading': semester.create_loading}"
-                    @click="addNewSubject">
-                    <span>Thêm Môn</span>
+                    :class="{'is-loading': shift.create_loading}"
+                    @click="addNewShift">
+                    <span>Tạo ca thi</span>
                   </b-button>
                 </b-field>
                 <div>
-                  <div v-if="subject.semester_subject_record_data.length === 0" >
+                  <div v-if="shift.shift_record_data.length === 0" >
                     <b-message type="is-danger" has-icon>
-                      Hiện tại chưa có thông tin về môn thi, bạn hãy nhập vào môn thi!
+                      Hiện tại chưa có thông tin về ca thi trong <b>{{ collapse.SemTitle }}</b>, bạn hãy nhập vào ca thi!
                     </b-message>
                   </div>
                   <div v-else>
 
-                    <!--Semester Subject Record-->
+                    <!--Shift Record-->
                     <b-table
-                        :data="subject.semester_subject_record_data"
-                        :loading="subject.subject_loading"
+                        :data="shift.shift_record_data"
+                        :loading="shift.shift_loading"
                         paginated
                         backend-pagination
                         detailed
-                        :total="subject.total"
-                        :per-page="subject.per_page"
-                        @page-change="onSemesterSubjectPageChange"
+                        :total="shift.total"
+                        :per-page="shift.per_page"
+                        @page-change="onShiftPageChange"
                         aria-next-label="Next page"
                         aria-previous-label="Previous page"
                         aria-page-label="Page"
                         aria-current-label="Current page"
                         backend-sorting
                         hoverable
-                        detail-key="SubjectID"
-                        :opened-detailed="subject.ID_Index"
-                        :default-sort-direction="subject.defaultSortOrder"
-                        :default-sort="[subject.sortField, subject.sortOrder]"
-                        @sort="onSemesterSubjectSort"
-                        @details-open="(row, index) => { subject.currentSemesterSubjectID = row.SubjectID ; getShiftRecordData(); closeOtherDetails(row, index) }"
-                        @details-close="(row, index) => { shift.subject_shift_record_data = [] }"
+                        detail-key="ShiftID"
+                        :opened-detailed="shift.ID_Index"
+                        :default-sort-direction="shift.defaultSortOrder"
+                        :default-sort="[shift.sortField, shift.sortOrder]"
+                        @sort="onShiftSort"
+                        @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRoomRecord(); closeOtherDetails(row, index) }"
+                        @details-close="(row, index) => { room.room_record_data = [] }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
-                            <b-table-column field="SubjectID" label="Mã môn" sortable width="90">
-                                {{ props.row.SubjectID }}
+                            <b-table-column field="ShiftID" label="Mã ca thi" width="100" sortable>
+                              {{ props.row.ShiftID }}
                             </b-table-column>
-
-                            <b-table-column field="SubjectTitle" label="Tên môn" sortable width="90">
-                                 {{ props.row.SubjectTitle }}
+                            <b-table-column field="SubjectID" label="Mã môn" width="100" sortable>
+                              {{ props.row.Subject }}
+                            </b-table-column>
+                            <b-table-column field="Date_Start" label="Ngày thi" width="100" sortable>
+                              {{ props.row.Date_Start }}
+                            </b-table-column>
+                            <b-table-column field="Start_At" label="Thời gian bắt đầu" width="100" sortable>
+                              {{ props.row.Start_At }}
+                            </b-table-column>
+                            <b-table-column field="End_At" label="Thời gian kết thúc" width="100" sortable>
+                              {{ props.row.End_At }}
                             </b-table-column>
 
                             <b-table-column field="Action" width="90">
-                                <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onSemesterSubjectDelete(props.row.SubjectID)"></b-button>
+                                <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onShiftEdit(props.row)"></b-button>
+                                <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onShiftDelete(props.row.ShiftID)"></b-button>
                             </b-table-column>
                         </template>
+
+                        <!--Room-->
                         <template slot="detail" slot-scope="props">
-                            <h4 class="title is-4">Danh sách ca thi</h4>
+                            <h4 class="title is-4">Danh sách phòng thi</h4>
                             <b-field grouped group-multiline>
+                              <b-autocomplete
+                                :data="room.searchResults"
+                                placeholder="Tìm kiếm để nhập phòng thi"
+                                icon="search"
+                                field="RoomName"
+                                :loading="room.search_loading"
+                                @typing="onRoomSearch"
+                                @select="option => { room.roomID = option.RoomID }"
+                                expanded>
+                                  <template slot-scope="props">
+                                    <div class="media">
+                                      <div class="media-content">
+                                        <b>Mã phòng: </b>{{ props.option.RoomID }}
+                                        <br>
+                                        <b>Tên phòng: </b>{{ props.option.RoomName }}
+                                      </div>
+                                    </div>
+                                  </template>
+                              </b-autocomplete>
                               <b-button
-                                :class="{'is-loading': shift.shift_loading}"
+                                :class="{'is-loading': room.room_loading}"
                                 class="button"
-                                @click="getShiftRecordData(props.row)"
+                                @click="getRoomRecord()"
                               >
                                 <b-icon
                                   size="is-small"
@@ -134,23 +143,23 @@
                               </b-button>
                               <b-button
                                 class="button"
-                                @click="addNewShift"
+                                @click="addNewRoom"
                                 icon-pack="fas" icon-left="plus-square"
                               >
-                                <span>Tạo ca thi</span>
+                                <span>Thêm phòng thi</span>
                               </b-button>
                             </b-field>
 
-                            <!--subject_shift-->
-                            <b-field v-if="shift.subject_shift_record_data.length > 0" grouped group-multiline>
+                            <!--shift-->
+                            <b-field v-if="room.room_record_data.length > 0" grouped group-multiline>
                               <b-table
-                                :data="shift.subject_shift_record_data"
-                                :loading="shift.loading"
+                                :data="room.room_record_data"
+                                :loading="room.room_loading"
                                 paginated
                                 backend-pagination
-                                :total="shift.total"
-                                :per-page="shift.per_page"
-                                @page-change="onShiftPageChange"
+                                :total="room.total"
+                                :per-page="room.per_page"
+                                @page-change="onRoomPageChange"
                                 aria-next-label="Next page"
                                 aria-previous-label="Previous page"
                                 aria-page-label="Page"
@@ -159,20 +168,14 @@
                                 bordered
                                 narrowed
                                 hoverable
-                                detail-key="ID"
-                                :default-sort-direction="shift.defaultSortOrder"
-                                :default-sort="[shift.sortField, shift.sortOrder]"
-                                @sort="onShiftSort">
+                                detail-key="RoomID"
+                                :default-sort-direction="room.defaultSortOrder"
+                                :default-sort="[room.sortField, room.sortOrder]"
+                                @sort="onRoomSort">
                                 <template slot-scope="props">
 
-                                  <b-table-column field="ShiftID" label="Mã môn" width="100" sortable>
-                                    {{ props.row.ShiftID }}
-                                  </b-table-column>
-                                  <b-table-column field="Date_Start" label="Ngày thi" width="100" sortable>
-                                    {{ props.row.Date_Start }}
-                                  </b-table-column>
-                                  <b-table-column field="Start_At" label="Thời gian thi" width="100" sortable>
-                                    {{ props.row.Start_At }}
+                                  <b-table-column field="RoomID" label="Mã môn" width="100" sortable>
+                                    {{ props.row.RoomID }}
                                   </b-table-column>
                                   <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
                                     {{ props.row.RoomName }}
@@ -182,22 +185,22 @@
                                   </b-table-column>
 
                                   <b-table-column field="Action" width="90">
-                                    <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onShiftEdit(props.row)"></b-button>
-                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onShiftDelete(props.row.ShiftID)"></b-button>
+                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row.RoomID)"></b-button>
                                   </b-table-column>
                                 </template>
                               </b-table>
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có dự liệu ca thi, bạn hãy nhập vào ca thi!
+                                Hiện tại chưa có dự liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
                               </b-message>
                             </b-field>
 
-                            <!--subject_shift-->
+                            <!--shift-->
                         </template>
+
                     </b-table>
-                    <!--Semester Subject Record-->
+                    <!--Shift Record-->
 
                   </div>
                 </div>
@@ -231,30 +234,15 @@
                     semester_record_data: [], // semester info
                     loading: false, // semester loading
                     create_loading: false, // create semester loading
-                    SemesterSubjectID: '', // subject for semester
-                },
-                subject: {
-                    semester_subject_record_data: [], // subject semester data
-                    total: 0,
-                    subject_loading: false,
-                    search_loading: false,
-                    searchResults: [],
-                    sortField: 'SubjectID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
-                    ID_Index: [],
-                    currentSemesterSubjectID: '',
                 },
                 shift: {
-                    subject_shift_record_data: [],
+                    shift_record_data: [],
                     date_start: '',
                     start_at: '',
                     total: 0,
                     shift_loading: false,
+                    create_loading: false,
                     search_loading: false,
-                    searchResults: [],
                     sortField: 'ShiftID',
                     sortOrder: 'desc',
                     defaultSortOrder: 'desc',
@@ -262,8 +250,22 @@
                     per_page: 5,
                     ID_Index: [],
                 },
+                room: {
+                    roomID: '',
+                    room_record_data: [],
+                    total: 0,
+                    searchResults: [],
+                    room_loading: false,
+                    search_loading: false,
+                    sortField: 'RoomID',
+                    sortOrder: 'desc',
+                    defaultSortOrder: 'desc',
+                    page: 1,
+                    per_page: 5,
+                },
                 isOpen: null,
                 collapses: [],
+                currentShiftID: '', // current opening shiftID
                 currentSemID: '', // current opening semesterID
                 hasSemesterError: false,
                 hasSubjectError: false,
@@ -279,7 +281,7 @@
                         this.hasSemesterError = false;
                         this.semester.create_loading = true;
                         const response = await axios({
-                            url: '/schedule/create-new-semester',
+                            url: '/schedule/create-semester',
                             method: 'post',
                             headers: {
                                 'Authorization': authHeader(),
@@ -332,7 +334,7 @@
                         this.getSemesterRecordData();
                     }
                 }
-            },
+            }, // xong
             async onSemesterDelete(record) {
                 this.$buefy.dialog.confirm({
                     title: 'Xóa kỳ thi',
@@ -344,7 +346,7 @@
                     onConfirm: async () => {
                         try {
                             const removeData = await axios({
-                                url: '/schedule/remove-semester-record',
+                                url: '/schedule/remove-semester',
                                 method: 'delete',
                                 headers: {
                                     'Authorization': authHeader(),
@@ -378,7 +380,7 @@
                         }
                     },
                 });
-            },
+            }, // xong
             async getSemesterRecordData() {
                 this.semester.loading = true;
                 try {
@@ -411,255 +413,12 @@
                     });
                     throw error;
                 }
-            },
-            async getSemesterSubjectRecordData() {
-                this.subject.subject_loading = true;
-                try {
-                    const response = await axios({
-                        url: '/schedule/semester-subject-records',
-                        method: 'get',
-                        params: {
-                            SemID: this.currentSemID,
-                            page_index: this.subject.page,
-                            per_page: this.subject.per_page,
-                            sort_field: this.subject.sortField,
-                            sort_order: this.subject.sortOrder,
-                        },
-                        headers: {
-                            'Authorization': authHeader(),
-                        }
-                    });
-                    if (response.status === 200) {
-                        // console.log(response);
-                        this.subject.semester_subject_record_data = [];
-                        this.subject.total = response.data.total_results;
-                        response.data.semester_subject_records.forEach((item) => {
-                            this.subject.semester_subject_record_data.push(item);
-                        });
-                        this.subject.subject_loading = false;
-                    }
-                } catch (error) {
-                    this.subject.semester_subject_record_data = [];
-                    this.subject.total = 0;
-                    this.subject.loading = false;
-                    this.$buefy.notification.open({
-                        duration: 2000,
-                        message: `Không thể lấy được dữ liệu của kỳ thi ${this.currentSemID} này!`,
-                        position: 'is-bottom-right',
-                        type: 'is-danger',
-                        hasIcon: true
-                    });
-                    throw error
-                }
-            },
-            async onSemesterSubjectDelete(SubjectID) {
-                console.log(SubjectID);
-                console.log(this.currentSemID);
-                this.$buefy.dialog.confirm({
-                    title: 'Xóa kỳ thi',
-                    message: `Bạn có chắc chắn là muốn <b>xóa</b> môn thi có mã số ${SubjectID} này không? Đã làm thì tự chịu đấy.`,
-                    confirmText: 'Xóa!',
-                    cancelText: 'Bỏ qua',
-                    type: 'is-danger',
-                    hasIcon: true,
-                    onConfirm: async () => {
-                        try {
-                            const removeData = await axios({
-                                url: '/schedule/remove-semester-subject-record',
-                                method: 'delete',
-                                headers: {
-                                    'Authorization': authHeader(),
-                                },
-                                data: {
-                                    semID: this.currentSemID,
-                                    delSubjectID: SubjectID,
-                                },
-                            });
-                            if (removeData.status === 200) {
-                                this.$buefy.notification.open({
-                                    duration: 2000,
-                                    message: `Đã xóa môn thi có mã số <b>${SubjectID}</b> thành công.`,
-                                    position: 'is-bottom-right',
-                                    type: 'is-success',
-                                    hasIcon: true
-                                });
-                            }
-                        } catch (e) {
-                            if (e['message'].includes('401')) {
-                                this.$buefy.notification.open({
-                                    duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
-                                    position: 'is-bottom-right',
-                                    type: 'is-danger',
-                                    hasIcon: true
-                                })
-                            }
-                        } finally {
-                            this.getSemesterSubjectRecordData();
-                        }
-                    },
-                });
-            },
-            async getShiftRecordData() {
-                this.shift.shift_loading = true;
-                try {
-                    const response = await axios({
-                        url: '/schedule/shift-records',
-                        method: 'get',
-                        params: {
-                            subjectID: this.subject.currentSemesterSubjectID,
-                            page_index: this.shift.page,
-                            per_page: this.shift.per_page,
-                            sort_field: this.shift.sortField,
-                            sort_order: this.shift.sortOrder
-                        },
-                        headers: {
-                            'Authorization': authHeader(),
-                        }
-                    });
-                    console.log(response.data.shift_records);
-                    if (response.status === 200) {
-                        this.shift.subject_shift_record_data = [];
-                        this.shift.total = response.data.total_results;
-                        response.data.shift_records.forEach((item) => {
-                            this.shift.subject_shift_record_data.push(item);
-                        });
-                        // console.log(this.data);
-                        this.shift.shift_loading = false
-                    }
-                } catch (error) {
-                    this.shift.student_record = [];
-                    this.shift.total = 0;
-                    this.shift.shift_loading = false;
-                    this.$buefy.notification.open({
-                        duration: 2000,
-                        message: 'Không thể lấy được dữ liệu ca thi!',
-                        position: 'is-bottom-right',
-                        type: 'is-danger',
-                        hasIcon: true
-                    });
-                    throw error;
-                }
-            },
-            onSemesterSubjectSort(field, order) {
-                this.subject.sortField = field;
-                this.subject.sortOrder = order;
-                this.getSemesterSubjectRecordData();
-            },
-            onSemesterSubjectPageChange(page) {
-                this.subject.page = page;
-                this.getSemesterSubjectRecordData();
-            },
-            async addNewSubject() {
-                if (this.semester.SemesterSubjectID.length === 0) {
-                    this.hasSubjectError = true;
-                }
-                else {
-                   try {
-                       // console.log(this.currentSemID, this.semester.SemesterSubjectID);
-                       this.hasSubjectError = false;
-                       this.semester.create_loading = true;
-                       const response = await axios({
-                           url: '/schedule/create-subject-semester',
-                           method: 'post',
-                           headers: {
-                               'Authorization': authHeader(),
-                           },
-                           data: {
-                               semID: this.currentSemID,
-                               subjectID: this.semester.SemesterSubjectID,
-                           },
-                       });
-                       if (response.status === 200) {
-                           this.semester.create_loading = false;
-                           if (response.data.status === 'success') {
-                               this.$buefy.notification.open({
-                                   duration: 2000,
-                                   message: `Đã thêm môn thi thành công.`,
-                                   position: 'is-bottom-right',
-                                   type: 'is-success',
-                                   hasIcon: true
-                               });
-                           } else {
-                               this.$buefy.notification.open({
-                                   duration: 2000,
-                                   message: `Môn thi đã được thêm từ trước.`,
-                                   position: 'is-bottom-right',
-                                   type: 'is-warning',
-                                   hasIcon: true
-                               });
-                           }
-                       }
-                    } catch (e) {
-                       this.semester.create_loading = false;
-                       if (e['message'].includes('400')) {
-                            this.$buefy.notification.open({
-                                duration: 2000,
-                                message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
-                                position: 'is-bottom-right',
-                                type: 'is-danger',
-                                hasIcon: true
-                            })
-                        } else if (e['message'].includes('401')) {
-                           this.$buefy.notification.open({
-                                duration: 2000,
-                                message: 'HTTP Status 401: Không được quyền sử dụng!',
-                                position: 'is-bottom-right',
-                                type: 'is-danger',
-                                hasIcon: true
-                            })
-                       }
-                   }
-                   finally {
-                       this.subject.subject_loading = false;
-                       this.getSemesterSubjectRecordData();
-                   }
-                }
-            },
-            onSubjectSearch: debounce(function (SubjectID) {
-              this.subject.search_loading = true;
-              if (SubjectID.length > 15 || SubjectID.length === 0) {
-                this.subject.searchResults = [];
-                this.subject.search_loading = false;
-              }
-              else {
-                this.subject.searchResults = [];
-                axios({
-                  url: '/subject/search-subject',
-                  method: 'get',
-                  headers: {
-                    'Authorization': authHeader(),
-                  },
-                  params: {
-                    searchID: SubjectID,
-                  },
-                }).then((response) => {
-                  if (response.status === 200) {
-                    // console.log(response.data.search_results);
-                    response.data.search_results.forEach((item) => {
-                      this.subject.searchResults.push(item);
-                    });
-                    this.subject.search_loading = false;
-                  }
-                }).catch((error) => {
-                  this.subject.searchResults = [];
-                  this.subject.search_loading = false;
-                  this.$buefy.notification.open({
-                    duration: 2000,
-                    message: 'Không thể tìm được dữ liệu!',
-                    position: 'is-bottom-right',
-                    type: 'is-danger',
-                    hasIcon: true
-                  });
-                  throw error;
-              });
-            }
-          }, 500),
+            }, // xong
             async addNewShift() {
                 this.$buefy.modal.open({
                     parent: this,
                     component: new_shift,
-                    props: { currentSubjectID: this.subject.currentSemesterSubjectID },
+                    props: { currentSemesterID: this.currentSemID },
                     hasModalCard: true,
                     customClass: 'custom-class custom-class-2',
                     canCancel: false,
@@ -674,6 +433,15 @@
                              hasIcon: true
                            });
                            this.getShiftRecordData();
+                         }
+                         else if (http_status === 208) {
+                             this.$buefy.notification.open({
+                               duration: 2000,
+                               message: `Ca thi đã tồn tại từ trước!`,
+                               position: 'is-bottom-right',
+                               type: 'is-warning',
+                               hasIcon: true
+                             });
                          }
                          else if (http_status === 400) {
                            this.$buefy.notification.open({
@@ -696,16 +464,57 @@
                        }
                     }
                 })
-            },
+            }, // xong
             onShiftSort(field, order) {
                 this.shift.sortField = field;
                 this.shift.sortOrder = order;
                 this.getShiftRecordData();
-            },
+            }, // xong
+            async getShiftRecordData() {
+                this.shift.shift_loading = true;
+                try {
+                    const response = await axios({
+                        url: '/schedule/shift-records',
+                        method: 'get',
+                        params: {
+                            semID: this.currentSemID,
+                            page_index: this.shift.page,
+                            per_page: this.shift.per_page,
+                            sort_field: this.shift.sortField,
+                            sort_order: this.shift.sortOrder
+                        },
+                        headers: {
+                            'Authorization': authHeader(),
+                        }
+                    });
+                    console.log(response.data.shift_records);
+                    if (response.status === 200) {
+                        this.shift.shift_record_data = [];
+                        this.shift.total = response.data.total_results;
+                        response.data.shift_records.forEach((item) => {
+                            this.shift.shift_record_data.push(item);
+                        });
+                        // console.log(this.data);
+                        this.shift.shift_loading = false
+                    }
+                } catch (error) {
+                    this.shift.shift_record_data = [];
+                    this.shift.total = 0;
+                    this.shift.shift_loading = false;
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Không thể lấy được dữ liệu ca thi!',
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+                    throw error;
+                }
+            }, // xong
             onShiftPageChange(page) {
                 this.shift.page = page;
                 this.getShiftRecordData();
-            },
+            }, // xong
             onShiftEdit(record) {
                 this.$buefy.modal.open({
                    parent: this,
@@ -752,8 +561,165 @@
                       }
                    }
                 })
+            }, // chưa xong
+            async onShiftDelete(ID) {
+                this.$buefy.dialog.confirm({
+                    title: 'Xóa ca thi',
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> ca thi có mã ${ID} này không? Đã làm thì tự chịu đấy.`,
+                    confirmText: 'Xóa!',
+                    cancelText: 'Bỏ qua',
+                    type: 'is-danger',
+                    hasIcon: true,
+                    onConfirm: async () => {
+                        try {
+                            const removeData = await axios({
+                                url: '/schedule/remove-shift',
+                                method: 'delete',
+                                headers: {
+                                    'Authorization': authHeader(),
+                                },
+                                data: {
+                                    delShiftID: ID,
+                                },
+                            });
+                            if (removeData.status === 200) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `Đã xóa ca thi có mã <b>${ID}</b> thành công.`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                            }
+                        } catch (e) {
+                            if (e['message'].includes('401')) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                })
+                            }
+                        } finally {
+                            this.getShiftRecordData();
+                        }
+                    },
+                });
+            }, // xong
+            async addNewRoom() {
+                console.log(this.roomID);
+                // if (this.room.length === 0) {
+                //     this.hasSemesterError = true;
+                // }
+                    try {
+                        this.room.room_loading = true;
+                        const response = await axios({
+                            url: '/schedule/create-room',
+                            method: 'post',
+                            headers: {
+                                'Authorization': authHeader(),
+                            },
+                            data: {
+                                roomID: this.room.roomID,
+                                shiftID: this.currentShiftID,
+                            },
+                        });
+                        if (response.status === 200) {
+                            this.room.room_loading = false;
+                            if (response.data.status === 'success') {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `Đã thêm phòng thi thành công.`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-success',
+                                    hasIcon: true
+                                });
+                            } else {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `Phòng thi đã tồn tại từ trước.`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-warning',
+                                    hasIcon: true
+                                });
+                            }
+                        }
+                    } catch (e) {
+                        this.room.room_loading = false;
+                        if (e['message'].includes('400')) {
+                            this.$buefy.notification.open({
+                                duration: 2000,
+                                message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
+                            })
+                        } else if (e['message'].includes('401')) {
+                            this.$buefy.notification.open({
+                                duration: 2000,
+                                message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                position: 'is-bottom-right',
+                                type: 'is-danger',
+                                hasIcon: true
+                            })
+                        }
+                    }
+                    finally {
+                        this.getRoomRecord();
+                    }
             },
-            onShiftDelete(ID) {
+            async getRoomRecord() {
+                this.room.room_loading = true;
+                try {
+                    const response = await axios({
+                        url: '/schedule/room-records',
+                        method: 'get',
+                        params: {
+                            shiftID: this.currentShiftID,
+                            page_index: this.room.page,
+                            per_page: this.room.per_page,
+                            sort_field: this.room.sortField,
+                            sort_order: this.room.sortOrder
+                        },
+                        headers: {
+                            'Authorization': authHeader(),
+                        }
+                    });
+                    console.log(response.data.shift_records);
+                    if (response.status === 200) {
+                        this.room.room_record_data = [];
+                        this.room.total = response.data.total_results;
+                        response.data.room_records.forEach((item) => {
+                            this.room.room_record_data.push(item);
+                        });
+                        // console.log(this.data);
+                        this.room.room_loading = false
+                    }
+                } catch (error) {
+                    this.room.room_record_data = [];
+                    this.room.total = 0;
+                    this.room.room_loading = false;
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Không thể lấy được dữ liệu phòng!',
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+                    throw error;
+                }
+            }, // xong
+            onRoomPageChange(page) {
+                this.room.page = page;
+                this.getRoomRecord();
+            }, // xong
+            onRoomSort(field, order) {
+                this.room.sortField = field;
+                this.room.sortOrder = order;
+                this.getRoomRecord();
+            }, // xong
+            onRoomDelete(ID) {
                 this.$buefy.dialog.confirm({
                     title: 'Xóa kỳ thi',
                     message: `Bạn có chắc chắn là muốn <b>xóa</b> ca thi có mã ${ID} này không? Đã làm thì tự chịu đấy.`,
@@ -764,13 +730,13 @@
                     onConfirm: async () => {
                         try {
                             const removeData = await axios({
-                                url: '/schedule/remove-shift-record',
+                                url: '/schedule/remove-room',
                                 method: 'delete',
                                 headers: {
                                     'Authorization': authHeader(),
                                 },
                                 data: {
-                                    currentSubjectID: this.subject.currentSemesterSubjectID,
+                                    currentShiftID: this.currentShiftID,
                                     delShiftID: ID,
                                 },
                             });
@@ -799,11 +765,50 @@
                     },
                 });
             },
+            onRoomSearch: debounce(function (roomName) {
+                this.room.search_loading = true;
+                if (roomName.length === 0) {
+                    this.room.searchResults = [];
+                    this.room.search_loading = false;
+                }
+                else {
+                    this.room.searchResults = [];
+                    axios({
+                        url: '/room/search-room-record',
+                        method: 'get',
+                        headers: {
+                            'Authorization': authHeader(),
+                        },
+                        params: {
+                            searchName: roomName,
+                        },
+                    }).then((response) => {
+                        if (response.status === 200) {
+                            // console.log(response.data.search_results);
+                            response.data.search_results.forEach((item) => {
+                                this.room.searchResults.push(item);
+                            });
+                            this.room.search_loading = false;
+                        }
+                    }).catch((error) => {
+                        this.room.searchResults = [];
+                        this.room.search_loading = false;
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Không thể tìm được dữ liệu!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        });
+                        throw error;
+                    });
+                }
+            }, 500),
             destroySemesterData() { // destroy subject data for scalability when closing accordion
-                this.subject.semester_subject_record_data = [];
+                this.shift.shift_record_data = [];
             },
             closeOtherDetails(row) {
-                this.subject.ID_Index = [row.SubjectID];
+                this.shift.ID_Index = [row.ShiftID];
                 // console.log(this.student_status.ID_Index);
             },
         },

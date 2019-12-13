@@ -74,7 +74,7 @@
                 try {
                   const update = await axios({
                     method: 'post',
-                    url: '/schedule/create-new-shift',
+                    url: '/schedule/edit-shift',
                     headers: {
                       'Authorization': authHeader(),
                     },

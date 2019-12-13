@@ -274,7 +274,7 @@
                   if (removeData.status === 200) {
                     this.$buefy.notification.open({
                       duration: 2000,
-                      message: `<b>Đã xóa thành công môn học</b>.`,
+                      message: `Đã xóa thành công môn học.`,
                       position: 'is-bottom-right',
                       type: 'is-success',
                       hasIcon: true

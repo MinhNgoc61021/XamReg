@@ -78,7 +78,11 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/create-new-semester': {
+      '/schedule/create-semester': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/remove-semester': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
@@ -86,31 +90,35 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/remove-semester-record': {
+      '/schedule/create-shift': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/semester-subject-records': {
+      '/schedule/remove-shift': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/create-subject-semester': {
-          target: 'http://api:5000',
-          changeOrigin: true,
-      },
-      '/schedule/remove-semester-subject-record': {
-          target: 'http://api:5000',
-          changeOrigin: true,
-      },
-      '/schedule/create-new-shift': {
-          target: 'http://api:5000',
-          changeOrigin: true,
-      },
-      '/schedule/remove-shift-record': {
+      '/schedule/edit-shift': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
       '/schedule/shift-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/room-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/update-room':{
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/remove-room':{
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/create-room':{
           target: 'http://api:5000',
           changeOrigin: true,
       },
