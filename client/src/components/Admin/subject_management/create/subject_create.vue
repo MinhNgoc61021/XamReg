@@ -13,7 +13,7 @@
             :value="newSubjectID"
             maxlength="15"
             validation-message="Nhập đúng mã môn học"
-            pattern="([A-Z]|[a-z]{3})([0-9]{4})"
+            pattern="^(([A-Z]|[a-z]){3})([0-9]{4})"
             placeholder="Nhập mã môn học"
             required
           >

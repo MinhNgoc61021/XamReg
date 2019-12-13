@@ -38,9 +38,13 @@
                 class="card-header"
                 role="button">
                 <p class="card-header-title">
-                    {{ collapse.SemTitle }}
+                    <span>Tiêu đề: {{ collapse.SemTitle }}
+                      <b-tag v-if="collapse.Status === false">Chưa thi</b-tag>
+                      <b-tag v-else type="is-primary"> Đang thi</b-tag>
+                    </span>
                 </p>
                 <div style="float: right; margin: 20px;">
+                    <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onSemesterEdit(collapse)"></b-button>
                     <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onSemesterDelete(collapse)"></b-button>
                 </div>
             </div>
@@ -90,8 +94,8 @@
                             <b-table-column field="ShiftID" label="Mã ca thi" width="100" sortable>
                               {{ props.row.ShiftID }}
                             </b-table-column>
-                            <b-table-column field="SubjectID" label="Mã môn" width="100" sortable>
-                              {{ props.row.Subject }}
+                            <b-table-column field="SubjectID" label="Môn thi" width="100" sortable>
+                              <b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}</b>
                             </b-table-column>
                             <b-table-column field="Date_Start" label="Ngày thi" width="100" sortable>
                               <span class="tag is-success">
@@ -223,6 +227,7 @@
                     semester_record_data: [], // semester info
                     loading: false, // semester loading
                     create_loading: false, // create semester loading
+                    semester_status: false,
                 },
                 shift: {
                     shift_record_data: [],
@@ -407,8 +412,51 @@
                     throw error;
                 }
             }, // xong
-            async onSemesterEdit() {
-
+            async onSemesterEdit(record) {
+                this.$buefy.modal.open({
+                   parent: this,
+                   component: semester_edit,
+                   props: {
+                       currentSemID: record.SemID,
+                       currentSemTitle: record.SemTitle,
+                       currentStatus: record.Status,
+                   },
+                   hasModalCard: true,
+                   customClass: 'custom-class custom-class-2',
+                   canCancel: false,
+                   events: {
+                     'loadSemesters': (http_status) => {
+                       if (http_status === 200) {
+                         this.$buefy.notification.open({
+                           duration: 2000,
+                           message: `Đã sửa đổi thành công!`,
+                           position: 'is-bottom-right',
+                           type: 'is-success',
+                           hasIcon: true
+                         });
+                         this.getSemesterRecordData();
+                       }
+                       else if (http_status === 400) {
+                         this.$buefy.notification.open({
+                           duration: 2000,
+                           message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                           position: 'is-bottom-right',
+                           type: 'is-danger',
+                           hasIcon: true
+                         });
+                       }
+                       else if (http_status === 401) {
+                         this.$buefy.notification.open({
+                           duration: 2000,
+                           message: 'Không được quyền sử dụng!',
+                           position: 'is-bottom-right',
+                           type: 'is-danger',
+                           hasIcon: true
+                         });
+                        }
+                      }
+                   }
+                })
             },
             async addNewShift() {
                 this.$buefy.modal.open({
@@ -518,8 +566,9 @@
                    props: {
                        currentShiftID: record.ShiftID,
                        currentStart_At: record.Start_At,
-                       currentDate_Start: record.Date_Start,
+                       currentDate_Start: new Date(moment(record.Date_Start).format('MM/DD/YYYY')),
                        currentRoomID: record.Date_Start,
+                       currentEnd_At: record.End_At,
                    },
                    hasModalCard: true,
                    customClass: 'custom-class custom-class-2',

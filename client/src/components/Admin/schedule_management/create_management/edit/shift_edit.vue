@@ -17,8 +17,6 @@
                 <template slot-scope="props">
                   <div class="media">
                     <div class="media-content">
-                      <b>Mã phòng: </b>{{ props.option.RoomID }}
-                      <br>
                       <b>Tên phòng: </b>{{ props.option.RoomName }}
                     </div>
                   </div>
@@ -57,13 +55,14 @@
 
     export default {
         name: "shift_edit",
-        props: ['currentShiftID', 'currentStart_At', 'currentDate_Start', 'currentRoomID'],
+        props: ['currentShiftID', 'currentStart_At', 'currentDate_Start', 'currentRoomID', 'currentSubjectID'],
         data() {
           return {
               SubjectID: this.currentSubjectID,
               newRoomID: '',
               Date_Start: this.currentDate_Start,
               Start_At: this.currentStart_At,
+              End_At: this.currentEnd_At,
               search: {
                     searchResults: [],
                     searchLoading: false,

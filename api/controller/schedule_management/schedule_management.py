@@ -32,9 +32,33 @@ def add_semester(current_user):
                 return jsonify({'status': 'already-exist'}), 200
             else:
                 Log.create(current_user['ID'],
-                           'Tạo thêm kỳ thi ' + newSemesterTitle + ' vào hệ thống.',
+                           'Tạo thêm kỳ thi có tựa đề ' + newSemesterTitle + ' vào hệ thống.',
                            set_custom_log_time())
                 return jsonify({'status': 'success'}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@schedule_management.route('/edit-semester', methods=['PUT'])
+@token_required
+def edit_semester(current_user):
+    try:
+        semID = request.get_json().get('semID')
+        newSemesterTitle = request.get_json().get('newSemTitle')
+        newStatus = request.get_json().get('newStatus')
+        print(semID, flush=True)
+        print(newSemesterTitle, flush=True)
+        check = re.search('^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ' +
+                                  'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
+                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s-]+$', newSemesterTitle)
+        if check is not None:
+            Semester_Examination.updateRecord(semID, newSemesterTitle, newStatus)
+            Log.create(current_user['ID'],
+                       'Thay đổi tựa đề của của kỳ thi có mã ' + str(semID) + ' thành ' + newSemesterTitle + '.',
+                       set_custom_log_time())
+            return jsonify({'status': 'success'}), 200
+        else:
+            return jsonify({'status': 'bad-request'}), 400
     except:
         return jsonify({'status': 'bad-request'}), 400
 
@@ -96,7 +120,7 @@ def create_shift(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
-@schedule_management.route('/edit-shift ', methods=['put'])
+@schedule_management.route('/edit-shift ', methods=['PUT'])
 @token_required
 def edit_shift(current_user):
     try:
@@ -107,10 +131,10 @@ def edit_shift(current_user):
         new_start_at = edit_shift.get('newStart_At')
         new_end_at = edit_shift.get('newEnd_At')
         newShift = Shift.updateRecord(str(shiftID),
-                                str(new_subjectID),
-                                new_date_start,
-                                new_start_at,
-                                new_end_at)
+                                      str(new_subjectID),
+                                      new_date_start,
+                                      new_start_at,
+                                      new_end_at)
         if newShift is not None:
             Log.create(current_user['ID'],
                        'Thay đổi thông tin ca thi có mã ' + str(shiftID),
@@ -167,12 +191,6 @@ def get_shift(current_user):
     except:
         return jsonify({'status': 'bad-request'}), 400
 
-
-#
-# @schedule_management.route('/update-shift' , methods=['PUT'])
-# @token_required
-# def update_shift:
-#
 
 @schedule_management.route('/create-room', methods=['POST'])
 @token_required

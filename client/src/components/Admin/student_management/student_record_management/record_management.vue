@@ -187,6 +187,7 @@
     import moment from 'moment/moment';
     import edit_student_form from "./edit/student_edit";
     import debounce from 'lodash/debounce';
+    import { eventBus } from "../../../../main";
 
     /*
      student edit data form
@@ -548,6 +549,18 @@
         },
         mounted() {
             this.getStudentRecordData();
+        },
+        created() {
+            eventBus.$on('up-to-date', () => {
+                this.getStudentRecordData();
+                this.$buefy.notification.open({
+                    duration: 2000,
+                    message: `Đã cập nhật danh sách sinh viên thành công!`,
+                    position: 'is-bottom-right',
+                    type: 'is-success',
+                    hasIcon: true
+                });
+            })
         }
     }
 </script>

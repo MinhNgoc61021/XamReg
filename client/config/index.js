@@ -86,6 +86,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/schedule/edit-semester': {
+        target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/schedule/semester-records': {
           target: 'http://api:5000',
           changeOrigin: true,
