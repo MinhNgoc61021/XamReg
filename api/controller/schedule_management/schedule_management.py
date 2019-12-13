@@ -201,17 +201,21 @@ def create_room(current_user):
 @schedule_management.route('/remove-room', methods=['DELETE'])
 @token_required
 def remove_room(current_user):
+    try:
         record = request.get_json()
 
-        room_shiftID = record.get('delRoomID')
+        roomID = record.get('delRoomID')
         currentShiftID = record.get('currentShiftID')
-        print(room_shiftID, flush=True)
+        print(roomID, flush=True)
         print(currentShiftID, flush=True)
-        Room_Shift.delRecord(room_shiftID)
+        Room_Shift.delRecord(roomID, currentShiftID)
         Log.create(current_user['ID'],
-                   'Xoá phòng thi có mã ' + str(room_shiftID) + ' ra khỏi ca thi có mã ' + str(currentShiftID) + ' hệ thống.',
+                   'Xoá phòng thi có mã ' + str(roomID) + ' ra khỏi ca thi có mã ' + str(currentShiftID) + ' hệ thống.',
                    set_custom_log_time())
 
+        return jsonify({'status': 'success'}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
 
 
 @schedule_management.route('/room-records', methods=['GET'])

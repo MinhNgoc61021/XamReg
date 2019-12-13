@@ -46,7 +46,7 @@
             </div>
               <div class="card-content">
                 <h4 class="title is-4">Danh sách ca thi</h4>
-                <b-field grouped group-multiline>
+                <b-field>
                   <b-button
                     type="is-primary"
                     :class="{'is-loading': shift.create_loading}"
@@ -55,12 +55,12 @@
                   </b-button>
                 </b-field>
                 <div>
-                  <div v-if="shift.shift_record_data.length === 0" >
+                  <b-field group-multiline v-if="shift.shift_record_data.length === 0">
                     <b-message type="is-danger" has-icon>
                       Hiện tại chưa có thông tin về ca thi trong <b>{{ collapse.SemTitle }}</b>, bạn hãy nhập vào ca thi!
                     </b-message>
-                  </div>
-                  <div v-else>
+                  </b-field>
+                  <b-field group-multiline v-else>
 
                     <!--Shift Record-->
                     <b-table
@@ -114,26 +114,7 @@
                         <!--Room-->
                         <template slot="detail" slot-scope="props">
                             <h4 class="title is-4">Danh sách phòng thi</h4>
-                            <b-field grouped group-multiline>
-                              <b-autocomplete
-                                :data="room.searchResults"
-                                placeholder="Tìm kiếm để nhập phòng thi"
-                                icon="search"
-                                field="RoomName"
-                                :loading="room.search_loading"
-                                @typing="onRoomSearch"
-                                @select="option => { room.roomID = option.RoomID }"
-                                expanded>
-                                  <template slot-scope="props">
-                                    <div class="media">
-                                      <div class="media-content">
-                                        <b>Mã phòng: </b>{{ props.option.RoomID }}
-                                        <br>
-                                        <b>Tên phòng: </b>{{ props.option.RoomName }}
-                                      </div>
-                                    </div>
-                                  </template>
-                              </b-autocomplete>
+                            <b-field>
                               <b-button
                                 :class="{'is-loading': room.room_loading}"
                                 class="button"
@@ -143,6 +124,25 @@
                                   size="is-small"
                                   icon="sync"/>
                               </b-button>
+                              <b-field :message="[{ 'Kỳ thi chưa đánh': hasRoomError },]">
+                                <b-autocomplete
+                                  :data="room.searchResults"
+                                  placeholder="Tìm kiếm để nhập phòng thi"
+                                  icon="search"
+                                  field="RoomName"
+                                  :loading="room.search_loading"
+                                  @typing="onRoomSearch"
+                                  @select="option => { room.roomID = option.RoomID }"
+                                  expanded>
+                                    <template slot-scope="props">
+                                      <div class="media">
+                                        <div class="media-content">
+                                          <b>Tên phòng: </b>{{ props.option.RoomName }}
+                                        </div>
+                                      </div>
+                                    </template>
+                                </b-autocomplete>
+                              </b-field>
                               <b-button
                                 class="button"
                                 @click="addNewRoom"
@@ -187,7 +187,7 @@
                                   </b-table-column>
 
                                   <b-table-column field="Action" width="90">
-                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row.Room_ShiftID)"></b-button>
+                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row.RoomID)"></b-button>
                                   </b-table-column>
                                 </template>
                               </b-table>
@@ -204,7 +204,7 @@
                     </b-table>
                     <!--Shift Record-->
 
-                  </div>
+                  </b-field >
                 </div>
             </div>
         </b-collapse>
@@ -221,6 +221,7 @@
 
 <script>
     import axios from 'axios';
+    import moment from 'moment';
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
     import semester_edit from "./edit/semester_edit";
@@ -253,7 +254,7 @@
                     ID_Index: [],
                 },
                 room: {
-                    roomID: '',
+                    roomID: null,
                     room_record_data: [],
                     total: 0,
                     searchResults: [],
@@ -271,6 +272,7 @@
                 currentSemID: '', // current opening semesterID
                 hasSemesterError: false,
                 hasSubjectError: false,
+                hasRoomError: false,
             }
         },
         methods: {
@@ -613,11 +615,11 @@
                 });
             }, // xong
             async addNewRoom() {
-                console.log(this.roomID);
-                // if (this.room.length === 0) {
-                //     this.hasSemesterError = true;
-                // }
-                    try {
+                if (this.room.roomID === null) {
+                    this.hasRoomError = true;
+                }
+                else {
+                     try {
                         this.room.room_loading = true;
                         const response = await axios({
                             url: '/schedule/create-room',
@@ -671,8 +673,11 @@
                         }
                     }
                     finally {
-                        this.getRoomRecord();
+                         this.hasRoomError = false;
+                         this.room.roomID = null;
+                         this.getRoomRecord();
                     }
+                }
             },
             async getRoomRecord() {
                 this.room.room_loading = true;
@@ -691,7 +696,7 @@
                             'Authorization': authHeader(),
                         }
                     });
-                    console.log(response.data.shift_records);
+                    // console.log(response.data.shift_records);
                     if (response.status === 200) {
                         this.room.room_record_data = [];
                         this.room.total = response.data.total_results;
@@ -765,7 +770,7 @@
                                 })
                             }
                         } finally {
-                            this.getShiftRecordData();
+                            this.getRoomRecord();
                         }
                     },
                 });

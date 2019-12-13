@@ -562,10 +562,10 @@ class Room_Shift(Base):
             sess.close()
 
     @classmethod
-    def delRecord(cls, room_shiftID):
+    def delRecord(cls, roomID, shiftID):
         sess = Session()
         try:
-            room_shift = sess.query(Room_Shift).filter(Room_Shift.Room_ShiftID == room_shiftID).one()
+            room_shift = sess.query(Room_Shift).filter(Room_Shift.RoomID == roomID, Room_Shift.ShiftID == shiftID).one()
             sess.delete(room_shift)
             sess.commit()
         except:
