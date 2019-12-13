@@ -114,7 +114,7 @@
                         <!--Room-->
                         <template slot="detail" slot-scope="props">
                             <h4 class="title is-4">Danh sách phòng thi</h4>
-                            <b-field>
+                            <b-field  grouped group-multiline>
                               <b-button
                                 :class="{'is-loading': room.room_loading}"
                                 class="button"
@@ -125,7 +125,7 @@
                                   icon="sync"/>
                               </b-button>
                               <b-field :message="[{ 'Kỳ thi chưa đánh': hasRoomError },]">
-                                <b-autocomplete
+                                <b-autocomplete width="300"
                                   :data="room.searchResults"
                                   placeholder="Tìm kiếm để nhập phòng thi"
                                   icon="search"
@@ -133,7 +133,7 @@
                                   :loading="room.search_loading"
                                   @typing="onRoomSearch"
                                   @select="option => { room.roomID = option.RoomID }"
-                                  expanded>
+                                  >
                                     <template slot-scope="props">
                                       <div class="media">
                                         <div class="media-content">
@@ -210,9 +210,6 @@
         </b-collapse>
       </div>
       <div v-else>
-        <b-message type="is-danger" has-icon>
-          Hiện tại chưa có thông tin về kỳ thi, bạn hãy nhập vào và tạo kỳ thi mới!
-        </b-message>
       </div>
     </section>
   </div>

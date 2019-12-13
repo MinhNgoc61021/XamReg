@@ -87,9 +87,6 @@
           </b-table>
         </b-field>
         <b-field v-else>
-          <b-message type="is-danger" has-icon>
-            Hiện tại chưa có dự liệu môn thi, bạn hãy nhập vào môn thi!
-          </b-message>
         </b-field>
     </section>
   </div>
