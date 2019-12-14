@@ -20,7 +20,7 @@
               <option value="20">20 dòng/trang</option>
             </b-select>
           </b-field>
-          <section id="tab-action">
+          <b-field v-if="log_data.length > 0">
               <b-table
                   :data="log_data"
                   :loading="loading"
@@ -43,15 +43,15 @@
                         {{ props.row.LogID }}
                     </b-table-column>
 
-                    <b-table-column field="UserID" label="Người dùng" sortable>
+                    <b-table-column field="UserID" label="Người dùng" width="120" sortable>
                          {{ props.row.User }}
                     </b-table-column>
 
-                    <b-table-column field="Action" label="Hành động" sortable>
+                    <b-table-column field="Action" label="Hành động" width="700" sortable>
                         {{ props.row.Action }}
                     </b-table-column>
 
-                    <b-table-column field="Created_At" label="Thời gian" sortable>
+                    <b-table-column field="Created_At" label="Thời gian" width="120" sortable>
                         <span class="tag is-success">
                           {{ formatDate(props.row.Created_At) }}
                         </span>
@@ -59,7 +59,9 @@
 
                   </template>
               </b-table>
-          </section>
+            </b-field>
+          <b-field v-else>
+          </b-field>
       </div>
 </template>
 

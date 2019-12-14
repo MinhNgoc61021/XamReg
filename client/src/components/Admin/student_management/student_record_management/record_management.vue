@@ -47,7 +47,8 @@
                 </template>
             </b-autocomplete>
         </b-field>
-        <b-table
+        <b-field v-if="student.student_record.length > 0">
+          <b-table
             :data="student.student_record"
             :loading="student.loading"
             paginated
@@ -171,6 +172,12 @@
                 </b-field>
             </template>
         </b-table>
+        </b-field>
+        <b-field v-else>
+          <b-message type="is-danger" has-icon>
+            Hiện tại chưa có dự liệu sinh viên, bạn hãy nhập vào sinh viên!
+          </b-message>
+        </b-field>
     </section>
 </template>
 
@@ -178,8 +185,9 @@
     import axios from 'axios'
     import { authHeader } from "../../../api/jwt_handling";
     import moment from 'moment/moment';
-    import edit_student_form from "./edit/edit_student_modal_form";
+    import edit_student_form from "./edit/student_edit";
     import debounce from 'lodash/debounce';
+    import { eventBus } from "../../../../main";
 
     /*
      student edit data form
@@ -233,7 +241,7 @@
                 this.student.loading = true;
                 try {
                     const response = await axios({
-                        url: '/record/student-records',
+                        url: '/student/student-records',
                         method: 'get',
                         params: {
                             page_index: this.student.page,
@@ -298,7 +306,7 @@
                     onConfirm: async () => {
                         try {
                             const removeData = await axios({
-                                url: '/record/remove-student-record',
+                                url: '/student/remove-student-record',
                                 method: 'delete',
                                 headers: {
                                     'Authorization': authHeader(),
@@ -321,7 +329,7 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true
@@ -394,7 +402,7 @@
                 else {
                     this.search.searchResults = [];
                     axios({
-                        url: '/record/search-student-record',
+                        url: '/student/search-student-record',
                         method: 'get',
                         headers: {
                             'Authorization': authHeader(),
@@ -455,7 +463,7 @@
                     onConfirm: async () => {
                         try {
                             const removeData = await axios({
-                                url: '/record/remove-student-status-record',
+                                url: '/student/remove-student-status-record',
                                 method: 'delete',
                                 headers: {
                                     'Authorization': authHeader(),
@@ -478,7 +486,7 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true
@@ -494,7 +502,7 @@
                 this.student_status.loading = true;
                 try {
                     const response = await axios({
-                        url: '/record/student-status-records',
+                        url: '/student/student-status-records',
                         method: 'get',
                         params: {
                             StudentID: this.student_status.currentStudentID,
@@ -541,6 +549,18 @@
         },
         mounted() {
             this.getStudentRecordData();
+        },
+        created() {
+            eventBus.$on('up-to-date', () => {
+                this.getStudentRecordData();
+                this.$buefy.notification.open({
+                    duration: 2000,
+                    message: `Đã cập nhật danh sách sinh viên thành công!`,
+                    position: 'is-bottom-right',
+                    type: 'is-success',
+                    hasIcon: true
+                });
+            })
         }
     }
 </script>

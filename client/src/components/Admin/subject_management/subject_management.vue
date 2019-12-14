@@ -53,38 +53,41 @@
                 </template>
             </b-autocomplete>
         </b-field>
-        <b-table
-          :data="subject_info.subject_record"
-          :loading="subject_info.loading"
-          paginated
-          backend-pagination
-          :total="subject_info.total"
-          :per-page="subject_info.per_page"
-          @page-change="onSubjectPageChange"
-          aria-next-label="Next page"
-          aria-previous-label="Previous page"
-          aria-page-label="Page"
-          aria-current-label="Current page"
-          backend-sorting
-          hoverable
-          :default-sort-direction="subject_info.defaultSortOrder"
-          :default-sort="[subject_info.sortField, subject_info.sortOrder]"
-          @sort="onStatusSort"
-        >
-          <template slot-scope="props" style="width: 500px">
-            <b-table-column field="SubjectID" label="Mã môn học" sortable width="200px">
-              {{props.row.SubjectID}}
-            </b-table-column>
-            <b-table-column field="SubjectTitle" label="Tên môn học" sortable  width="200px">
-              {{props.row.SubjectTitle}}
-            </b-table-column>
-            <b-table-column field="Action"  width="90px">
-              <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onStatusEdit(props.row)"></b-button>
-              <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row)"></b-button>
-            </b-table-column>
-          </template>
-        </b-table>
-
+        <b-field v-if="subject_info.subject_record.length > 0">
+          <b-table
+            :data="subject_info.subject_record"
+            :loading="subject_info.loading"
+            paginated
+            backend-pagination
+            :total="subject_info.total"
+            :per-page="subject_info.per_page"
+            @page-change="onSubjectPageChange"
+            aria-next-label="Next page"
+            aria-previous-label="Previous page"
+            aria-page-label="Page"
+            aria-current-label="Current page"
+            backend-sorting
+            hoverable
+            :default-sort-direction="subject_info.defaultSortOrder"
+            :default-sort="[subject_info.sortField, subject_info.sortOrder]"
+            @sort="onStatusSort"
+          >
+            <template slot-scope="props" style="width: 500px">
+              <b-table-column field="SubjectID" label="Mã môn học" sortable width="200px">
+                {{props.row.SubjectID}}
+              </b-table-column>
+              <b-table-column field="SubjectTitle" label="Tên môn học" sortable  width="200px">
+                {{props.row.SubjectTitle}}
+              </b-table-column>
+              <b-table-column field="Action"  width="90px">
+                <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onStatusEdit(props.row)"></b-button>
+                <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row)"></b-button>
+              </b-table-column>
+            </template>
+          </b-table>
+        </b-field>
+        <b-field v-else>
+        </b-field>
     </section>
   </div>
 </template>
@@ -148,10 +151,11 @@
               this.subject_info.total = 0;
               this.subject_info.loading = false;
               this.$buefy.notification.open({
-                duration: 2000,
-                message: 'Chịu, đ lấy đc',
-                position: 'is-bottom-right',
-                type: 'is-danger',
+                  duration: 2000,
+                  message: 'Không thể lấy được dữ liệu về môn thi!',
+                  position: 'is-bottom-right',
+                  type: 'is-danger',
+                  hasIcon: true,
               });
               throw error;
             }
@@ -205,50 +209,50 @@
                 this.getSubjectInfo();
           },
           createSubject() {
-            this.$buefy.modal.open({
-              parent: this,
-              component: subject_create,
-              hasModalCard: true,
-              customClass: 'custom-class custom-class-2',
-              canCancel: false,
-              events: {
-                 'loadSubjects': (http_status) => {
-                   if (http_status === 200) {
-                     this.$buefy.notification.open({
-                       duration: 2000,
-                       message: `Đã tạo môn học thành công!`,
-                       position: 'is-bottom-right',
-                       type: 'is-success',
-                       hasIcon: true
-                     });
-                     this.getSubjectInfo();
+              this.$buefy.modal.open({
+                parent: this,
+                component: subject_create,
+                hasModalCard: true,
+                customClass: 'custom-class custom-class-2',
+                canCancel: false,
+                events: {
+                   'loadSubjects': (http_status) => {
+                     if (http_status === 200) {
+                       this.$buefy.notification.open({
+                         duration: 2000,
+                         message: `Đã tạo môn học thành công!`,
+                         position: 'is-bottom-right',
+                         type: 'is-success',
+                         hasIcon: true
+                       });
+                       this.getSubjectInfo();
+                     }
+                     else if (http_status === 400) {
+                       this.$buefy.notification.open({
+                         duration: 2000,
+                         message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                         position: 'is-bottom-right',
+                         type: 'is-danger',
+                         hasIcon: true
+                       });
+                     }
+                     else if (http_status === 401) {
+                       this.$buefy.notification.open({
+                         duration: 2000,
+                         message: 'Không được quyền sử dụng!',
+                         position: 'is-bottom-right',
+                         type: 'is-danger',
+                         hasIcon: true
+                       });
+                     }
                    }
-                   else if (http_status === 400) {
-                     this.$buefy.notification.open({
-                       duration: 2000,
-                       message: 'Các bạn nộp rác cho t àk ?!',
-                       position: 'is-bottom-right',
-                       type: 'is-danger',
-                       hasIcon: true
-                     });
-                   }
-                   else if (http_status === 401) {
-                     this.$buefy.notification.open({
-                       duration: 2000,
-                       message: 'Không được quyền sử dụng!',
-                       position: 'is-bottom-right',
-                       type: 'is-danger',
-                       hasIcon: true
-                     });
-                   }
-                 }
-              }
-            })
+                }
+              })
           },
           async onStatusDelete(row) {
             this.$buefy.dialog.confirm({
               title: 'Xóa môn học',
-              message: `Bạn có chắc chắn là muốn <b>xóa</b> môn học ${row.SubjectID} này không?`,
+              message: `Bạn có chắc chắn là muốn <b>xóa</b> môn học ${row.SubjectID} này không? Đã làm là tự chịu đấy.`,
               confirmText: 'Xóa!',
               cancelText: 'Hủy bỏ',
               type: 'is-danger',
@@ -268,7 +272,7 @@
                   if (removeData.status === 200) {
                     this.$buefy.notification.open({
                       duration: 2000,
-                      message: `<b>Đã xóa thành công môn học</b>.`,
+                      message: `Đã xóa thành công môn học.`,
                       position: 'is-bottom-right',
                       type: 'is-success',
                       hasIcon: true
@@ -278,7 +282,7 @@
                   if (e['message'].includes('401')) {
                     this.$buefy.notification.open({
                       duration: 2000,
-                      message: 'HTTP Status 401: Không được quyền sử dụng!',
+                      message: 'Không được quyền sử dụng!',
                       position: 'is-bottom-right',
                       type: 'is-danger',
                       hasIcon: true
@@ -291,7 +295,6 @@
             });
           },
           onStatusEdit(row) {
-            console.log(row);
              this.$buefy.modal.open({
                parent: this,
                component: subject_edit,
@@ -317,7 +320,7 @@
                    else if (http_status === 400) {
                      this.$buefy.notification.open({
                        duration: 2000,
-                       message: 'Các bạn nộp rác cho t àk ?!',
+                       message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
                        position: 'is-bottom-right',
                        type: 'is-danger',
                        hasIcon: true

@@ -2,7 +2,7 @@
   <form @submit.prevent="createSubject()">
     <div class="modal-card" style="width: 450px;">
         <header class="modal-card-head">
-            <p class="modal-card-title">Tạo môn học</p>
+            <p class="modal-card-title">Form tạo môn học</p>
         </header>
 
       <section class="modal-card-body">
@@ -13,7 +13,7 @@
             :value="newSubjectID"
             maxlength="15"
             validation-message="Nhập đúng mã môn học"
-            pattern="([A-Z]{3})([0-9]{4})"
+            pattern="^(([A-Z]|[a-z]){3})([0-9]{4})"
             placeholder="Nhập mã môn học"
             required
           >
@@ -36,7 +36,7 @@
     </div>
     <footer class="modal-card-foot">
           <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
-          <button class="button is-primary" type="submit">Cập nhật</button>
+          <button class="button is-primary" type="submit">Tạo</button>
       </footer>
   </form>
 </template>
@@ -72,15 +72,6 @@
               if (update.status === 200) {
                 this.$emit('loadSubjects', 200);
                 this.$parent.close();
-                if (update.data.status === 'success') {
-                  this.$buefy.notification.open({
-                    duration: 2500,
-                    message: `Môn học: ${this.newStudent.StudentID} đã được tạo thành công!`,
-                    position: 'is-bottom-right',
-                    type: 'is-success',
-                    hasIcon: true
-                  });
-                }
               }
             } catch (e) {
               if (e['message'].includes('400')) {

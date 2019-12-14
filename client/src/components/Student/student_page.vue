@@ -14,7 +14,7 @@
               <b-navbar-item tag="router-link" :to="{ path: '/student-home' }" class="routing-link">
                   Trang chủ
               </b-navbar-item>
-              <b-navbar-item tag="router-link" :to="{ name: 'shift_register', params: { studentid: ID } }" class="routing-link">
+              <b-navbar-item tag="router-link" :to="{ name: 'shift-register', params: { studentid: ID } }" class="routing-link">
                   Đăng ký dự thi
               </b-navbar-item>
           </template>

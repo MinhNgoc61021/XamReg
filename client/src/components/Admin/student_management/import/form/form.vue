@@ -38,7 +38,7 @@
             </b-select>
         </b-field>
           <div class="buttons" style="float: right;">
-            <button class="button is-primary" type="submit" outlined>Cập nhật</button>
+            <button class="button" type="submit" outlined>Tạo</button>
           </div>
       </form>
     </section>
@@ -66,7 +66,7 @@
           async submitNewStudent() {
               try {
                   const response = await axios({
-                     url: '/record/create-student-record',
+                     url: '/student/create-student-record',
                      method: 'post',
                      headers: {
                         'Authorization': authHeader(),
