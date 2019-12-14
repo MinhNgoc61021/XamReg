@@ -45,7 +45,7 @@
               </b-timepicker>
           </b-field>
 
-          <b-field label="Giờ bắt đầu thi">
+          <b-field label="Giờ kết thúc thi">
               <b-timepicker
                   v-model="End_At"
                   :value="End_At"
