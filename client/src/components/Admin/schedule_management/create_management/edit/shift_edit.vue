@@ -73,6 +73,7 @@
         props: ['currentShiftID', 'currentSemID', 'currentStart_At', 'currentEnd_At' ,'currentDate_Start', 'currentSubjectID'],
         data() {
           return {
+              SemID: this.currentSemID,
               ShiftID: this.currentShiftID,
               SubjectID: this.currentSubjectID,
               Date_Start: this.currentDate_Start,
@@ -94,7 +95,7 @@
                       'Authorization': authHeader(),
                     },
                     data: {
-                        SemID: this.currentSemID,
+                        SemID: this.SemID,
                         ShiftID: this.ShiftID,
                         newSubjectID: this.SubjectID,
                         newDate_Start: moment(this.Date_Start).format('YYYY-MM-DD'),
