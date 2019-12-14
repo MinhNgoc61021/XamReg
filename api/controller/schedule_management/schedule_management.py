@@ -140,17 +140,21 @@ def edit_shift(current_user):
     try:
         edit_shift = request.get_json()
         shiftID = edit_shift.get('currentShiftID')
+        semID = edit_shift.get('curremtSemID')
         new_subjectID = edit_shift.get('newSubjectID')
         new_date_start = edit_shift.get('newDate_Start')
         new_start_at = edit_shift.get('newStart_At')
         new_end_at = edit_shift.get('newEnd_At')
+
+        print(shiftID, flush=True)
+        print(new_subjectID, flush=True)
 
         new_time_start = datetime.strptime(new_start_at, "%H:%M:%S")  # convert string to time
         new_time_end = datetime.strptime(new_end_at, "%H:%M:%S")
         diff = new_time_end - new_time_start
         check = diff.total_seconds() / 3600
         if check >= 1:
-            newShift = Shift.updateRecord(str(shiftID),
+            newShift = Shift.updateRecord(str(shiftID), str(semID),
                                           str(new_subjectID),
                                           new_date_start,
                                           new_start_at,

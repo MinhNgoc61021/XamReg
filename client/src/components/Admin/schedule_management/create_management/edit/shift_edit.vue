@@ -70,7 +70,7 @@
 
     export default {
         name: "shift_edit",
-        props: ['currentShiftID', 'currentStart_At', 'currentEnd_At' ,'currentDate_Start', 'currentSubjectID'],
+        props: ['currentShiftID', 'currentSemID', 'currentStart_At', 'currentEnd_At' ,'currentDate_Start', 'currentSubjectID'],
         data() {
           return {
               ShiftID: this.currentShiftID,
@@ -94,6 +94,7 @@
                       'Authorization': authHeader(),
                     },
                     data: {
+                        SemID: this.currentSemID,
                         ShiftID: this.ShiftID,
                         newSubjectID: this.SubjectID,
                         newDate_Start: moment(this.Date_Start).format('YYYY-MM-DD'),

@@ -583,6 +583,7 @@
                    parent: this,
                    component: shift_edit,
                    props: {
+                       currentSemID: this.currentSemID,
                        currentShiftID: record.ShiftID,
                        currentSubjectID: record.Subject.SubjectID,
                        currentDate_Start: new Date(moment(record.Date_Start).format('MM/DD/YYYY')),
