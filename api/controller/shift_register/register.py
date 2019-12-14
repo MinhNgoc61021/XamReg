@@ -50,6 +50,7 @@ def get_shift(current_user):
 def search_semester(current_user):
     try:
         searchID = request.args.get('searchID')
+        print(searchID)
         validatesearchID = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchID))
         if validatesearchID is None:
             search_results = Semester_Examination.searchSemesterRecord(searchID)
