@@ -101,7 +101,7 @@
               total: 0,
               loading: false,
               sortField: 'RoomID',
-              sortOrder: 'desc',
+              sortOrder: 'asc',
               defaultSortOrder: 'asc',
               page: 1,
               per_page: 5,
