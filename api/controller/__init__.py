@@ -18,7 +18,6 @@ def create_app():
     app.register_blueprint(schedule_management)
     app.register_blueprint(authentication)
     app.register_blueprint(excel_handling)
-    app.register_blueprint(subject_management)
     app.register_blueprint(shift_register)
     app.register_blueprint(subject_management)
     app.register_blueprint(exam_room_management)

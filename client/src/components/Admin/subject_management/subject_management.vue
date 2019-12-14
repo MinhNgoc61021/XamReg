@@ -1,10 +1,7 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>Quản lý môn thi </li>
-      </ul>
-    </nav>
+    <h1 class="title is-3">Quản lý môn thi</h1>
+    <h2 class="subtitle is-6">Cập nhật, quản lý thông tin của môn thi</h2>
 
     <section>
       <b-field grouped group-multiline >
@@ -142,6 +139,7 @@
               if (response.status === 200) {
                 this.subject_info.subject_record = [];
                 this.subject_info.total = response.data.total_results;
+                console.log(this.subject_info.total);
                 response.data.records.forEach((item) => {
                   this.subject_info.subject_record.push(item);
                 });
@@ -153,7 +151,7 @@
               this.subject_info.loading = false;
               this.$buefy.notification.open({
                 duration: 2000,
-                message: 'Chịu, đ lấy đc',
+                message: 'Không lấy được thông tin môn học!',
                 position: 'is-bottom-right',
                 type: 'is-danger',
               });
@@ -230,7 +228,7 @@
                    else if (http_status === 400) {
                      this.$buefy.notification.open({
                        duration: 2000,
-                       message: 'Các bạn nộp rác cho t àk ?!',
+                       message: 'Tạo môn học thất bại',
                        position: 'is-bottom-right',
                        type: 'is-danger',
                        hasIcon: true
@@ -321,7 +319,7 @@
                    else if (http_status === 400) {
                      this.$buefy.notification.open({
                        duration: 2000,
-                       message: 'Các bạn nộp rác cho t àk ?!',
+                       message: 'Sửa đổi không thành công!',
                        position: 'is-bottom-right',
                        type: 'is-danger',
                        hasIcon: true

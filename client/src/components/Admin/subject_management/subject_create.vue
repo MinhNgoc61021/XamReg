@@ -76,7 +76,7 @@
                 if (update.data.status === 'success') {
                   this.$buefy.notification.open({
                     duration: 2500,
-                    message: `Môn học: ${this.newStudent.StudentID} đã được tạo thành công!`,
+                    message: `Môn học đã được tạo thành công!`,
                     position: 'is-bottom-right',
                     type: 'is-success',
                     hasIcon: true

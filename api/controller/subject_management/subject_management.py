@@ -22,7 +22,6 @@ def get_subject_record(current_user):
         sort_field = request.args.get('sort_field')
         sort_order = request.args.get('sort_order')
         record = Subject.getSubjectRecord(page_index, per_page, sort_field, sort_order)
-
         return jsonify({
             'status': 'success',
             'records': record[0],
