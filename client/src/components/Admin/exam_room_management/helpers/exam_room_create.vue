@@ -5,20 +5,11 @@
             <p class="modal-card-title">Form tạo phòng thi</p>
         </header>
         <section class="modal-card-body">
-          <b-field label="Mã số phòng thi">
-            <b-input
-              type="number"
-              v-model="newRoomID"
-              :value="newRoomID"
-              placeholder="Nhập mã số phòng thi"
-              required>
-            </b-input>
-          </b-field>
           <b-field label="Tên phòng thi">
             <b-input
               v-model="newRoomName"
               :value="newRoomName"
-              maxlength="19"
+              maxlength="30"
               placeholder="Nhập tên phòng thi"
               required>
             </b-input>
@@ -36,7 +27,7 @@
 
         <footer class="modal-card-foot">
           <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
-          <button class="button is-primary" type="submit" @submit="closeModal()">Tạo</button>
+          <button class="button is-primary" type="submit" @submit="closeModal()">Cập nhật</button>
         </footer>
       </div>
   </form>
@@ -46,10 +37,9 @@
     import axios from "axios";
     import {authHeader} from "../../../api/jwt_handling";
     export default {
-        name: "addRoomModal",
+        name: "exam_room_create",
         data() {
           return {
-              newRoomID: "",
               newRoomName: "",
               newMaxcapacity: ""
           }
@@ -64,7 +54,6 @@
                           'Authorization': authHeader(),
                       },
                       data: {
-                          newRoomID: this.newRoomID,
                           newRoomName: this.newRoomName,
                           newMaxcapacity: this.newMaxcapacity,
                       },

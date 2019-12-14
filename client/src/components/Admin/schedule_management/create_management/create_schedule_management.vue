@@ -531,7 +531,7 @@
                             'Authorization': authHeader(),
                         }
                     });
-                    console.log(response.data.shift_records);
+                    // console.log(response.data.shift_records);
                     if (response.status === 200) {
                         this.shift.shift_record_data = [];
                         this.shift.total = response.data.total_results;
@@ -567,7 +567,6 @@
                        currentShiftID: record.ShiftID,
                        currentStart_At: record.Start_At,
                        currentDate_Start: new Date(moment(record.Date_Start).format('MM/DD/YYYY')),
-                       currentRoomID: record.Date_Start,
                        currentEnd_At: record.End_At,
                    },
                    hasModalCard: true,

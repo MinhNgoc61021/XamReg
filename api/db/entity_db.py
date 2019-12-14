@@ -671,13 +671,13 @@ class Exam_Room(Base):
             sess.close()
 
     @classmethod
-    def updateRecord(cls, currentRoomID, newRoomID, newRoomName, newMaxcapacity):
+    def updateRecord(cls, currentRoomID, newRoomName, newMaxcapacity):
         sess = Session()
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
             sess.query(Exam_Room).filter_by(RoomID=currentRoomID).update(
-                {Exam_Room.RoomID: newRoomID, Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
+                {Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
             sess.commit()
         except:
             sess.rollback()

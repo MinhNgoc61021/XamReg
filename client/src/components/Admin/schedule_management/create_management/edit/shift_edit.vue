@@ -61,8 +61,8 @@
               SubjectID: this.currentSubjectID,
               newRoomID: '',
               Date_Start: this.currentDate_Start,
-              Start_At: this.currentStart_At,
-              End_At: this.currentEnd_At,
+              Start_At: new Date(moment(this.currentStart_At).format('HH:mm:ss')),
+              End_At:  new Date(moment(this.currentEnd_At).format('HH:mm:ss')),
               search: {
                     searchResults: [],
                     searchLoading: false,
