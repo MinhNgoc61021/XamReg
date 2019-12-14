@@ -11,7 +11,7 @@ from controller.time_conversion.asia_timezone import set_custom_log_time
 import re
 
 # student record management for admin
-student_record_management = Blueprint('student_record_management', __name__, url_prefix='/record')
+student_record_management = Blueprint('student_record_management', __name__, url_prefix='/student')
 
 
 @student_record_management.route('/student-records', methods=['GET'])

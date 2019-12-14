@@ -6,7 +6,7 @@ from flask import (
     jsonify
 )
 from controller.authentication.auth import token_required
-from db.entity_db import User, Subject, Exam_Room, Log
+from db.entity_db import Exam_Room, Log
 from controller.time_conversion.asia_timezone import set_custom_log_time
 import re
 
@@ -22,7 +22,7 @@ def create_room_record(current_user):
 
         print(newRoomName, flush=True)
         print(newMaxcapacity, flush=True)
-        # check validation
+
         Log.create(current_user['ID'],
                    'Tạo thêm phòng thi ' + newRoomName,
                    set_custom_log_time())
@@ -70,7 +70,6 @@ def update_room_record(current_user):
     try:
         new_update = request.get_json()
         currentRoomID = new_update.get('currentRoomID')
-        newRoomID = new_update.get('RoomID')
         newRoomName = new_update.get('RoomName')
         newMaxcapacity = new_update.get('Maxcapacity')
 
@@ -79,7 +78,7 @@ def update_room_record(current_user):
         # print(newUsername, flush=True)
         # print(newFullname, flush=True)
 
-        Exam_Room.updateRecord(currentRoomID, newRoomID, newRoomName, newMaxcapacity)
+        Exam_Room.updateRecord(currentRoomID, newRoomName, newMaxcapacity)
         Log.create(current_user['ID'],
                    'Cập nhật thông tin của phòng thi ' + newRoomName,
                    set_custom_log_time())
@@ -111,7 +110,7 @@ def remove_room_record(current_user):
 
 @exam_room_management.route('/search-room-record', methods=['GET'])
 @token_required
-def get_room_search(current_user):
+def get_room_info_search(current_user):
     try:
         searchName = request.args.get('searchName')
         check = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchName))

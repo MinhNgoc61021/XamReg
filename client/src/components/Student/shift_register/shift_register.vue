@@ -10,7 +10,7 @@
         >
           <b-icon
             size="is-small"
-            icon="edit"/>
+            icon="sync"/>
           <span>Làm mới</span>
         </b-button>
         <b-autocomplete
@@ -35,6 +35,12 @@
             </div>
           </template>
         </b-autocomplete>
+        <b-button
+          class="button"
+          @click="selectSemesterModal"
+        >
+          <span>Chọn kỳ thi khác</span>
+        </b-button>
       </b-field>
 
       <b-table
@@ -59,9 +65,8 @@
           <b-table-column field="ShiftID" label="Mã ca thi" sortable>
             {{ props.row.ShiftID }}
           </b-table-column>
-
-          <b-table-column field="SubjectID" label="Mã môn thi" sortable>
-            {{ props.row.SubjectID }}
+          <b-table-column field="SubjectID" label="Môn thi" sortable>
+            <b></b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}
           </b-table-column>
 
           <b-table-column field="Date_Start" label="Ngày thi" sortable>
@@ -92,8 +97,8 @@
             {{ props.row.ShiftID }}
           </b-table-column>
 
-          <b-table-column field="SubjectID" label="Mã môn thi" sortable>
-            {{ props.row.Subject }}
+          <b-table-column field="SubjectID" label="Môn thi">
+            <b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}</b>
           </b-table-column>
 
           <b-table-column field="Date_Start" label="Ngày thi" sortable>
@@ -116,7 +121,7 @@
     import axios from "axios";
     import {authHeader} from "../../api/jwt_handling";
     import enter_semester from "./enter_semester";
-
+    import { mapActions, mapState } from 'vuex';
     export default {
         name: 'shift-register',
         data() {
@@ -159,102 +164,119 @@
                 }
             }
         },
+        computed: {
+            ...mapState([
+                'currentSemesterID',
+            ]),
+        },
         methods: {
-          async getShiftRecordData() {
-            this.shift.shift_loading = true;
-                try {
-                    const response = await axios({
-                        url: '/shift-register/shift-records',
-                        method: 'get',
-                        params: {
-                            SemID: this.semester.semester_record.SemID,
-                            page_index: this.shift.page,
-                            per_page: this.shift.per_page,
-                            sort_field: this.shift.sortField,
-                            sort_order: this.shift.sortOrder
-                        },
-                        headers: {
-                            'Authorization': authHeader(),
+            ...mapActions([
+                'SetCurrentSemesterID',
+            ]),
+            async getShiftRecordData() {
+              this.shift.shift_loading = true;
+                  try {
+                      const response = await axios({
+                          url: '/shift-register/shift-records',
+                          method: 'get',
+                          params: {
+                              SemID: this.semester.semester_record.SemID,
+                              page_index: this.shift.page,
+                              per_page: this.shift.per_page,
+                              sort_field: this.shift.sortField,
+                              sort_order: this.shift.sortOrder
+                          },
+                          headers: {
+                              'Authorization': authHeader(),
+                          }
+                      });
+                      if (response.status === 200) {
+                          this.shift.shift_record_data = [];
+                          this.shift.total = response.data.total_results;
+                          console.log(response.data.shift_records);
+                          response.data.shift_records.forEach((item) => {
+                              this.shift.shift_record_data.push(item);
+                              console.log('ca thi ở đây:', item);
+                          });
+                          // console.log(this.data);
+                          this.shift.shift_loading = false
+                      }
+                  } catch (error) {
+                      this.shift.shift_record_data = [];
+                      this.shift.total = 0;
+                      this.shift.shift_loading = false;
+                      this.$buefy.notification.open({
+                          duration: 2000,
+                          message: 'Không thể lấy được dữ liệu ca thi!',
+                          position: 'is-bottom-right',
+                          type: 'is-danger',
+                          hasIcon: true
+                      });
+                      throw error;
+                  }
+            },
+            onShiftSearch() {
+            },
+            onShiftPageChange(page) {
+              this.shift.page = page;
+              this.getShiftRecordData();
+            },
+            onStatusSort(field, order) {
+              this.shift.sortField = field;
+              this.shift.sortOrder = order;
+            },
+            selectSemesterModal() {
+                this.$buefy.modal.open({
+                    parent: this,
+                    component: enter_semester,
+                    hasModalCard: true,
+                    customClass: 'custom-class custom-class-2',
+                    canCancel: false,
+                    events: {
+                      'loadSemesterShifts': (semester_record) => {
+                        if (semester_record.SemTitle !== '') {
+                          this.semester.semester_record = semester_record;
+                          this.SetCurrentSemesterID(semester_record.SemID);
+                          this.getShiftRecordData();
+                          this.$buefy.notification.open({
+                            duration: 2000,
+                            message: `Đã lấy ca thi thành công!`,
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                            hasIcon: true
+                          });
+                        } else if (semester_record.SemTitle === '') {
+                          this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Không lấy được dữ liệu!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                          });
                         }
-                    });
-                    if (response.status === 200) {
-                        this.shift.shift_record_data = [];
-                        this.shift.total = response.data.total_results;
-                        console.log(response.data.shift_records);
-                        response.data.shift_records.forEach((item) => {
-                            this.shift.shift_record_data.push(item);
-                            console.log('ca thi ở đây:', item);
-                        });
-                        // console.log(this.data);
-                        this.shift.shift_loading = false
+                        // } else if (http_status === 401) {
+                        //   this.$buefy.notification.open({
+                        //     duration: 2000,
+                        //     message: 'Không được quyền sử dụng!',
+                        //     position: 'is-bottom-right',
+                        //     type: 'is-danger',
+                        //     hasIcon: true
+                        //   });
+                        // }
+                      }
                     }
-                } catch (error) {
-                    this.shift.shift_record_data = [];
-                    this.shift.total = 0;
-                    this.shift.shift_loading = false;
-                    this.$buefy.notification.open({
-                        duration: 2000,
-                        message: 'Không thể lấy được dữ liệu ca thi!',
-                        position: 'is-bottom-right',
-                        type: 'is-danger',
-                        hasIcon: true
-                    });
-                    throw error;
-                }
-          },
-          onShiftSearch() {
+                  })
+            }
 
-          },
-          onShiftPageChange(page) {
-            this.shift.page = page;
-            this.getShiftRecordData();
-          },
-          onStatusSort(field, order) {
-            this.shift.sortField = field;
-            this.shift.sortOrder = order;
-            this.getSubjectsInfo();
-          },
         },
         mounted() {
-            this.$buefy.modal.open({
-            parent: this,
-            component: enter_semester,
-            hasModalCard: true,
-            customClass: 'custom-class custom-class-2',
-            canCancel: false,
-            events: {
-              'loadSemesterShifts': (semester_record) => {
-                if (semester_record.SemTitle !== '') {
-                  this.semester.semester_record = semester_record;
-                  this.getShiftRecordData();
-                  this.$buefy.notification.open({
-                    duration: 2000,
-                    message: `Đã nhập thành công!`,
-                    position: 'is-bottom-right',
-                    type: 'is-success',
-                    hasIcon: true
-                  });
-                } else if (semester_record.SemTitle === '') {
-                  this.$buefy.notification.open({
-                    duration: 2000,
-                    message: 'Sửa đổi không thành công!',
-                    position: 'is-bottom-right',
-                    type: 'is-danger',
-                    hasIcon: true
-                  });
-                }
-                // } else if (http_status === 401) {
-                //   this.$buefy.notification.open({
-                //     duration: 2000,
-                //     message: 'Không được quyền sử dụng!',
-                //     position: 'is-bottom-right',
-                //     type: 'is-danger',
-                //     hasIcon: true
-                //   });
-                // }
-              }
+            if (this.currentSemesterID === '') {
+                this.selectSemesterModal();
             }
-          })
+            else {
+                this.semester.semester_record.SemID = this.currentSemesterID;
+                this.getShiftRecordData();
+            }
         },
     }
 </script>

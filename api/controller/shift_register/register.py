@@ -8,7 +8,8 @@ from flask import (
     jsonify
 )
 from controller.authentication.auth import token_required
-from db.entity_db import Student_Shift, Shift, Semester_Examination
+from db.entity_db import Shift, Semester_Examination
+
 
 # shift register for student
 shift_register = Blueprint('shift_register', __name__, url_prefix='/shift-register')
@@ -61,4 +62,3 @@ def search_semester(current_user):
             return jsonify({'status': 'bad-request'}), 400
     except:
         return jsonify({'status': 'bad-request'}), 400
-

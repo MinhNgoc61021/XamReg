@@ -61,9 +61,6 @@
               </b-table>
             </b-field>
           <b-field v-else>
-            <b-message type="is-danger" has-icon>
-              Hiện tại chưa có dự liệu về nhật ký!
-            </b-message>
           </b-field>
       </div>
 </template>

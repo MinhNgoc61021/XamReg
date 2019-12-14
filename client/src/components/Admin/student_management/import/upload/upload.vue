@@ -39,6 +39,8 @@
 <script>
     import axios from 'axios';
     import { authHeader } from "../../../../api/jwt_handling";
+    import { eventBus } from "../../../../../main";
+
     export default {
         data() {
             return {
@@ -117,7 +119,8 @@
                             })
                         }
                     } finally {
-                        formData.delete('student_list_excel')
+                        formData.delete('student_list_excel');
+                        eventBus.$emit('up-to-date', '')
                     }
                 }
             }

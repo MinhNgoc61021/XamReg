@@ -53,39 +53,41 @@
                 </template>
             </b-autocomplete>
         </b-field>
-        <b-table
-          :data="subject_info.subject_record"
-          :loading="subject_info.loading"
-          paginated
-          backend-pagination
-          :total="subject_info.total"
-          :per-page="subject_info.per_page"
-          @page-change="onSubjectPageChange"
-          aria-next-label="Next page"
-          aria-previous-label="Previous page"
-          aria-page-label="Page"
-          aria-current-label="Current page"
-          backend-sorting
-          hoverable
-          :default-sort-direction="subject_info.defaultSortOrder"
-          :default-sort="[subject_info.sortField, subject_info.sortOrder]"
-          @sort="onStatusSort"
-        >
-          <template slot-scope="props" style="width: 500px">
-            <b-table-column field="SubjectID" label="Mã môn học" sortable>
-              {{props.row.SubjectID}}
-            </b-table-column>
-            <b-table-column field="SubjectTitle" label="Tên môn học" sortable>
-              {{props.row.SubjectTitle}}
-            </b-table-column>
-            <b-table-column field="Action">
-              <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onStatusEdit(props.row)"></b-button>
-              <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row)"></b-button>
-            </b-table-column>
-          </template>
-        </b-table>
-
-
+        <b-field v-if="subject_info.subject_record.length > 0">
+          <b-table
+            :data="subject_info.subject_record"
+            :loading="subject_info.loading"
+            paginated
+            backend-pagination
+            :total="subject_info.total"
+            :per-page="subject_info.per_page"
+            @page-change="onSubjectPageChange"
+            aria-next-label="Next page"
+            aria-previous-label="Previous page"
+            aria-page-label="Page"
+            aria-current-label="Current page"
+            backend-sorting
+            hoverable
+            :default-sort-direction="subject_info.defaultSortOrder"
+            :default-sort="[subject_info.sortField, subject_info.sortOrder]"
+            @sort="onStatusSort"
+          >
+            <template slot-scope="props" style="width: 500px">
+              <b-table-column field="SubjectID" label="Mã môn học" sortable width="200px">
+                {{props.row.SubjectID}}
+              </b-table-column>
+              <b-table-column field="SubjectTitle" label="Tên môn học" sortable  width="200px">
+                {{props.row.SubjectTitle}}
+              </b-table-column>
+              <b-table-column field="Action"  width="90px">
+                <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onStatusEdit(props.row)"></b-button>
+                <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row)"></b-button>
+              </b-table-column>
+            </template>
+          </b-table>
+        </b-field>
+        <b-field v-else>
+        </b-field>
     </section>
   </div>
 </template>

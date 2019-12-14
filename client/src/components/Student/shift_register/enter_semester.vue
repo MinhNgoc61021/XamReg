@@ -14,7 +14,7 @@
           :loading="search.searchLoading"
           @typing="onSemesterSearch"
           @select="option => semester.semester_record = [option]"
-          expanded>
+        expanded required>
           <template slot-scope="props">
             <div class="media">
               <div class="media-left">
@@ -59,15 +59,13 @@ export default {
       this.$router.push({ path: '/student-home' })
     },
     async submitSemesterData() {
-      this.$emit('loadSemesterShifts', this.semester.semester_record[0]);
-      this.$parent.close();
-      // this.$buefy.notification.open({
-      //   duration: 2500,
-      //   message: `Được r nhé!`,
-      //   position: 'is-bottom-right',
-      //   type: 'is-success',
-      //   hasIcon: true
-      // });
+        if (this.semester_record !== []) {
+          this.$emit('loadSemesterShifts', this.semester.semester_record[0]);
+          this.$parent.close();
+        }
+        else {
+            this.go_home();
+        }
     },
     onSemesterSearch: debounce(function (SemTitle) {
       this.search.searchLoading = true;
@@ -112,5 +110,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

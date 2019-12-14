@@ -7,7 +7,7 @@
                 <b-tab-item label="Tạo và Quản lý danh sách kỳ thi" icon-pack="fas" icon="plus">
                   <component v-bind:is="create_schedule_management"/>
                 </b-tab-item>
-                <b-tab-item label="Xem danh sách thi sinh dự thi & Xuất (Export) PDF" icon-pack="fas" icon="file-export">
+                <b-tab-item label="Xem danh sách sinh viên dự thi & Xuất danh sách (Export)" icon-pack="fas" icon="file-export">
                   <component v-bind:is="export_pdf"/>
                 </b-tab-item>
             </b-tabs>

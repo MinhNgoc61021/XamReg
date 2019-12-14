@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import *
 from flask_bcrypt import generate_password_hash, check_password_hash
 from marshmallow_sqlalchemy import *
+from marshmallow_sqlalchemy.fields import Nested
 
 # create_engine connect to examrag model
 
@@ -189,6 +190,19 @@ class User(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def updatePassword(cls, currentUserID, newPassword):
+        sess = Session()
+        try:
+            sess.query(User).filter_by(ID=currentUserID).update(
+                {User.Password: generate_password_hash(newPassword)})
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
 
 # Subject persistent class
 class Subject(Base):
@@ -327,11 +341,18 @@ class Student_Status(Base):
         try:
             if sess.query(Student_Status).filter(Student_Status.StudentID == studentID,
                                                  Student_Status.SubjectID == subjectID).scalar() is None:
-                student_status = Student_Status(StudentID=studentID,
-                                                SubjectID=subjectID, Status=status)
-                sess.add(student_status)
-                sess.commit()
-                return True
+                if str(status).lower() == 'đủ điều kiện':
+                    student_status = Student_Status(StudentID=studentID,
+                                                    SubjectID=subjectID, Status='Qualified')
+                    sess.add(student_status)
+                    sess.commit()
+                    return True
+                elif str(status).lower() == 'không đủ điều kiện':
+                    student_status = Student_Status(StudentID=studentID,
+                                                    SubjectID=subjectID, Status='Unqualified')
+                    sess.add(student_status)
+                    sess.commit()
+                    return True
             else:
                 return False
         except:
@@ -364,6 +385,21 @@ class Semester_Examination(Base):
                    primary_key=True)
     SemTitle = Column(String(200),
                       nullable=False)
+    Status = Column(Boolean,
+                    nullable=False, default=False)  # true là đang thi, false là không thi
+
+    @classmethod
+    def searchSemesterRecord(cls, SemTitle):
+        sess = Session()
+        try:
+            semester = sess.query(Semester_Examination).filter(Semester_Examination.SemTitle.like(SemTitle + '%'),
+                                                               Semester_Examination.Status == True)
+            return semester_examination_schema.dump(semester, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
 
     @classmethod
     def searchSemesterRecord(cls, SemTitle):
@@ -421,6 +457,26 @@ class Semester_Examination(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def updateRecord(cls, currentSemID, new_semTitle, new_Status):
+        sess = Session()
+        try:
+            # A dictionary of key - values with key being the attribute to be updated, and value being the new
+            # contents of attribute
+            if sess.query(Semester_Examination).filter(Semester_Examination.SemID != currentSemID,
+                                                       Semester_Examination.SemTitle == new_semTitle).scalar() is None:
+                sess.query(Semester_Examination).filter(Semester_Examination.SemID == currentSemID).update(
+                    {Semester_Examination.SemTitle: new_semTitle, Semester_Examination.Status: new_Status})
+                sess.commit()
+                return True
+            else:
+                return False
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
 
 # Shift persistent class
 # (khi tạo ky thi thì nhập vào ca thi(SemID, SubjectID))
@@ -472,7 +528,7 @@ class Shift(Base):
     def getRecord(cls, semID, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
-            record_query = sess.query(Shift).filter(Shift.SemID == semID).order_by(
+            record_query = sess.query(Shift).filter(Shift.SemID == semID).options(joinedload('Subject')).order_by(
                 getattr(
                     getattr(Shift, sort_field), sort_order)())
 
@@ -502,16 +558,21 @@ class Shift(Base):
             sess.close()
 
     @classmethod
-    def updateRecord(cls, currentShiftID, currentSubjectID, new_date_start, new_start_at, new_end_at):
+    def updateRecord(cls, ShiftID, SemID, newSubjectID, new_date_start, new_start_at, new_end_at):
         sess = Session()
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Shift).filter(Shift.ShiftID == currentShiftID, Shift.SubjectID == currentSubjectID).update(
-                {Shift.Date_Start: new_date_start,
-                 Shift.Start_At: new_start_at,
-                 Shift.End_At: new_end_at})
-            sess.commit()
+            if sess.query(Shift).filter(Shift.SubjectID == newSubjectID, Shift.ShiftID != ShiftID, Shift.SemID == SemID) is None:
+                sess.query(Shift).filter(Shift.ShiftID == ShiftID).update(
+                    {Shift.SubjectID: newSubjectID,
+                     Shift.Date_Start: new_date_start,
+                     Shift.Start_At: new_start_at,
+                     Shift.End_At: new_end_at})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise
@@ -538,9 +599,10 @@ class Room_Shift(Base):
     def create(cls, roomID, shiftID):
         sess = Session()
         try:
-            if sess.query(Room_Shift).filter(Room_Shift.RoomID == roomID, Room_Shift.ShiftID == shiftID).scalar() is None:
+            if sess.query(Room_Shift).filter(Room_Shift.RoomID == roomID,
+                                             Room_Shift.ShiftID == shiftID).scalar() is None:
 
-                newShift = Room_Shift(RoomID=roomID,ShiftID=shiftID)
+                newShift = Room_Shift(RoomID=roomID, ShiftID=shiftID)
                 sess.add(newShift)
                 sess.commit()
                 return True
@@ -574,10 +636,10 @@ class Room_Shift(Base):
             sess.close()
 
     @classmethod
-    def delRecord(cls, room_shiftID):
+    def delRecord(cls, roomID, shiftID):
         sess = Session()
         try:
-            room_shift = sess.query(Room_Shift).filter(Room_Shift.Room_ShiftID == room_shiftID).one()
+            room_shift = sess.query(Room_Shift).filter(Room_Shift.RoomID == roomID, Room_Shift.ShiftID == shiftID).one()
             sess.delete(room_shift)
             sess.commit()
         except:
@@ -588,6 +650,7 @@ class Room_Shift(Base):
 
 
 # Student_Shift persistent class
+# dùng bảng này đăng ký nhé
 class Student_Shift(Base):
     __tablename__ = 'student_shift'
 
@@ -643,11 +706,11 @@ class Exam_Room(Base):
         try:
             record_query = sess.query(Exam_Room).order_by(getattr(
                 getattr(Exam_Room, sort_field), sort_order)())
-            print('ok1', flush=True)
+
             # user_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
                                                                    page_size=int(per_page))
-            print('ok2', flush=True)
+
             # many=True if user_query is a collection of many results, so that record will be serialized to a list.
             return room_schema.dump(record_query, many=True), get_record_pagination
         except:
@@ -657,13 +720,13 @@ class Exam_Room(Base):
             sess.close()
 
     @classmethod
-    def updateRecord(cls, currentRoomID, newRoomID, newRoomName, newMaxcapacity):
+    def updateRecord(cls, currentRoomID, newRoomName, newMaxcapacity):
         sess = Session()
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
             sess.query(Exam_Room).filter_by(RoomID=currentRoomID).update(
-                {Exam_Room.RoomID: newRoomID, Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
+                {Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
             sess.commit()
         except:
             sess.rollback()
@@ -844,6 +907,8 @@ class ExamRoomSchema(ModelSchema):
 
 
 class ShiftSchema(ModelSchema):
+    Subject = Nested(SubjectSchema)
+
     class Meta:
         model = Shift
         # optionally attach a Session

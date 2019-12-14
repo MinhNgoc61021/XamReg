@@ -83,9 +83,6 @@
       </b-table>
     </b-field>
     <b-field v-else>
-      <b-message type="is-danger" has-icon>
-        Hiện tại chưa có dự liệu phòng thi, bạn hãy nhập vào phòng thi!
-      </b-message>
     </b-field>
   </div>
 </template>
@@ -151,7 +148,7 @@
                   this.loading = false;
                   this.$buefy.notification.open({
                     duration: 2000,
-                    message: 'Không thể lấy được dự liệu phòng thi!',
+                    message: 'Không thể lấy được dữ liệu phòng thi!',
                     position: 'is-bottom-right',
                     type: 'is-danger',
                     hasIcon: true
@@ -326,7 +323,7 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true

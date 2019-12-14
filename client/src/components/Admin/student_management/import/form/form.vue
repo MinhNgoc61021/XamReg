@@ -66,7 +66,7 @@
           async submitNewStudent() {
               try {
                   const response = await axios({
-                     url: '/record/create-student-record',
+                     url: '/student/create-student-record',
                      method: 'post',
                      headers: {
                         'Authorization': authHeader(),

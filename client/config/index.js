@@ -22,6 +22,10 @@ module.exports = {
         target: 'http://api:5000',
         changeOrigin: true,
       },
+      '/auth/update-password': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/handling/upload': {
         target: 'http://api:5000',
         changeOrigin: true,
@@ -53,6 +57,33 @@ module.exports = {
       '/record/search-student-record': {
         target: 'http://api:5000',
         changeOrigin: true,
+      '/student/student-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/student/create-student-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/student/remove-student-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/student/update-student-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/student/student-status-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/student/remove-student-status-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/student/search-student-record': {
+          target: 'http://api:5000',
+          changeOrigin: true,
       },
       '/subject/subject-records': {
         target: 'http://api:5000',
@@ -84,6 +115,10 @@ module.exports = {
       },
       '/schedule/remove-semester': {
           target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/edit-semester': {
+        target: 'http://api:5000',
           changeOrigin: true,
       },
       '/schedule/semester-records': {

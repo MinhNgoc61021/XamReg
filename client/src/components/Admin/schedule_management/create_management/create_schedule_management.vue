@@ -38,15 +38,19 @@
                 class="card-header"
                 role="button">
                 <p class="card-header-title">
-                    {{ collapse.SemTitle }}
+                    <span>Tiêu đề: {{ collapse.SemTitle }}
+                      <b-tag v-if="collapse.Status === false">Chưa thi</b-tag>
+                      <b-tag v-else type="is-primary"> Đang thi</b-tag>
+                    </span>
                 </p>
                 <div style="float: right; margin: 20px;">
+                    <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onSemesterEdit(collapse)"></b-button>
                     <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onSemesterDelete(collapse)"></b-button>
                 </div>
             </div>
               <div class="card-content">
                 <h4 class="title is-4">Danh sách ca thi</h4>
-                <b-field grouped group-multiline>
+                <b-field>
                   <b-button
                     type="is-primary"
                     :class="{'is-loading': shift.create_loading}"
@@ -55,12 +59,12 @@
                   </b-button>
                 </b-field>
                 <div>
-                  <div v-if="shift.shift_record_data.length === 0" >
+                  <b-field group-multiline v-if="shift.shift_record_data.length === 0">
                     <b-message type="is-danger" has-icon>
                       Hiện tại chưa có thông tin về ca thi trong <b>{{ collapse.SemTitle }}</b>, bạn hãy nhập vào ca thi!
                     </b-message>
-                  </div>
-                  <div v-else>
+                  </b-field>
+                  <b-field expanded v-else>
 
                     <!--Shift Record-->
                     <b-table
@@ -90,11 +94,13 @@
                             <b-table-column field="ShiftID" label="Mã ca thi" width="100" sortable>
                               {{ props.row.ShiftID }}
                             </b-table-column>
-                            <b-table-column field="SubjectID" label="Mã môn" width="100" sortable>
-                              {{ props.row.Subject }}
+                            <b-table-column field="SubjectID" label="Môn thi" width="100" sortable>
+                              <b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}</b>
                             </b-table-column>
                             <b-table-column field="Date_Start" label="Ngày thi" width="100" sortable>
-                              {{ props.row.Date_Start }}
+                              <span class="tag is-success">
+                                {{ formatDate(props.row.Date_Start) }}
+                              </span>
                             </b-table-column>
                             <b-table-column field="Start_At" label="Thời gian bắt đầu" width="100" sortable>
                               {{ props.row.Start_At }}
@@ -112,44 +118,34 @@
                         <!--Room-->
                         <template slot="detail" slot-scope="props">
                             <h4 class="title is-4">Danh sách phòng thi</h4>
-                            <b-field grouped group-multiline>
-                              <b-autocomplete
-                                :data="room.searchResults"
-                                placeholder="Tìm kiếm để nhập phòng thi"
-                                icon="search"
-                                field="RoomName"
-                                :loading="room.search_loading"
-                                @typing="onRoomSearch"
-                                @select="option => { room.roomID = option.RoomID }"
-                                expanded>
-                                  <template slot-scope="props">
-                                    <div class="media">
-                                      <div class="media-content">
-                                        <b>Mã phòng: </b>{{ props.option.RoomID }}
-                                        <br>
-                                        <b>Tên phòng: </b>{{ props.option.RoomName }}
-                                      </div>
-                                    </div>
-                                  </template>
-                              </b-autocomplete>
+                            <b-field  expanded>
                               <b-button
                                 :class="{'is-loading': room.room_loading}"
                                 class="button"
-                                @click="getRoomRecord()"
+                                @click="getRoomRecord"
                               >
                                 <b-icon
                                   size="is-small"
                                   icon="sync"/>
                               </b-button>
-                              <b-button
-                                class="button"
-                                @click="addNewRoom"
-                                icon-pack="fas" icon-left="plus-square"
-                              >
-                                <span>Thêm phòng thi</span>
-                              </b-button>
+                              <b-autocomplete clear-on-select
+                                  :data="room.searchResults"
+                                  placeholder="Tìm kiếm để chọn phòng thi"
+                                  icon="search"
+                                  field="RoomName"
+                                  :loading="room.search_loading"
+                                  @typing="onRoomSearch"
+                                  @select="option => { room.select_search = [option]; addNewRoom() }"
+                                   expanded>
+                                    <template slot-scope="props">
+                                      <div class="media">
+                                        <div class="media-content">
+                                          <b>Tên phòng: </b>{{ props.option.RoomName }}
+                                        </div>
+                                      </div>
+                                    </template>
+                                </b-autocomplete>
                             </b-field>
-
                             <!--shift-->
                             <b-field v-if="room.room_record_data.length > 0" grouped group-multiline>
                               <b-table
@@ -174,7 +170,7 @@
                                 @sort="onRoomSort">
                                 <template slot-scope="props">
 
-                                  <b-table-column field="RoomID" label="Mã môn" width="100" sortable>
+                                  <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
                                     {{ props.row.RoomID }}
                                   </b-table-column>
                                   <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
@@ -198,19 +194,15 @@
 
                             <!--shift-->
                         </template>
-
                     </b-table>
                     <!--Shift Record-->
 
-                  </div>
+                  </b-field >
                 </div>
             </div>
         </b-collapse>
       </div>
       <div v-else>
-        <b-message type="is-danger" has-icon>
-          Hiện tại chưa có thông tin về kỳ thi, bạn hãy nhập vào và tạo kỳ thi mới!
-        </b-message>
       </div>
     </section>
   </div>
@@ -219,6 +211,7 @@
 
 <script>
     import axios from 'axios';
+    import moment from 'moment';
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
     import semester_edit from "./edit/semester_edit";
@@ -234,6 +227,7 @@
                     semester_record_data: [], // semester info
                     loading: false, // semester loading
                     create_loading: false, // create semester loading
+                    semester_status: false,
                 },
                 shift: {
                     shift_record_data: [],
@@ -251,7 +245,7 @@
                     ID_Index: [],
                 },
                 room: {
-                    roomID: '',
+                    select_search: Object,
                     room_record_data: [],
                     total: 0,
                     searchResults: [],
@@ -269,9 +263,13 @@
                 currentSemID: '', // current opening semesterID
                 hasSemesterError: false,
                 hasSubjectError: false,
+                hasRoomError: false,
             }
         },
         methods: {
+            formatDate(date) {
+                return moment(date).format('L');
+            },
             async addNewSemester() {
                 if (this.semester.newSemester.length === 0) {
                     this.hasSemesterError = true;
@@ -295,7 +293,7 @@
                             if (response.data.status === 'success') {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `Đã tạo kỳ thi thành công.`,
+                                    message: `Đã tạo kỳ thi thành công!`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
                                     hasIcon: true
@@ -303,7 +301,7 @@
                             } else {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `Kỳ thi đã tồn tại từ trước.`,
+                                    message: `Kỳ thi đã tồn tại từ trước!`,
                                     position: 'is-bottom-right',
                                     type: 'is-warning',
                                     hasIcon: true
@@ -323,7 +321,7 @@
                         } else if (e['message'].includes('401')) {
                             this.$buefy.notification.open({
                                 duration: 2000,
-                                message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                message: 'Không được quyền sử dụng!',
                                 position: 'is-bottom-right',
                                 type: 'is-danger',
                                 hasIcon: true
@@ -369,7 +367,7 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true
@@ -414,6 +412,62 @@
                     throw error;
                 }
             }, // xong
+            async onSemesterEdit(record) {
+                this.$buefy.modal.open({
+                   parent: this,
+                   component: semester_edit,
+                   props: {
+                       currentSemID: record.SemID,
+                       currentSemTitle: record.SemTitle,
+                       currentStatus: record.Status,
+                   },
+                   hasModalCard: true,
+                   customClass: 'custom-class custom-class-2',
+                   canCancel: false,
+                   events: {
+                     'loadSemesters': (http_status) => {
+                       if (http_status === 200) {
+                         this.$buefy.notification.open({
+                           duration: 2000,
+                           message: `Đã sửa đổi thành công!`,
+                           position: 'is-bottom-right',
+                           type: 'is-success',
+                           hasIcon: true
+                         });
+                         this.getSemesterRecordData();
+                       }
+                       else if (http_status === 202) {
+                          this.$buefy.notification.open({
+                           duration: 2000,
+                           message: `Kỳ thi đã tồn tại từ trước!`,
+                           position: 'is-bottom-right',
+                           type: 'is-warning',
+                           hasIcon: true
+                         });
+                         this.getSemesterRecordData();
+                       }
+                       else if (http_status === 400) {
+                         this.$buefy.notification.open({
+                           duration: 2000,
+                           message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                           position: 'is-bottom-right',
+                           type: 'is-danger',
+                           hasIcon: true
+                         });
+                       }
+                       else if (http_status === 401) {
+                         this.$buefy.notification.open({
+                           duration: 2000,
+                           message: 'Không được quyền sử dụng!',
+                           position: 'is-bottom-right',
+                           type: 'is-danger',
+                           hasIcon: true
+                         });
+                        }
+                      }
+                   }
+                })
+            },
             async addNewShift() {
                 this.$buefy.modal.open({
                     parent: this,
@@ -434,10 +488,19 @@
                            });
                            this.getShiftRecordData();
                          }
-                         else if (http_status === 208) {
+                         else if (http_status === '202-already-exist-subject') {
                              this.$buefy.notification.open({
                                duration: 2000,
-                               message: `Ca thi đã tồn tại từ trước!`,
+                               message: `Ca thi đang bị trùng môn thi với ca thi khác!`,
+                               position: 'is-bottom-right',
+                               type: 'is-warning',
+                               hasIcon: true
+                             });
+                         }
+                         else if (http_status === '202-time-false') {
+                             this.$buefy.notification.open({
+                               duration: 2000,
+                               message: `Thời gian bắt đầu thi và kết thúc phải chênh nhau ít nhất <b>1 tiếng</b>!`,
                                position: 'is-bottom-right',
                                type: 'is-warning',
                                hasIcon: true
@@ -487,7 +550,7 @@
                             'Authorization': authHeader(),
                         }
                     });
-                    console.log(response.data.shift_records);
+                    // console.log(response.data.shift_records);
                     if (response.status === 200) {
                         this.shift.shift_record_data = [];
                         this.shift.total = response.data.total_results;
@@ -520,43 +583,63 @@
                    parent: this,
                    component: shift_edit,
                    props: {
+                       currentSemID: this.currentSemID,
                        currentShiftID: record.ShiftID,
-                       currentStart_At: record.Start_At,
-                       currentDate_Start: record.Date_Start,
-                       currentRoomID: record.Date_Start,
+                       currentSubjectID: record.Subject.SubjectID,
+                       currentDate_Start: new Date(moment(record.Date_Start).format('MM/DD/YYYY')),
+                       currentStart_At: new Date(moment(record.Start_At, 'hh:mm')),
+                       currentEnd_At: new Date(moment(record.End_At, 'hh:mm')),
                    },
                    hasModalCard: true,
                    customClass: 'custom-class custom-class-2',
                    canCancel: false,
                    events: {
-                     'loadSubjects': (http_status) => {
+                     'editShift': (http_status) => {
                        if (http_status === 200) {
-                         this.$buefy.notification.open({
-                           duration: 2000,
-                           message: `Đã sửa đổi thành công!`,
-                           position: 'is-bottom-right',
-                           type: 'is-success',
-                           hasIcon: true
-                         });
-                         this.getShiftRecordData();
+                           this.$buefy.notification.open({
+                             duration: 2000,
+                             message: `Đã sửa đổi thành công!`,
+                             position: 'is-bottom-right',
+                             type: 'is-success',
+                             hasIcon: true
+                           });
+                           this.getShiftRecordData();
                        }
+                       else if (http_status === '202-already-exist-subject') {
+                             this.$buefy.notification.open({
+                               duration: 2000,
+                               message: `Ca thi đang bị trùng môn thi với ca thi khác!`,
+                               position: 'is-bottom-right',
+                               type: 'is-warning',
+                               hasIcon: true
+                             });
+                         }
+                         else if (http_status === '202-time-false') {
+                             this.$buefy.notification.open({
+                               duration: 2000,
+                               message: `Thời gian bắt đầu thi và kết thúc phải chênh nhau ít nhất <b>1 tiếng</b>!`,
+                               position: 'is-bottom-right',
+                               type: 'is-warning',
+                               hasIcon: true
+                             });
+                         }
                        else if (http_status === 400) {
-                         this.$buefy.notification.open({
-                           duration: 2000,
-                           message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
-                           position: 'is-bottom-right',
-                           type: 'is-danger',
-                           hasIcon: true
-                         });
+                           this.$buefy.notification.open({
+                             duration: 2000,
+                             message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                             position: 'is-bottom-right',
+                             type: 'is-danger',
+                             hasIcon: true
+                           });
                        }
                        else if (http_status === 401) {
-                         this.$buefy.notification.open({
-                           duration: 2000,
-                           message: 'Không được quyền sử dụng!',
-                           position: 'is-bottom-right',
-                           type: 'is-danger',
-                           hasIcon: true
-                         });
+                           this.$buefy.notification.open({
+                             duration: 2000,
+                             message: 'Không được quyền sử dụng!',
+                             position: 'is-bottom-right',
+                             type: 'is-danger',
+                             hasIcon: true
+                           });
                         }
                       }
                    }
@@ -595,7 +678,7 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true
@@ -608,66 +691,62 @@
                 });
             }, // xong
             async addNewRoom() {
-                console.log(this.roomID);
-                // if (this.room.length === 0) {
-                //     this.hasSemesterError = true;
-                // }
-                    try {
-                        this.room.room_loading = true;
-                        const response = await axios({
-                            url: '/schedule/create-room',
-                            method: 'post',
-                            headers: {
-                                'Authorization': authHeader(),
-                            },
-                            data: {
-                                roomID: this.room.roomID,
-                                shiftID: this.currentShiftID,
-                            },
-                        });
-                        if (response.status === 200) {
-                            this.room.room_loading = false;
-                            if (response.data.status === 'success') {
-                                this.$buefy.notification.open({
-                                    duration: 2000,
-                                    message: `Đã thêm phòng thi thành công.`,
-                                    position: 'is-bottom-right',
-                                    type: 'is-success',
-                                    hasIcon: true
-                                });
-                            } else {
-                                this.$buefy.notification.open({
-                                    duration: 2000,
-                                    message: `Phòng thi đã tồn tại từ trước.`,
-                                    position: 'is-bottom-right',
-                                    type: 'is-warning',
-                                    hasIcon: true
-                                });
-                            }
-                        }
-                    } catch (e) {
+                try {
+                    this.room.room_loading = true;
+                    const response = await axios({
+                        url: '/schedule/create-room',
+                        method: 'post',
+                        headers: {
+                            'Authorization': authHeader(),
+                        },
+                        data: {
+                            roomID: this.room.select_search[0].RoomID,
+                            shiftID: this.currentShiftID,
+                        },
+                    });
+                    if (response.status === 200) {
                         this.room.room_loading = false;
-                        if (e['message'].includes('400')) {
+                        if (response.data.status === 'success') {
                             this.$buefy.notification.open({
                                 duration: 2000,
-                                message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                                message: `Đã thêm phòng thi thành công.`,
                                 position: 'is-bottom-right',
-                                type: 'is-danger',
+                                type: 'is-success',
                                 hasIcon: true
-                            })
-                        } else if (e['message'].includes('401')) {
+                            });
+                        } else {
                             this.$buefy.notification.open({
                                 duration: 2000,
-                                message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                message: `Phòng thi đã tồn tại từ trước.`,
                                 position: 'is-bottom-right',
-                                type: 'is-danger',
+                                type: 'is-warning',
                                 hasIcon: true
-                            })
+                            });
                         }
                     }
-                    finally {
-                        this.getRoomRecord();
+                } catch (e) {
+                    this.room.room_loading = false;
+                    if (e['message'].includes('400')) {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
+                    } else if (e['message'].includes('401')) {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Không được quyền sử dụng!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
                     }
+                }
+                finally {
+                    this.getRoomRecord();
+                }
             },
             async getRoomRecord() {
                 this.room.room_loading = true;
@@ -686,7 +765,7 @@
                             'Authorization': authHeader(),
                         }
                     });
-                    console.log(response.data.shift_records);
+                    // console.log(response.data.shift_records);
                     if (response.status === 200) {
                         this.room.room_record_data = [];
                         this.room.total = response.data.total_results;
@@ -719,10 +798,10 @@
                 this.room.sortOrder = order;
                 this.getRoomRecord();
             }, // xong
-            onRoomDelete(ID) {
+            async onRoomDelete(ID) {
                 this.$buefy.dialog.confirm({
                     title: 'Xóa kỳ thi',
-                    message: `Bạn có chắc chắn là muốn <b>xóa</b> ca thi có mã ${ID} này không? Đã làm thì tự chịu đấy.`,
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> phòng thi có mã ${ID} này không? Đã làm thì tự chịu đấy.`,
                     confirmText: 'Xóa!',
                     cancelText: 'Bỏ qua',
                     type: 'is-danger',
@@ -737,13 +816,13 @@
                                 },
                                 data: {
                                     currentShiftID: this.currentShiftID,
-                                    delShiftID: ID,
+                                    delRoomID: ID,
                                 },
                             });
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `Đã xóa kỳ thi <b>${record.SemTitle}</b> thành công.`,
+                                    message: `Đã xóa phòng thi có mã ${ID}`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
                                     hasIcon: true
@@ -753,14 +832,14 @@
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: 'HTTP Status 401: Không được quyền sử dụng!',
+                                    message: 'Không được quyền sử dụng!',
                                     position: 'is-bottom-right',
                                     type: 'is-danger',
                                     hasIcon: true
                                 })
                             }
                         } finally {
-                            this.getShiftRecordData();
+                            this.getRoomRecord();
                         }
                     },
                 });
@@ -803,7 +882,7 @@
                         throw error;
                     });
                 }
-            }, 500),
+            }, 500), // xong
             destroySemesterData() { // destroy subject data for scalability when closing accordion
                 this.shift.shift_record_data = [];
             },
