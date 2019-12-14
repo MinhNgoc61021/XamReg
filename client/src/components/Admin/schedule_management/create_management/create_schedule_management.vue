@@ -481,7 +481,7 @@
                          else if (http_status === 208) {
                              this.$buefy.notification.open({
                                duration: 2000,
-                               message: `Ca thi đã tồn tại từ trước!`,
+                               message: `Ca thi đang bị trùng môn thi với ca thi khác!`,
                                position: 'is-bottom-right',
                                type: 'is-warning',
                                hasIcon: true

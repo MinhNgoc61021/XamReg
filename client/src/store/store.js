@@ -14,6 +14,7 @@ export const store = new Vuex.Store ({
     ID: '',
     fullname: '',
     isNotExist: false,
+    currentSemesterID: '', // dùng cái này thì khi sinh viên vào nó ko phải nhập lại Kỳ thi lần 2 nữa, chỉ có khi nào đăng xuất rồi sau mới phải đánh lại
   },
   plugins: [createPersistedState()],
   mutations: {
@@ -31,6 +32,12 @@ export const store = new Vuex.Store ({
         signOut(state) {
           state.userStatus = {};
         },
+        setCurrentSemesterID(state, CurrentSemesterID) {
+          state.currentSemesterID = CurrentSemesterID;
+        },
+        delCurrentSemesterID(state) {
+          state.currentSemesterID = '';
+        }
   },
   actions: {
       SignIn: (context, { username, password }) => {
@@ -51,7 +58,8 @@ export const store = new Vuex.Store ({
               }
             })
       },
-      SignOut: () => {
+      SignOut: (context) => {
+        context.commit('delCurrentSemesterID');
         apiService.signOut();
         router.push('/register');
       },
@@ -63,9 +71,13 @@ export const store = new Vuex.Store ({
                 context.commit('getUserData', response.data);
               }},
           )
-        },
+      },
+      SetCurrentSemesterID: (context, semID) => { // hàm này gọi bên shift_register
+        context.commit('setCurrentSemesterID', semID);
+      },
+
   },
   getters: {
-
+    
   },
 });

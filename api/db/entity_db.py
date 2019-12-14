@@ -376,6 +376,18 @@ class Semester_Examination(Base):
                     nullable=False, default=False) # true là đang thi, false là không thi
 
     @classmethod
+    def searchSemesterRecord(cls, SemTitle):
+        sess = Session()
+        try:
+            semester = sess.query(Semester_Examination).filter(Semester_Examination.SemTitle.like(SemTitle + '%'), Semester_Examination.Status == True)
+            return semester_examination_schema.dump(semester, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
     def create(cls, newSemesterTitle):
         sess = Session()
         try:
