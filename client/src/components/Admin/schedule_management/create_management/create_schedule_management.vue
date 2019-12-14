@@ -293,7 +293,7 @@
                             if (response.data.status === 'success') {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `Đã tạo kỳ thi thành công.`,
+                                    message: `Đã tạo kỳ thi thành công!`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
                                     hasIcon: true
@@ -301,7 +301,7 @@
                             } else {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `Kỳ thi đã tồn tại từ trước.`,
+                                    message: `Kỳ thi đã tồn tại từ trước!`,
                                     position: 'is-bottom-right',
                                     type: 'is-warning',
                                     hasIcon: true
@@ -436,6 +436,16 @@
                          });
                          this.getSemesterRecordData();
                        }
+                       else if (http_status === 202) {
+                          this.$buefy.notification.open({
+                           duration: 2000,
+                           message: `Kỳ thi đã tồn tại từ trước!`,
+                           position: 'is-bottom-right',
+                           type: 'is-warning',
+                           hasIcon: true
+                         });
+                         this.getSemesterRecordData();
+                       }
                        else if (http_status === 400) {
                          this.$buefy.notification.open({
                            duration: 2000,
@@ -478,10 +488,19 @@
                            });
                            this.getShiftRecordData();
                          }
-                         else if (http_status === 208) {
+                         else if (http_status === '202-already-exist-subject') {
                              this.$buefy.notification.open({
                                duration: 2000,
                                message: `Ca thi đang bị trùng môn thi với ca thi khác!`,
+                               position: 'is-bottom-right',
+                               type: 'is-warning',
+                               hasIcon: true
+                             });
+                         }
+                         else if (http_status === '202-time-false') {
+                             this.$buefy.notification.open({
+                               duration: 2000,
+                               message: `Thời gian bắt đầu thi và kết thúc phải chênh nhau ít nhất <b>1 tiếng</b>!`,
                                position: 'is-bottom-right',
                                type: 'is-warning',
                                hasIcon: true
@@ -565,42 +584,61 @@
                    component: shift_edit,
                    props: {
                        currentShiftID: record.ShiftID,
-                       currentStart_At: record.Start_At,
+                       currentSubjectID: record.Subject.SubjectID,
                        currentDate_Start: new Date(moment(record.Date_Start).format('MM/DD/YYYY')),
-                       currentEnd_At: record.End_At,
+                       currentStart_At: new Date(moment(record.Start_At, 'hh:mm')),
+                       currentEnd_At: new Date(moment(record.End_At, 'hh:mm')),
                    },
                    hasModalCard: true,
                    customClass: 'custom-class custom-class-2',
                    canCancel: false,
                    events: {
-                     'loadSubjects': (http_status) => {
+                     'editShift': (http_status) => {
                        if (http_status === 200) {
-                         this.$buefy.notification.open({
-                           duration: 2000,
-                           message: `Đã sửa đổi thành công!`,
-                           position: 'is-bottom-right',
-                           type: 'is-success',
-                           hasIcon: true
-                         });
-                         this.getShiftRecordData();
+                           this.$buefy.notification.open({
+                             duration: 2000,
+                             message: `Đã sửa đổi thành công!`,
+                             position: 'is-bottom-right',
+                             type: 'is-success',
+                             hasIcon: true
+                           });
+                           this.getShiftRecordData();
                        }
+                       else if (http_status === '202-already-exist-subject') {
+                             this.$buefy.notification.open({
+                               duration: 2000,
+                               message: `Ca thi đang bị trùng môn thi với ca thi khác!`,
+                               position: 'is-bottom-right',
+                               type: 'is-warning',
+                               hasIcon: true
+                             });
+                         }
+                         else if (http_status === '202-time-false') {
+                             this.$buefy.notification.open({
+                               duration: 2000,
+                               message: `Thời gian bắt đầu thi và kết thúc phải chênh nhau ít nhất <b>1 tiếng</b>!`,
+                               position: 'is-bottom-right',
+                               type: 'is-warning',
+                               hasIcon: true
+                             });
+                         }
                        else if (http_status === 400) {
-                         this.$buefy.notification.open({
-                           duration: 2000,
-                           message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
-                           position: 'is-bottom-right',
-                           type: 'is-danger',
-                           hasIcon: true
-                         });
+                           this.$buefy.notification.open({
+                             duration: 2000,
+                             message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                             position: 'is-bottom-right',
+                             type: 'is-danger',
+                             hasIcon: true
+                           });
                        }
                        else if (http_status === 401) {
-                         this.$buefy.notification.open({
-                           duration: 2000,
-                           message: 'Không được quyền sử dụng!',
-                           position: 'is-bottom-right',
-                           type: 'is-danger',
-                           hasIcon: true
-                         });
+                           this.$buefy.notification.open({
+                             duration: 2000,
+                             message: 'Không được quyền sử dụng!',
+                             position: 'is-bottom-right',
+                             type: 'is-danger',
+                             hasIcon: true
+                           });
                         }
                       }
                    }

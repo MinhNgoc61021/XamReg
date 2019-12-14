@@ -19,6 +19,7 @@
               type="number"
               v-model="newMaxcapacity"
               :value="newMaxcapacity"
+              min="0"
               placeholder="Nhập số lượng chỗ thi"
               required>
             </b-input>

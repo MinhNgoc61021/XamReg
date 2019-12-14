@@ -9,6 +9,7 @@ import re
 from controller.authentication.auth import token_required
 from db.entity_db import Semester_Examination, Room_Shift, Shift, Log
 from controller.time_conversion.asia_timezone import set_custom_log_time
+from datetime import datetime
 
 # Log management for admin
 schedule_management = Blueprint('schedule_management', __name__, url_prefix='/schedule')
@@ -29,7 +30,7 @@ def add_semester(current_user):
         else:
             newSemester = Semester_Examination.create(newSemesterTitle)
             if newSemester is False:
-                return jsonify({'status': 'already-exist'}), 200
+                return jsonify({'status': 'already-exist'}), 202
             else:
                 Log.create(current_user['ID'],
                            'Tạo thêm kỳ thi có tựa đề ' + newSemesterTitle + ' vào hệ thống.',
@@ -49,14 +50,17 @@ def edit_semester(current_user):
         print(semID, flush=True)
         print(newSemesterTitle, flush=True)
         check = re.search('^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ' +
-                                  'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
-                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ()\\s-]+$', newSemesterTitle)
+                          'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
+                          'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ()\\s-]+$', newSemesterTitle)
         if check is not None:
-            Semester_Examination.updateRecord(semID, newSemesterTitle, newStatus)
-            Log.create(current_user['ID'],
-                       'Thay đổi tựa đề của của kỳ thi có mã ' + str(semID) + ' thành ' + newSemesterTitle + '.',
-                       set_custom_log_time())
-            return jsonify({'status': 'success'}), 200
+            newSem = Semester_Examination.updateRecord(semID, newSemesterTitle, newStatus)
+            if newSem is True:
+                Log.create(current_user['ID'],
+                           'Thay đổi tựa đề của của kỳ thi có mã ' + str(semID) + ' thành ' + newSemesterTitle + '.',
+                           set_custom_log_time())
+                return jsonify({'status': 'success'}), 200
+            else:
+                return jsonify({'status': 'already-exist'}), 202
         else:
             return jsonify({'status': 'bad-request'}), 400
     except:
@@ -102,47 +106,64 @@ def create_shift(current_user):
         date_start = shift.get('date_start')
         start_at = shift.get('start_at')
         end_at = shift.get('end_at')
-        newShift = Shift.create(str(subjectID),
-                                str(semID),
-                                date_start,
-                                start_at,
-                                end_at)
+        print(start_at, flush=True)
+        print(end_at, flush=True)
+        time_start = datetime.strptime(str(start_at), '%H:%M:%S')  # convert string to time
+        time_end = datetime.strptime(str(end_at), '%H:%M:%S')
+        diff = time_end - time_start
+        check = diff.total_seconds() / 3600
+        print(check, flush=True)
+        if check >= 1:
+            newShift = Shift.create(str(subjectID),
+                                    str(semID),
+                                    date_start,
+                                    start_at,
+                                    end_at)
 
-        if newShift is False:
-            return jsonify({'status': 'already-exist'}), 200
+            if newShift is False:
+                return jsonify({'status': 'already-exist-subject'}), 202
+            else:
+                Log.create(current_user['ID'],
+                           'Thêm ca thi vào kỳ thi có mã ' + str(semID) + ' vào hệ thống.',
+                           set_custom_log_time())
+                return jsonify({'status': 'success'}), 200
         else:
-            Log.create(current_user['ID'],
-                       'Thêm ca thi vào kỳ thi có mã ' + str(semID) + ' vào hệ thống.',
-                       set_custom_log_time())
-            return jsonify({'status': 'success'}), 200
+            return jsonify({'status': 'time-false'}), 202
 
     except:
         return jsonify({'status': 'bad-request'}), 400
 
 
-@schedule_management.route('/edit-shift ', methods=['PUT'])
+@schedule_management.route('/edit-shift', methods=['PUT'])
 @token_required
 def edit_shift(current_user):
     try:
         edit_shift = request.get_json()
-        shiftID = edit_shift.get('ShiftID')
+        shiftID = edit_shift.get('currentShiftID')
         new_subjectID = edit_shift.get('newSubjectID')
         new_date_start = edit_shift.get('newDate_Start')
         new_start_at = edit_shift.get('newStart_At')
         new_end_at = edit_shift.get('newEnd_At')
-        newShift = Shift.updateRecord(str(shiftID),
-                                      str(new_subjectID),
-                                      new_date_start,
-                                      new_start_at,
-                                      new_end_at)
-        if newShift is not None:
-            Log.create(current_user['ID'],
-                       'Thay đổi thông tin ca thi có mã ' + str(shiftID),
-                       set_custom_log_time())
-            return jsonify({'status': 'success'}), 200
+
+        new_time_start = datetime.strptime(new_start_at, "%H:%M:%S")  # convert string to time
+        new_time_end = datetime.strptime(new_end_at, "%H:%M:%S")
+        diff = new_time_start - new_time_end
+        check = diff.total_seconds() / 3600
+        if check >= 1:
+            newShift = Shift.updateRecord(str(shiftID),
+                                          str(new_subjectID),
+                                          new_date_start,
+                                          new_start_at,
+                                          new_end_at)
+            if newShift is True:
+                Log.create(current_user['ID'],
+                           'Thay đổi thông tin ca thi có mã ' + str(shiftID),
+                           set_custom_log_time())
+                return jsonify({'status': 'success'}), 200
+            else:
+                return jsonify({'status': 'already-exist-subject'}), 202
         else:
-            print('Mã môn không hợp lệ', flush=True)
-            return jsonify({'status': 'bad-request'}), 400
+            return jsonify({'status': 'time-false'}), 202
     except:
         return jsonify({'status': 'bad-request'}), 400
 

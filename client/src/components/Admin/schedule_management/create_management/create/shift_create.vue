@@ -18,7 +18,7 @@
               :loading="search.searchLoading"
               @typing="onSubjectSearch"
               @select="option =>  optionedSubject = [option]"
-              expanded>
+              expanded required>
                 <template slot-scope="props">
                     <div class="media">
                         <div class="media-left">
@@ -101,8 +101,11 @@
                         this.$parent.close();
                         this.$emit('loadShifts', 200);
                     }
-                    else {
-                        this.$emit('loadShifts', 208);
+                    else if (response.data.status === 'time-false') {
+                        this.$emit('loadShifts', '202-time-false');
+                    }
+                    else if (response.data.status === 'already-exist-subject') {
+                        this.$emit('loadShifts', '202-already-exist-subject');
                     }
                 } catch (e) {
                   if (e['message'].includes('400')) {

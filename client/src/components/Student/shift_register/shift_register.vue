@@ -10,7 +10,7 @@
         >
           <b-icon
             size="is-small"
-            icon="edit"/>
+            icon="sync"/>
           <span>Làm mới</span>
         </b-button>
         <b-autocomplete
@@ -35,6 +35,12 @@
             </div>
           </template>
         </b-autocomplete>
+        <b-button
+          class="button"
+          @click="selectSemesterModal"
+        >
+          <span>Chọn kỳ thi khác</span>
+        </b-button>
       </b-field>
 
       <b-table
@@ -220,49 +226,53 @@
               this.shift.sortField = field;
               this.shift.sortOrder = order;
             },
+            selectSemesterModal() {
+                this.$buefy.modal.open({
+                    parent: this,
+                    component: enter_semester,
+                    hasModalCard: true,
+                    customClass: 'custom-class custom-class-2',
+                    canCancel: false,
+                    events: {
+                      'loadSemesterShifts': (semester_record) => {
+                        if (semester_record.SemTitle !== '') {
+                          this.semester.semester_record = semester_record;
+                          this.SetCurrentSemesterID(semester_record.SemID);
+                          this.getShiftRecordData();
+                          this.$buefy.notification.open({
+                            duration: 2000,
+                            message: `Đã lấy ca thi thành công!`,
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                            hasIcon: true
+                          });
+                        } else if (semester_record.SemTitle === '') {
+                          this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Không lấy được dữ liệu!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                          });
+                        }
+                        // } else if (http_status === 401) {
+                        //   this.$buefy.notification.open({
+                        //     duration: 2000,
+                        //     message: 'Không được quyền sử dụng!',
+                        //     position: 'is-bottom-right',
+                        //     type: 'is-danger',
+                        //     hasIcon: true
+                        //   });
+                        // }
+                      }
+                    }
+                  })
+            }
+
         },
         mounted() {
             if (this.currentSemesterID === '') {
-                this.$buefy.modal.open({
-                  parent: this,
-                  component: enter_semester,
-                  hasModalCard: true,
-                  customClass: 'custom-class custom-class-2',
-                  canCancel: false,
-                  events: {
-                    'loadSemesterShifts': (semester_record) => {
-                      if (semester_record.SemTitle !== '') {
-                        this.semester.semester_record = semester_record;
-                        this.SetCurrentSemesterID(semester_record.SemID);
-                        this.getShiftRecordData();
-                        this.$buefy.notification.open({
-                          duration: 2000,
-                          message: `Đã nhập thành công!`,
-                          position: 'is-bottom-right',
-                          type: 'is-success',
-                          hasIcon: true
-                        });
-                      } else if (semester_record.SemTitle === '') {
-                        this.$buefy.notification.open({
-                          duration: 2000,
-                          message: 'Sửa đổi không thành công!',
-                          position: 'is-bottom-right',
-                          type: 'is-danger',
-                          hasIcon: true
-                        });
-                      }
-                      // } else if (http_status === 401) {
-                      //   this.$buefy.notification.open({
-                      //     duration: 2000,
-                      //     message: 'Không được quyền sử dụng!',
-                      //     position: 'is-bottom-right',
-                      //     type: 'is-danger',
-                      //     hasIcon: true
-                      //   });
-                      // }
-                    }
-                  }
-                })
+                this.selectSemesterModal();
             }
             else {
                 this.semester.semester_record.SemID = this.currentSemesterID;

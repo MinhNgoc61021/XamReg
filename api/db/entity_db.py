@@ -190,6 +190,19 @@ class User(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def updatePassword(cls, currentUserID, newPassword):
+        sess = Session()
+        try:
+            sess.query(User).filter_by(ID=currentUserID).update(
+                {User.Password: generate_password_hash(newPassword)})
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
 
 # Subject persistent class
 class Subject(Base):
@@ -373,13 +386,14 @@ class Semester_Examination(Base):
     SemTitle = Column(String(200),
                       nullable=False)
     Status = Column(Boolean,
-                    nullable=False, default=False) # true là đang thi, false là không thi
+                    nullable=False, default=False)  # true là đang thi, false là không thi
 
     @classmethod
     def searchSemesterRecord(cls, SemTitle):
         sess = Session()
         try:
-            semester = sess.query(Semester_Examination).filter(Semester_Examination.SemTitle.like(SemTitle + '%'), Semester_Examination.Status == True)
+            semester = sess.query(Semester_Examination).filter(Semester_Examination.SemTitle.like(SemTitle + '%'),
+                                                               Semester_Examination.Status == True)
             return semester_examination_schema.dump(semester, many=True)
         except:
             sess.rollback()
@@ -437,9 +451,14 @@ class Semester_Examination(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Semester_Examination).filter(Semester_Examination.SemID == currentSemID).update(
-                {Semester_Examination.SemTitle: new_semTitle, Semester_Examination.Status: new_Status})
-            sess.commit()
+            if sess.query(Semester_Examination).filter(Semester_Examination.SemID != currentSemID,
+                                                       Semester_Examination.SemTitle == new_semTitle).scalar() is None:
+                sess.query(Semester_Examination).filter(Semester_Examination.SemID == currentSemID).update(
+                    {Semester_Examination.SemTitle: new_semTitle, Semester_Examination.Status: new_Status})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise
@@ -527,16 +546,21 @@ class Shift(Base):
             sess.close()
 
     @classmethod
-    def updateRecord(cls, ShiftID, currentSubjectID, new_date_start, new_start_at, new_end_at):
+    def updateRecord(cls, ShiftID, newSubjectID, new_date_start, new_start_at, new_end_at):
         sess = Session()
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Shift).filter(Shift.ShiftID == ShiftID, Shift.SubjectID == currentSubjectID).update(
-                {Shift.Date_Start: new_date_start,
-                 Shift.Start_At: new_start_at,
-                 Shift.End_At: new_end_at})
-            sess.commit()
+            if sess.query(Shift).filter(Shift.SubjectID == newSubjectID, Shift.ShiftID != ShiftID) is None:
+                sess.query(Shift).filter(Shift.ShiftID == ShiftID).update(
+                    {Shift.SubjectID: newSubjectID,
+                     Shift.Date_Start: new_date_start,
+                     Shift.Start_At: new_start_at,
+                     Shift.End_At: new_end_at})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise
@@ -614,6 +638,7 @@ class Room_Shift(Base):
 
 
 # Student_Shift persistent class
+# dùng bảng này đăng ký nhé
 class Student_Shift(Base):
     __tablename__ = 'student_shift'
 

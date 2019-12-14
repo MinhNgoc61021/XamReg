@@ -22,6 +22,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/auth/update-password': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/handling/upload': {
           target: 'http://api:5000',
           changeOrigin: true,

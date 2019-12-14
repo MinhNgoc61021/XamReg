@@ -95,3 +95,20 @@ def get_user(current_user):
     return jsonify({'status': 'success', 'ID': current_user['ID'],
                     'Fullname': current_user['Fullname'],
                     }), 200
+
+
+@authentication.route('/update-password', methods=['PUT'])
+@token_required
+def update_password(current_user):
+    currentUserID = request.get_json().get('UserID')
+    newPassword = request.get_json().get('newPassword')
+    confirmPassword = request.get_json().get('confirmPassword')
+
+    if str(newPassword) == str(confirmPassword) and len(str(newPassword)) >= 5:
+        User.updatePassword(currentUserID, str(newPassword))
+        Log.create(str(current_user['ID']), 'Thay đổi mật khẩu', set_custom_log_time())
+        return jsonify({'status': 'success'}), 200
+
+    elif str(newPassword) != str(confirmPassword) or len(str(newPassword)) < 5:
+        return jsonify({'status': 'password-not-meet-requirement'}), 202
+    Log.create(str(current_user['ID']), 'Thay đổi mật khẩu', set_custom_log_time())
