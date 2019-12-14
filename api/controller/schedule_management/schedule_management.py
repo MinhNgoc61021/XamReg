@@ -147,7 +147,7 @@ def edit_shift(current_user):
 
         new_time_start = datetime.strptime(new_start_at, "%H:%M:%S")  # convert string to time
         new_time_end = datetime.strptime(new_end_at, "%H:%M:%S")
-        diff = new_time_start - new_time_end
+        diff = new_time_end - new_time_start
         check = diff.total_seconds() / 3600
         if check >= 1:
             newShift = Shift.updateRecord(str(shiftID),

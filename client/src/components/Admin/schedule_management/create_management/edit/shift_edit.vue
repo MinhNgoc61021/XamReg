@@ -95,7 +95,7 @@
                     },
                     data: {
                         ShiftID: this.ShiftID,
-                        newSubjectID: this.Subject.SubjectID,
+                        newSubjectID: this.SubjectID,
                         newDate_Start: moment(this.Date_Start).format('YYYY-MM-DD'),
                         newStart_At: moment(this.Start_At).format("HH:mm:ss"),
                         newEnd_At: moment(this.End_At).format('HH:mm:ss'),
@@ -105,10 +105,10 @@
                       this.$emit('editShift', 200);
                       this.$parent.close();
                   }
-                  else if (response.data.status === 'time-false') {
+                  else if (update.data.status === 'time-false') {
                         this.$emit('editShift', '202-time-false');
                     }
-                  else if (response.data.status === 'already-exist-subject') {
+                  else if (update.data.status === 'already-exist-subject') {
                       this.$emit('editShift', '202-already-exist-subject');
                   }
                 } catch (e) {
