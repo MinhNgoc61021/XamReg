@@ -27,12 +27,13 @@ def add_student_shift(current_user):
 @token_required
 def get_shift(current_user):
     try:
+        SemID = request.args.get('SemID')
         page_index = request.args.get('page_index')
         per_page = request.args.get('per_page')
         sort_order = request.args.get('sort_order')
         sort_field = request.args.get('sort_field')
 
-        record = Shift.getRecord(page_index, per_page, sort_field, sort_order)
+        record = Shift.getRecord(SemID, page_index, per_page, sort_field, sort_order)
 
         return jsonify({'status': 'success',
                         'shift_records': record[0],
@@ -50,11 +51,9 @@ def get_shift(current_user):
 def search_semester(current_user):
     try:
         searchID = request.args.get('searchID')
-        print(searchID)
         validatesearchID = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchID))
         if validatesearchID is None:
             search_results = Semester_Examination.searchSemesterRecord(searchID)
-            print(search_results)
             return jsonify({'status': 'success',
                             'search_results': search_results,
                             }), 200

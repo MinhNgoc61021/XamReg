@@ -55,11 +55,6 @@
             :default-sort="[shift.sortField, shift.sortOrder]"
             @sort="onStatusSort"
       >
-        <div v-if="shift.shift_record_data.length === 0" >
-          <b-message type="is-danger" has-icon>
-            Hiện tại chưa có thông tin về ca thi.
-          </b-message>
-        </div>
         <template slot-scope="props">
           <b-table-column field="ShiftID" label="Mã ca thi" sortable>
             {{ props.row.ShiftID }}
@@ -98,7 +93,7 @@
           </b-table-column>
 
           <b-table-column field="SubjectID" label="Mã môn thi" sortable>
-            {{ props.row.SubjectID }}
+            {{ props.row.Subject }}
           </b-table-column>
 
           <b-table-column field="Date_Start" label="Ngày thi" sortable>
@@ -126,6 +121,9 @@
         name: 'shift-register',
         data() {
             return {
+                semester: {
+                  semester_record: []
+                },
                 shift: {
                     shift_record_data: [],
                     registered_shift: [],
@@ -169,7 +167,7 @@
                         url: '/shift-register/shift-records',
                         method: 'get',
                         params: {
-                            semID: this.currentSemID,
+                            SemID: this.semester.semester_record.SemID,
                             page_index: this.shift.page,
                             per_page: this.shift.per_page,
                             sort_field: this.shift.sortField,
@@ -179,12 +177,13 @@
                             'Authorization': authHeader(),
                         }
                     });
-                    console.log(response.data.shift_records);
                     if (response.status === 200) {
                         this.shift.shift_record_data = [];
                         this.shift.total = response.data.total_results;
+                        console.log(response.data.shift_records);
                         response.data.shift_records.forEach((item) => {
                             this.shift.shift_record_data.push(item);
+                            console.log('ca thi ở đây:', item);
                         });
                         // console.log(this.data);
                         this.shift.shift_loading = false
@@ -203,10 +202,17 @@
                     throw error;
                 }
           },
+          onShiftSearch() {
+
+          },
+          onShiftPageChange(page) {
+            this.shift.page = page;
+            this.getShiftRecordData();
+          },
           onStatusSort(field, order) {
-                this.shift.sortField = field;
-                this.shift.sortOrder = order;
-                this.getSubjectsInfo();
+            this.shift.sortField = field;
+            this.shift.sortOrder = order;
+            this.getSubjectsInfo();
           },
         },
         mounted() {
@@ -217,8 +223,10 @@
             customClass: 'custom-class custom-class-2',
             canCancel: false,
             events: {
-              'loadShifts': (http_status) => {
-                if (http_status === 200) {
+              'loadSemesterShifts': (semester_record) => {
+                if (semester_record.SemTitle !== '') {
+                  this.semester.semester_record = semester_record;
+                  this.getShiftRecordData();
                   this.$buefy.notification.open({
                     duration: 2000,
                     message: `Đã nhập thành công!`,
@@ -226,8 +234,7 @@
                     type: 'is-success',
                     hasIcon: true
                   });
-                  this.getShiftRecordData();
-                } else if (http_status === 400) {
+                } else if (semester_record.SemTitle === '') {
                   this.$buefy.notification.open({
                     duration: 2000,
                     message: 'Sửa đổi không thành công!',
@@ -235,15 +242,16 @@
                     type: 'is-danger',
                     hasIcon: true
                   });
-                } else if (http_status === 401) {
-                  this.$buefy.notification.open({
-                    duration: 2000,
-                    message: 'Không được quyền sử dụng!',
-                    position: 'is-bottom-right',
-                    type: 'is-danger',
-                    hasIcon: true
-                  });
                 }
+                // } else if (http_status === 401) {
+                //   this.$buefy.notification.open({
+                //     duration: 2000,
+                //     message: 'Không được quyền sử dụng!',
+                //     position: 'is-bottom-right',
+                //     type: 'is-danger',
+                //     hasIcon: true
+                //   });
+                // }
               }
             }
           })

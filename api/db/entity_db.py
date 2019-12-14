@@ -370,7 +370,7 @@ class Semester_Examination(Base):
         sess = Session()
         try:
             semester = sess.query(Semester_Examination).filter(Semester_Examination.SemTitle.like(SemTitle + '%'))
-            return Semester_Examination.dump(semester, many=True)
+            return semester_examination_schema.dump(semester, many=True)
         except:
             sess.rollback()
             raise

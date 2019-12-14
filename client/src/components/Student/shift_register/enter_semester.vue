@@ -59,15 +59,15 @@ export default {
       this.$router.push({ path: '/student-home' })
     },
     async submitSemesterData() {
-      this.$emit('loadShifts', 200);
+      this.$emit('loadSemesterShifts', this.semester.semester_record[0]);
       this.$parent.close();
-      this.$buefy.notification.open({
-        duration: 2500,
-        message: `Được r nhé!`,
-        position: 'is-bottom-right',
-        type: 'is-success',
-        hasIcon: true
-      });
+      // this.$buefy.notification.open({
+      //   duration: 2500,
+      //   message: `Được r nhé!`,
+      //   position: 'is-bottom-right',
+      //   type: 'is-success',
+      //   hasIcon: true
+      // });
     },
     onSemesterSearch: debounce(function (SemTitle) {
       this.search.searchLoading = true;
@@ -90,7 +90,6 @@ export default {
           if (response.status === 200) {
             response.data.search_results.forEach((item) => {
               this.search.searchResults.push(item);
-              console.log(item);
             });
             this.search.searchLoading = false;
           }
