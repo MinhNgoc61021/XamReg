@@ -17,6 +17,7 @@
               placeholder="Tìm kiếm để nhập môn thi"
               field="SubjectID"
               :value="SubjectID"
+              v-model="SubjectID"
               :loading="search.searchLoading"
               @typing="onSubjectSearch"
               @select="option =>  optionedSubject = [option]"

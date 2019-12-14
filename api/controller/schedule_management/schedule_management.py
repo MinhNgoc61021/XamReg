@@ -147,6 +147,7 @@ def edit_shift(current_user):
         new_end_at = edit_shift.get('newEnd_At')
 
         print(shiftID, flush=True)
+        print(semID, flush=True)
         print(new_subjectID, flush=True)
 
         new_time_start = datetime.strptime(new_start_at, "%H:%M:%S")  # convert string to time
