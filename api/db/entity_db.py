@@ -481,7 +481,7 @@ class Shift(Base):
         finally:
             sess.close()
 
-    
+
     @classmethod
     def getRecord(cls, semID, page_index, per_page, sort_field, sort_order):
         sess = Session()
