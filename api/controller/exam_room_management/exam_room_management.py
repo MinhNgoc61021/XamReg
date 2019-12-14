@@ -6,7 +6,7 @@ from flask import (
     jsonify
 )
 from controller.authentication.auth import token_required
-from db.entity_db import User, Subject, Exam_Room, Log
+from db.entity_db import Exam_Room, Log
 from controller.time_conversion.asia_timezone import set_custom_log_time
 import re
 
@@ -68,7 +68,6 @@ def update_room_record(current_user):
     try:
         new_update = request.get_json()
         currentRoomID = new_update.get('currentRoomID')
-        newRoomID = new_update.get('RoomID')
         newRoomName = new_update.get('RoomName')
         newMaxcapacity = new_update.get('Maxcapacity')
 
@@ -77,7 +76,7 @@ def update_room_record(current_user):
         # print(newUsername, flush=True)
         # print(newFullname, flush=True)
 
-        Exam_Room.updateRecord(currentRoomID, newRoomID, newRoomName, newMaxcapacity)
+        Exam_Room.updateRecord(currentRoomID, newRoomName, newMaxcapacity)
         Log.create(current_user['ID'],
                    'Cập nhật thông tin của phòng thi ' + newRoomName,
                    set_custom_log_time())

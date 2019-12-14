@@ -9,7 +9,7 @@
             <b-input
               v-model="newRoomName"
               :value="newRoomName"
-              maxlength="19"
+              maxlength="30"
               placeholder="Nhập tên phòng thi"
               required>
             </b-input>
@@ -19,6 +19,7 @@
               type="number"
               v-model="newMaxcapacity"
               :value="newMaxcapacity"
+              min="0"
               placeholder="Nhập số lượng chỗ thi"
               required>
             </b-input>
@@ -57,7 +58,6 @@
                       },
                       data: {
                           currentRoomID: this.currentRoomID,
-                          RoomID: this.newRoomID,
                           RoomName: this.newRoomName,
                           Maxcapacity: this.newMaxcapacity,
                       },

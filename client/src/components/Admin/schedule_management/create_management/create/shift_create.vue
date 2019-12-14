@@ -8,7 +8,30 @@
           <b-field label="Ngày thi">
               <b-datepicker v-model="Date_Start" placeholder="Hãy nhập ngày thi" required></b-datepicker>
           </b-field>
-
+          <b-field label="Môn thi">
+            <b-autocomplete
+              icon="search"
+              type="text"
+              :data="search.searchResults"
+              placeholder="Tìm kiếm để nhập môn thi"
+              field="SubjectID"
+              :loading="search.searchLoading"
+              @typing="onSubjectSearch"
+              @select="option =>  optionedSubject = [option]"
+              expanded required>
+                <template slot-scope="props">
+                    <div class="media">
+                        <div class="media-left">
+                          <b-icon icon-pack="fas" icon="book"></b-icon>
+                        </div>
+                        <div class="media-content">
+                          <div><b>Mã môn học: </b>{{ props.option.SubjectID }}</div>
+                          <div><b>Tên môn học: </b>{{ props.option.SubjectTitle }}</div>
+                        </div>
+                    </div>
+                </template>
+            </b-autocomplete>
+          </b-field>
           <b-field label="Giờ bắt đầu thi">
               <b-timepicker
                   v-model="Start_At"
@@ -23,31 +46,6 @@
                   placeholder="Hãy nhập giờ kết thúc"
                   icon="clock" required>
               </b-timepicker>
-          </b-field>
-
-          <b-field label="Môn thi">
-            <b-autocomplete
-              icon="search"
-              type="text"
-              :data="search.searchResults"
-              placeholder="Tìm kiếm để nhập môn thi"
-              field="SubjectID"
-              :loading="search.searchLoading"
-              @typing="onSubjectSearch"
-              @select="option =>  SubjectID = option.SubjectID"
-              expanded>
-                <template slot-scope="props">
-                    <div class="media">
-                        <div class="media-left">
-                          <b-icon icon-pack="fas" icon="book"></b-icon>
-                        </div>
-                        <div class="media-content">
-                          <div><b>Mã môn học: </b>{{ props.option.SubjectID }}</div>
-                          <div><b>Tên môn học: </b>{{ props.option.SubjectTitle }}</div>
-                        </div>
-                    </div>
-                </template>
-            </b-autocomplete>
           </b-field>
 
         </section>
@@ -71,7 +69,7 @@
         props: ['currentSemesterID'],
         data() {
           return {
-              SubjectID: '',
+              optionedSubject: '',
               Date_Start: null,
               Start_At: null,
               End_At: null,
@@ -84,6 +82,7 @@
         methods: {
             async createShift() {
                 try {
+                    console.log(this.optionedSubject[0]);
                   const response = await axios({
                     method: 'post',
                     url: '/schedule/create-shift',
@@ -92,18 +91,21 @@
                     },
                     data: {
                         semID: this.currentSemesterID,
-                        subjectID: this.SubjectID,
+                        subjectID: this.optionedSubject[0].SubjectID,
                         date_start: moment(this.Date_Start).format('YYYY-MM-DD'),
-                        start_at: moment(this.Start_At).format("YYYY-MM-DD HH:mm:ss"),
-                        end_at: moment(this.End_At).format("YYYY-MM-DD HH:mm:ss"),
+                        start_at: moment(this.Start_At).format("HH:mm:ss"),
+                        end_at: moment(this.End_At).format("HH:mm:ss"),
                     },
                   });
                     if (response.data.status === 'success') {
                         this.$parent.close();
                         this.$emit('loadShifts', 200);
                     }
-                    else {
-                        this.$emit('loadShifts', 208);
+                    else if (response.data.status === 'time-false') {
+                        this.$emit('loadShifts', '202-time-false');
+                    }
+                    else if (response.data.status === 'already-exist-subject') {
+                        this.$emit('loadShifts', '202-already-exist-subject');
                     }
                 } catch (e) {
                   if (e['message'].includes('400')) {

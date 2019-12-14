@@ -70,6 +70,9 @@
                     this.$emit('loadSemesters', 200);
                     this.$parent.close();
                   }
+                  if (update.status === 202) {
+                    this.$emit('loadSemesters', 202);
+                  }
                 } catch (e) {
                   if (e['message'].includes('400')) {
                     this.$emit('loadSemesters', 400);

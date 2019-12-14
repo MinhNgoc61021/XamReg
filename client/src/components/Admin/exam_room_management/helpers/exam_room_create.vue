@@ -9,7 +9,7 @@
             <b-input
               v-model="newRoomName"
               :value="newRoomName"
-              maxlength="19"
+              maxlength="30"
               placeholder="Nhập tên phòng thi"
               required>
             </b-input>
@@ -19,6 +19,7 @@
               type="number"
               v-model="newMaxcapacity"
               :value="newMaxcapacity"
+              min="0"
               placeholder="Nhập số lượng chỗ thi"
               required>
             </b-input>
@@ -27,7 +28,7 @@
 
         <footer class="modal-card-foot">
           <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
-          <button class="button is-primary" type="submit" @submit="closeModal()">Tạo</button>
+          <button class="button is-primary" type="submit" @submit="closeModal()">Cập nhật</button>
         </footer>
       </div>
   </form>
@@ -37,7 +38,7 @@
     import axios from "axios";
     import {authHeader} from "../../../api/jwt_handling";
     export default {
-        name: "addRoomModal",
+        name: "exam_room_create",
         data() {
           return {
               newRoomName: "",

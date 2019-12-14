@@ -22,6 +22,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/auth/update-password': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/handling/upload': {
           target: 'http://api:5000',
           changeOrigin: true,
@@ -146,6 +150,14 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/shift-register/shift-records':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/search-semester':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      }
     },
 
     // Various Dev Server settings

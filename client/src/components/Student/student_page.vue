@@ -26,7 +26,7 @@
                     <strong>{{ ID }}</strong>
                   </b-navbar-item>
                   <hr class="dropdown-divider" aria-role="menuitem">
-                  <b-navbar-item>
+                  <b-navbar-item v-on:click="updatePassword">
                     <b-icon icon-pack="fas" icon="lock"></b-icon>
                     <span>Cập nhật mật khẩu</span>
                   </b-navbar-item>
@@ -63,7 +63,10 @@
 
 <script>
   import { mapState, mapActions, mapMutations } from 'vuex';
+  import update_password from "../Personal_Info/update_password";
   import shift_register from "./shift_register/shift_register";
+
+
   export default {
       name: 'Student_Page',
       components: {
@@ -80,6 +83,18 @@
           ]),
           admin_signOut() {
               this.SignOut();
+          },
+          updatePassword() {
+              this.$buefy.modal.open({
+                   parent: this,
+                   component: update_password,
+                   props: {
+                       currentUserID: this.ID,
+                   },
+                   hasModalCard: true,
+                   customClass: 'custom-class custom-class-2',
+                   canCancel: false,
+                })
           },
       },
       created() {
