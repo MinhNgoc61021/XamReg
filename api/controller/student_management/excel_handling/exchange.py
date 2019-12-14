@@ -66,6 +66,7 @@ def upload(current_user):
                 subjectID = re.search('^(([A-Z]|[a-z]){3})([0-9]{4})',
                                       str(excel_data['subjectID']))
                 status = re.search('(đủ điều kiện|không đủ điều kiện)', excel_data['status'].lower())
+
                 # print(ID, flush=True)
                 # print(fullname, flush=True)
                 # print(dob, flush=True)

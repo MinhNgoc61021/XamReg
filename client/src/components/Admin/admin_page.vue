@@ -26,9 +26,6 @@
               <b-navbar-item tag="router-link" :to="{ path: '/log-management' }" class="routing-link">
                   Quản lý nhật ký
               </b-navbar-item>
-               <b-navbar-item tag="router-link" :to="{ path: '/exam-room-management' }" class="routing-link">
-                  Quản lý phòng thi
-              </b-navbar-item>
           </template>
 
           <template slot="end">
@@ -41,6 +38,10 @@
                   <b-navbar-item>
                     <b-icon icon-pack="fas" icon="lock"></b-icon>
                     <span>Cập nhật mật khẩu</span>
+                  </b-navbar-item>
+                  <b-navbar-item tag="router-link" :to="{ path: '/manual' }">
+                    <b-icon icon-pack="fas" icon="question-circle"></b-icon>
+                    <span>Trợ giúp</span>
                   </b-navbar-item>
                   <b-navbar-item v-on:click="admin_signOut()" >
                     <b-icon icon-pack="fas" icon="sign-out-alt"></b-icon>

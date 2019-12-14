@@ -1,5 +1,5 @@
 <template>
-    <button @click.prevent="exportPDF()"></button>
+    <button @click.prevent="exportPDF()">print</button>
 </template>
 
 <script>

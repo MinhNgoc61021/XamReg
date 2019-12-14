@@ -8,11 +8,13 @@ import Buefy from 'buefy';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import JsonExcel from 'vue-json-excel';
+
 export const eventBus = new Vue();
 
 library.add(fas);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
-
+Vue.component('downloadExcel', JsonExcel);
 Vue.use(Buefy, {
     defaultIconPack: 'fas',
     // ...
