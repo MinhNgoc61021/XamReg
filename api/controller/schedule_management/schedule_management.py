@@ -139,7 +139,7 @@ def create_shift(current_user):
 def edit_shift(current_user):
     try:
         edit_shift = request.get_json()
-        shiftID = edit_shift.get('currentShiftID')
+        shiftID = edit_shift.get('ShiftID')
         semID = edit_shift.get('SemID')
         new_subjectID = edit_shift.get('newSubjectID')
         new_date_start = edit_shift.get('newDate_Start')
