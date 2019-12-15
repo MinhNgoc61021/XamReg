@@ -22,7 +22,7 @@ def add_semester(current_user):
         newSemesterTitle = request.get_json().get('newSemester')
         checkSemester = re.search('^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ' +
                                   'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
-                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s-]+$', newSemesterTitle)
+                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ()\\s-]+$', newSemesterTitle)
         print(newSemesterTitle, flush=True)
 
         if checkSemester is None:
