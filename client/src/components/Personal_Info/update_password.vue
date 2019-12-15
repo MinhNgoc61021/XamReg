@@ -79,6 +79,7 @@
                           message: `Đã cập nhật mật khẩu thành công.`,
                           position: 'is-bottom-right',
                           type: 'is-success',
+                          hasIcon: true,
                       });
                       this.SignOut();
                   }
@@ -88,6 +89,7 @@
                           message: `Mật khẩu không hợp lệ, bạn hãy nhập ít nhất 5 ký tự và bạn phải nhập đúng mât khẩu xác nhận !`,
                           position: 'is-bottom-right',
                           type: 'is-warning',
+                          hasIcon: true,
                       });
                   }
               } catch (e) {
@@ -97,6 +99,7 @@
                           message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
                           position: 'is-bottom-right',
                           type: 'is-danger',
+                          hasIcon: true,
                       });
                   }
                   else if (e['message'].includes('401')) {
@@ -105,6 +108,7 @@
                           message: 'Không được quyền sử dụng!',
                           position: 'is-bottom-right',
                           type: 'is-danger',
+                          hasIcon: true,
                       });
                   }
               }

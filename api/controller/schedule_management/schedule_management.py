@@ -22,7 +22,7 @@ def add_semester(current_user):
         newSemesterTitle = request.get_json().get('newSemester')
         checkSemester = re.search('^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ' +
                                   'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
-                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s-]+$', newSemesterTitle)
+                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ()\\s-]+$', newSemesterTitle)
         print(newSemesterTitle, flush=True)
 
         if checkSemester is None:
@@ -147,6 +147,7 @@ def edit_shift(current_user):
         new_end_at = edit_shift.get('newEnd_At')
 
         print(shiftID, flush=True)
+        print(semID, flush=True)
         print(new_subjectID, flush=True)
 
         new_time_start = datetime.strptime(new_start_at, "%H:%M:%S")  # convert string to time

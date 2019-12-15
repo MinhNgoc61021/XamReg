@@ -63,7 +63,9 @@
       <div class="content has-text-centered" >
         <p>
           <span>ExamReg</span>
-          <a href=""> <span>Github</span> </a>
+          <a href="https://github.com/MinhNgoc61021/XamReg">
+            <span>Github</span>
+          </a>
         </p>
       </div>
     </footer>
