@@ -157,6 +157,26 @@ module.exports = {
       '/shift-register/search-semester':{
         target: 'http://api:5000',
         changeOrigin: true,
+      },
+      '/shift-register/search-subject':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/room-records':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/registered-room-records':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/register-shift': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/registered-shift-records':{
+        target: 'http://api:5000',
+        changeOrigin: true,
       }
     },
 
