@@ -150,7 +150,16 @@
                                             class="button"
                                             @click="getStudentRecord">
                                         <b-icon size="is-small" icon="sync"/></b-button>
-                                      <b-button class="button" size="is-small" icon-left="sync" @click="exportExcel">In</b-button>
+                                      <download-excel
+                                            class   = "btn btn-default"
+                                            :name = "excel_export.file_name"
+                                            :fields = "excel_export.json_fields"
+                                            :fetch   = "exportExcel"
+                                            :before-generate = "startDownload"
+                                            :before-finish = "finishDownload"
+                                            >
+                                            <b-button class="button" icon-left="file-download" @click="exportExcel">In</b-button>
+                                        </download-excel>
                                     </b-field>
                                     <b-field v-if="student.student_record_data.length > 0">
                                         <b-table
@@ -182,7 +191,6 @@
                                                 </b-table-column>
                                               </template>
                                         </b-table>
-
                                     </b-field>
                                     <b-field v-else>
                                          <b-message type="is-danger" has-icon>
@@ -220,66 +228,77 @@
     import moment from 'moment';
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
-    import JsonExcel from 'vue-json-excel';
 
     export default {
         name: 'export_pdf',
         data() {
             return {
-                semester: {
-                    newSemester: '', // new semester
-                    semester_record_data: [], // semester info
-                    loading: false, // semester loading
-                    create_loading: false, // create semester loading
-                    semester_status: false,
+              semester: {
+                newSemester: '', // new semester
+                semester_record_data: [], // semester info
+                loading: false, // semester loading
+                create_loading: false, // create semester loading
+                semester_status: false,
+              },
+              shift: {
+                shift_record_data: [],
+                date_start: '',
+                start_at: '',
+                total: 0,
+                shift_loading: false,
+                create_loading: false,
+                search_loading: false,
+                sortField: 'ShiftID',
+                sortOrder: 'desc',
+                defaultSortOrder: 'desc',
+                page: 1,
+                per_page: 5,
+                ID_Index: [],
+              },
+              room: {
+                select_search: Object,
+                room_record_data: [],
+                total: 0,
+                searchResults: [],
+                room_loading: false,
+                search_loading: false,
+                sortField: 'RoomID',
+                sortOrder: 'desc',
+                defaultSortOrder: 'desc',
+                page: 1,
+                per_page: 5,
+                ID_Index: [],
+              },
+              student: {
+                select_search: Object,
+                student_record_data: [],
+                searchResults: [],
+                student_loading: false,
+                search_loading: false,
+                sortField: 'ID',
+                sortOrder: 'desc',
+                defaultSortOrder: 'desc',
+              },
+              excel_export: {
+                json_fields: {
+                  "Mã sinh viên": "ID",
+                  "Tên sinh viên":"Fullname",
+                  "Ngày sinh": "Dob",
+                  "Giới tính": "Gender",
+                  "Lớp học": "CourseID"
                 },
-                shift: {
-                    shift_record_data: [],
-                    date_start: '',
-                    start_at: '',
-                    total: 0,
-                    shift_loading: false,
-                    create_loading: false,
-                    search_loading: false,
-                    sortField: 'ShiftID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
-                    ID_Index: [],
-                },
-                room: {
-                    select_search: Object,
-                    room_record_data: [],
-                    total: 0,
-                    searchResults: [],
-                    room_loading: false,
-                    search_loading: false,
-                    sortField: 'RoomID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
-                    ID_Index: [],
-                },
-                student: {
-                    select_search: Object,
-                    student_record_data: [],
-                    searchResults: [],
-                    student_loading: false,
-                    search_loading: false,
-                    sortField: 'ID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                },
-                isOpen: null,
-                collapses: [],
-                currentShiftID: '', // current opening shiftID
-                currentSemID: '', // current opening semesterID
-                currentRoomID: '', //current opening roomID
-                hasSemesterError: false,
-                hasSubjectError: false,
-                hasRoomError: false,
+                json_data: [],
+                file_name: ""
+              },
+
+              isOpen: null,
+              collapses: [],
+              currentShiftID: '', // current opening shiftID
+              currentSemID: '', // current opening semesterID
+              currentRoomID: '', //current opening roomID
+              hasSemesterError: false,
+              hasSubjectError: false,
+              hasRoomError: false
             }
         },
         methods: {
@@ -515,8 +534,48 @@
                 // console.log(this.student_status.ID_Index);
             },
 
-            exportExcel(){
-              
+            async exportExcel(){
+                try {
+                    const response = await axios({
+                        url: '/schedule/student-records',
+                        method: 'get',
+                        params: {
+                            roomID: this.currentRoomID,
+                            sort_field: this.student.sortField,
+                            sort_order: this.student.sortOrder
+                        },
+                        headers: {
+                            'Authorization': authHeader(),
+                        }
+                    });
+                    // console.log(response.data.shift_records);
+                    if (response.status === 200) {
+                        this.excel_export.json_data = [];
+                        this.excel_export.file_name = "Danh sách sinh viên mã phòng " + this.currentRoomID + ".xls";
+                        this.student.total = response.data.total_results;
+                        response.data.student_records.forEach((item) => {
+                            this.excel_export.json_data.push(item);
+                        });
+                        return this.excel_export.json_data
+                        // console.log(this.data);
+                    }
+                } catch (error) {
+                    this.excel_export.json_data = [];
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Không thể download file excel!',
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+                    throw error;
+                }
+            },
+            startDownload(){
+
+            },
+            finishDownload(){
+              this.excel_export.json_data = []
             }
         },
         mounted() {

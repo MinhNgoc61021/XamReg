@@ -309,3 +309,4 @@ def get_students(current_user):
                         }), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
+
