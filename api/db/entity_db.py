@@ -649,7 +649,7 @@ class Student_Shift(Base):
                        ForeignKey('user.ID', onupdate="cascade"),
                        nullable=False)
     fakeRoomID = Column(Integer,
-                        nullable=False) #sử dụng roomID lưu trong open-detail tại bảng mở rộng của export_pdf 
+                        nullable=False) #sử dụng roomID lưu trong open-detail tại bảng mở rộng của export_pdf
     ShiftID = Column(Integer,
                      ForeignKey('shift.ShiftID', onupdate="cascade"),
                      nullable=False)
