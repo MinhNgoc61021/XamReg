@@ -402,18 +402,6 @@ class Semester_Examination(Base):
             sess.close()
 
     @classmethod
-    def searchSemesterRecord(cls, SemTitle):
-        sess = Session()
-        try:
-            semester = sess.query(Semester_Examination).filter(Semester_Examination.SemTitle.like(SemTitle + '%'))
-            return semester_examination_schema.dump(semester, many=True)
-        except:
-            sess.rollback()
-            raise
-        finally:
-            sess.close()
-
-    @classmethod
     def create(cls, newSemesterTitle):
         sess = Session()
         try:
@@ -525,10 +513,45 @@ class Shift(Base):
             sess.close()
 
     @classmethod
+    def searchShiftRecord(cls, SubjectID):
+        sess = Session()
+        try:
+            subject = sess.query(Shift).filter(Shift.SubjectID.like(SubjectID + '%'),
+                                               Student_Status.Status.like('Qualified' + '%'))
+            return shift_schema.dump(subject, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
     def getRecord(cls, semID, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
             record_query = sess.query(Shift).filter(Shift.SemID == semID).options(joinedload('Subject')).order_by(
+                getattr(
+                    getattr(Shift, sort_field), sort_order)())
+
+            # record_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return shift_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getQualifiedShiftRecord(cls, semID, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Shift).filter(Shift.SemID == semID,
+                                                    # Student_Status.Status.like('Qualified' + '%')
+                                                    ).options(joinedload('Subject')).order_by(
                 getattr(
                     getattr(Shift, sort_field), sort_order)())
 
