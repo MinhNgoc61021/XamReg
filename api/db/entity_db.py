@@ -658,6 +658,26 @@ class Student_Shift(Base):
     Student = relationship('User',
                            back_populates='student_shift')
 
+    # @classmethod
+    # def getRecord(cls, roomID, page_index, per_page, sort_field, sort_order):
+    #     sess = Session()
+    #     try:
+    #         record_query = sess.query(User).join(Student_Shift).filter(User.ID == Student_Shift.StudentID,
+    #                                                                      Student_Shift.ShiftID == shiftID).order_by(
+    #             getattr(
+    #                 getattr(User, sort_field), sort_order)())
+    #
+    #         # record_query is the user object and get_record_pagination is the index data
+    #         record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+    #                                                                page_size=int(per_page))
+    #
+    #         # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+    #         return examroom_schema.dump(record_query, many=True), get_record_pagination
+    #     except:
+    #         sess.rollback()
+    #         raise
+    #     finally:
+    #         sess.close()
 
 # Exam Room persistent class
 class Exam_Room(Base):

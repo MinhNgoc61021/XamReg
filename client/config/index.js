@@ -126,6 +126,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/schedule/student-records':{
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/schedule/create-room':{
           target: 'http://api:5000',
           changeOrigin: true,
