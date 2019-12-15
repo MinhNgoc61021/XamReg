@@ -659,11 +659,16 @@ class Student_Shift(Base):
                            back_populates='student_shift')
 
     # @classmethod
-    # def getRecord(cls, roomID, page_index, per_page, sort_field, sort_order):
+    # def getRecord(cls, shiftID, roomID, page_index, per_page, sort_field, sort_order):
     #     sess = Session()
     #     try:
-    #         record_query = sess.query(User).join(Student_Shift).filter(User.ID == Student_Shift.StudentID,
-    #                                                                      Student_Shift.ShiftID == shiftID).order_by(
+    #         record_query = sess.query(Exam_Room).options(
+    #                         joinedload(Order.supplier_fragments, innerjoin=True)
+    #                         .joinedload(SupplierFragment.line_items, innerjoin=True)
+    #                         .joinedload(LineItem.variant, innerjoin=True)
+    #                         .joinedload(Variant.product, innerjoin=True),
+    #                         Load(Order).raiseload('*')
+    #         ).order_by(
     #             getattr(
     #                 getattr(User, sort_field), sort_order)())
     #
@@ -672,7 +677,7 @@ class Student_Shift(Base):
     #                                                                page_size=int(per_page))
     #
     #         # many=True if user_query is a collection of many results, so that record will be serialized to a list.
-    #         return examroom_schema.dump(record_query, many=True), get_record_pagination
+    #         return user_schema.dump(record_query, many=True), get_record_pagination
     #     except:
     #         sess.rollback()
     #         raise
@@ -908,6 +913,8 @@ class RoomShiftSchema(ModelSchema):
 
 
 class ExamRoomSchema(ModelSchema):
+    User = Nested(UserSchema)
+
     class Meta:
         model = Exam_Room
         # optionally attach a Session
