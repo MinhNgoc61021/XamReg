@@ -336,7 +336,7 @@
                 const response = await axios({
                   url: '/shift-register/register-shift',
                   method: 'post',
-                  params: {
+                  data: {
                     studentID: this.studentid,
                     Room_ShiftID: Room_ShiftID,
                   },
