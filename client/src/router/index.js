@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import register from '../components/Register/register';
 import VeeValidate from 'vee-validate'
 import admin_page from "../components/Admin/admin_page";
-import student_page from '../components/Student/student_page';
+import student_page from "../components/Student/student_page";
 import upload from "../components/Admin/student_management/import/upload/upload";
 import student_management from "../components/Admin/student_management/student_management";
 import schedule_management from "../components/Admin/schedule_management/schedule_management";

@@ -14,7 +14,7 @@
           :loading="search.searchLoading"
           @typing="onSemesterSearch"
           @select="option => semester.semester_record = [option]"
-          expanded required>
+        expanded required>
           <template slot-scope="props">
             <div class="media">
               <div class="media-left">
@@ -60,7 +60,7 @@ export default {
     },
     async submitSemesterData() {
         if (this.semester_record !== []) {
-            this.$emit('loadSemesterShifts', this.semester.semester_record[0]);
+          this.$emit('loadSemesterShifts', this.semester.semester_record[0]);
           this.$parent.close();
         }
         else {

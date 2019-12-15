@@ -512,12 +512,46 @@ class Shift(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def searchShiftRecord(cls, SubjectID):
+        sess = Session()
+        try:
+            subject = sess.query(Shift).filter(Shift.SubjectID.like(SubjectID + '%'),
+                                               Student_Status.Status.like('Qualified' + '%'))
+            return shift_schema.dump(subject, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
 
     @classmethod
     def getRecord(cls, semID, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
             record_query = sess.query(Shift).filter(Shift.SemID == semID).options(joinedload('Subject')).order_by(
+                getattr(
+                    getattr(Shift, sort_field), sort_order)())
+
+            # record_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return shift_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getQualifiedShiftRecord(cls, semID, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Shift).filter(Shift.SemID == semID,
+                                                    # Student_Status.Status.like('Qualified' + '%')
+                                                    ).options(joinedload('Subject')).order_by(
                 getattr(
                     getattr(Shift, sort_field), sort_order)())
 
@@ -552,7 +586,7 @@ class Shift(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            if sess.query(Shift).filter(Shift.SubjectID == newSubjectID, Shift.SemID == SemID, Shift.ShiftID != ShiftID).scalar() is None:
+            if sess.query(Shift).filter(Shift.SubjectID == newSubjectID, Shift.ShiftID != ShiftID, Shift.SemID == SemID) is None:
                 sess.query(Shift).filter(Shift.ShiftID == ShiftID).update(
                     {Shift.SubjectID: newSubjectID,
                      Shift.Date_Start: new_date_start,
@@ -911,8 +945,6 @@ class RoomShiftSchema(ModelSchema):
 
 
 class ExamRoomSchema(ModelSchema):
-    User = Nested(UserSchema)
-
     class Meta:
         model = Exam_Room
         # optionally attach a Session

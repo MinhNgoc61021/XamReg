@@ -8,7 +8,7 @@
             >
               <b-icon
                 size="is-small"
-                icon="sync"/>
+                icon="edit"/>
               <span>Làm mới</span>
             </b-button>
 

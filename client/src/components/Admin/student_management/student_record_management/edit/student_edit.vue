@@ -69,7 +69,7 @@
 
         <footer class="modal-card-foot">
           <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
-          <button class="button is-primary" type="submit" @submit="closeModal()">Cập nhật</button>
+          <button class="button is-primary" type="submit" >Cập nhật</button>
         </footer>
       </div>
   </form>
