@@ -34,7 +34,7 @@ def init_admin():
                                 'Nam', 'Admin', 'Admin')
 
 @app.route('/init_student')
-def init_admin():
+def init_student():
     check_user = User.isExist('StudentAcc')
     # check_user_role = User_Role.isExist(check_user.UserID)
     if check_user:
@@ -42,8 +42,8 @@ def init_admin():
     else:
         # fullname = 'Nguyễn Ngọc Minh'
         # print(fullname, flush=True)
-        add_admin = User.create('Admin2', 'IAMLEGEND', '12345', 'Nguyen Ngoc Minh', '1999-12-18',
-                                'Nam', 'Admin', 'Admin')
+        add_admin = User.create('Admin2', 'BOOMSTICK', '12345', 'Nguyen Ngoc Minh', '1999-12-18',
+                                'Nam', 'K62', 'Student')
 # @app.route('/hello')
 # def hello():
 #     return 'hello'

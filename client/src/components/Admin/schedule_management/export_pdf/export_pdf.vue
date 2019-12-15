@@ -66,7 +66,7 @@
                         :default-sort-direction="shift.defaultSortOrder"
                         :default-sort="[shift.sortField, shift.sortOrder]"
                         @sort="onShiftSort"
-                        @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRoomRecord(); closeOtherDetails(row, index) }"
+                        @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
                         @details-close="(row, index) => { room.room_record_data = [] }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
@@ -111,6 +111,7 @@
                                 :loading="room.room_loading"
                                 paginated
                                 backend-pagination
+                                detailed
                                 :total="room.total"
                                 :per-page="room.per_page"
                                 @page-change="onRoomPageChange"
@@ -119,21 +120,20 @@
                                 aria-page-label="Page"
                                 aria-current-label="Current page"
                                 backend-sorting
-                                bordered
-                                narrowed
                                 hoverable
                                 detail-key="RoomID"
+                                :opened-detailed="room.ID_Index"
                                 :default-sort-direction="room.defaultSortOrder"
                                 :default-sort="[room.sortField, room.sortOrder]"
                                 @sort="onRoomSort"
-                                @details-open="(row, index) => { currentRoomID = row.RoomID ; getStudentRecord(); closeOtherDetails(row, index) }"
+                                @details-open="(row, index) => { currentRoomID = row.RoomID ; getStudentRecord(); closeOtherDetails_Room(row, index) }"
                                 @details-close="(row, index) => { student.student_record_data = [] }"
                                 :show-detail-icon="true">
                                 <template slot-scope="props">
-                                  <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
+                                  <b-table-column field="RoomID" label="Mã phòng" width="200" sortable>
                                     {{ props.row.RoomID }}
                                   </b-table-column>
-                                  <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
+                                  <b-table-column field="RoomName" label="Phòng thi" width="200" sortable>
                                     {{ props.row.RoomName }}
                                   </b-table-column>
                                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
@@ -148,23 +148,14 @@
                                       <b-button
                                             :class="{'is-loading': student.student_loading}"
                                             class="button"
-                                            @click="getRoomRecord"
-                                      >
+                                            @click="getStudentRecord">
                                         <b-icon size="is-small" icon="sync"/></b-button>
+                                      <b-button class="button" size="is-small" icon-left="sync" @click="exportExcel">In</b-button>
                                     </b-field>
-                                    <b-field v-if="student.student_record_data.length > 0" grouped group-multiline>
+                                    <b-field v-if="student.student_record_data.length > 0">
                                         <b-table
                                               :data="student.student_record_data"
                                               :loading="student.student_loading"
-                                              paginated
-                                              backend-pagination
-                                              :total="student.total"
-                                              :per-page="student.per_page"
-                                              @page-change="onStudentPageChange"
-                                              aria-next-label="Next page"
-                                              aria-previous-label="Previous page"
-                                              aria-page-label="Page"
-                                              aria-current-label="Current page"
                                               backend-sorting
                                               bordered
                                               narrowed
@@ -191,6 +182,7 @@
                                                 </b-table-column>
                                               </template>
                                         </b-table>
+
                                     </b-field>
                                     <b-field v-else>
                                          <b-message type="is-danger" has-icon>
@@ -228,6 +220,7 @@
     import moment from 'moment';
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
+    import JsonExcel from 'vue-json-excel';
 
     export default {
         name: 'export_pdf',
@@ -267,19 +260,17 @@
                     defaultSortOrder: 'desc',
                     page: 1,
                     per_page: 5,
+                    ID_Index: [],
                 },
                 student: {
                     select_search: Object,
                     student_record_data: [],
-                    total: 0,
                     searchResults: [],
                     student_loading: false,
                     search_loading: false,
-                    sortField: 'SubjectID',
+                    sortField: 'ID',
                     sortOrder: 'desc',
                     defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
                 },
                 isOpen: null,
                 collapses: [],
@@ -476,10 +467,8 @@
                         method: 'get',
                         params: {
                             roomID: this.currentRoomID,
-                            page_index: this.room.page,
-                            per_page: this.room.per_page,
-                            sort_field: this.room.sortField,
-                            sort_order: this.room.sortOrder
+                            sort_field: this.student.sortField,
+                            sort_order: this.student.sortOrder
                         },
                         headers: {
                             'Authorization': authHeader(),
@@ -487,21 +476,21 @@
                     });
                     // console.log(response.data.shift_records);
                     if (response.status === 200) {
-                        this.room.room_record_data = [];
-                        this.room.total = response.data.total_results;
-                        response.data.room_records.forEach((item) => {
-                            this.room.room_record_data.push(item);
+                        this.student.student_record_data = [];
+                        this.student.total = response.data.total_results;
+                        response.data.student_records.forEach((item) => {
+                            this.student.student_record_data.push(item);
                         });
                         // console.log(this.data);
-                        this.room.room_loading = false
+                        this.student.student_loading = false
                     }
                 } catch (error) {
-                    this.room.room_record_data = [];
-                    this.room.total = 0;
-                    this.room.room_loading = false;
+                    this.student.student_record_data = [];
+                    this.student.total = 0;
+                    this.student.student_loading = false;
                     this.$buefy.notification.open({
                         duration: 2000,
-                        message: 'Không thể lấy được dữ liệu phòng!',
+                        message: 'Không thể lấy được dữ liệu sinh viên!',
                         position: 'is-bottom-right',
                         type: 'is-danger',
                         hasIcon: true
@@ -509,13 +498,26 @@
                     throw error;
                 }
             }, // xong
+            onStudentSort(field, order) {
+                this.student.sortField = field;
+                this.student.sortOrder = order;
+                this.getStudentRecord();
+            }, // xong
             destroySemesterData() { // destroy subject data for scalability when closing accordion
                 this.shift.shift_record_data = [];
             },
-            closeOtherDetails(row) {
+            closeOtherDetails_Shift(row) {
                 this.shift.ID_Index = [row.ShiftID];
                 // console.log(this.student_status.ID_Index);
             },
+            closeOtherDetails_Room(row) {
+                this.room.ID_Index = [row.RoomID];
+                // console.log(this.student_status.ID_Index);
+            },
+
+            exportExcel(){
+              
+            }
         },
         mounted() {
             this.getSemesterRecordData();
