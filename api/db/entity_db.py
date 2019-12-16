@@ -660,12 +660,14 @@ class Room_Shift(Base):
         finally:
             sess.close()
 
+    # lấy các phòng cho phép đăng ký theo ca
     @classmethod
     def getRegisterRoom(cls, shiftID, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
             record_query = sess.query(Room_Shift).options(
-                joinedload('Exam_Room')).filter(Room_Shift.ShiftID == shiftID).order_by(
+                joinedload('Exam_Room')).filter(
+                Room_Shift.ShiftID == shiftID).order_by(
                 getattr(
                     getattr(Room_Shift, sort_field), sort_order)())
 
@@ -733,6 +735,20 @@ class Student_Shift(Base):
             sess.close()
 
     @classmethod
+    def delRecord(cls, StudentID, Room_ShiftID):
+        sess = Session()
+        try:
+            room = sess.query(Student_Shift).filter(Student_Shift.StudentID == StudentID,
+                                                    Student_Shift.Room_ShiftID == Room_ShiftID).one()
+            sess.delete(room)
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
     def getRecord(cls, Room_ShiftID, sort_field, sort_order):
         sess = Session()
         try:
@@ -740,6 +756,20 @@ class Student_Shift(Base):
                                                                        Student_Shift.Room_ShiftID == Room_ShiftID).order_by(
                 getattr(
                     getattr(User, sort_field), sort_order)())
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return user_schema.dump(record_query, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getRegisteredRoom_Shift(cls, StudentID):
+        sess = Session()
+        try:
+            record_query = sess.query(User).join(Student_Shift).filter(Student_Shift.StudentID == StudentID)
 
             # many=True if user_query is a collection of many results, so that record will be serialized to a list.
             return user_schema.dump(record_query, many=True)
@@ -988,7 +1018,6 @@ class ExamRoomSchema(ModelSchema):
 
 class RoomShiftSchema(ModelSchema):
     Exam_Room = Nested(ExamRoomSchema)
-    Student_Shift = Nested(StudentShiftSchema)
 
     class Meta:
         model = Room_Shift
