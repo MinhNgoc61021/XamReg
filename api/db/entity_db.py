@@ -666,8 +666,8 @@ class Room_Shift(Base):
         try:
             record_query = sess.query(Room_Shift).options(
                 joinedload('Exam_Room')).filter(Room_Shift.ShiftID == shiftID).order_by(
-                    getattr(
-                        getattr(Room_Shift, sort_field), sort_order)())
+                getattr(
+                    getattr(Room_Shift, sort_field), sort_order)())
 
             # record_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
@@ -708,8 +708,8 @@ class Student_Shift(Base):
     Room_ShiftID = Column(Integer,
                           ForeignKey('room_shift.Room_ShiftID', onupdate="cascade"),
                           nullable=False)
-    Student = relationship('User',
-                           back_populates='student_shift')
+    User = relationship('User',
+                        back_populates='student_shift')
     Room_Shift = relationship('Room_Shift',
                               back_populates='student_shift')
 
@@ -718,7 +718,7 @@ class Student_Shift(Base):
         sess = Session()
         try:
             if sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID,
-                                             Student_Shift.StudentID == studentID).scalar() is None:
+                                                Student_Shift.StudentID == studentID).scalar() is None:
 
                 newShift = Student_Shift(Room_ShiftID=room_shiftID, StudentID=str(studentID))
                 sess.add(newShift)
@@ -921,7 +921,7 @@ Subject.shift = relationship('Shift',
 
 User.student_shift = relationship('Student_Shift',
                                   order_by=Student_Shift.StudentID,
-                                  back_populates='Student',
+                                  back_populates='User',
                                   cascade='all, delete, delete-orphan')
 
 Room_Shift.student_shift = relationship('Student_Shift',

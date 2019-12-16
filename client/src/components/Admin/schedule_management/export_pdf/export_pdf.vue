@@ -302,7 +302,7 @@
                         response.data.semesterRecords.forEach((item) => {
                             this.semester.semester_record_data.push(item);
                         });
-                        console.log(this.semester.semester_record_data)
+                        console.log(this.semester.semester_record_data);
                         // console.log(this.data);
                         this.semester.loading = false
                     }
