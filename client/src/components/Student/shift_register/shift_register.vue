@@ -47,7 +47,7 @@
 
       <b-field group-multiline v-if="shift.shift_record_data.length === 0">
         <b-message type="is-danger" has-icon>
-          Mày đéo được thi!
+          Hiện tại bạn không chưa môn nào được cho pháp đăng ký
         </b-message>
       </b-field>
 
@@ -132,16 +132,16 @@
 
                 <template slot-scope="props">
                   <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
-                    {{ props.row.RoomID }}
+                    {{ props.row.Exam_Room.RoomID }}
                   </b-table-column>
                   <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
-                    {{ props.row.RoomName }}
+                    {{ props.row.Exam_Room.RoomName }}
                   </b-table-column>
                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
-                    {{ props.row.Maxcapacity }}
+                    {{ props.row.Exam_Room.Maxcapacity }}
                   </b-table-column>
                   <b-table-column width="10">
-                    <b-button type="is-success" style="float: right" icon-pack="fas" icon-left="plus-square" outlined @click.prevent="registerShift(props.row.RoomID, currentShiftID, studentid)">Đăng ký</b-button>
+                    <b-button type="is-success" style="float: right" icon-pack="fas" icon-left="plus-square" outlined @click.prevent="registerShift(props.row.Room_ShiftID)">Đăng ký</b-button>
                   </b-table-column>
                 </template>
               </b-table>
@@ -171,73 +171,73 @@
 
       <b-field v-else>
         <b-table
-        :data="registered_shift.registered_shift_record_data"
-        :loading="registered_shift.shift_loading"
-        detailed
-        backend-sorting
-        hoverable
-        detail-key="ShiftID"
-        :opened-detailed="registered_shift.ID_Index"
-        :default-sort-direction="registered_shift.defaultSortOrder"
-        :default-sort="[registered_shift.sortField, registered_shift.sortOrder]"
-        @sort="onRegisteredShiftSort"
-        @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRegisteredRoomRecord(); closeOtherRegisteredDetails(row, index) }"
-        @details-close="(row, index) => { registered_room.room_record_data = [] }"
-        :show-detail-icon="true"
-      >
-        <template slot-scope="props">
-          <b-table-column field="ShiftID" label="Mã ca thi" sortable>
-            {{ props.row.ShiftID }}
-          </b-table-column>
-          <b-table-column field="SubjectID" label="Môn thi" sortable>
-            <b></b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}
-          </b-table-column>
-          <b-table-column field="Date_Start" label="Ngày thi" sortable>
-            {{ formatDate(props.row.Date_Start) }}
-          </b-table-column>
-          <b-table-column field="Start_At" label="Thời gian bắt đầu" sortable>
-            {{ props.row.Start_At }}
-          </b-table-column>
-          <b-table-column field="End_At" label="Thời gian kết thúc" sortable>
-            {{ props.row.End_At }}
-          </b-table-column>
-        </template>
+          :data="registered_shift.registered_shift_record_data"
+          :loading="registered_shift.shift_loading"
+          detailed
+          backend-sorting
+          hoverable
+          detail-key="ShiftID"
+          :opened-detailed="registered_shift.ID_Index"
+          :default-sort-direction="registered_shift.defaultSortOrder"
+          :default-sort="[registered_shift.sortField, registered_shift.sortOrder]"
+          @sort="onRegisteredShiftSort"
+          @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRegisteredRoomRecord(); closeOtherRegisteredDetails(row, index) }"
+          @details-close="(row, index) => { registered_room.room_record_data = [] }"
+          :show-detail-icon="true"
+        >
+          <template slot-scope="props">
+            <b-table-column field="ShiftID" label="Mã ca thi" sortable>
+              {{ props.row.ShiftID }}
+            </b-table-column>
+            <b-table-column field="SubjectID" label="Môn thi" sortable>
+              <b></b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}
+            </b-table-column>
+            <b-table-column field="Date_Start" label="Ngày thi" sortable>
+              {{ formatDate(props.row.Date_Start) }}
+            </b-table-column>
+            <b-table-column field="Start_At" label="Thời gian bắt đầu" sortable>
+              {{ props.row.Start_At }}
+            </b-table-column>
+            <b-table-column field="End_At" label="Thời gian kết thúc" sortable>
+              {{ props.row.End_At }}
+            </b-table-column>
+          </template>
 
-        <template slot="detail" slot-scope="props">
-          <h4 class="title is-4">Danh sách phòng thi</h4>
-          <b-field  expanded>
-            <b-button
-              :class="{'is-loading': registered_room.room_loading}"
-              class="button"
-              @click="getRegisteredRoomRecord"
+          <template slot="detail" slot-scope="props">
+            <h4 class="title is-4">Danh sách phòng thi</h4>
+            <b-field  expanded>
+              <b-button
+                :class="{'is-loading': registered_room.room_loading}"
+                class="button"
+                @click="getRegisteredRoomRecord"
+              >
+                <b-icon
+                  size="is-small"
+                  icon="sync"/>
+              </b-button>
+            </b-field>
+            <b-table
+              :data="registered_room.room_record_data"
+              :loading="registered_room.room_loading"
+              bordered
+              narrowed
+              hoverable
+              detail-key="RoomID"
             >
-              <b-icon
-                size="is-small"
-                icon="sync"/>
-            </b-button>
-          </b-field>
-          <b-table
-            :data="registered_room.room_record_data"
-            :loading="registered_room.room_loading"
-            bordered
-            narrowed
-            hoverable
-            detail-key="RoomID"
-          >
-            <template slot-scope="props">
-              <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
-                {{ props.row.RoomID }}
-              </b-table-column>
-              <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
-                {{ props.row.RoomName }}
-              </b-table-column>
-              <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
-                {{ props.row.Maxcapacity }}
-              </b-table-column>
-            </template>
-          </b-table>
-        </template>
-      </b-table>
+              <template slot-scope="props">
+                <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
+                  {{ props.row.RoomID }}
+                </b-table-column>
+                <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
+                  {{ props.row.RoomName }}
+                </b-table-column>
+                <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
+                  {{ props.row.Maxcapacity }}
+                </b-table-column>
+              </template>
+            </b-table>
+          </template>
+        </b-table>
       </b-field>
     </div>
 </template>
@@ -331,29 +331,28 @@
             formatDate(date) {
                 return moment(date).format('L');
             },
-            registerShift(RoomID, ShiftID, studentID) {
+            async registerShift(Room_ShiftID) {
               try {
-                console.log(RoomID, ShiftID, studentID);
-                // const response = await axios({
-                //   url: '/shift-register/register-shift',
-                //   method: 'post',
-                //   params: {
-                //     studentID: this.studentID
-                //     shiftID: this.shift.
-                //   },
-                //   headers: {
-                //     'Authorization': authHeader(),
-                //   }
-                // });
-                // if (response.status === 200) {
-                //   this.shift.shift_record_data = [];
-                //   this.shift.total = response.data.total_results;
-                //   response.data.shift_records.forEach((item) => {
-                //     this.shift.shift_record_data.push(item);
-                //   });
-                //   // console.log(this.data);
-                //   this.shift.shift_loading = false
-                // }
+                const response = await axios({
+                  url: '/shift-register/register-shift',
+                  method: 'post',
+                  data: {
+                    studentID: this.studentid,
+                    Room_ShiftID: Room_ShiftID,
+                  },
+                  headers: {
+                    'Authorization': authHeader(),
+                  }
+                });
+                if (response.status === 200) {
+                  this.shift.shift_record_data = [];
+                  this.shift.total = response.data.total_results;
+                  response.data.shift_records.forEach((item) => {
+                    this.shift.shift_record_data.push(item);
+                  });
+                  // console.log(this.data);
+                  this.shift.shift_loading = false
+                }
               } catch (error) {
                 this.registered_shift.registered_shift_record_data = [];
                 this.registered_shift.total = 0;
@@ -376,6 +375,7 @@
                           method: 'get',
                           params: {
                               SemID: this.semester.semester_record.SemID,
+                              StudentID: this.studentid,
                               page_index: this.shift.page,
                               per_page: this.shift.per_page,
                               sort_field: this.shift.sortField,
@@ -386,6 +386,7 @@
                           }
                       });
                       if (response.status === 200) {
+                          console.log(response.data);
                           this.shift.shift_record_data = [];
                           this.shift.total = response.data.total_results;
                           response.data.shift_records.forEach((item) => {
@@ -409,7 +410,6 @@
                   }
             },
             async getRegisteredShiftRecordData() {
-              console.log('hello');
               this.registered_shift.shift_loading = true;
               try {
                 const response = await axios({
@@ -417,6 +417,7 @@
                   method: 'get',
                   params: {
                     SemID: this.semester.semester_record.SemID,
+                    StudentID: this.studentid,
                     page_index: this.registered_shift.page,
                     per_page: this.registered_shift.per_page,
                     sort_field: this.registered_shift.sortField,
@@ -426,6 +427,7 @@
                     'Authorization': authHeader(),
                   }
                 });
+                console.log(response.data);
                 if (response.status === 200) {
                   this.registered_shift.shift_record_data = [];
                   this.registered_shift.total = response.data.total_results;

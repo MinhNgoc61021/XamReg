@@ -583,7 +583,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

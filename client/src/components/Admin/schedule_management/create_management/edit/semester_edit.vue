@@ -21,8 +21,8 @@
           <b-field label="Tình trạng">
             <b-switch v-model="newStatus"
                       :value="newStatus">
-              <b-tag v-if="newStatus === false">Chưa thi</b-tag>
-              <b-tag v-else type="is-primary"> Đang thi</b-tag>
+              <b-tag v-if="newStatus === false">Chưa mở đăng ký</b-tag>
+              <b-tag v-else type="is-primary">Mở đăng ký</b-tag>
             </b-switch>
           </b-field>
 

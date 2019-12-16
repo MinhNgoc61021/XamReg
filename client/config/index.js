@@ -174,6 +174,10 @@ module.exports = {
         target: 'http://api:5000',
         changeOrigin: true,
       },
+      '/shift-register/register-shift': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
       '/shift-register/registered-shift-records':{
         target: 'http://api:5000',
         changeOrigin: true,

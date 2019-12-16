@@ -39,8 +39,8 @@
                 role="button">
                 <p class="card-header-title">
                     <span>Tiêu đề: {{ collapse.SemTitle }}
-                      <b-tag v-if="collapse.Status === false">Chưa thi</b-tag>
-                      <b-tag v-else type="is-primary"> Đang thi</b-tag>
+                      <b-tag v-if="collapse.Status === false">Chưa mở đăng ký</b-tag>
+                      <b-tag v-else type="is-primary">Mở đăng ký</b-tag>
                     </span>
                 </p>
                 <div style="float: right; margin: 20px;">
