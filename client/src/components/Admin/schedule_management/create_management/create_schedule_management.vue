@@ -39,8 +39,8 @@
                 role="button">
                 <p class="card-header-title">
                     <span>Tiêu đề: {{ collapse.SemTitle }}
-                      <b-tag v-if="collapse.Status === false">Chưa thi</b-tag>
-                      <b-tag v-else type="is-primary"> Đang thi</b-tag>
+                      <b-tag v-if="collapse.Status === false">Chưa mở đăng ký</b-tag>
+                      <b-tag v-else type="is-primary">Mở đăng ký</b-tag>
                     </span>
                 </p>
                 <div style="float: right; margin: 20px;">
@@ -288,25 +288,24 @@
                                 newSemester: this.semester.newSemester,
                             },
                         });
+                        this.semester.create_loading = false;
                         if (response.status === 200) {
-                            this.semester.create_loading = false;
-                            if (response.data.status === 'success') {
-                                this.$buefy.notification.open({
-                                    duration: 2000,
-                                    message: `Đã tạo kỳ thi thành công!`,
-                                    position: 'is-bottom-right',
-                                    type: 'is-success',
-                                    hasIcon: true
-                                });
-                            } else {
-                                this.$buefy.notification.open({
-                                    duration: 2000,
-                                    message: `Kỳ thi đã tồn tại từ trước!`,
-                                    position: 'is-bottom-right',
-                                    type: 'is-warning',
-                                    hasIcon: true
-                                });
-                            }
+                            this.$buefy.notification.open({
+                                duration: 2000,
+                                message: `Đã tạo kỳ thi thành công!`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                            });
+                        }
+                        else if (response.status === 202) {
+                            this.$buefy.notification.open({
+                                duration: 2000,
+                                message: `Kỳ thi đã tồn tại từ trước!`,
+                                position: 'is-bottom-right',
+                                type: 'is-warning',
+                                hasIcon: true
+                            });
                         }
                     } catch (e) {
                         this.semester.create_loading = false;
@@ -329,6 +328,7 @@
                         }
                     }
                     finally {
+                        this.semester.newSemester = '';
                         this.getSemesterRecordData();
                     }
                 }

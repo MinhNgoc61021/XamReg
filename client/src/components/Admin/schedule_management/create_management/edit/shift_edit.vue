@@ -17,6 +17,7 @@
               placeholder="Tìm kiếm để nhập môn thi"
               field="SubjectID"
               :value="SubjectID"
+              v-model="SubjectID"
               :loading="search.searchLoading"
               @typing="onSubjectSearch"
               @select="option =>  optionedSubject = [option]"
@@ -44,7 +45,7 @@
               </b-timepicker>
           </b-field>
 
-          <b-field label="Giờ bắt đầu thi">
+          <b-field label="Giờ kết thúc thi">
               <b-timepicker
                   v-model="End_At"
                   :value="End_At"
@@ -54,11 +55,11 @@
           </b-field>
 
         </section>
+        <footer class="modal-card-foot">
+            <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
+            <button class="button is-primary" type="submit">Cập nhật</button>
+        </footer>
     </div>
-    <footer class="modal-card-foot">
-          <button class="button" type="button" @click="$parent.close()">Bỏ qua</button>
-          <button class="button is-primary" type="submit">Cập nhật</button>
-      </footer>
   </form>
 </template>
 

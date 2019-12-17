@@ -7,7 +7,7 @@ from flask import (
 )
 import re
 from controller.authentication.auth import token_required
-from db.entity_db import Semester_Examination, Room_Shift, Shift, Log
+from db.entity_db import Semester_Examination, Room_Shift, Shift, Log, Student_Shift
 from controller.time_conversion.asia_timezone import set_custom_log_time
 from datetime import datetime
 
@@ -22,7 +22,7 @@ def add_semester(current_user):
         newSemesterTitle = request.get_json().get('newSemester')
         checkSemester = re.search('^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ' +
                                   'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
-                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s-]+$', newSemesterTitle)
+                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ()\\s-]+$', newSemesterTitle)
         print(newSemesterTitle, flush=True)
 
         if checkSemester is None:
@@ -147,6 +147,7 @@ def edit_shift(current_user):
         new_end_at = edit_shift.get('newEnd_At')
 
         print(shiftID, flush=True)
+        print(semID, flush=True)
         print(new_subjectID, flush=True)
 
         new_time_start = datetime.strptime(new_start_at, "%H:%M:%S")  # convert string to time
@@ -285,6 +286,26 @@ def get_room(current_user):
                         'page_size': record[1].page_size,
                         'num_pages': record[1].num_pages,
                         'total_results': record[1].total_results,
+                        }), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+@schedule_management.route('/student-records', methods=['GET'])
+@token_required
+def get_students(current_user):
+    try:
+        roomID = request.args.get('roomID')
+        sort_order = request.args.get('sort_order')
+        sort_field = request.args.get('sort_field')
+
+        print(roomID, flush=True)
+        print(sort_order, flush=True)
+        print(sort_field, flush=True)
+
+        record = Student_Shift.getRecord(roomID, sort_field, sort_order)
+        print("Student: ", record, flush=True)
+        return jsonify({'status': 'success',
+                        'student_records': record
                         }), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
