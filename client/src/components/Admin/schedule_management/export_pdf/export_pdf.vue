@@ -139,9 +139,9 @@
                                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
                                     {{ props.row.Maxcapacity }}
                                   </b-table-column>
-                                  <b-table-column field="Maxcapacity" label="Số lượng sinh viên" width="100" sortable>
-                                    {{ props.row.Maxcapacity }}
-                                  </b-table-column>
+<!--                                  <b-table-column field="student_count" label="Số lượng sinh viên" width="100" sortable>-->
+<!--                                    {{ room.student_count }}-->
+<!--                                  </b-table-column>-->
                                 </template>
 
                                 <!--Student-->
@@ -262,7 +262,7 @@
                 select_search: Object,
                 room_record_data: [],
                 total: 0,
-                student_count: student.total,
+                student_count: '',
                 searchResults: [],
                 room_loading: false,
                 search_loading: false,
@@ -501,11 +501,11 @@
                     // console.log(response.data.shift_records);
                     if (response.status === 200) {
                         this.student.student_record_data = [];
-                        this.student.total = response.data.total_results;
+                        this.room.student_count = response.data.total_results;
                         response.data.student_records.forEach((item) => {
                             this.student.student_record_data.push(item);
                         });
-                        // console.log(this.data);
+                        console.log(this.room.student_count);
                         this.student.student_loading = false
                     }
                 } catch (error) {

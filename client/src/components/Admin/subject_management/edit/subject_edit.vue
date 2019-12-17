@@ -44,7 +44,6 @@
 <script>
     import axios from "axios";
     import {authHeader} from "../../../api/jwt_handling";
-
     export default {
         name: "subject_edit",
         props: ['currentSubjectID','currentSubjectTitle'],
