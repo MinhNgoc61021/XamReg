@@ -96,6 +96,18 @@ def get_semester(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
+@schedule_management.route('/register-semester-records', methods=['GET'])
+@token_required
+def get_register_semester(current_user):
+    try:
+        semesterRecords = Semester_Examination.getRegisterRecord()
+        return jsonify({'status': 'success',
+                        'semesterRecords': semesterRecords
+                        }), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
 @schedule_management.route('/create-shift', methods=['POST'])
 @token_required
 def create_shift(current_user):
@@ -162,7 +174,7 @@ def edit_shift(current_user):
                                           new_end_at)
             if newShift is True:
                 Log.create(current_user['ID'],
-                           'Thay đổi thông tin ca thi có mã ' + str(shiftID),
+                           'Chỉnh sửa thông tin ca thi có mã ' + str(shiftID),
                            set_custom_log_time())
                 return jsonify({'status': 'success'}), 200
             else:

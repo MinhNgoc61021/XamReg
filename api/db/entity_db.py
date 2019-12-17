@@ -390,7 +390,7 @@ class Semester_Examination(Base):
     SemTitle = Column(String(200),
                       nullable=False)
     Status = Column(Boolean,
-                    nullable=False, default=False)  # true là đang thi, false là không thi
+                    nullable=False, default=False)  # true là đang mở đăng kí, false là không mở đăng ký
 
     @classmethod
     def searchSemesterRecord(cls, SemTitle):
@@ -429,6 +429,18 @@ class Semester_Examination(Base):
         sess = Session()
         try:
             semester_list = sess.query(Semester_Examination)
+            return semester_examination_schema.dump(semester_list, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getRegisterRecord(cls):
+        sess = Session()
+        try:
+            semester_list = sess.query(Semester_Examination).filter(Semester_Examination.Status == True)
             return semester_examination_schema.dump(semester_list, many=True)
         except:
             sess.rollback()

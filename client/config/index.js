@@ -98,6 +98,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/schedule/register-semester-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/schedule/create-shift': {
           target: 'http://api:5000',
           changeOrigin: true,

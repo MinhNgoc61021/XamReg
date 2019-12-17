@@ -30,8 +30,8 @@
                 role="button">
                 <p class="card-header-title">
                     <span>Tiêu đề: {{ collapse.SemTitle }}
-                      <b-tag v-if="collapse.Status === false">Chưa thi</b-tag>
-                      <b-tag v-else type="is-primary"> Đang thi</b-tag>
+                      <b-tag v-if="collapse.Status === false">Chưa mở đăng ký</b-tag>
+                      <b-tag v-else type="is-primary">Đang mở đăng ký</b-tag>
                     </span>
                 </p>
             </div>
@@ -127,7 +127,7 @@
                                 :default-sort-direction="room.defaultSortOrder"
                                 :default-sort="[room.sortField, room.sortOrder]"
                                 @sort="onRoomSort"
-                                @details-open="(row, index) => { currentRoomShiftID = row.Room_ShiftID ; getStudentRecord(); closeOtherDetails_Room(row, index) }"
+                                @details-open="(row, index) => { currentRoomShiftID = row.Room_ShiftID ; currentRoomName = row.Exam_Room.RoomName; getStudentRecord(); closeOtherDetails_Room(row, index) }"
                                 @details-close="(row, index) => { student.student_record_data = [] }"
                                 :show-detail-icon="true">
                                 <template slot-scope="props">
@@ -298,6 +298,7 @@
               currentShiftID: '', // current opening shiftID
               currentSemID: '', // current opening semesterID
               currentRoomShiftID: '', //current opening roomID
+              currentRoomName: '', // for excel name
               hasSemesterError: false,
               hasSubjectError: false,
               hasRoomError: false
@@ -311,7 +312,7 @@
                 this.semester.loading = true;
                 try {
                     const response = await axios({
-                        url: '/schedule/semester-records',
+                        url: '/schedule/register-semester-records',
                         method: 'get',
                         headers: {
                             'Authorization': authHeader(),
@@ -555,7 +556,7 @@
                     // console.log(response.data.shift_records);
                     if (response.status === 200) {
                         this.excel_export.json_data = [];
-                        this.excel_export.file_name = "Danh sách sinh viên mã phòng " + this.currentRoomShiftID + ".xlsx";
+                        this.excel_export.file_name = "Danh sách sinh viên của phòng " + this.currentRoomName  + ".xls";
                         this.student.total = response.data.total_results;
                         response.data.student_records.forEach((item) => {
                             this.excel_export.json_data.push(item);
@@ -567,7 +568,7 @@
                     this.excel_export.json_data = [];
                     this.$buefy.notification.open({
                         duration: 2000,
-                        message: 'Không thể download file excel!',
+                        message: 'Không thể tải được file excel!',
                         position: 'is-bottom-right',
                         type: 'is-danger',
                         hasIcon: true
