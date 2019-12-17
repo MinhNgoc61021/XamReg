@@ -27,7 +27,8 @@
                 :loading="search.searchLoading"
                 @typing="onStudentSearch"
                 @select="option => student.student_record = [option]"
-                expanded>
+                expanded
+                clear-on-select>
               <template slot-scope="props">
                     <div class="media">
                         <div class="media-left">
@@ -115,7 +116,7 @@
             </template>
             <template slot="detail" slot-scope="props">
                 <h4 class="title is-4">Danh sách môn học</h4>
-                <b-field grouped group-multiline>
+                <b-field group-multiline>
                   <b-button
                     :class="{'is-loading': student_status.loading}"
                     class="button"
@@ -125,12 +126,35 @@
                       size="is-small"
                       icon="sync"/>
                   </b-button>
+                  <b-autocomplete
+                    clear-on-select
+                    icon="search"
+                    type="text"
+                    :data="subject_search.searchResults"
+                    placeholder="Tìm kiếm để nhập môn thi"
+                    field="SubjectID"
+                    :loading="subject_search.searchLoading"
+                    @typing="onSubjectSearch"
+                    @select="option => { subject_search.select_subject = [option]; addStudentSubject() }"
+                    expanded>
+                      <template slot-scope="props">
+                          <div class="media">
+                              <div class="media-left">
+                                <b-icon icon-pack="fas" icon="book"></b-icon>
+                              </div>
+                              <div class="media-content">
+                                <div><b>Mã môn học: </b>{{ props.option.SubjectID }}</div>
+                                <div><b>Tên môn học: </b>{{ props.option.SubjectTitle }}</div>
+                              </div>
+                          </div>
+                      </template>
+                  </b-autocomplete>
                   <b-select v-model="student_status.status_type">
                     <option value="Qualified" >Đủ điều kiện thi</option>
                     <option value="Unqualified">Không đủ điều kiện thi</option>
                   </b-select>
                 </b-field>
-                <b-field v-if="student_status.student_subject_record.length > 0" grouped group-multiline>
+                <b-field v-if="student_status.student_subject_record.length > 0" group-multiline>
                   <b-table
                     :data="student_status.student_subject_record"
                     :loading="student_status.loading"
@@ -224,6 +248,11 @@
                 search: {
                     searchResults: [],
                     searchLoading: false,
+                },
+                subject_search: {
+                    searchResults: [],
+                    searchLoading: false,
+                    select_subject: Object,
                 },
             }
         },
@@ -435,6 +464,90 @@
                 }
 
             }, 500),
+            async addStudentSubject() {
+                this.subject_search.loading = true;
+                try {
+                    const response = await axios({
+                        url: '/student/create-student-subject',
+                        method: 'post',
+                        data: {
+                            StudentID: this.student_status.currentStudentID,
+                            Student_SubjectID: this.subject_search.select_subject[0].SubjectID,
+                            Status_Type: this.student_status.status_type,
+                        },
+                        headers: {
+                            'Authorization': authHeader(),
+                        }
+                    });
+                    if (response.data.status === 'success') {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: `Đã thêm môn học cho sinh viên có MSSV: ${this.student_status.currentStudentID} thành công.`,
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                            hasIcon: true
+                        });
+                    } else {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: `Môn học đã tồn tại từ trước!`,
+                            position: 'is-bottom-right',
+                            type: 'is-warning',
+                            hasIcon: true
+                        });
+                    }
+                } catch (error) {
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: `Không thể lấy được dữ liệu môn học của sinh viên có MSSV: ${this.student_status.currentStudentID}!`,
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+                    throw error;
+                } finally {
+                    this.getStudent_Subject();
+                }
+            },
+            onSubjectSearch: debounce(function (SubjectID) {
+                this.subject_search.searchLoading = true;
+                if (SubjectID.length > 15 || SubjectID.length === 0) {
+                  this.subject_search.searchResults = [];
+                  this.subject_search.searchLoading = false;
+                }
+                else {
+                  this.subject_search.searchResults = [];
+                  axios({
+                    url: '/subject/search-subject',
+                    method: 'get',
+                    headers: {
+                      'Authorization': authHeader(),
+                    },
+                    params: {
+                      searchID: SubjectID,
+                    },
+                  }).then((response) => {
+                    if (response.status === 200) {
+                      // console.log(response.data.search_results);
+                      response.data.search_results.forEach((item) => {
+                        this.subject_search.searchResults.push(item);
+                      });
+                      this.subject_search.searchLoading = false;
+                    }
+                  }).catch((error) => {
+                    this.subject_search.searchResults = [];
+                    this.subject_search.searchLoading = false;
+                    this.$buefy.notification.open({
+                      duration: 2000,
+                      message: 'Không thể tìm được dữ liệu!',
+                      position: 'is-bottom-right',
+                      type: 'is-danger',
+                      hasIcon: true
+                    });
+                    throw error;
+                  });
+                }
+              }, 500),
             /*
               * Handle student status record page-change event
             */

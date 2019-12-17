@@ -79,30 +79,28 @@
                          newGender: this.newStudent.Gender,
                      }
                   });
-                  if (response.status === 200) {
-                      if (response.data.status === 'success') {
-                          this.$buefy.notification.open({
-                              duration: 2500,
-                              message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã được tạo thành công!`,
-                              position: 'is-bottom-right',
-                              type: 'is-success',
-                              hasIcon: true
-                          });
-                      }
-                      else {
-                          this.$buefy.notification.open({
-                              duration: 2500,
-                              message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã tồn tại trước đó!`,
-                              position: 'is-bottom-right',
-                              type: 'is-warning',
-                              hasIcon: true
-                          });
-                      }
+                  if (response.data.status === 'success') {
+                      this.$buefy.notification.open({
+                          duration: 2000,
+                          message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã được tạo thành công!`,
+                          position: 'is-bottom-right',
+                          type: 'is-success',
+                          hasIcon: true
+                      });
+                  }
+                  else {
+                      this.$buefy.notification.open({
+                          duration: 2000,
+                          message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã tồn tại trước đó!`,
+                          position: 'is-bottom-right',
+                          type: 'is-warning',
+                          hasIcon: true
+                      });
                   }
               } catch (e) {
                   if (e['message'].includes('400')) {
                       this.$buefy.notification.open({
-                          duration: 2500,
+                          duration: 2000,
                           message: `Kiểm tra lại, dữ liệu bạn nhập đang có vấn đề!`,
                           position: 'is-bottom-right',
                           type: 'is-danger',

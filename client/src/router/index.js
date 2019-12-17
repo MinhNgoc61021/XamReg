@@ -11,7 +11,8 @@ import log_management from "../components/Admin/log_management/log_management";
 import subject_management from "../components/Admin/subject_management/subject_management";
 import student_home_page from "../components/Student/home_page";
 import shift_register from "../components/Student/shift_register/shift_register";
-import exam_room_management from "../components/Admin/exam_room_management/exam_room_management"
+import exam_room_management from "../components/Admin/exam_room_management/exam_room_management";
+import manual from "../components/manual_script/manual";
 import { getToken } from "../components/api/jwt_handling";
 Vue.use(VeeValidate);
 Vue.use(Router);
@@ -25,10 +26,12 @@ export const router = new Router({
                   { path: '/schedule-management', component: schedule_management },
                   { path: '/log-management', component: log_management },
                   { path: '/subject-management', component: subject_management },
-                  { path: '/exam-room-management', component: exam_room_management },],
+                  { path: '/exam-room-management', component: exam_room_management },
+                  { path: '/manual', name: 'manual', component: manual },],
     },
     { path: '/student', name: 'student', component: student_page, redirect: '/student-home',
       children: [ { path: '/student-home', component: student_home_page },
+                  { path: '/manual', name: 'manual', component: manual },
                   { path: '/shift-register/:studentid', component: shift_register, name: 'shift-register' , props: true,
                     beforeEnter (to, from, next)  {
                         if (getToken(localStorage.getItem('user')).type === 'Admin') {
