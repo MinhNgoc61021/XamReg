@@ -134,6 +134,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/schedule/student-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/room/room-records': {
           target: 'http://api:5000',
           changeOrigin: true,

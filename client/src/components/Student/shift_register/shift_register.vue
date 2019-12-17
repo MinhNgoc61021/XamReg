@@ -47,7 +47,7 @@
 
       <b-field group-multiline v-if="shift.shift_record_data.length === 0">
         <b-message type="is-danger" has-icon>
-          Hiện tại bạn không chưa môn nào được cho pháp đăng ký
+          Hiện tại bạn không chưa môn nào được cho phép đăng ký
         </b-message>
       </b-field>
 
@@ -184,7 +184,7 @@
               {{ props.row.ShiftID }}
             </b-table-column>
             <b-table-column field="SubjectID" label="Môn thi" sortable>
-              <b></b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}
+              <b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}</b>
             </b-table-column>
             <b-table-column field="Date_Start" label="Ngày thi" sortable>
               {{ formatDate(props.row.Date_Start) }}
@@ -297,27 +297,33 @@
                     'Authorization': authHeader(),
                   }
                 });
-                if (response.status === 200) {
-                    if (response.data.status === 'success') {
-                        this.$buefy.notification.open({
-                              duration: 2000,
-                              message: 'Đã đăng ký thành công!',
-                              position: 'is-bottom-right',
-                              type: 'is-success',
-                              hasIcon: true
-                        });
-                    }
-                    else {
-                        this.$buefy.notification.open({
-                              duration: 2000,
-                              message: 'Bạn đã đăng ký phòng thi này rồi!',
-                              position: 'is-bottom-right',
-                              type: 'is-warning',
-                              hasIcon: true
-                        });
-                    }
-
+                if (response.data.status === 'success') {
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Đã đăng ký thành công!',
+                        position: 'is-bottom-right',
+                        type: 'is-success',
+                        hasIcon: true
+                    });
                 }
+                else if (response.data.status === 'already-registered') {
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Bạn đã đăng ký phòng thi này rồi!',
+                        position: 'is-bottom-right',
+                        type: 'is-warning',
+                        hasIcon: true
+                    });
+                }
+                else if (response.data.status === 'out of capacity') {
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Phòng này hiện tại đã đủ sinh viên đăng ký, bạn hãy đăng ký phòng khác!',
+                        position: 'is-bottom-right',
+                        type: 'is-warning',
+                        hasIcon: true
+                    });
+                  }
               } catch (error) {
                 this.$buefy.notification.open({
                   duration: 2000,
@@ -510,11 +516,6 @@
                 this.shift.sortField = field;
                 this.shift.sortOrder = order;
                 this.getShiftRecordData();
-            },
-            onRegisteredShiftSort(field, order) {
-                this.registered_shift.sortField = field;
-                this.registered_shift.sortOrder = order;
-                this.getRegisteredRoomShiftRecordData();
             },
             selectSemesterModal() {
                 this.$buefy.modal.open({

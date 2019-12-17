@@ -87,8 +87,8 @@
                         :default-sort-direction="shift.defaultSortOrder"
                         :default-sort="[shift.sortField, shift.sortOrder]"
                         @sort="onShiftSort"
-                        @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRoomRecord(); closeOtherDetails(row, index) }"
-                        @details-close="(row, index) => { room.room_record_data = [] }"
+                        @details-open="(row, index) => { currentShiftID = row.ShiftID; getRoomRecord(); closeOtherDetails(row, index) }"
+                        @details-close="(row, index) => { room.room_record_data = []; room.page = 1 }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
                             <b-table-column field="ShiftID" label="Mã ca thi" width="100" sortable>
@@ -147,7 +147,7 @@
                                 </b-autocomplete>
                             </b-field>
                             <!--shift-->
-                            <b-field v-if="room.room_record_data.length > 0" grouped group-multiline>
+                            <b-field v-if="room.room_record_data.length > 0">
                               <b-table
                                 :data="room.room_record_data"
                                 :loading="room.room_loading"
@@ -164,24 +164,23 @@
                                 bordered
                                 narrowed
                                 hoverable
-                                detail-key="RoomID"
                                 :default-sort-direction="room.defaultSortOrder"
                                 :default-sort="[room.sortField, room.sortOrder]"
                                 @sort="onRoomSort">
                                 <template slot-scope="props">
 
                                   <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
-                                    {{ props.row.RoomID }}
+                                    {{ props.row.Exam_Room.RoomID }}
                                   </b-table-column>
-                                  <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
-                                    {{ props.row.RoomName }}
+                                  <b-table-column field="RoomName" label="Phòng thi" width="100">
+                                    {{ props.row.Exam_Room.RoomName }}
                                   </b-table-column>
-                                  <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
-                                    {{ props.row.Maxcapacity }}
+                                  <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
+                                    {{ props.row.Exam_Room.Maxcapacity }}
                                   </b-table-column>
 
                                   <b-table-column field="Action" width="90">
-                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row.RoomID)"></b-button>
+                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row.Exam_Room.RoomID)"></b-button>
                                   </b-table-column>
                                 </template>
                               </b-table>
@@ -576,6 +575,7 @@
             }, // xong
             onShiftPageChange(page) {
                 this.shift.page = page;
+                this.room.page = 1;
                 this.getShiftRecordData();
             }, // xong
             onShiftEdit(record) {

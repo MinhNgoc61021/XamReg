@@ -671,6 +671,30 @@ class Room_Shift(Base):
         sess = Session()
         try:
             record_query = sess.query(Room_Shift).options(
+                joinedload('Exam_Room')).filter(
+                Room_Shift.ShiftID == shiftID).order_by(
+                getattr(
+                    getattr(Room_Shift, sort_field), sort_order)())
+
+            # to count current student register (đếm số sinh viên đã đăng ký)
+            # record_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return roomshift_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    # lấy các phòng cho phép đăng ký theo ca
+    @classmethod
+    def getExportRecord(cls, shiftID, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Room_Shift).options(
                 joinedload('Exam_Room')).options(
                 joinedload('Student_Shift')).filter(
                 Room_Shift.ShiftID == shiftID).order_by(
@@ -726,15 +750,21 @@ class Student_Shift(Base):
     def create(cls, room_shiftID, studentID):
         sess = Session()
         try:
-            if sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID,
-                                                Student_Shift.StudentID == studentID).scalar() is None:
+            registerTotalbyRoom_Shift = sess.query(Room_Shift).filter(Room_Shift.Room_ShiftID == room_shiftID).group_by(Room_Shift.Room_ShiftID).count()
+            getMaxcapacity = sess.query(Exam_Room).join(Room_Shift).filter(Room_Shift.Room_ShiftID == room_shiftID).first()
+            print(registerTotalbyRoom_Shift, flush=True)
 
-                newShift = Student_Shift(Room_ShiftID=room_shiftID, StudentID=str(studentID))
-                sess.add(newShift)
-                sess.commit()
-                return True
+            if registerTotalbyRoom_Shift <= getMaxcapacity.Maxcapacity:
+                if sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID,
+                                                Student_Shift.StudentID == studentID).scalar() is None:
+                    newShift = Student_Shift(Room_ShiftID=room_shiftID, StudentID=str(studentID))
+                    sess.add(newShift)
+                    sess.commit()
+                    return True
+                else:
+                    return False, 'already-registered'
             else:
-                return False
+                return False, 'out of capacity'
         except:
             sess.rollback()
             raise

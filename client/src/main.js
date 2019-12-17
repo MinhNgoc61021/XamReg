@@ -15,6 +15,7 @@ export const eventBus = new Vue();
 library.add(fas);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('downloadExcel', JsonExcel);
+
 Vue.use(Buefy, {
     defaultIconPack: 'fas',
     // ...
