@@ -154,7 +154,7 @@
       </b-field>
 
       <h1 class="title is-3">Các môn đã đăng ký</h1>
-      <b-field grouped group-multiline>
+      <b-field group-multiline>
         <b-button
           :class="{'is-loading': registered_shift.create_loading}"
           class="button"
@@ -167,7 +167,7 @@
         </b-button>
       </b-field>
 
-      <b-field group-multiline v-if="registered_shift.registered_shift_record_data.length === 0">
+      <b-field v-if="registered_shift.registered_shift_record_data.length === 0">
         <b-message type="is-danger" has-icon>
           Bạn chưa đăng ký môn
         </b-message>
