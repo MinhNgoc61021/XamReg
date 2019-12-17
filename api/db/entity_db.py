@@ -513,19 +513,6 @@ class Shift(Base):
             sess.close()
 
     @classmethod
-    def searchShiftRecord(cls, SubjectID):
-        sess = Session()
-        try:
-            subject = sess.query(Shift).filter(Shift.SubjectID.like(SubjectID + '%'),
-                                               Student_Status.Status.like('Qualified' + '%'))
-            return shift_schema.dump(subject, many=True)
-        except:
-            sess.rollback()
-            raise
-        finally:
-            sess.close()
-
-    @classmethod
     def getRecord(cls, semID, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
@@ -546,12 +533,11 @@ class Shift(Base):
             sess.close()
 
     @classmethod
-    def getQualifiedShiftRecord(cls, semID, page_index, per_page, sort_field, sort_order):
+    def getQualifiedShiftRecord(cls, semID, studentID, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
-            record_query = sess.query(Shift).filter(Shift.SemID == semID,
-                                                    # Student_Status.Status.like('Qualified' + '%')
-                                                    ).options(joinedload('Subject')).order_by(
+            record_query = sess.query(Shift).filter(Shift.SemID == semID, Shift.SubjectID == Student_Status.SubjectID, Student_Status.StudentID == studentID, Student_Status.Status == 'Qualified'
+                                            ).order_by(
                 getattr(
                     getattr(Shift, sort_field), sort_order)())
 
@@ -586,7 +572,8 @@ class Shift(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            if sess.query(Shift).filter(Shift.SubjectID == newSubjectID, Shift.ShiftID != ShiftID, Shift.SemID == SemID) is None:
+            if sess.query(Shift).filter(Shift.SubjectID == newSubjectID, Shift.SemID == SemID,
+                                        Shift.ShiftID != ShiftID).scalar() is None:
                 sess.query(Shift).filter(Shift.ShiftID == ShiftID).update(
                     {Shift.SubjectID: newSubjectID,
                      Shift.Date_Start: new_date_start,
@@ -596,6 +583,19 @@ class Shift(Base):
                 return True
             else:
                 return False
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def searchShiftRecord(cls, SubjectID):
+        sess = Session()
+        try:
+            subject = sess.query(Shift).filter(Shift.SubjectID.like(SubjectID + '%'),
+                                               Student_Status.Status.like('Qualified' + '%'))
+            return shift_schema.dump(subject, many=True)
         except:
             sess.rollback()
             raise
@@ -659,6 +659,27 @@ class Room_Shift(Base):
             sess.close()
 
     @classmethod
+    def getRegisterRoom(cls, shiftID, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Exam_Room).join(Room_Shift).filter(Exam_Room.RoomID == Room_Shift.RoomID,
+                                                                         Room_Shift.ShiftID == shiftID).order_by(
+                getattr(
+                    getattr(Exam_Room, sort_field), sort_order)())
+
+            # record_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return examroom_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
     def delRecord(cls, roomID, shiftID):
         sess = Session()
         try:
@@ -682,15 +703,46 @@ class Student_Shift(Base):
     StudentID = Column(String(45),
                        ForeignKey('user.ID', onupdate="cascade"),
                        nullable=False)
+    RoomID = Column(Integer,
+                    ForeignKey('exam_room.RoomID', onupdate="cascade"),
+                    nullable=False)
     ShiftID = Column(Integer,
                      ForeignKey('shift.ShiftID', onupdate="cascade"),
                      nullable=False)
-    __table_args__ = (UniqueConstraint('StudentID', 'ShiftID', name='Student_Shift_UC'),
-                      )
     Shift = relationship('Shift',
                          back_populates='student_shift')
+    Exam_Room = relationship('Exam_Room',
+                             back_populates='student_shift')
     Student = relationship('User',
                            back_populates='student_shift')
+
+    @classmethod
+    def create(cls, studentID, shiftID, roomID):
+        sess = Session()
+        try:
+
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getRecord(cls, roomID, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(User).join(Student_Shift).filter(Student_Shift.StudentID == User.ID,
+                                                                       Student_Shift.RoomID == roomID).order_by(
+                getattr(
+                    getattr(User, sort_field), sort_order)())
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return user_schema.dump(record_query, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
 
 
 # Exam Room persistent class
@@ -867,6 +919,11 @@ Shift.student_shift = relationship('Student_Shift',
                                    back_populates='Shift',
                                    cascade='all, delete, delete-orphan')
 
+Exam_Room.student_shift = relationship('Student_Shift',
+                                       order_by=Student_Shift.RoomID,
+                                       back_populates='Exam_Room',
+                                       cascade='all, delete, delete-orphan')
+
 User.student_shift = relationship('Student_Shift',
                                   order_by=Student_Shift.StudentID,
                                   back_populates='Student',
@@ -917,6 +974,8 @@ class StudentStatusSchema(ModelSchema):
 
 
 class RoomShiftSchema(ModelSchema):
+    Subject = Nested(SubjectSchema)
+
     class Meta:
         model = Room_Shift
 

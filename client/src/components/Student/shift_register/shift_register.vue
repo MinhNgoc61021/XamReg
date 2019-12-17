@@ -142,6 +142,7 @@
                   </b-table-column>
                   <b-table-column width="10">
                     <b-button type="is-success" style="float: right" icon-pack="fas" icon-left="plus-square" outlined @click.prevent="registerShift(props.row.RoomID, currentShiftID, studentid)">Đăng ký</b-button>
+                    <b-button type="alert" style="float: right" icon-pack="fas" icon-left="plus-square" outlined @click.prevent="cancelShift(props.row.RoomID, currentShiftID, studentid)">Hủy đăng ký</b-button>
                   </b-table-column>
                 </template>
               </b-table>
@@ -331,41 +332,76 @@
             formatDate(date) {
                 return moment(date).format('L');
             },
-            registerShift(RoomID, ShiftID, studentID) {
+            async registerShift(RoomID, ShiftID, StudentID) {
               try {
-                console.log(RoomID, ShiftID, studentID);
-                // const response = await axios({
-                //   url: '/shift-register/register-shift',
-                //   method: 'post',
-                //   params: {
-                //     studentID: this.studentID
-                //     shiftID: this.shift.
-                //   },
-                //   headers: {
-                //     'Authorization': authHeader(),
-                //   }
-                // });
-                // if (response.status === 200) {
-                //   this.shift.shift_record_data = [];
-                //   this.shift.total = response.data.total_results;
-                //   response.data.shift_records.forEach((item) => {
-                //     this.shift.shift_record_data.push(item);
-                //   });
-                //   // console.log(this.data);
-                //   this.shift.shift_loading = false
-                // }
-              } catch (error) {
-                this.registered_shift.registered_shift_record_data = [];
-                this.registered_shift.total = 0;
-                this.registered_shift.shift_loading = false;
-                this.$buefy.notification.open({
-                  duration: 2000,
-                  message: 'Không thể lấy được dữ liệu ca thi!',
-                  position: 'is-bottom-right',
-                  type: 'is-danger',
-                  hasIcon: true
+                const response = await axios({
+                  url: '/shift-register/register-shift',
+                  method: 'post',
+                  params: {
+                    studentID: StudentID,
+                    shiftID: ShiftID,
+                    roomID: RoomID
+                  },
+                  headers: {
+                    'Authorization': authHeader(),
+                  }
                 });
-                throw error;
+                if (response.status === 200) {
+                  this.notRegistered = false;
+                  this.$buefy.notification.open({
+                    duration: 2000,
+                    message: `Đã đăng ký thành công!`,
+                    position: 'is-bottom-right',
+                    type: 'is-success',
+                    hasIcon: true
+                  });
+                  this.getRegisteredShiftRecordData();
+                }
+              } catch (error) {
+                this.$buefy.notification.open({
+                    duration: 2000,
+                    message: 'Không thể đăng ký!',
+                    position: 'is-bottom-right',
+                    type: 'is-danger',
+                    hasIcon: true
+                  });
+                  throw error;
+              }
+            },
+            cancelShift(RoomID, ShiftID, studentID) {
+              try {
+                const response = await axios({
+                  url: '/shift-register/unregister-shift',
+                  method: 'delete',
+                  params: {
+                    studentID: StudentID,
+                    shiftID: ShiftID,
+                    roomID: RoomID
+                  },
+                  headers: {
+                    'Authorization': authHeader(),
+                  }
+                });
+                if (response.status === 200) {
+                  this.notRegistered = false;
+                  this.$buefy.notification.open({
+                    duration: 2000,
+                    message: `Đã hủy đăng ký!`,
+                    position: 'is-bottom-right',
+                    type: 'is-success',
+                    hasIcon: true
+                  });
+                  this.getRegisteredShiftRecordData();
+                }
+              } catch (error) {
+                this.$buefy.notification.open({
+                    duration: 2000,
+                    message: 'Không thể hủy đăng ký!',
+                    position: 'is-bottom-right',
+                    type: 'is-danger',
+                    hasIcon: true
+                  });
+                  throw error;
               }
             },
             async getShiftRecordData() {
@@ -409,7 +445,6 @@
                   }
             },
             async getRegisteredShiftRecordData() {
-              console.log('hello');
               this.registered_shift.shift_loading = true;
               try {
                 const response = await axios({
@@ -417,6 +452,7 @@
                   method: 'get',
                   params: {
                     SemID: this.semester.semester_record.SemID,
+                    studentID: this.studentid,
                     page_index: this.registered_shift.page,
                     per_page: this.registered_shift.per_page,
                     sort_field: this.registered_shift.sortField,
