@@ -29,7 +29,7 @@
       </section>
 
       <footer class="modal-card-foot">
-          <button v-if="semester.currentSemesterID === null" class="button" type="button" @click="go_home()">Về trang chủ</button>
+          <button v-if="semester.currentSemesterID === ''" class="button" type="button" @click="go_home()">Về trang chủ</button>
           <button v-else class="button" type="button" @click="$parent.close()">Bỏ qua</button>
           <button class="button is-primary" type="submit">Xác nhận</button>
       </footer>
