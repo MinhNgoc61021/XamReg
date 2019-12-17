@@ -135,14 +135,14 @@
                 @sort="onRoomSort">
 
                 <template slot-scope="props">
-                  <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
+                  <b-table-column field="RoomID" label="Mã phòng" width="100">
                     {{ props.row.Exam_Room.RoomID }}
                   </b-table-column>
                   <b-table-column field="RoomName" label="Phòng thi" width="100">
                     {{ props.row.Exam_Room.RoomName }}
                   </b-table-column>
                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
-                    {{ props.row.Exam_Room.Maxcapacity }}
+                    {{ props.row.Student_Shift.length }}   / {{ props.row.Exam_Room.Maxcapacity }}
                   </b-table-column>
                   <b-table-column width="10">
                     <b-button type="is-success" style="float: right" icon-pack="fas" icon-left="plus-square" outlined @click.prevent="registerShift(props.row.Room_ShiftID)">Đăng ký</b-button>
@@ -177,17 +177,7 @@
         <b-table
           :data="registered_shift.registered_shift_record_data"
           :loading="registered_shift.shift_loading"
-          detailed
-          backend-sorting
           hoverable
-          detail-key="ShiftID"
-          :opened-detailed="registered_shift.ID_Index"
-          :default-sort-direction="registered_shift.defaultSortOrder"
-          :default-sort="[registered_shift.sortField, registered_shift.sortOrder]"
-          @sort="onRegisteredShiftSort"
-          @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRegisteredRoomShiftRecordData(); closeOtherRegisteredDetails(row, index) }"
-          @details-close="(row, index) => { registered_room.room_record_data = [] }"
-          :show-detail-icon="true"
         >
           <template slot-scope="props">
             <b-table-column field="ShiftID" label="Mã ca thi" sortable>
@@ -205,41 +195,6 @@
             <b-table-column field="End_At" label="Thời gian kết thúc" sortable>
               {{ props.row.End_At }}
             </b-table-column>
-          </template>
-
-          <template slot="detail" slot-scope="props">
-            <h4 class="title is-4">Danh sách phòng thi</h4>
-            <b-field  expanded>
-              <b-button
-                :class="{'is-loading': registered_room.room_loading}"
-                class="button"
-                @click="getRegisteredRoomShiftRecordData"
-              >
-                <b-icon
-                  size="is-small"
-                  icon="sync"/>
-              </b-button>
-            </b-field>
-            <b-table
-              :data="registered_room.room_record_data"
-              :loading="registered_room.room_loading"
-              bordered
-              narrowed
-              hoverable
-              detail-key="RoomID"
-            >
-              <template slot-scope="props">
-                <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
-                  {{ props.row.RoomID }}
-                </b-table-column>
-                <b-table-column field="RoomName" label="Phòng thi" width="100">
-                  {{ props.row.RoomName }}
-                </b-table-column>
-                <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
-                  {{ props.row.Maxcapacity }}
-                </b-table-column>
-              </template>
-            </b-table>
           </template>
         </b-table>
       </b-field>
@@ -307,15 +262,9 @@
                 registered_room: {
                     roomID: '',
                     room_record_data: [],
-                    total: 0,
                     searchResults: [],
                     room_loading: false,
                     search_loading: false,
-                    sortField: 'RoomID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
                 },
                 search: {
                   searchResults: [],
@@ -361,7 +310,7 @@
                     else {
                         this.$buefy.notification.open({
                               duration: 2000,
-                              message: 'Bạn đã đăng ký phong thi này rồi!',
+                              message: 'Bạn đã đăng ký phòng thi này rồi!',
                               position: 'is-bottom-right',
                               type: 'is-warning',
                               hasIcon: true
@@ -379,7 +328,7 @@
                 });
                 throw error;
               } finally {
-                  this.getShiftRecordData();
+                  this.getRoomRecord();
                   this.getRegisteredRoomShiftRecordData()
               }
             },
@@ -557,10 +506,6 @@
               this.shift.page = page;
               this.getShiftRecordData();
             },
-            onRegisteredShiftPageChange(page) {
-              this.registered_shift.page = page;
-              this.getRegisteredRoomShiftRecordData();
-            },
             onShiftSort(field, order) {
                 this.shift.sortField = field;
                 this.shift.sortOrder = order;
@@ -575,7 +520,7 @@
                 this.$buefy.modal.open({
                     parent: this,
                     component: enter_semester,
-                    props: { semesterID: this.semesterID },
+                    props: { semesterID: this.currentSemesterID },
                     hasModalCard: true,
                     customClass: 'custom-class custom-class-2',
                     canCancel: false,
@@ -625,6 +570,7 @@
             },
         },
         mounted() {
+            console.log(this.currentSemesterID);
             if (this.currentSemesterID === '') {
                 this.selectSemesterModal();
             }

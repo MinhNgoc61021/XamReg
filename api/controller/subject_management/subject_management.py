@@ -45,18 +45,14 @@ def create_subject(current_user):
         print(newSubjectTitle, flush=True)
         validateSubjectID = re.search('([A-Z]{3})([0-9]{4})', str(newSubjectID))
         if validateSubjectID is not None:
-            success = Subject.create(newSubjectID, newSubjectTitle)
-            if success:
+            isNew = Subject.create(str(newSubjectID).lower().strip(), newSubjectTitle)
+            if isNew:
                 Log.create(current_user['ID'],
                            'Thêm môn học: ' + newSubjectID + ' ' + newSubjectTitle + ' vào hệ thống.',
                            set_custom_log_time())
                 return jsonify({'status': 'success'}), 200
             else:
-                Log.create(current_user['ID'],
-                           'Thêm môn học: ' + newSubjectID + ' ' + newSubjectTitle
-                           + ' đã có trong hệ thống. Hệ thống không đổi',
-                           set_custom_log_time())
-                return jsonify({'status': 'already-exist'}), 200
+                return jsonify({'status': 'already-exist'}), 202
         else:
             return jsonify({'status': 'bad-request'}), 400
     except:

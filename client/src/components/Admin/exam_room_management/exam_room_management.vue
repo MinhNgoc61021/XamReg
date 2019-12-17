@@ -218,6 +218,15 @@
                                 });
                                 this.getRoomRecord();
                             }
+                            else if(http_status === 202) {
+                                 this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'Phòng thi này đã tồn tại từ trước!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-warning',
+                                    hasIcon: true
+                                 });
+                            }
                             else if(http_status === 400) {
                                  this.$buefy.notification.open({
                                     duration: 2000,

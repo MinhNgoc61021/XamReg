@@ -81,7 +81,6 @@ def search_semester(current_user):
 @token_required
 def get_room(current_user):
     shiftID = request.args.get('shiftID')
-    studentID = request.args.get('studentID')
     page_index = request.args.get('page_index')
     per_page = request.args.get('per_page')
     sort_order = request.args.get('sort_order')

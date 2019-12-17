@@ -619,6 +619,8 @@ class Room_Shift(Base):
                              back_populates='room_shift')
     Shift = relationship('Shift',
                          back_populates='room_shift')
+    Student_Shift = relationship('Student_Shift',
+                                 back_populates='room_shift')
 
     @classmethod
     def create(cls, roomID, shiftID):
@@ -666,7 +668,8 @@ class Room_Shift(Base):
         sess = Session()
         try:
             record_query = sess.query(Room_Shift).options(
-                joinedload('Exam_Room')).filter(
+                joinedload('Exam_Room')).options(
+                joinedload('Student_Shift')).filter(
                 Room_Shift.ShiftID == shiftID).order_by(
                 getattr(
                     getattr(Room_Shift, sort_field), sort_order)())
@@ -683,7 +686,6 @@ class Room_Shift(Base):
             raise
         finally:
             sess.close()
-
 
     @classmethod
     def delRecord(cls, roomID, shiftID):
@@ -961,6 +963,10 @@ Room_Shift.student_shift = relationship('Student_Shift',
                                         back_populates='Room_Shift',
                                         cascade='all, delete, delete-orphan')
 
+Student_Shift.room_shift = relationship('Room_Shift',
+                                        order_by=Room_Shift.Room_ShiftID,
+                                        back_populates='Student_Shift')
+
 Exam_Room.room_shift = relationship('Room_Shift',
                                     order_by=Room_Shift.RoomID,
                                     back_populates='Exam_Room',
@@ -1020,6 +1026,7 @@ class ExamRoomSchema(ModelSchema):
 
 class RoomShiftSchema(ModelSchema):
     Exam_Room = Nested(ExamRoomSchema)
+    Student_Shift = Nested(StudentShiftSchema, many=True, only=['RegisterID'])
 
     class Meta:
         model = Room_Shift

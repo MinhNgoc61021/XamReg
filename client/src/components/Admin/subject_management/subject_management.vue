@@ -220,9 +220,19 @@
                      if (http_status === 200) {
                        this.$buefy.notification.open({
                          duration: 2000,
-                         message: `Đã tạo môn học thành công!`,
+                         message: `Đã tạo môn thi thành công!`,
                          position: 'is-bottom-right',
                          type: 'is-success',
+                         hasIcon: true
+                       });
+                       this.getSubjectInfo();
+                     }
+                     else if (http_status === 202) {
+                       this.$buefy.notification.open({
+                         duration: 2000,
+                         message: `Môn thi này đã tồn tại từ trước!`,
+                         position: 'is-bottom-right',
+                         type: 'is-warning',
                          hasIcon: true
                        });
                        this.getSubjectInfo();
