@@ -327,6 +327,15 @@
                      });
                      this.getSubjectInfo();
                    }
+                   else if (http_status === 202) {
+                     this.$buefy.notification.open({
+                       duration: 2000,
+                       message: `Tên hoặc mã môn của môn học này đang bị trùng với của môn khác!`,
+                       position: 'is-bottom-right',
+                       type: 'is-warning',
+                       hasIcon: true
+                     });
+                   }
                    else if (http_status === 400) {
                      this.$buefy.notification.open({
                        duration: 2000,

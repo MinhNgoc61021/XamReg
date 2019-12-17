@@ -78,13 +78,15 @@ def update_room_record(current_user):
         # print(newUsername, flush=True)
         # print(newFullname, flush=True)
 
-        Exam_Room.updateRecord(currentRoomID, newRoomName, newMaxcapacity)
-        Log.create(current_user['ID'],
-                   'Cập nhật thông tin của phòng thi ' + newRoomName,
-                   set_custom_log_time())
+        check = Exam_Room.updateRecord(currentRoomID, str(newRoomName).strip(), newMaxcapacity)
+        if check is True:
+            Log.create(current_user['ID'],
+                       'Cập nhật thông tin của phòng thi ' + newRoomName,
+                       set_custom_log_time())
 
-        return jsonify({'status': 'success'}), 200
-
+            return jsonify({'status': 'success'}), 200
+        else:
+            return jsonify({'status': 'already-exist'}), 202
     except:
         return jsonify({'status': 'bad-request'}), 400
 

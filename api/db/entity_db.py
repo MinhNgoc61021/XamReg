@@ -291,9 +291,13 @@ class Subject(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
-                {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
-            sess.commit()
+            if sess.query(Subject).filter(Subject.SubjectID == newSubjectID, Subject.SubjectTitle == newSubjectTitle).scalar() is None:
+                sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
+                    {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise
@@ -495,7 +499,6 @@ class Shift(Base):
         sess = Session()
         try:
             if sess.query(Shift).filter(Shift.SubjectID == subjectID, Shift.SemID == semID).scalar() is None:
-
                 newShift = Shift(SubjectID=subjectID,
                                  SemID=semID,
                                  Date_Start=date_start,
@@ -839,9 +842,14 @@ class Exam_Room(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Exam_Room).filter_by(RoomID=currentRoomID).update(
-                {Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
-            sess.commit()
+            if sess.query(Exam_Room).filter(Exam_Room.RoomID != currentRoomID,
+                                            Exam_Room.RoomName == newRoomName).scalar() is None:
+                sess.query(Exam_Room).filter_by(RoomID=currentRoomID).update(
+                    {Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise

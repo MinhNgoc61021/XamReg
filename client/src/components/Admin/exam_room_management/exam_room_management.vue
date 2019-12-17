@@ -264,13 +264,23 @@
                     customClass: 'custom-class custom-class-2',
                     canCancel: false,
                     events: {
-                        'loadRoomData': (http_status) => {
+                        'loadEditRoomStatus': (http_status) => {
                             if (http_status === 200) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
                                     message: `Đã cập nhật thành công!`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
+                                    hasIcon: true
+                                });
+                                this.getRoomRecord();
+                            }
+                            else if (http_status === 202) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `Tên phòng thi này đang bị trùng với tên phòng thi khác!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-warning',
                                     hasIcon: true
                                 });
                                 this.getRoomRecord();

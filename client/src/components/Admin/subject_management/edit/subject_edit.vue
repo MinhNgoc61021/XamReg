@@ -74,6 +74,9 @@
                 this.$emit('loadSubjects', 200);
                 this.$parent.close();
               }
+              else if (update.status === 202) {
+                this.$emit('loadSubjects', 202);
+              }
             } catch (e) {
               if (e['message'].includes('400')) {
                 this.$emit('loadSubjects', 400);

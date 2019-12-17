@@ -70,13 +70,15 @@ def edit_subject(current_user):
         print(newSubjectTitle, flush=True)
         validateSubjectID = re.search('([A-Z]|[a-z]{3})([0-9]{4})', str(newSubjectID))
         if validateSubjectID is not None:
-            success = Subject.updateRecord(currentSubjectID, newSubjectID, newSubjectTitle)
-            Log.create(current_user['ID'],
-                       'Thay đổi thông tin môn học: ' + currentSubjectID + ' thành ' + newSubjectID + ' ' + newSubjectTitle,
-                       set_custom_log_time())
-            return jsonify({'status': 'success'}), 200
+            success = Subject.updateRecord(currentSubjectID, str(newSubjectID).strip(), str(newSubjectTitle).strip())
+            if success is True:
+                Log.create(current_user['ID'],
+                           'Thay đổi thông tin môn học: ' + currentSubjectID + ' thành ' + newSubjectID + ' | ' + newSubjectTitle,
+                           set_custom_log_time())
+                return jsonify({'status': 'success'}), 200
+            else:
+                return jsonify({'status': 'already-exist'}), 202
         else:
-            print('Mã môn không hợp lệ', flush=True)
             return jsonify({'status': 'bad-request'}), 400
     except:
         return jsonify({'status': 'bad-request'}), 400
@@ -95,7 +97,6 @@ def remove_subject(current_user):
                    set_custom_log_time())
             return jsonify({'status': 'success'}), 200
         else:
-            print('Mã môn không hợp lệ', flush=True)
             return jsonify({'status': 'bad-request'}), 400
     except:
         return jsonify({'status': 'bad-request'}), 400
