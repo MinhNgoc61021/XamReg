@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h1 class="title is-3">Quản lý môn thi</h1>
     <h2 class="subtitle is-6">Cập nhật, quản lý thông tin của môn thi</h2>
 
@@ -10,7 +10,18 @@
               @click="createSubject"
               icon-pack="fas" icon-left="plus-square"
             >
-              <span>Tạo môn học</span>
+              <span>Tạo môn</span>
+            </b-button>
+
+            <b-button
+              class="button"
+              @click="getSubjectInfo"
+              :class="{'is-loading': subject_info.loading}"
+            >
+              <b-icon
+                size="is-small"
+                icon="sync"/>
+              <span>Làm mới</span>
             </b-button>
 
             <b-select v-model="subject_info.per_page">
@@ -19,16 +30,6 @@
               <option value="15">15 dòng/trang</option>
               <option value="20">20 dòng/trang</option>
             </b-select>
-
-            <b-button
-              class="button"
-              @click="getSubjectsInfo"
-            >
-              <b-icon
-                size="is-small"
-                icon="sync"/>
-              <span>Làm mới</span>
-            </b-button>
 
             <b-autocomplete
                 :data="search.searchResults"
@@ -42,12 +43,11 @@
               <template slot-scope="props">
                     <div class="media">
                         <div class="media-left">
-                          <b-icon icon-pack="fas" icon="file-search"></b-icon>
+                          <b-icon icon-pack="fas" icon="book"></b-icon>
                         </div>
                         <div class="media-content">
-                            <b>Mã môn học: </b>{{ props.option.SubjectID }}
-                            <br>
-                            <b>Tên môn học: </b>{{ props.option.SubjectTitle }}
+                          <div><b>Mã môn học: </b>{{ props.option.SubjectID }}</div>
+                          <div><b>Tên môn học: </b>{{ props.option.SubjectTitle }}</div>
                         </div>
                     </div>
                 </template>
@@ -95,8 +95,8 @@
 <script>
     import axios from 'axios'
     import { authHeader} from "../../api/jwt_handling";
-    import subject_edit from "./subject_edit";
-    import subject_create from "./subject_create";
+    import subject_edit from "./edit/subject_edit";
+    import subject_create from "./create/subject_create";
     import debounce from 'lodash/debounce';
     export default {
         name: "subject_management",
@@ -122,7 +122,7 @@
           }
         },
         methods: {
-          async getSubjectsInfo() {
+          async getSubjectInfo() {
             this.subject_info.loading = true;
             try {
               const response = await axios({
@@ -141,7 +141,6 @@
               if (response.status === 200) {
                 this.subject_info.subject_record = [];
                 this.subject_info.total = response.data.total_results;
-                console.log(this.subject_info.total);
                 response.data.records.forEach((item) => {
                   this.subject_info.subject_record.push(item);
                 });
@@ -152,21 +151,22 @@
               this.subject_info.total = 0;
               this.subject_info.loading = false;
               this.$buefy.notification.open({
-                duration: 2000,
-                message: 'Không lấy được thông tin môn học!',
-                position: 'is-bottom-right',
-                type: 'is-danger',
+                  duration: 2000,
+                  message: 'Không thể lấy được dữ liệu về môn thi!',
+                  position: 'is-bottom-right',
+                  type: 'is-danger',
+                  hasIcon: true,
               });
               throw error;
             }
           },
           onSubjectPageChange(page) {
             this.subject_info.page = page;
-            this.getSubjectsInfo();
+            this.getSubjectInfo();
           },
           onSubjectSearch: debounce(function (SubjectID) {
             this.search.searchLoading = true;
-            if (SubjectID.length > 7 || SubjectID.length === 0) {
+            if (SubjectID.length > 15 || SubjectID.length === 0) {
               this.search.searchResults = [];
               this.search.searchLoading = false;
             }
@@ -206,53 +206,63 @@
           onStatusSort(field, order) {
                 this.subject_info.sortField = field;
                 this.subject_info.sortOrder = order;
-                this.getSubjectsInfo();
+                this.getSubjectInfo();
           },
           createSubject() {
-            this.$buefy.modal.open({
-              parent: this,
-              component: subject_create,
-              hasModalCard: true,
-              customClass: 'custom-class custom-class-2',
-              canCancel: false,
-              events: {
-                 'loadSubjects': (http_status) => {
-                   if (http_status === 200) {
-                     this.$buefy.notification.open({
-                       duration: 2000,
-                       message: `Đã tạo môn học thành công!`,
-                       position: 'is-bottom-right',
-                       type: 'is-success',
-                       hasIcon: true
-                     });
-                     this.getSubjectsInfo();
+              this.$buefy.modal.open({
+                parent: this,
+                component: subject_create,
+                hasModalCard: true,
+                customClass: 'custom-class custom-class-2',
+                canCancel: false,
+                events: {
+                   'loadSubjects': (http_status) => {
+                     if (http_status === 200) {
+                       this.$buefy.notification.open({
+                         duration: 2000,
+                         message: `Đã tạo môn thi thành công!`,
+                         position: 'is-bottom-right',
+                         type: 'is-success',
+                         hasIcon: true
+                       });
+                       this.getSubjectInfo();
+                     }
+                     else if (http_status === 202) {
+                       this.$buefy.notification.open({
+                         duration: 2000,
+                         message: `Môn thi này đã tồn tại từ trước!`,
+                         position: 'is-bottom-right',
+                         type: 'is-warning',
+                         hasIcon: true
+                       });
+                       this.getSubjectInfo();
+                     }
+                     else if (http_status === 400) {
+                       this.$buefy.notification.open({
+                         duration: 2000,
+                         message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                         position: 'is-bottom-right',
+                         type: 'is-danger',
+                         hasIcon: true
+                       });
+                     }
+                     else if (http_status === 401) {
+                       this.$buefy.notification.open({
+                         duration: 2000,
+                         message: 'Không được quyền sử dụng!',
+                         position: 'is-bottom-right',
+                         type: 'is-danger',
+                         hasIcon: true
+                       });
+                     }
                    }
-                   else if (http_status === 400) {
-                     this.$buefy.notification.open({
-                       duration: 2000,
-                       message: 'Tạo môn học thất bại',
-                       position: 'is-bottom-right',
-                       type: 'is-danger',
-                       hasIcon: true
-                     });
-                   }
-                   else if (http_status === 401) {
-                     this.$buefy.notification.open({
-                       duration: 2000,
-                       message: 'Không được quyền sử dụng!',
-                       position: 'is-bottom-right',
-                       type: 'is-danger',
-                       hasIcon: true
-                     });
-                   }
-                 }
-              }
-            })
+                }
+              })
           },
           async onStatusDelete(row) {
             this.$buefy.dialog.confirm({
               title: 'Xóa môn học',
-              message: `Bạn có chắc chắn là muốn <b>xóa</b> môn học ${row.SubjectID} này không?`,
+              message: `Bạn có chắc chắn là muốn <b>xóa</b> môn học ${row.SubjectID} này không? Đã làm là tự chịu đấy.`,
               confirmText: 'Xóa!',
               cancelText: 'Hủy bỏ',
               type: 'is-danger',
@@ -272,7 +282,7 @@
                   if (removeData.status === 200) {
                     this.$buefy.notification.open({
                       duration: 2000,
-                      message: `<b>Đã xóa thành công môn học</b>.`,
+                      message: `Đã xóa thành công môn học.`,
                       position: 'is-bottom-right',
                       type: 'is-success',
                       hasIcon: true
@@ -282,20 +292,19 @@
                   if (e['message'].includes('401')) {
                     this.$buefy.notification.open({
                       duration: 2000,
-                      message: 'HTTP Status 401: Không được quyền sử dụng!',
+                      message: 'Không được quyền sử dụng!',
                       position: 'is-bottom-right',
                       type: 'is-danger',
                       hasIcon: true
                     })
                   }
                 } finally {
-                  this.getSubjectsInfo();
+                  this.getSubjectInfo();
                 }
               },
             });
           },
           onStatusEdit(row) {
-            console.log(row);
              this.$buefy.modal.open({
                parent: this,
                component: subject_edit,
@@ -316,12 +325,21 @@
                        type: 'is-success',
                        hasIcon: true
                      });
-                     this.getSubjectsInfo();
+                     this.getSubjectInfo();
+                   }
+                   else if (http_status === 202) {
+                     this.$buefy.notification.open({
+                       duration: 2000,
+                       message: `Tên hoặc mã môn của môn học này đang bị trùng với của môn khác!`,
+                       position: 'is-bottom-right',
+                       type: 'is-warning',
+                       hasIcon: true
+                     });
                    }
                    else if (http_status === 400) {
                      this.$buefy.notification.open({
                        duration: 2000,
-                       message: 'Sửa đổi không thành công!',
+                       message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
                        position: 'is-bottom-right',
                        type: 'is-danger',
                        hasIcon: true
@@ -342,11 +360,10 @@
           }
         },
       mounted() {
-          this.getSubjectsInfo();
+          this.getSubjectInfo();
       }
     }
 </script>
 
 <style scoped>
-
 </style>

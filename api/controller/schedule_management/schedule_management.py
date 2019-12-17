@@ -28,7 +28,7 @@ def add_semester(current_user):
         if checkSemester is None:
             return jsonify({'status': 'bad-request'}), 400
         else:
-            newSemester = Semester_Examination.create(newSemesterTitle)
+            newSemester = Semester_Examination.create(str(newSemesterTitle).strip())
             if newSemester is False:
                 return jsonify({'status': 'already-exist'}), 202
             else:

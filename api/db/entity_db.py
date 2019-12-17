@@ -291,9 +291,13 @@ class Subject(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
-                {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
-            sess.commit()
+            if sess.query(Subject).filter(Subject.SubjectID == newSubjectID, Subject.SubjectTitle == newSubjectTitle).scalar() is None:
+                sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
+                    {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise
@@ -495,7 +499,6 @@ class Shift(Base):
         sess = Session()
         try:
             if sess.query(Shift).filter(Shift.SubjectID == subjectID, Shift.SemID == semID).scalar() is None:
-
                 newShift = Shift(SubjectID=subjectID,
                                  SemID=semID,
                                  Date_Start=date_start,
@@ -619,6 +622,8 @@ class Room_Shift(Base):
                              back_populates='room_shift')
     Shift = relationship('Shift',
                          back_populates='room_shift')
+    Student_Shift = relationship('Student_Shift',
+                                 back_populates='room_shift')
 
     @classmethod
     def create(cls, roomID, shiftID):
@@ -660,15 +665,19 @@ class Room_Shift(Base):
         finally:
             sess.close()
 
+    # lấy các phòng cho phép đăng ký theo ca
     @classmethod
     def getRegisterRoom(cls, shiftID, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
             record_query = sess.query(Room_Shift).options(
-                joinedload('Exam_Room')).filter(Room_Shift.ShiftID == shiftID).order_by(
+                joinedload('Exam_Room')).options(
+                joinedload('Student_Shift')).filter(
+                Room_Shift.ShiftID == shiftID).order_by(
                 getattr(
                     getattr(Room_Shift, sort_field), sort_order)())
 
+            # to count current student register (đếm số sinh viên đã đăng ký)
             # record_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
                                                                    page_size=int(per_page))
@@ -733,6 +742,20 @@ class Student_Shift(Base):
             sess.close()
 
     @classmethod
+    def delRecord(cls, StudentID, Room_ShiftID):
+        sess = Session()
+        try:
+            room = sess.query(Student_Shift).filter(Student_Shift.StudentID == StudentID,
+                                                    Student_Shift.Room_ShiftID == Room_ShiftID).one()
+            sess.delete(room)
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
     def getRecord(cls, Room_ShiftID, sort_field, sort_order):
         sess = Session()
         try:
@@ -744,6 +767,20 @@ class Student_Shift(Base):
             count = record_query.session.execute(count_record_query).scalar()
             # many=True if user_query is a collection of many results, so that record will be serialized to a list.
             return user_schema.dump(record_query, many=True), count
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getRegisteredRoom_Shift(cls, StudentID):
+        sess = Session()
+        try:
+            record_query = sess.query(User).join(Student_Shift).filter(Student_Shift.StudentID == StudentID)
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return user_schema.dump(record_query, many=True)
         except:
             sess.rollback()
             raise
@@ -806,9 +843,14 @@ class Exam_Room(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Exam_Room).filter_by(RoomID=currentRoomID).update(
-                {Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
-            sess.commit()
+            if sess.query(Exam_Room).filter(Exam_Room.RoomID != currentRoomID,
+                                            Exam_Room.RoomName == newRoomName).scalar() is None:
+                sess.query(Exam_Room).filter_by(RoomID=currentRoomID).update(
+                    {Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise
@@ -930,6 +972,10 @@ Room_Shift.student_shift = relationship('Student_Shift',
                                         back_populates='Room_Shift',
                                         cascade='all, delete, delete-orphan')
 
+Student_Shift.room_shift = relationship('Room_Shift',
+                                        order_by=Room_Shift.Room_ShiftID,
+                                        back_populates='Student_Shift')
+
 Exam_Room.room_shift = relationship('Room_Shift',
                                     order_by=Room_Shift.RoomID,
                                     back_populates='Exam_Room',
@@ -989,7 +1035,7 @@ class ExamRoomSchema(ModelSchema):
 
 class RoomShiftSchema(ModelSchema):
     Exam_Room = Nested(ExamRoomSchema)
-    Student_Shift = Nested(StudentShiftSchema)
+    Student_Shift = Nested(StudentShiftSchema, many=True, only=['RegisterID'])
 
     class Meta:
         model = Room_Shift

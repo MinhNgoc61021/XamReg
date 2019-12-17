@@ -63,6 +63,9 @@
                       this.$emit('loadRoomData', 200);
                       this.$parent.close();
                   }
+                  else {
+                      this.$emit('loadRoomData', 202);
+                  }
               } catch (e) {
                   if (e['message'].includes('400')) {
                       this.$emit('loadRoomData', 400);
