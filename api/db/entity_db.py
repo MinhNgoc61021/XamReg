@@ -569,28 +569,6 @@ class Shift(Base):
             sess.close()
 
     @classmethod
-    def getQualifiedShiftRecord(cls, semID, page_index, per_page, sort_field, sort_order):
-        sess = Session()
-        try:
-            record_query = sess.query(Shift).filter(Shift.SemID == semID,
-                                                    # Student_Status.Status.like('Qualified' + '%')
-                                                    ).options(joinedload('Subject')).order_by(
-                getattr(
-                    getattr(Shift, sort_field), sort_order)())
-
-            # record_query is the user object and get_record_pagination is the index data
-            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
-                                                                   page_size=int(per_page))
-
-            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
-            return shift_schema.dump(record_query, many=True), get_record_pagination
-        except:
-            sess.rollback()
-            raise
-        finally:
-            sess.close()
-
-    @classmethod
     def delRecord(cls, shiftID):
         sess = Session()
         try:
@@ -762,9 +740,10 @@ class Student_Shift(Base):
                                                                        Student_Shift.Room_ShiftID == Room_ShiftID).order_by(
                 getattr(
                     getattr(User, sort_field), sort_order)())
-
+            count_record_query = record_query.statement.with_only_columns([func.count()]).order_by(None)
+            count = record_query.session.execute(count_record_query).scalar()
             # many=True if user_query is a collection of many results, so that record will be serialized to a list.
-            return user_schema.dump(record_query, many=True)
+            return user_schema.dump(record_query, many=True), count
         except:
             sess.rollback()
             raise

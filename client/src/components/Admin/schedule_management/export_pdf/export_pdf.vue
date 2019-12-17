@@ -139,6 +139,9 @@
                                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
                                     {{ props.row.Maxcapacity }}
                                   </b-table-column>
+                                  <b-table-column field="Maxcapacity" label="Số lượng sinh viên" width="100" sortable>
+                                    {{ props.row.Maxcapacity }}
+                                  </b-table-column>
                                 </template>
 
                                 <!--Student-->
@@ -259,6 +262,7 @@
                 select_search: Object,
                 room_record_data: [],
                 total: 0,
+                student_count: student.total,
                 searchResults: [],
                 room_loading: false,
                 search_loading: false,
@@ -272,6 +276,7 @@
               student: {
                 select_search: Object,
                 student_record_data: [],
+                total: 0,
                 searchResults: [],
                 student_loading: false,
                 search_loading: false,

@@ -305,7 +305,8 @@ def get_students(current_user):
         record = Student_Shift.getRecord(roomID, sort_field, sort_order)
         print("Student: ", record, flush=True)
         return jsonify({'status': 'success',
-                        'student_records': record
+                        'student_records': record[0],
+                        'total_results': record[1]
                         }), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
