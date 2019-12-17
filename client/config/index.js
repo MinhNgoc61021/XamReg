@@ -98,7 +98,7 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/semester-register-records': {
+      '/schedule/register-semester-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
