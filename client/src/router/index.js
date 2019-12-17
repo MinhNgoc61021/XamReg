@@ -11,8 +11,10 @@ import log_management from "../components/Admin/log_management/log_management";
 import subject_management from "../components/Admin/subject_management/subject_management";
 import student_home_page from "../components/Student/home_page";
 import shift_register from "../components/Student/shift_register/shift_register";
+import export_ticket from "../components/Student/export_ticket/export_ticket";
 import exam_room_management from "../components/Admin/exam_room_management/exam_room_management"
 import manual from "../components/manual_script/manual.vue"
+
 import { getToken } from "../components/api/jwt_handling";
 Vue.use(VeeValidate);
 Vue.use(Router);
@@ -32,15 +34,16 @@ export const router = new Router({
     { path: '/student', name: 'student', component: student_page, redirect: '/student-home',
       children: [ { path: '/student-home', component: student_home_page },
                   { path: '/manual', component: manual },
+                  { path: '/export-ticket', component: export_ticket },
                   { path: '/shift-register/:studentid', component: shift_register, name: 'shift-register' , props: true,
-                    // beforeEnter (to, from, next)  {
-                    //     if (getToken(localStorage.getItem('user')).type === 'Admin') {
-                    //         return next('/admin');
-                    //     }
-                    //     else {
-                    //       return next();
-                    //     }
-                    // }
+                    beforeEnter (to, from, next)  {
+                        if (getToken(localStorage.getItem('user')).type === 'Admin') {
+                            return next('/admin');
+                        }
+                        else {
+                          return next();
+                        }
+                    }
                   } ],
     },
     { path: '/upload', name: 'upload', component: upload },

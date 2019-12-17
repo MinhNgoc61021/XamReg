@@ -153,16 +153,6 @@
                                             class="button"
                                             @click="getStudentRecord">
                                         <b-icon size="is-small" icon="sync"/></b-button>
-                                      <download-excel
-                                            class   = "btn btn-default"
-                                            :name = "excel_export.file_name"
-                                            :fields = "excel_export.json_fields"
-                                            :fetch   = "exportExcel"
-                                            :before-generate = "startDownload"
-                                            :before-finish = "finishDownload"
-                                            >
-                                            <b-button class="button" icon-left="file-download" @click="exportExcel">In</b-button>
-                                        </download-excel>
                                     </b-field>
                                     <b-field v-if="student.student_record_data.length > 0">
                                         <b-table

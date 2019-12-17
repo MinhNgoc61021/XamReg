@@ -17,6 +17,9 @@
               <b-navbar-item tag="router-link" :to="{ name: 'shift-register', params: { studentid: ID } }" class="routing-link">
                   Đăng ký dự thi
               </b-navbar-item>
+              <b-navbar-item tag="router-link" :to="{ name: 'export-ticket', params: { studentid: ID } }" class="routing-link">
+                  In phiếu đăng kí dự thi
+              </b-navbar-item>
           </template>
 
           <template slot="end">
