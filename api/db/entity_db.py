@@ -671,6 +671,7 @@ class Room_Shift(Base):
                 getattr(
                     getattr(Room_Shift, sort_field), sort_order)())
 
+            # to count current student register (đếm số sinh viên đã đăng ký)
             # record_query is the user object and get_record_pagination is the index data
             record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
                                                                    page_size=int(per_page))
@@ -682,6 +683,7 @@ class Room_Shift(Base):
             raise
         finally:
             sess.close()
+
 
     @classmethod
     def delRecord(cls, roomID, shiftID):
