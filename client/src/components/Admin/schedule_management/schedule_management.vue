@@ -8,7 +8,7 @@
                   <component v-bind:is="create_schedule_management"/>
                 </b-tab-item>
                 <b-tab-item label="Xem danh sách sinh viên dự thi & Xuất danh sách (Export)" icon-pack="fas" icon="file-export">
-                  <component v-bind:is="export_pdf"/>
+                  <component v-bind:is="export_file"/>
                 </b-tab-item>
             </b-tabs>
         </section>
@@ -16,17 +16,17 @@
 </template>
 
 <script>
-    import export_pdf from "./export_pdf/export_pdf";
+    import export_file from "./export_file/export";
     import create_schedule_management from "./create_management/create_schedule_management";
     export default {
         name: "schedule_management",
         components: {
-            create_schedule_management, export_pdf
+            create_schedule_management, export_file
         },
         data() {
           return {
               create_schedule_management,
-              export_pdf,
+              export_file,
           }
       },
     }

@@ -69,7 +69,7 @@
             :default-sort="[student.sortField, student.sortOrder]"
             @sort="onStudentSort"
             @details-open="(row, index) => { student_status.currentStudentID = row.ID ; getStudent_Subject(); closeOtherDetails(row, index) }"
-            @details-close="(row, index) => { student_status.student_subject_record = [] }"
+            @details-close="(row, index) => { student_status.student_subject_record = []; student_status.page = 1 }"
             :show-detail-icon="true">
 
             <template slot-scope="props">
@@ -282,6 +282,7 @@
             */
             onStudentPageChange(page) {
                 this.student.page = page;
+                this.student_status.page = 1;
                 this.getStudentRecordData();
             },
             /*

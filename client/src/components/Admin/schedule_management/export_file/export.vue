@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-field grouped group-multiline>
+    <b-field group-multiline>
       <b-button
         class="button"
         :class="{'is-loading': semester.loading}"
@@ -105,7 +105,7 @@
 
                             </b-field>
                             <!--room-->
-                            <b-field v-if="room.room_record_data.length > 0" grouped group-multiline>
+                            <b-field v-if="room.room_record_data.length > 0" group-multiline>
                               <b-table
                                 :data="room.room_record_data"
                                 :loading="room.room_loading"
@@ -121,24 +121,28 @@
                                 aria-current-label="Current page"
                                 backend-sorting
                                 hoverable
-                                detail-key="RoomID"
+                                bordered
+                                detail-key="Room_ShiftID"
                                 :opened-detailed="room.ID_Index"
                                 :default-sort-direction="room.defaultSortOrder"
                                 :default-sort="[room.sortField, room.sortOrder]"
                                 @sort="onRoomSort"
-                                @details-open="(row, index) => { currentRoomID = row.RoomID ; getStudentRecord(); closeOtherDetails_Room(row, index) }"
+                                @details-open="(row, index) => { currentRoomShiftID = row.Room_ShiftID ; getStudentRecord(); closeOtherDetails_Room(row, index) }"
                                 @details-close="(row, index) => { student.student_record_data = [] }"
                                 :show-detail-icon="true">
                                 <template slot-scope="props">
-                                  <b-table-column field="RoomID" label="Mã phòng" width="200" sortable>
-                                    {{ props.row.RoomID }}
+                                  <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
+                                    {{ props.row.Exam_Room.RoomID }}
                                   </b-table-column>
-                                  <b-table-column field="RoomName" label="Phòng thi" width="200" sortable>
-                                    {{ props.row.RoomName }}
+                                  <b-table-column field="RoomName" label="Phòng thi" width="100">
+                                    {{ props.row.Exam_Room.RoomName }}
                                   </b-table-column>
-                                  <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
-                                    {{ props.row.Maxcapacity }}
+                                  <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
+                                    {{ props.row.Exam_Room.Maxcapacity }}
                                   </b-table-column>
+<!--                                  <b-table-column field="student_count" label="Số lượng sinh viên" width="100" sortable>-->
+<!--                                    {{ room.student_count }}-->
+<!--                                  </b-table-column>-->
                                 </template>
 
                                 <!--Student-->
@@ -150,7 +154,16 @@
                                             class="button"
                                             @click="getStudentRecord">
                                         <b-icon size="is-small" icon="sync"/></b-button>
-                                      <b-button class="button" size="is-small" icon-left="sync" @click="exportExcel">In</b-button>
+                                      <download-excel
+                                            class   = "btn btn-default"
+                                            :name = "excel_export.file_name"
+                                            :fields = "excel_export.json_fields"
+                                            :fetch   = "exportExcel"
+                                            :before-generate = "startDownload"
+                                            :before-finish = "finishDownload"
+                                            >
+                                            <b-button class="button" icon-left="file-download" @click="exportExcel">In</b-button>
+                                        </download-excel>
                                     </b-field>
                                     <b-field v-if="student.student_record_data.length > 0">
                                         <b-table
@@ -168,21 +181,20 @@
                                                 <b-table-column field="ID" label="Mã số sinh viên" width="100" sortable>
                                                 {{ props.row.ID }}
                                                 </b-table-column>
-                                                <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
+                                                <b-table-column field="Fullname" label="Phòng thi" width="100" sortable>
                                                   {{ props.row.Fullname }}
                                                 </b-table-column>
-                                                <b-table-column field="Dob" label="Ngày sinh" width="100">
+                                                <b-table-column field="Dob" label="Ngày sinh" width="100" sortable>
                                                   {{ props.row.Dob }}
                                                 </b-table-column>
-                                                <b-table-column field="Dob" label="Giới tính" width="100">
+                                                <b-table-column field="Gender" label="Giới tính" width="100" sortable >
                                                   {{ props.row.Gender }}
                                                 </b-table-column>
-                                                <b-table-column field="Dob" label="Lớp" width="100" sortable>
+                                                <b-table-column field="CourseID" label="Lớp" width="100" sortable>
                                                   {{ props.row.CourseID }}
                                                 </b-table-column>
                                               </template>
                                         </b-table>
-
                                     </b-field>
                                     <b-field v-else>
                                          <b-message type="is-danger" has-icon>
@@ -220,65 +232,78 @@
     import moment from 'moment';
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
-    import JsonExcel from 'vue-json-excel';
+
     export default {
-        name: 'export_pdf',
+        name: 'export',
         data() {
             return {
-                semester: {
-                    newSemester: '', // new semester
-                    semester_record_data: [], // semester info
-                    loading: false, // semester loading
-                    create_loading: false, // create semester loading
-                    semester_status: false,
+              semester: {
+                newSemester: '', // new semester
+                semester_record_data: [], // semester info
+                loading: false, // semester loading
+                create_loading: false, // create semester loading
+                semester_status: false,
+              },
+              shift: {
+                shift_record_data: [],
+                date_start: '',
+                start_at: '',
+                total: 0,
+                shift_loading: false,
+                create_loading: false,
+                search_loading: false,
+                sortField: 'ShiftID',
+                sortOrder: 'desc',
+                defaultSortOrder: 'desc',
+                page: 1,
+                per_page: 5,
+                ID_Index: [],
+              },
+              room: {
+                select_search: Object,
+                room_record_data: [],
+                total: 0,
+                student_count: '',
+                searchResults: [],
+                room_loading: false,
+                search_loading: false,
+                sortField: 'RoomID',
+                sortOrder: 'desc',
+                defaultSortOrder: 'desc',
+                page: 1,
+                per_page: 5,
+                ID_Index: [],
+              },
+              student: {
+                select_search: Object,
+                student_record_data: [],
+                total: 0,
+                searchResults: [],
+                student_loading: false,
+                search_loading: false,
+                sortField: 'ID',
+                sortOrder: 'desc',
+                defaultSortOrder: 'desc',
+              },
+              excel_export: {
+                json_fields: {
+                  "Mã sinh viên": "ID",
+                  "Tên sinh viên":"Fullname",
+                  "Ngày sinh": "Dob",
+                  "Giới tính": "Gender",
+                  "Lớp học": "CourseID"
                 },
-                shift: {
-                    shift_record_data: [],
-                    date_start: '',
-                    start_at: '',
-                    total: 0,
-                    shift_loading: false,
-                    create_loading: false,
-                    search_loading: false,
-                    sortField: 'ShiftID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
-                    ID_Index: [],
-                },
-                room: {
-                    select_search: Object,
-                    room_record_data: [],
-                    total: 0,
-                    searchResults: [],
-                    room_loading: false,
-                    search_loading: false,
-                    sortField: 'RoomID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
-                    ID_Index: [],
-                },
-                student: {
-                    select_search: Object,
-                    student_record_data: [],
-                    searchResults: [],
-                    student_loading: false,
-                    search_loading: false,
-                    sortField: 'ID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                },
-                isOpen: null,
-                collapses: [],
-                currentShiftID: '', // current opening shiftID
-                currentSemID: '', // current opening semesterID
-                currentRoomID: '', //current opening roomID
-                hasSemesterError: false,
-                hasSubjectError: false,
-                hasRoomError: false,
+                json_data: [],
+                file_name: ""
+              },
+              isOpen: null,
+              collapses: [],
+              currentShiftID: '', // current opening shiftID
+              currentSemID: '', // current opening semesterID
+              currentRoomShiftID: '', //current opening roomID
+              hasSemesterError: false,
+              hasSubjectError: false,
+              hasRoomError: false
             }
         },
         methods: {
@@ -302,7 +327,7 @@
                         response.data.semesterRecords.forEach((item) => {
                             this.semester.semester_record_data.push(item);
                         });
-                        console.log(this.semester.semester_record_data);
+                        // console.log(this.semester.semester_record_data);
                         // console.log(this.data);
                         this.semester.loading = false
                     }
@@ -345,6 +370,7 @@
                     if (response.status === 200) {
                         this.shift.shift_record_data = [];
                         this.shift.total = response.data.total_results;
+                        // console.log(response.data.total_results);
                         response.data.shift_records.forEach((item) => {
                             this.shift.shift_record_data.push(item);
                         });
@@ -390,6 +416,7 @@
                     if (response.status === 200) {
                         this.room.room_record_data = [];
                         this.room.total = response.data.total_results;
+                        // console.log(response.data);
                         response.data.room_records.forEach((item) => {
                             this.room.room_record_data.push(item);
                         });
@@ -465,7 +492,7 @@
                         url: '/schedule/student-records',
                         method: 'get',
                         params: {
-                            roomID: this.currentRoomID,
+                            currentRoomShiftID: this.currentRoomShiftID,
                             sort_field: this.student.sortField,
                             sort_order: this.student.sortOrder
                         },
@@ -476,11 +503,12 @@
                     // console.log(response.data.shift_records);
                     if (response.status === 200) {
                         this.student.student_record_data = [];
-                        this.student.total = response.data.total_results;
+                        this.room.student_count = response.data.total_results;
+                        // console.log(response.data.student_records);
                         response.data.student_records.forEach((item) => {
                             this.student.student_record_data.push(item);
                         });
-                        // console.log(this.data);
+                        // console.log(this.room.student_count);
                         this.student.student_loading = false
                     }
                 } catch (error) {
@@ -510,11 +538,50 @@
                 // console.log(this.student_status.ID_Index);
             },
             closeOtherDetails_Room(row) {
-                this.room.ID_Index = [row.RoomID];
+                this.room.ID_Index = [row.Room_ShiftID];
                 // console.log(this.student_status.ID_Index);
             },
-            exportExcel(){
-
+            async exportExcel(){
+                try {
+                    const response = await axios({
+                        url: '/schedule/student-records',
+                        method: 'get',
+                        params: {
+                            currentRoomShiftID: this.currentRoomShiftID,
+                            sort_field: this.student.sortField,
+                            sort_order: this.student.sortOrder
+                        },
+                        headers: {
+                            'Authorization': authHeader(),
+                        }
+                    });
+                    // console.log(response.data.shift_records);
+                    if (response.status === 200) {
+                        this.excel_export.json_data = [];
+                        this.excel_export.file_name = "Danh sách sinh viên mã phòng " + this.currentRoomShiftID + ".xlsx";
+                        this.student.total = response.data.total_results;
+                        response.data.student_records.forEach((item) => {
+                            this.excel_export.json_data.push(item);
+                        });
+                        return this.excel_export.json_data
+                        // console.log(this.data);
+                    }
+                } catch (error) {
+                    this.excel_export.json_data = [];
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Không thể download file excel!',
+                        position: 'is-bottom-right',
+                        type: 'is-danger',
+                        hasIcon: true
+                    });
+                    throw error;
+                }
+            },
+            startDownload(){
+            },
+            finishDownload(){
+              this.excel_export.json_data = []
             }
         },
         mounted() {

@@ -122,8 +122,8 @@ def register_shift(current_user):
         studentID = request.get_json().get('studentID')
         Room_ShiftID = request.get_json().get('Room_ShiftID')
         check = Student_Shift.create(Room_ShiftID, studentID)
-        if check is False:
-            return jsonify({'status': 'already-exist'}), 200
+        if check[0] is False:
+                return jsonify({'status': check[1]}), 202
         else:
             Log.create(current_user['ID'],
                        'Đã đăng ký ca thi ' + str(Room_ShiftID),

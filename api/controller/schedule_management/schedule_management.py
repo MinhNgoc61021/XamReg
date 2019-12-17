@@ -278,7 +278,7 @@ def get_room(current_user):
         print(sort_order, flush=True)
         print(sort_field, flush=True)
 
-        record = Room_Shift.getRecord(shiftID, page_index, per_page, sort_field, sort_order)
+        record = Room_Shift.getRegisterRoom(shiftID, page_index, per_page, sort_field, sort_order)
 
         return jsonify({'status': 'success',
                         'room_records': record[0],
@@ -290,22 +290,25 @@ def get_room(current_user):
     except:
         return jsonify({'status': 'bad-request'}), 400
 
+
 @schedule_management.route('/student-records', methods=['GET'])
 @token_required
 def get_students(current_user):
     try:
-        roomID = request.args.get('roomID')
+        roomshiftID = request.args.get('currentRoomShiftID')
         sort_order = request.args.get('sort_order')
         sort_field = request.args.get('sort_field')
 
-        print(roomID, flush=True)
+        print(roomshiftID, flush=True)
         print(sort_order, flush=True)
         print(sort_field, flush=True)
 
-        record = Student_Shift.getRecord(roomID, sort_field, sort_order)
-        print("Student: ", record, flush=True)
+        record = Student_Shift.getRecord(roomshiftID, sort_field, sort_order)
+        print("Student: ", record[0], flush=True)
+        print("Student_count: ", record[1], flush=True)
         return jsonify({'status': 'success',
-                        'student_records': record
+                        'student_records': record[0],
+                        'total_results': record[1]
                         }), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
