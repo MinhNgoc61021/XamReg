@@ -30,8 +30,8 @@
                 role="button">
                 <p class="card-header-title">
                     <span>Tiêu đề: {{ collapse.SemTitle }}
-                      <b-tag v-if="collapse.Status === false">Chưa thi</b-tag>
-                      <b-tag v-else type="is-primary"> Đang thi</b-tag>
+                      <b-tag v-if="collapse.Status === false">Chưa mở đăng ký</b-tag>
+                      <b-tag v-else type="is-primary">Đang mở đăng ký</b-tag>
                     </span>
                 </p>
             </div>
@@ -314,7 +314,7 @@
                 this.semester.loading = true;
                 try {
                     const response = await axios({
-                        url: '/schedule/semester-records',
+                        url: '/schedule/register-semester-records',
                         method: 'get',
                         headers: {
                             'Authorization': authHeader(),
