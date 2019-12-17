@@ -77,33 +77,6 @@ def search_semester(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
-@shift_register.route('/search-subject', methods=['get'])
-@token_required
-def search_subject(current_user):
-    try:
-        searchID = request.args.get('searchID')
-        validatesearchID = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchID))
-        if validatesearchID is None:
-            search_results = Shift.searchShiftRecord(searchID)
-            return jsonify({'status': 'success',
-                            'search_results': search_results,
-                            }), 200
-        else:
-            return jsonify({'status': 'bad-request'}), 400
-    except:
-        return jsonify({'status': 'bad-request'}), 400
-
-
-@shift_register.route('/register-shift', methods=['POST'])
-@token_required
-def register_shift(current_user):
-    try:
-        studentID = request.args.get('studentID')
-        shiftID = request.args.get('shiftID')
-        roomID = request.args.get('roomID')
-        Student_Shift.create(studentID,shiftID,roomID)
-
-
 @shift_register.route('/room-records', methods=['GET'])
 @token_required
 def get_room(current_user):
@@ -193,6 +166,7 @@ def get_registered_shift(current_user):
         sort_order = request.args.get('sort_order')
         sort_field = request.args.get('sort_field')
 
+        # query ở đây
         record = Shift.getQualifiedShiftRecord(SemID, studentID, page_index, per_page, sort_field, sort_order)
 
         return jsonify({'status': 'success',

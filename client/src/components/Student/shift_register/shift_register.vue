@@ -113,7 +113,6 @@
                   Hiện tại ca thi này chưa có phòng thi
                 </b-message>
               </b-field>
-
               <b-table v-else
                 :data="room.room_record_data"
                 :loading="room.room_loading"
@@ -350,24 +349,24 @@
                   }
                 });
                 if (response.status === 200) {
-                  if (response.data.status === 'success') {
-                      this.$buefy.notification.open({
-                            duration: 2000,
-                            message: 'Đã đăng ký thành công!',
-                            position: 'is-bottom-right',
-                            type: 'is-success',
-                            hasIcon: true
-                      });
+                    if (response.data.status === 'success') {
+                        this.$buefy.notification.open({
+                              duration: 2000,
+                              message: 'Đã đăng ký thành công!',
+                              position: 'is-bottom-right',
+                              type: 'is-success',
+                              hasIcon: true
+                        });
                     }
-                  else {
-                      this.$buefy.notification.open({
-                            duration: 2000,
-                            message: 'Bạn đã đăng ký phong thi này rồi!',
-                            position: 'is-bottom-right',
-                            type: 'is-warning',
-                            hasIcon: true
-                      });
-                  }
+                    else {
+                        this.$buefy.notification.open({
+                              duration: 2000,
+                              message: 'Bạn đã đăng ký phong thi này rồi!',
+                              position: 'is-bottom-right',
+                              type: 'is-warning',
+                              hasIcon: true
+                        });
+                    }
                 }
               } catch (error) {
                 this.$buefy.notification.open({

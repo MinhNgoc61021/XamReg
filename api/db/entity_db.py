@@ -815,16 +815,16 @@ class Student_Shift(Base):
         finally:
             sess.close()
 
-    @classmethod
-    def create(cls, studentID, shiftID, roomID):
-        sess = Session()
-        try:
-
-        except:
-            sess.rollback()
-            raise
-        finally:
-            sess.close()
+    # @classmethod
+    # def create(cls, studentID, shiftID, roomID):
+    #     sess = Session()
+    #     try:
+    #
+    #     except:
+    #         sess.rollback()
+    #         raise
+    #     finally:
+    #         sess.close()
 
     @classmethod
     def getRecord(cls, roomID, sort_field, sort_order):
