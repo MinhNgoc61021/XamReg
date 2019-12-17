@@ -29,7 +29,8 @@
       </section>
 
       <footer class="modal-card-foot">
-          <button class="button" type="button" @click="go_home()">Về trang chủ</button>
+          <button v-if="semester.currentSemesterID === null" class="button" type="button" @click="go_home()">Về trang chủ</button>
+          <button v-else class="button" type="button" @click="$parent.close()">Bỏ qua</button>
           <button class="button is-primary" type="submit">Xác nhận</button>
       </footer>
     </div>
@@ -41,11 +42,13 @@ import axios from "axios";
 import {authHeader} from "../../api/jwt_handling";
 import debounce from 'lodash/debounce';
 export default {
+  props: ['semesterID'],
   name: "enter_semester",
   data() {
     return {
       semester: {
-        semester_record: []
+          semester_record: [],
+          currentSemesterID: this.semesterID,
       },
       search: {
         searchResults: [],

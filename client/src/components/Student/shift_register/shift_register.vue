@@ -575,6 +575,7 @@
                 this.$buefy.modal.open({
                     parent: this,
                     component: enter_semester,
+                    props: { semesterID: this.semesterID },
                     hasModalCard: true,
                     customClass: 'custom-class custom-class-2',
                     canCancel: false,
