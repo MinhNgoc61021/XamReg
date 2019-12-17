@@ -87,14 +87,10 @@ def create_new_student(current_user):
 def get_student_info_search(current_user):
     try:
         searchID = request.args.get('searchID')
-        check = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchID))
-        if check is None:
-            searchResults = User.searchStudentRecord(searchID)
-            return jsonify({'status': 'success',
-                            'search_results': searchResults,
-                            }), 200
-        else:
-            return jsonify({'status': 'bad-request'}), 400
+        searchResults = User.searchStudentRecord(searchID)
+        return jsonify({'status': 'success',
+                        'search_results': searchResults,
+                        }), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
 

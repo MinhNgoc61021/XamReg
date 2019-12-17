@@ -93,8 +93,8 @@ def remove_subject(current_user):
         if validate:
             Subject.delRecord(delSubjectID)
             Log.create(current_user['ID'],
-                   'Xóa môn học: ' + delSubjectID,
-                   set_custom_log_time())
+                       'Xóa môn học: ' + delSubjectID,
+                       set_custom_log_time())
             return jsonify({'status': 'success'}), 200
         else:
             return jsonify({'status': 'bad-request'}), 400
@@ -107,13 +107,9 @@ def remove_subject(current_user):
 def search_subject(current_user):
     try:
         searchID = request.args.get('searchID')
-        validatesearchID = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchID))
-        if validatesearchID is None:
-            search_results = Subject.searchSubjectRecord(searchID)
-            return jsonify({'status': 'success',
-                            'search_results': search_results,
-                            }), 200
-        else:
-            return jsonify({'status': 'bad-request'}), 400
+        search_results = Subject.searchSubjectRecord(searchID)
+        return jsonify({'status': 'success',
+                        'search_results': search_results,
+                        }), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
