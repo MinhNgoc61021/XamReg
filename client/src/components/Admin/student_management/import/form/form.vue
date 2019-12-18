@@ -46,7 +46,9 @@
 <script>
   import axios from 'axios';
   import {authHeader} from "../../../../api/jwt_handling";
+  import lodash from 'lodash.debounce';
   import moment from 'moment/moment';
+  import { eventBus } from "../../../../../main";
 
   export default {
       name: "form",
@@ -116,6 +118,8 @@
                           hasIcon: true
                       })
                   }
+              } finally {
+                  eventBus.$emit('up-to-date', '');
               }
           },
       },

@@ -229,6 +229,9 @@ def create_student_subject_status(current_user):
         student_subjectID = request.get_json().get('Student_SubjectID')
         status_type = request.get_json().get('Status_Type')
 
+        print('OK', flush=True)
+        print(student_subjectID, flush=True)
+
         if status_type == 'Qualified':
             check = Student_Status.create(str(studentID), str(student_subjectID), 'đủ điều kiện')
             if check is True:

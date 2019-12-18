@@ -27,8 +27,7 @@
                 :loading="search.searchLoading"
                 @typing="onStudentSearch"
                 @select="option => student.student_record = [option]"
-                expanded
-                clear-on-select>
+                expanded>
               <template slot-scope="props">
                     <div class="media">
                         <div class="media-left">
@@ -69,8 +68,8 @@
             :default-sort-direction="student.defaultSortOrder"
             :default-sort="[student.sortField, student.sortOrder]"
             @sort="onStudentSort"
-            @details-open="(row, index) => { student_status.currentStudentID = row.ID ; getStudent_Subject(); closeOtherDetails(row, index) }"
-            @details-close="(row, index) => { student_status.student_subject_record = []; student_status.page = 1 }"
+            @details-open="(row, index) => { student_status.currentStudentID = row.ID ; student_status.page = 1; getStudent_Subject(); closeOtherDetails(row, index) }"
+            @details-close="(row, index) => { student_status.student_subject_record = []; student_status.page = 1; }"
             :show-detail-icon="true">
 
             <template slot-scope="props">
@@ -250,9 +249,9 @@
                     searchLoading: false,
                 },
                 subject_search: {
+                    select_subject: Object,
                     searchResults: [],
                     searchLoading: false,
-                    select_subject: Object,
                 },
             }
         },
@@ -470,14 +469,14 @@
                     const response = await axios({
                         url: '/student/create-student-subject',
                         method: 'post',
-                        data: {
-                            StudentID: this.student_status.currentStudentID,
-                            Student_SubjectID: this.subject_search.select_subject[0].SubjectID,
-                            Status_Type: this.student_status.status_type,
-                        },
                         headers: {
                             'Authorization': authHeader(),
-                        }
+                        },
+                        data: {
+                            Student_SubjectID: this.subject_search.select_subject[0].SubjectID,
+                            StudentID: this.student_status.currentStudentID,
+                            Status_Type: this.student_status.status_type,
+                        },
                     });
                     if (response.data.status === 'success') {
                         this.$buefy.notification.open({
@@ -496,16 +495,26 @@
                             hasIcon: true
                         });
                     }
-                } catch (error) {
-                    this.$buefy.notification.open({
-                        duration: 2000,
-                        message: `Không thể lấy được dữ liệu môn học của sinh viên có MSSV: ${this.student_status.currentStudentID}!`,
-                        position: 'is-bottom-right',
-                        type: 'is-danger',
-                        hasIcon: true
-                    });
-                    throw error;
+                } catch (e) {
+                    if (e['message'].includes('400')) {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
+                    } else if (e['message'].includes('401')) {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Không được quyền sử dụng!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
+                    }
                 } finally {
+                    this.subject_search.loading = false;
                     this.getStudent_Subject();
                 }
             },
