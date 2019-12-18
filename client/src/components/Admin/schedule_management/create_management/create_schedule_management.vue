@@ -12,7 +12,7 @@
         <span>Làm mới</span>
       </b-button>
       <b-field :message="[{ 'Kỳ thi chưa đánh': hasSemesterError },]" expanded>
-        <b-input v-model="semester.newSemester" placeholder="Nhập tiêu đề để tạo kỳ thi" >
+        <b-input v-model="semester.newSemester" @keyup.enter="addNewSemester" placeholder="Nhập tiêu đề để tạo kỳ thi" >
         </b-input>
       </b-field>
       <b-button
@@ -892,6 +892,12 @@
             },
         },
         mounted() {
+            var self = this;
+            window.addEventListener('keyup', function(event) {
+              if (event.keyCode === 13) {
+                  self.addNewSemester();
+              }
+            });
             this.getSemesterRecordData();
         }
     }

@@ -68,7 +68,7 @@
             :default-sort-direction="student.defaultSortOrder"
             :default-sort="[student.sortField, student.sortOrder]"
             @sort="onStudentSort"
-            @details-open="(row, index) => { student_status.currentStudentID = row.ID ; student_status.page = 1; getStudent_Subject(); closeOtherDetails(row, index) }"
+            @details-open="(row, index) => { student_status.currentStudentID = row.ID ; student_status.page = 1; student_status.status_type =  'Qualified'; getStudent_Subject(); closeOtherDetails(row, index) }"
             @details-close="(row, index) => { student_status.student_subject_record = []; student_status.page = 1; }"
             :show-detail-icon="true">
 
