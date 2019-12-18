@@ -89,10 +89,9 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    import moment from 'moment';
-    import {authHeader} from "../../../api/jwt_handling";
-    import debounce from 'lodash/debounce';
+    // import axios from 'axios';
+    // import {authHeader} from "api/jwt_handling";
+    // import debounce from 'lodash/debounce';
 
     export default {
         name: 'export_ticket',

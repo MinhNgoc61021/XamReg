@@ -42,7 +42,9 @@ def init_student():
     else:
         # fullname = 'Nguyễn Ngọc Minh'
         # print(fullname, flush=True)
-        add_admin = User.create('Student1', 'BOOMSTICK', '12345', 'Nguyen Ngoc Minh', '1999-12-18',
+        add_stduent1 = User.create('Student1', 'BOOMSTICK', '12345', 'Nguyen Ngoc Minh', '1999-12-18',
+                                'Nam', 'K62', 'Student')
+        add_stduent2 = User.create('Student2', 'LITTLEFRIEND', '67890', 'Nguyen Ngoc Minh', '1999-12-18',
                                 'Nam', 'K62', 'Student')
 # @app.route('/hello')
 # def hello():
