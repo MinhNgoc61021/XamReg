@@ -66,8 +66,8 @@
                         :default-sort-direction="shift.defaultSortOrder"
                         :default-sort="[shift.sortField, shift.sortOrder]"
                         @sort="onShiftSort"
-                        @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
-                        @details-close="(row, index) => { room.room_record_data = [] }"
+                        @details-open="(row, index) => { currentShiftID = row.ShiftID; room.page = 1; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
+                        @details-close="(row, index) => { room.room_record_data = []; room.page = 1 }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
                             <b-table-column field="ShiftID" label="Mã ca thi" width="100" sortable>
@@ -182,10 +182,17 @@
                                                   {{ props.row.Fullname }}
                                                 </b-table-column>
                                                 <b-table-column field="Dob" label="Ngày sinh" width="100" sortable>
-                                                  {{ props.row.Dob }}
+                                                 <span class="tag is-success">
+                                                    {{ formatDate(props.row.Dob) }}
+                                                 </span>
                                                 </b-table-column>
                                                 <b-table-column field="Gender" label="Giới tính" width="100" sortable >
-                                                  {{ props.row.Gender }}
+                                                  <span>
+                                                      <b-icon pack="fas"
+                                                          :icon="props.row.Gender === 'Nam' ? 'mars' : 'venus'">
+                                                      </b-icon>
+                                                      {{ props.row.Gender }}
+                                                  </span>
                                                 </b-table-column>
                                                 <b-table-column field="CourseID" label="Lớp" width="100" sortable>
                                                   {{ props.row.CourseID }}

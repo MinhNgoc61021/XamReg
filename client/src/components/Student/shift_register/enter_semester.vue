@@ -17,9 +17,6 @@
         expanded required>
           <template slot-scope="props">
             <div class="media">
-              <div class="media-left">
-                <b-icon icon-pack="fas" icon="file-search"></b-icon>
-              </div>
               <div class="media-content">
                 <b>Tên kỳ thi: </b>{{ props.option.SemTitle }}
               </div>

@@ -87,7 +87,7 @@
                         :default-sort-direction="shift.defaultSortOrder"
                         :default-sort="[shift.sortField, shift.sortOrder]"
                         @sort="onShiftSort"
-                        @details-open="(row, index) => { currentShiftID = row.ShiftID; getRoomRecord(); closeOtherDetails(row, index) }"
+                        @details-open="(row, index) => { currentShiftID = row.ShiftID; room.page = 1; getRoomRecord(); closeOtherDetails(row, index) }"
                         @details-close="(row, index) => { room.room_record_data = []; room.page = 1 }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
@@ -705,7 +705,7 @@
                         },
                     });
                     if (response.status === 200) {
-                        this.room.room_loading = false;
+
                         if (response.data.status === 'success') {
                             this.$buefy.notification.open({
                                 duration: 2000,
@@ -725,7 +725,6 @@
                         }
                     }
                 } catch (e) {
-                    this.room.room_loading = false;
                     if (e['message'].includes('400')) {
                         this.$buefy.notification.open({
                             duration: 2000,
@@ -745,6 +744,7 @@
                     }
                 }
                 finally {
+                    this.room.room_loading = false;
                     this.getRoomRecord();
                 }
             },

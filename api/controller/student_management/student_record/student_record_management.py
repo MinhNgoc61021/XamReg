@@ -73,7 +73,7 @@ def create_new_student(current_user):
             newStudent = User.create(newStudentID, newStudentID + '@vnu.edu.vn', newStudentID, newFullname, newDob,
                                      newGender, newCourseID, 'Student')
             if newStudent is False:
-                return jsonify({'status': 'already-exist'}), 200
+                return jsonify({'status': 'already-exist'}), 202
             else:
                 return jsonify({'status': 'success'}), 200
         else:
@@ -215,6 +215,36 @@ def update_student_info_record(current_user):
                        set_custom_log_time())
 
             return jsonify({'status': 'success'}), 200
+        else:
+            return jsonify({'status': 'bad-request'}), 400
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@student_record_management.route('/create-student-subject', methods=['POST'])
+@token_required
+def create_student_subject_status(current_user):
+    try:
+        studentID = request.get_json().get('StudentID')
+        student_subjectID = request.get_json().get('Student_SubjectID')
+        status_type = request.get_json().get('Status_Type')
+
+        print('OK', flush=True)
+        print(student_subjectID, flush=True)
+
+        if status_type == 'Qualified':
+            check = Student_Status.create(str(studentID), str(student_subjectID), 'đủ điều kiện')
+            if check is True:
+                return jsonify({'status': 'success'}), 200
+            else:
+                return jsonify({'status': 'already-exist'}), 202
+
+        elif status_type == 'Unqualified':
+            check = Student_Status.create(str(studentID), str(student_subjectID), 'không đủ điều kiện')
+            if check is True:
+                return jsonify({'status': 'success'}), 200
+            else:
+                return jsonify({'status': 'already-exist'}), 202
         else:
             return jsonify({'status': 'bad-request'}), 400
     except:

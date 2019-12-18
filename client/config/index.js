@@ -58,6 +58,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/student/create-student-subject': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/subject/subject-records': {
         target: 'http://api:5000',
         changeOrigin: true,
