@@ -66,7 +66,7 @@
                         :default-sort-direction="shift.defaultSortOrder"
                         :default-sort="[shift.sortField, shift.sortOrder]"
                         @sort="onShiftSort"
-                        @details-open="(row, index) => { currentShiftID = row.ShiftID; room.page = 1; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
+                        @details-open="(row, index) => { currentShiftID = row.ShiftID; room.page = 1; currentSubjectName = row.Subject.SubjectTitle; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
                         @details-close="(row, index) => { room.room_record_data = []; room.page = 1 }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
@@ -127,7 +127,7 @@
                                 :default-sort-direction="room.defaultSortOrder"
                                 :default-sort="[room.sortField, room.sortOrder]"
                                 @sort="onRoomSort"
-                                @details-open="(row, index) => { currentRoomShiftID = row.Room_ShiftID ; currentRoomName = row.Exam_Room.RoomName; getStudentRecord(); closeOtherDetails_Room(row, index) }"
+                                @details-open="(row, index) => { currentRoomShiftID = row.Room_ShiftID ; currentRoomName = row.Exam_Room.RoomName;  getStudentRecord(); closeOtherDetails_Room(row, index) }"
                                 @details-close="(row, index) => { student.student_record_data = [] }"
                                 :show-detail-icon="true">
                                 <template slot-scope="props">
@@ -154,16 +154,9 @@
                                             class="button"
                                             @click="getStudentRecord">
                                         <b-icon size="is-small" icon="sync"/></b-button>
-                                      <download-excel
-                                            class   = "btn btn-default"
-                                            :name = "excel_export.file_name"
-                                            :fields = "excel_export.json_fields"
-                                            :fetch   = "exportExcel"
-                                            :before-generate = "startDownload"
-                                            :before-finish = "finishDownload"
-                                            >
-                                            <b-button class="button" icon-left="file-download" @click="exportExcel">In</b-button>
-                                        </download-excel>
+                                      <b-button icon-left="file-download" @click="print">
+                                        In danh sách sinh viên
+                                      </b-button>
                                     </b-field>
                                     <b-field v-if="student.student_record_data.length > 0">
                                         <b-table
@@ -236,6 +229,7 @@
 
 <script>
     import axios from 'axios';
+    import printJS from 'print-js';
     import moment from 'moment';
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
@@ -308,7 +302,8 @@
               currentShiftID: '', // current opening shiftID
               currentSemID: '', // current opening semesterID
               currentRoomShiftID: '', //current opening roomID
-              currentRoomName: '', // for excel name
+              currentRoomName: '', // for pdf title
+              currentSubjectName: '', // for pdf title
               hasSemesterError: false,
               hasSubjectError: false,
               hasRoomError: false
@@ -549,47 +544,21 @@
                 this.room.ID_Index = [row.Room_ShiftID];
                 // console.log(this.student_status.ID_Index);
             },
-            async exportExcel(){
-                try {
-                    const response = await axios({
-                        url: '/schedule/student-records',
-                        method: 'get',
-                        params: {
-                            currentRoomShiftID: this.currentRoomShiftID,
-                            sort_field: this.student.sortField,
-                            sort_order: this.student.sortOrder
-                        },
-                        headers: {
-                            'Authorization': authHeader(),
-                        }
-                    });
-                    // console.log(response.data.shift_records);
-                    if (response.status === 200) {
-                        this.excel_export.json_data = [];
-                        this.excel_export.file_name = "Danh sách sinh viên của phòng " + this.currentRoomName  + ".xls";
-                        this.student.total = response.data.total_results;
-                        response.data.student_records.forEach((item) => {
-                            this.excel_export.json_data.push(item);
-                        });
-                        return this.excel_export.json_data
-                        // console.log(this.data);
-                    }
-                } catch (error) {
-                    this.excel_export.json_data = [];
-                    this.$buefy.notification.open({
-                        duration: 2000,
-                        message: 'Không thể tải được file excel!',
-                        position: 'is-bottom-right',
-                        type: 'is-danger',
-                        hasIcon: true
-                    });
-                    throw error;
-                }
-            },
-            startDownload(){
-            },
-            finishDownload(){
-              this.excel_export.json_data = []
+            print(){
+              printJS({
+                  printable: this.student.student_record_data,
+                  properties: [
+                          { field: 'ID', displayName: 'Mã số sinh viên'},
+                          { field: 'Fullname', displayName: 'Tên sinh viên'},
+                          { field: 'Dob', displayName: 'Ngày sinh'},
+                          { field: 'Gender', displayName: 'Giới tính'},
+                          { field: 'CourseID', displayName: 'Mã lớp học'}
+                        ],
+                  documentTitle: "Danh sách sinh viên tại phòng " + this.currentRoomName + ' | Môn thi: ' + this.currentSubjectName,
+                  headerStyle: 'font-weight: 300;',
+                  repeatTableHeader: false,
+                  type: 'json'
+              })
             }
         },
         mounted() {

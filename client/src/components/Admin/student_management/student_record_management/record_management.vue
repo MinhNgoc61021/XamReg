@@ -57,6 +57,7 @@
             :total="student.total"
             :per-page="student.per_page"
             @page-change="onStudentPageChange"
+            :current-page.sync="student.page"
             aria-next-label="Next page"
             aria-previous-label="Previous page"
             aria-page-label="Page"
@@ -68,7 +69,7 @@
             :default-sort-direction="student.defaultSortOrder"
             :default-sort="[student.sortField, student.sortOrder]"
             @sort="onStudentSort"
-            @details-open="(row, index) => { student_status.currentStudentID = row.ID ; student_status.page = 1; student_status.status_type =  'Qualified'; getStudent_Subject(); closeOtherDetails(row, index) }"
+            @details-open="(row, index) => { student_status.currentStudentID = row.ID ; student_status.page = 1; student_status.status_type = 'Qualified'; getStudent_Subject(); closeOtherDetails(row, index) }"
             @details-close="(row, index) => { student_status.student_subject_record = []; student_status.page = 1; }"
             :show-detail-icon="true">
 
@@ -167,6 +168,7 @@
                     aria-page-label="Page"
                     aria-current-label="Current page"
                     backend-sorting
+                    :current-page.sync="student_status.page"
                     bordered
                     narrowed
                     hoverable
@@ -347,13 +349,12 @@
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `Đã xóa tài khoản có MSSV <b>${recordID}</b> thành công.`,
+                                    message: `Đã xóa tài khoản có MSSV: <b>${recordID}</b> thành công.`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
                                     hasIcon: true
                                 });
                             }
-                            this.getStudentRecordData();
                         } catch (e) {
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
@@ -363,6 +364,22 @@
                                     type: 'is-danger',
                                     hasIcon: true
                                 })
+                            }
+                        } finally {
+                            if (this.student.student_record.length === 1) {
+                                // console.log(this.student.total);
+                                // console.log(this.student.per_page);
+                                if (parseInt(this.student.total / this.student.per_page) > 0) {
+                                    this.student.page--;
+                                    this.getStudentRecordData();
+                                }
+                                else {
+                                    this.student.page = 1;
+                                    this.getStudentRecordData();
+                                }
+                            }
+                            else {
+                                this.getStudentRecordData();
                             }
                         }
                     },
@@ -396,6 +413,16 @@
                                     message: `Đã cập nhật tài khoản của sinh viên thành công!`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
+                                    hasIcon: true
+                                });
+                                this.getStudentRecordData();
+                            }
+                            else if (http_status === 202) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `MSSV của sinh viên  này đang bị trùng với của sinh viên khác!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-warning',
                                     hasIcon: true
                                 });
                                 this.getStudentRecordData();
@@ -616,7 +643,19 @@
                                 })
                             }
                         } finally {
-                            this.getStudent_Subject();
+                            if (this.student.student_status.length === 1) {
+                                if (parseInt(this.student_status.total / this.student_status.per_page) > 0) {
+                                    this.student_status.page--;
+                                    this.getStudent_Subject();
+                                }
+                                else {
+                                    this.student_status.page = 1;
+                                    this.getStudent_Subject();
+                                }
+                            }
+                            else {
+                                this.getStudent_Subject();
+                            }
                         }
                     },
                 });

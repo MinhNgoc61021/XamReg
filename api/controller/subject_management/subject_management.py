@@ -43,7 +43,7 @@ def create_subject(current_user):
         newSubjectTitle = request.get_json().get('SubjectTitle')
         print(newSubjectID, flush=True)
         print(newSubjectTitle, flush=True)
-        validateSubjectID = re.search('([A-Z]{3})([0-9]{4})', str(newSubjectID))
+        validateSubjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3}))', str(newSubjectID))
         if validateSubjectID is not None:
             isNew = Subject.create(str(newSubjectID).lower().strip(), newSubjectTitle)
             if isNew:
@@ -68,7 +68,8 @@ def edit_subject(current_user):
         newSubjectTitle = request.get_json().get('SubjectTitle')
         print(newSubjectID, flush=True)
         print(newSubjectTitle, flush=True)
-        validateSubjectID = re.search('([A-Z]|[a-z]{3})([0-9]{4})', str(newSubjectID))
+        validateSubjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3}))', str(newSubjectID).strip())
+        print(validateSubjectID, flush=True)
         if validateSubjectID is not None:
             success = Subject.updateRecord(currentSubjectID, str(newSubjectID).strip(), str(newSubjectTitle).strip())
             if success is True:
@@ -89,7 +90,7 @@ def edit_subject(current_user):
 def remove_subject(current_user):
     try:
         delSubjectID = request.get_json().get('delSubjectID')
-        validate = re.search('([A-Z]{3})([0-9]{4})', str(delSubjectID))
+        validate = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3}))', str(delSubjectID))
         if validate:
             Subject.delRecord(delSubjectID)
             Log.create(current_user['ID'],

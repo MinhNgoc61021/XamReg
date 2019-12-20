@@ -80,8 +80,8 @@
                 {{props.row.SubjectTitle}}
               </b-table-column>
               <b-table-column field="Action"  width="90px">
-                <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onStatusEdit(props.row)"></b-button>
-                <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row)"></b-button>
+                <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onSubjectEdit(props.row)"></b-button>
+                <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onSubjectDelete(props.row)"></b-button>
               </b-table-column>
             </template>
           </b-table>
@@ -259,7 +259,7 @@
                 }
               })
           },
-          async onStatusDelete(row) {
+          async onSubjectDelete(row) {
             this.$buefy.dialog.confirm({
               title: 'Xóa môn học',
               message: `Bạn có chắc chắn là muốn <b>xóa</b> môn học ${row.SubjectID} này không? Đã làm là tự chịu đấy.`,
@@ -299,12 +299,24 @@
                     })
                   }
                 } finally {
-                  this.getSubjectInfo();
+                    if (this.subject_info.subject_record.length === 1) {
+                        if (parseInt(this.subject_info.total / this.subject_info.per_page) > 0) {
+                            this.subject_info.page--;
+                            this.getSubjectInfo();
+                        }
+                        else {
+                            this.subject_info.page = 1;
+                            this.getSubjectInfo();
+                        }
+                    }
+                    else {
+                        this.getSubjectInfo();
+                    }
                 }
               },
             });
           },
-          onStatusEdit(row) {
+          onSubjectEdit(row) {
              this.$buefy.modal.open({
                parent: this,
                component: subject_edit,

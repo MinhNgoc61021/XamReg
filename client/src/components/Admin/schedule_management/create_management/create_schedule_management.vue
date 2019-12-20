@@ -11,8 +11,13 @@
           icon="sync"/>
         <span>Làm mới</span>
       </b-button>
-      <b-field :message="[{ 'Kỳ thi chưa đánh': hasSemesterError },]" expanded>
-        <b-input v-model="semester.newSemester" @keyup.enter="addNewSemester" placeholder="Nhập tiêu đề để tạo kỳ thi" >
+      <b-field
+        :type="{ 'is-danger':  SemesterNotExist ? 'is-danger': invalidSemester  }"
+        :message="[{ 'Tiêu đề kỳ thi chưa đánh': SemesterNotExist },
+                          { 'Tiêu đề kỳ thi không hợp lệ': invalidSemester }]" expanded>
+        <b-input v-model="semester.newSemester"
+                 @keyup.enter="addNewSemester"
+                 placeholder="Nhập tiêu đề để tạo kỳ thi" >
         </b-input>
       </b-field>
       <b-button
@@ -260,7 +265,8 @@
                 collapses: [],
                 currentShiftID: '', // current opening shiftID
                 currentSemID: '', // current opening semesterID
-                hasSemesterError: false,
+                SemesterNotExist: false,
+                invalidSemester: false,
                 hasSubjectError: false,
                 hasRoomError: false,
             }
@@ -271,64 +277,73 @@
             },
             async addNewSemester() {
                 if (this.semester.newSemester.length === 0) {
-                    this.hasSemesterError = true;
+                    this.SemesterNotExist = true;
+                    this.invalidSemester = false;
                 }
                 else {
-                    try {
-                        this.hasSemesterError = false;
-                        this.semester.create_loading = true;
-                        const response = await axios({
-                            url: '/schedule/create-semester',
-                            method: 'post',
-                            headers: {
-                                'Authorization': authHeader(),
-                            },
-                            data: {
-                                newSemester: this.semester.newSemester,
-                            },
-                        });
-                        this.semester.create_loading = false;
-                        if (response.status === 200) {
-                            this.$buefy.notification.open({
-                                duration: 2000,
-                                message: `Đã tạo kỳ thi thành công!`,
-                                position: 'is-bottom-right',
-                                type: 'is-success',
-                                hasIcon: true
-                            });
-                        }
-                        else if (response.status === 202) {
-                            this.$buefy.notification.open({
-                                duration: 2000,
-                                message: `Kỳ thi đã tồn tại từ trước!`,
-                                position: 'is-bottom-right',
-                                type: 'is-warning',
-                                hasIcon: true
-                            });
-                        }
-                    } catch (e) {
-                        this.semester.create_loading = false;
-                        if (e['message'].includes('400')) {
-                            this.$buefy.notification.open({
-                                duration: 2000,
-                                message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
-                                position: 'is-bottom-right',
-                                type: 'is-danger',
-                                hasIcon: true
-                            })
-                        } else if (e['message'].includes('401')) {
-                            this.$buefy.notification.open({
-                                duration: 2000,
-                                message: 'Không được quyền sử dụng!',
-                                position: 'is-bottom-right',
-                                type: 'is-danger',
-                                hasIcon: true
-                            })
-                        }
+                    let pattern = new RegExp("^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s- ]+$");
+                    let check = pattern.test(this.semester.newSemester);
+                    if (check) {
+                        try {
+                          this.SemesterNotExist = false;
+                          this.invalidSemester = false;
+                          this.semester.create_loading = true;
+                          const response = await axios({
+                              url: '/schedule/create-semester',
+                              method: 'post',
+                              headers: {
+                                  'Authorization': authHeader(),
+                              },
+                              data: {
+                                  newSemester: this.semester.newSemester,
+                              },
+                          });
+                          this.semester.create_loading = false;
+                          if (response.status === 200) {
+                              this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: `Đã tạo kỳ thi thành công!`,
+                                  position: 'is-bottom-right',
+                                  type: 'is-success',
+                                  hasIcon: true
+                              });
+                          }
+                          else if (response.status === 202) {
+                              this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: `Kỳ thi đã tồn tại từ trước!`,
+                                  position: 'is-bottom-right',
+                                  type: 'is-warning',
+                                  hasIcon: true
+                              });
+                          }
+                      } catch (e) {
+                          this.semester.create_loading = false;
+                          if (e['message'].includes('400')) {
+                              this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                                  position: 'is-bottom-right',
+                                  type: 'is-danger',
+                                  hasIcon: true
+                              })
+                          } else if (e['message'].includes('401')) {
+                              this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: 'Không được quyền sử dụng!',
+                                  position: 'is-bottom-right',
+                                  type: 'is-danger',
+                                  hasIcon: true
+                              })
+                          }
+                      }
+                      finally {
+                          this.semester.newSemester = '';
+                          this.getSemesterRecordData();
+                      }
                     }
-                    finally {
-                        this.semester.newSemester = '';
-                        this.getSemesterRecordData();
+                    else {
+                        this.invalidSemester = true;
                     }
                 }
             }, // xong
@@ -685,7 +700,19 @@
                                 })
                             }
                         } finally {
-                            this.getShiftRecordData();
+                            if (this.shift.shift_record_data.length === 1) {
+                                if (parseInt(this.shift.total / this.shift.per_page) > 0) {
+                                    this.shift.page--;
+                                    this.getShiftRecordData();
+                                }
+                                else {
+                                    this.shift.page = 1;
+                                    this.getShiftRecordData();
+                                }
+                            }
+                            else {
+                                this.getShiftRecordData();
+                            }
                         }
                     },
                 });
@@ -839,7 +866,19 @@
                                 })
                             }
                         } finally {
-                            this.getRoomRecord();
+                            if (this.room.room_record_data.length === 1) {
+                                if (parseInt(this.room.total / this.room.per_page) > 0) {
+                                    this.room.page--;
+                                    this.getRoomRecord();
+                                }
+                                else {
+                                    this.room.page = 1;
+                                    this.getRoomRecord();
+                                }
+                            }
+                            else {
+                                this.getRoomRecord();
+                            }
                         }
                     },
                 });

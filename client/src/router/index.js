@@ -27,11 +27,11 @@ export const router = new Router({
                   { path: '/log-management', component: log_management },
                   { path: '/subject-management', component: subject_management },
                   { path: '/exam-room-management', component: exam_room_management },
-                  { path: '/manual', name: 'manual', component: manual },],
+                  { path: '/admin-manual', name: 'manual', component: manual },],
     },
     { path: '/student', name: 'student', component: student_page, redirect: '/student-home',
       children: [ { path: '/student-home', component: student_home_page },
-                  { path: '/manual', name: 'manual', component: manual },
+                  { path: '/student-manual', name: 'manual', component: manual },
                   { path: '/shift-register/:studentid', component: shift_register, name: 'shift-register' , props: true,
                     beforeEnter (to, from, next)  {
                         if (getToken(localStorage.getItem('user')).type === 'Admin') {

@@ -11,7 +11,7 @@
             type="text"
             v-model="newSubjectID"
             :value="newSubjectID"
-            maxlength="15"
+            maxlength="7"
             validation-message="Nhập đúng mã môn học"
             pattern="(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3}))"
             placeholder="Nhập mã môn học"

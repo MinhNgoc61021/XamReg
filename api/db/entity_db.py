@@ -147,15 +147,19 @@ class User(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(User).filter_by(ID=currentStudentID).update(
-                {User.ID: newStudentID,
-                 User.Password: generate_password_hash(newStudentID),
-                 User.Username: newUsername,
-                 User.Fullname: newFullname,
-                 User.CourseID: newCourseID,
-                 User.Dob: newDob,
-                 User.Gender: newGender})
-            sess.commit()
+            if sess.query(User).filter(User.ID == newStudentID).scalar() is None:
+                sess.query(User).filter_by(ID=currentStudentID).update(
+                    {User.ID: newStudentID,
+                     User.Password: generate_password_hash(newStudentID),
+                     User.Username: newUsername,
+                     User.Fullname: newFullname,
+                     User.CourseID: newCourseID,
+                     User.Dob: newDob,
+                     User.Gender: newGender})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise
@@ -291,7 +295,7 @@ class Subject(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            if sess.query(Subject).filter(Subject.SubjectID == newSubjectID, Subject.SubjectTitle == newSubjectTitle).scalar() is None:
+            if sess.query(Subject).filter(or_(Subject.SubjectID == newSubjectID, Subject.SubjectTitle == newSubjectTitle)).scalar() is None:
                 sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
                     {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
                 sess.commit()

@@ -30,7 +30,7 @@
                     <b-icon icon-pack="fas" icon="lock"></b-icon>
                     <span>Cập nhật mật khẩu</span>
                   </b-navbar-item>
-                  <b-navbar-item tag="router-link" :to="{ path: '/manual' }">
+                  <b-navbar-item tag="router-link" :to="{ path: '/stduent-manual' }">
                     <b-icon icon-pack="fas" icon="question-circle"></b-icon>
                     <span>Trợ giúp</span>
                   </b-navbar-item>
