@@ -12,11 +12,12 @@
         <span>Làm mới</span>
       </b-button>
       <b-field
-        :type="{ 'is-danger':  SemesterNotExist ? 'is-danger': invalidSemester  }"
-        :message="[{ 'Tiêu đề kỳ thi chưa đánh': SemesterNotExist },
-                          { 'Tiêu đề kỳ thi không hợp lệ': invalidSemester }]" expanded>
+        :type="{ 'is-danger':  SemesterNotExist }"
+        :message="[{ 'Tiêu đề kỳ thi chưa đánh': SemesterNotExist }]" expanded>
         <b-input v-model="semester.newSemester"
                  @keyup.enter="addNewSemester"
+                 validation-message="Nhập đúng tiêu đề kỳ thi(Không gồm các ký tự đặc biệt)"
+                 pattern="^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$"
                  placeholder="Nhập tiêu đề để tạo kỳ thi" >
         </b-input>
       </b-field>
@@ -192,7 +193,7 @@
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có dự liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
+                                Hiện tại chưa có thông tin về phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
                               </b-message>
                             </b-field>
 
@@ -221,6 +222,7 @@
     import semester_edit from "./edit/semester_edit";
     import shift_edit from "./edit/shift_edit";
     import new_shift from "./create/shift_create";
+    import { eventBus } from "../../../../main";
 
     export default {
         name: 'create_management',
@@ -278,7 +280,6 @@
             async addNewSemester() {
                 if (this.semester.newSemester.length === 0) {
                     this.SemesterNotExist = true;
-                    this.invalidSemester = false;
                 }
                 else {
                     let pattern = new RegExp("^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s- ]+$");
@@ -286,7 +287,6 @@
                     if (check) {
                         try {
                           this.SemesterNotExist = false;
-                          this.invalidSemester = false;
                           this.semester.create_loading = true;
                           const response = await axios({
                               url: '/schedule/create-semester',
@@ -424,6 +424,8 @@
                         hasIcon: true
                     });
                     throw error;
+                } finally {
+                    eventBus.$emit('up-to-date-semester',  '');
                 }
             }, // xong
             async onSemesterEdit(record) {
@@ -443,7 +445,7 @@
                        if (http_status === 200) {
                          this.$buefy.notification.open({
                            duration: 2000,
-                           message: `Đã sửa đổi thành công!`,
+                           message: `Đã cập nhật kỳ thi thành công!`,
                            position: 'is-bottom-right',
                            type: 'is-success',
                            hasIcon: true

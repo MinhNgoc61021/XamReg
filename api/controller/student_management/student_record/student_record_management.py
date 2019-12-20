@@ -209,7 +209,8 @@ def update_student_info_record(current_user):
                 checkGender is not None) and (checkCourseID is not None) and (
                 newStudentID == newUsername.split('@')[0]):
             #  print('OK1', flush=True)
-            check = User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob, newGender)
+            check = User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob,
+                                      newGender)
             if check is True:
                 Log.create(current_user['ID'],
                            'Cập nhật thông tin của sinh viên vào hệ thống.',

@@ -115,13 +115,9 @@ def remove_room_record(current_user):
 def get_room_info_search(current_user):
     try:
         searchName = request.args.get('searchName')
-        check = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchName))
-        if check is None:
-            searchResults = Exam_Room.searchRoomRecord(searchName)
-            return jsonify({'status': 'success',
+        searchResults = Exam_Room.searchRoomRecord(searchName)
+        return jsonify({'status': 'success',
                             'search_results': searchResults,
                             }), 200
-        else:
-            return jsonify({'status': 'bad-request'}), 400
     except:
         return jsonify({'status': 'bad-request'}), 400

@@ -189,7 +189,11 @@ module.exports = {
       '/shift-register/registered-room-shift-records':{
         target: 'http://api:5000',
         changeOrigin: true,
-      }
+      },
+      '/shift-register/get-info': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
     },
 
     // Various Dev Server settings

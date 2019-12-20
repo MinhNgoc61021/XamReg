@@ -207,7 +207,7 @@
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có dự liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
+                                Hiện tại chưa có dữ liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
                               </b-message>
                             </b-field>
                         </template>
@@ -221,6 +221,12 @@
         </b-collapse>
       </div>
       <div v-else>
+        <b-field>
+          <b-message type="is-danger" has-icon>
+            <p>Hiện tại chưa có kỳ thi nào ở đây!</p>
+            <p>Lưu ý! Ở đây chỉ hiển thị những kỳ thi đang <b>mở đăng ký!</b></p>
+          </b-message>
+        </b-field>
       </div>
     </section>
   </div>
@@ -233,6 +239,7 @@
     import moment from 'moment';
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
+    import { eventBus } from "../../../../main";
 
     export default {
         name: 'export',
@@ -562,7 +569,14 @@
             }
         },
         mounted() {
+
             this.getSemesterRecordData();
+        },
+        created() {
+            eventBus.$on('up-to-date-semester', () => {
+                this.getSemesterRecordData();
+                this.getRoomRecord();
+            })
         }
     }
 </script>

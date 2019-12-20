@@ -192,7 +192,7 @@
                 </b-field>
                 <b-field v-else>
                   <b-message type="is-danger" has-icon>
-                    Hiện tại sinh viên này chưa có thông tin về danh sách này, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b>!
+                    Hiện tại sinh viên này chưa có thông tin về danh sách môn học, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b> hoặc đánh vào <b>Tìm kiếm</b> để nhập môn học cho sinh viên!
                   </b-message>
                 </b-field>
             </template>
@@ -329,7 +329,7 @@
             async onStudentDelete(recordID) {
                 this.$buefy.dialog.confirm({
                     title: 'Xóa tài khoản',
-                    message: `Bạn có chắc chắn là muốn <b>xóa</b> tài khoản của sinh viên có MSSV ${recordID} này không? Đã làm thì tự chịu đấy.`,
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> tài khoản của sinh viên có MSSV <b>${recordID}</b> này không? Đã làm thì tự chịu đấy.`,
                     confirmText: 'Xóa!',
                     cancelText: 'Bỏ qua',
                     type: 'is-danger',
@@ -349,7 +349,7 @@
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `Đã xóa tài khoản có MSSV: <b>${recordID}</b> thành công.`,
+                                    message: `Đã xóa tài khoản có MSSV <b>${recordID}</b> thành công.`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
                                     hasIcon: true
@@ -420,7 +420,7 @@
                             else if (http_status === 202) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `MSSV của sinh viên  này đang bị trùng với của sinh viên khác!`,
+                                    message: `MSSV của sinh viên này đang bị trùng với của sinh viên khác!`,
                                     position: 'is-bottom-right',
                                     type: 'is-warning',
                                     hasIcon: true
@@ -508,7 +508,7 @@
                     if (response.data.status === 'success') {
                         this.$buefy.notification.open({
                             duration: 2000,
-                            message: `Đã thêm môn học cho sinh viên có MSSV: ${this.student_status.currentStudentID} thành công.`,
+                            message: `Đã thêm môn học cho sinh viên có MSSV ${this.student_status.currentStudentID} thành công.`,
                             position: 'is-bottom-right',
                             type: 'is-success',
                             hasIcon: true
@@ -643,7 +643,7 @@
                                 })
                             }
                         } finally {
-                            if (this.student.student_status.length === 1) {
+                            if (this.student_status.student_subject_record.length === 1) {
                                 if (parseInt(this.student_status.total / this.student_status.per_page) > 0) {
                                     this.student_status.page--;
                                     this.getStudent_Subject();

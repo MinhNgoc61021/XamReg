@@ -24,6 +24,7 @@
             type="text"
             v-model="newSubjectTitle"
             :value="newSubjectTitle"
+            pattern="^[a-zA-Z1-9_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$"
             maxlength="100"
             validation-message="Nhập đúng tên môn học"
             placeholder="Nhập tên môn học"

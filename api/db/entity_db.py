@@ -147,7 +147,17 @@ class User(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            if sess.query(User).filter(User.ID == newStudentID).scalar() is None:
+            if str(currentStudentID) == str(newStudentID):
+                sess.query(User).filter_by(ID=currentStudentID).update(
+                    {
+                     User.Fullname: newFullname,
+                     User.CourseID: newCourseID,
+                     User.Dob: newDob,
+                     User.Gender: newGender
+                    })
+                sess.commit()
+                return True
+            elif sess.query(User).filter(User.ID == newStudentID, User.ID != currentStudentID).scalar() is None:
                 sess.query(User).filter_by(ID=currentStudentID).update(
                     {User.ID: newStudentID,
                      User.Password: generate_password_hash(newStudentID),
@@ -295,7 +305,7 @@ class Subject(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            if sess.query(Subject).filter(or_(Subject.SubjectID == newSubjectID, Subject.SubjectTitle == newSubjectTitle)).scalar() is None:
+            if sess.query(Subject).filter(or_(Subject.SubjectID == newSubjectID, Subject.SubjectTitle == newSubjectTitle), Subject.SubjectID != currentSubjectID).scalar() is None:
                 sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
                     {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
                 sess.commit()
@@ -579,7 +589,7 @@ class Shift(Base):
         sess = Session()
         try:
             subject = sess.query(Shift).filter(Shift.SubjectID.like(SubjectID + '%'),
-                                               Student_Status.Status.like('Qualified' + '%'))
+                                               Student_Status.Status.like('Qualified' + '%'), Student_Status.SubjectID == Shift.SubjectID)
             return shift_schema.dump(subject, many=True)
         except:
             sess.rollback()
@@ -768,9 +778,10 @@ class Student_Shift(Base):
         try:
             registerTotalbyRoom_Shift = sess.query(Room_Shift).filter(Room_Shift.Room_ShiftID == room_shiftID).group_by(Room_Shift.Room_ShiftID).count()
             getMaxcapacity = sess.query(Exam_Room).join(Room_Shift).filter(Room_Shift.Room_ShiftID == room_shiftID).first()
-            print(registerTotalbyRoom_Shift, flush=True)
-
-            if registerTotalbyRoom_Shift <= getMaxcapacity.Maxcapacity:
+            # print(registerTotalbyRoom_Shift, flush=True)
+            # print(getMaxcapacity.Maxcapacity, flush=True)
+            # print('OK1', flush=True)
+            if int(registerTotalbyRoom_Shift) < int(getMaxcapacity.Maxcapacity):
                 if sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID,
                                                 Student_Shift.StudentID == studentID).scalar() is None:
                     newShift = Student_Shift(Room_ShiftID=room_shiftID, StudentID=str(studentID))
