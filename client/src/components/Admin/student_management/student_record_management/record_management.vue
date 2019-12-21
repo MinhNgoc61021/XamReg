@@ -57,6 +57,7 @@
             :total="student.total"
             :per-page="student.per_page"
             @page-change="onStudentPageChange"
+            :current-page.sync="student.page"
             aria-next-label="Next page"
             aria-previous-label="Previous page"
             aria-page-label="Page"
@@ -68,8 +69,8 @@
             :default-sort-direction="student.defaultSortOrder"
             :default-sort="[student.sortField, student.sortOrder]"
             @sort="onStudentSort"
-            @details-open="(row, index) => { student_status.currentStudentID = row.ID ; getStudent_Subject(); closeOtherDetails(row, index) }"
-            @details-close="(row, index) => { student_status.student_subject_record = [] }"
+            @details-open="(row, index) => { student_status.currentStudentID = row.ID ; student_status.page = 1; student_status.status_type = 'Qualified'; getStudent_Subject(); closeOtherDetails(row, index) }"
+            @details-close="(row, index) => { student_status.student_subject_record = []; student_status.page = 1; }"
             :show-detail-icon="true">
 
             <template slot-scope="props">
@@ -115,7 +116,7 @@
             </template>
             <template slot="detail" slot-scope="props">
                 <h4 class="title is-4">Danh sách môn học</h4>
-                <b-field grouped group-multiline>
+                <b-field group-multiline>
                   <b-button
                     :class="{'is-loading': student_status.loading}"
                     class="button"
@@ -125,12 +126,35 @@
                       size="is-small"
                       icon="sync"/>
                   </b-button>
+                  <b-autocomplete
+                    clear-on-select
+                    icon="search"
+                    type="text"
+                    :data="subject_search.searchResults"
+                    placeholder="Tìm kiếm để nhập môn thi"
+                    field="SubjectID"
+                    :loading="subject_search.searchLoading"
+                    @typing="onSubjectSearch"
+                    @select="option => { subject_search.select_subject = [option]; addStudentSubject() }"
+                    expanded>
+                      <template slot-scope="props">
+                          <div class="media">
+                              <div class="media-left">
+                                <b-icon icon-pack="fas" icon="book"></b-icon>
+                              </div>
+                              <div class="media-content">
+                                <div><b>Mã môn học: </b>{{ props.option.SubjectID }}</div>
+                                <div><b>Tên môn học: </b>{{ props.option.SubjectTitle }}</div>
+                              </div>
+                          </div>
+                      </template>
+                  </b-autocomplete>
                   <b-select v-model="student_status.status_type">
                     <option value="Qualified" >Đủ điều kiện thi</option>
                     <option value="Unqualified">Không đủ điều kiện thi</option>
                   </b-select>
                 </b-field>
-                <b-field v-if="student_status.student_subject_record.length > 0" grouped group-multiline>
+                <b-field v-if="student_status.student_subject_record.length > 0" group-multiline>
                   <b-table
                     :data="student_status.student_subject_record"
                     :loading="student_status.loading"
@@ -144,6 +168,7 @@
                     aria-page-label="Page"
                     aria-current-label="Current page"
                     backend-sorting
+                    :current-page.sync="student_status.page"
                     bordered
                     narrowed
                     hoverable
@@ -167,7 +192,7 @@
                 </b-field>
                 <b-field v-else>
                   <b-message type="is-danger" has-icon>
-                    Hiện tại sinh viên này chưa có thông tin về danh sách này, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b>!
+                    Hiện tại sinh viên này chưa có thông tin về danh sách môn học, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b> hoặc đánh vào <b>Tìm kiếm</b> để nhập môn học cho sinh viên!
                   </b-message>
                 </b-field>
             </template>
@@ -222,6 +247,11 @@
                     ID_Index: [], // ID_Index is used for expand event
                 },
                 search: {
+                    searchResults: [],
+                    searchLoading: false,
+                },
+                subject_search: {
+                    select_subject: Object,
                     searchResults: [],
                     searchLoading: false,
                 },
@@ -282,6 +312,7 @@
             */
             onStudentPageChange(page) {
                 this.student.page = page;
+                this.student_status.page = 1;
                 this.getStudentRecordData();
             },
             /*
@@ -298,7 +329,7 @@
             async onStudentDelete(recordID) {
                 this.$buefy.dialog.confirm({
                     title: 'Xóa tài khoản',
-                    message: `Bạn có chắc chắn là muốn <b>xóa</b> tài khoản của sinh viên có MSSV ${recordID} này không? Đã làm thì tự chịu đấy.`,
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> tài khoản của sinh viên có MSSV <b>${recordID}</b> này không? Đã làm thì tự chịu đấy.`,
                     confirmText: 'Xóa!',
                     cancelText: 'Bỏ qua',
                     type: 'is-danger',
@@ -324,7 +355,6 @@
                                     hasIcon: true
                                 });
                             }
-                            this.getStudentRecordData();
                         } catch (e) {
                             if (e['message'].includes('401')) {
                                 this.$buefy.notification.open({
@@ -334,6 +364,22 @@
                                     type: 'is-danger',
                                     hasIcon: true
                                 })
+                            }
+                        } finally {
+                            if (this.student.student_record.length === 1) {
+                                // console.log(this.student.total);
+                                // console.log(this.student.per_page);
+                                if (parseInt(this.student.total / this.student.per_page) > 0) {
+                                    this.student.page--;
+                                    this.getStudentRecordData();
+                                }
+                                else {
+                                    this.student.page = 1;
+                                    this.getStudentRecordData();
+                                }
+                            }
+                            else {
+                                this.getStudentRecordData();
                             }
                         }
                     },
@@ -367,6 +413,16 @@
                                     message: `Đã cập nhật tài khoản của sinh viên thành công!`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
+                                    hasIcon: true
+                                });
+                                this.getStudentRecordData();
+                            }
+                            else if (http_status === 202) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: `MSSV của sinh viên này đang bị trùng với của sinh viên khác!`,
+                                    position: 'is-bottom-right',
+                                    type: 'is-warning',
                                     hasIcon: true
                                 });
                                 this.getStudentRecordData();
@@ -434,6 +490,100 @@
                 }
 
             }, 500),
+            async addStudentSubject() {
+                this.subject_search.loading = true;
+                try {
+                    const response = await axios({
+                        url: '/student/create-student-subject',
+                        method: 'post',
+                        headers: {
+                            'Authorization': authHeader(),
+                        },
+                        data: {
+                            Student_SubjectID: this.subject_search.select_subject[0].SubjectID,
+                            StudentID: this.student_status.currentStudentID,
+                            Status_Type: this.student_status.status_type,
+                        },
+                    });
+                    if (response.data.status === 'success') {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: `Đã thêm môn học cho sinh viên có MSSV ${this.student_status.currentStudentID} thành công.`,
+                            position: 'is-bottom-right',
+                            type: 'is-success',
+                            hasIcon: true
+                        });
+                    } else {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: `Môn học đã tồn tại từ trước!`,
+                            position: 'is-bottom-right',
+                            type: 'is-warning',
+                            hasIcon: true
+                        });
+                    }
+                } catch (e) {
+                    if (e['message'].includes('400')) {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
+                    } else if (e['message'].includes('401')) {
+                        this.$buefy.notification.open({
+                            duration: 2000,
+                            message: 'Không được quyền sử dụng!',
+                            position: 'is-bottom-right',
+                            type: 'is-danger',
+                            hasIcon: true
+                        })
+                    }
+                } finally {
+                    this.subject_search.loading = false;
+                    this.getStudent_Subject();
+                }
+            },
+            onSubjectSearch: debounce(function (SubjectID) {
+                this.subject_search.searchLoading = true;
+                if (SubjectID.length > 15 || SubjectID.length === 0) {
+                  this.subject_search.searchResults = [];
+                  this.subject_search.searchLoading = false;
+                }
+                else {
+                  this.subject_search.searchResults = [];
+                  axios({
+                    url: '/subject/search-subject',
+                    method: 'get',
+                    headers: {
+                      'Authorization': authHeader(),
+                    },
+                    params: {
+                      searchID: SubjectID,
+                    },
+                  }).then((response) => {
+                    if (response.status === 200) {
+                      // console.log(response.data.search_results);
+                      response.data.search_results.forEach((item) => {
+                        this.subject_search.searchResults.push(item);
+                      });
+                      this.subject_search.searchLoading = false;
+                    }
+                  }).catch((error) => {
+                    this.subject_search.searchResults = [];
+                    this.subject_search.searchLoading = false;
+                    this.$buefy.notification.open({
+                      duration: 2000,
+                      message: 'Không thể tìm được dữ liệu!',
+                      position: 'is-bottom-right',
+                      type: 'is-danger',
+                      hasIcon: true
+                    });
+                    throw error;
+                  });
+                }
+              }, 500),
             /*
               * Handle student status record page-change event
             */
@@ -493,7 +643,19 @@
                                 })
                             }
                         } finally {
-                            this.getStudent_Subject();
+                            if (this.student_status.student_subject_record.length === 1) {
+                                if (parseInt(this.student_status.total / this.student_status.per_page) > 0) {
+                                    this.student_status.page--;
+                                    this.getStudent_Subject();
+                                }
+                                else {
+                                    this.student_status.page = 1;
+                                    this.getStudent_Subject();
+                                }
+                            }
+                            else {
+                                this.getStudent_Subject();
+                            }
                         }
                     },
                 });

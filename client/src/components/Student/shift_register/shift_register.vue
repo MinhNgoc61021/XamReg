@@ -4,7 +4,7 @@
       <h2 class="subtitle is-6">Sinh viên đăng ký ca thi mà sinh viên đủ điều kiện dự thi và đang còn chỗ trống</h2>
       <b-field grouped group-multiline>
         <b-button
-          :class="{'is-loading': shift.create_loading}"
+          :class="{'is-loading': shift.shift_loading}"
           class="button"
           @click="getShiftRecordData"
         >
@@ -47,7 +47,7 @@
 
       <b-field group-multiline v-if="shift.shift_record_data.length === 0">
         <b-message type="is-danger" has-icon>
-          Hiện tại bạn không chưa môn nào được cho pháp đăng ký
+          Hiện tại bạn không chưa môn nào được cho phép đăng ký
         </b-message>
       </b-field>
 
@@ -135,14 +135,14 @@
                 @sort="onRoomSort">
 
                 <template slot-scope="props">
-                  <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
+                  <b-table-column field="RoomID" label="Mã phòng" width="100">
                     {{ props.row.Exam_Room.RoomID }}
                   </b-table-column>
                   <b-table-column field="RoomName" label="Phòng thi" width="100">
                     {{ props.row.Exam_Room.RoomName }}
                   </b-table-column>
                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
-                    {{ props.row.Exam_Room.Maxcapacity }}
+                    {{ props.row.Student_Shift.length }}   / {{ props.row.Exam_Room.Maxcapacity }}
                   </b-table-column>
                   <b-table-column width="10">
                     <b-button type="is-success" style="float: right" icon-pack="fas" icon-left="plus-square" outlined @click.prevent="registerShift(props.row.Room_ShiftID)">Đăng ký</b-button>
@@ -150,86 +150,6 @@
                 </template>
               </b-table>
             </template>
-        </b-table>
-      </b-field>
-
-      <h1 class="title is-3">Các môn đã đăng ký</h1>
-      <b-field grouped group-multiline>
-        <b-button
-          :class="{'is-loading': registered_shift.create_loading}"
-          class="button"
-          @click="getRegisteredRoomShiftRecordData"
-        >
-          <b-icon
-            size="is-small"
-            icon="sync"/>
-          <span>Làm mới</span>
-        </b-button>
-      </b-field>
-
-      <b-field group-multiline v-if="registered_shift.registered_shift_record_data.length === 0">
-        <b-message type="is-danger" has-icon>
-          Bạn chưa đăng ký môn
-        </b-message>
-      </b-field>
-
-      <b-field v-else>
-        <b-table
-          :data="registered_shift.registered_shift_record_data"
-          :loading="registered_shift.shift_loading"
-        >
-          <template slot-scope="props">
-            <b-table-column field="SubjectID" label="Môn thi" sortable>
-              <b></b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}
-            </b-table-column>
-            <b-table-column field="RoomName" label="Phòng thi" sortable>
-              {{ props.row.RoomName }}
-            </b-table-column>
-            <b-table-column field="Date_Start" label="Ngày thi" sortable>
-              {{ formatDate(props.row.Date_Start) }}
-            </b-table-column>
-            <b-table-column field="Start_At" label="Thời gian bắt đầu" sortable>
-              {{ props.row.Start_At }}
-            </b-table-column>
-            <b-table-column field="End_At" label="Thời gian kết thúc" sortable>
-              {{ props.row.End_At }}
-            </b-table-column>
-          </template>
-
-          <template slot="detail" slot-scope="props">
-            <h4 class="title is-4">Danh sách phòng thi</h4>
-            <b-field  expanded>
-              <b-button
-                :class="{'is-loading': registered_room.room_loading}"
-                class="button"
-                @click="getRegisteredRoomShiftRecordData"
-              >
-                <b-icon
-                  size="is-small"
-                  icon="sync"/>
-              </b-button>
-            </b-field>
-            <b-table
-              :data="registered_room.room_record_data"
-              :loading="registered_room.room_loading"
-              bordered
-              narrowed
-              hoverable
-              detail-key="RoomID"
-            >
-              <template slot-scope="props">
-                <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
-                  {{ props.row.RoomID }}
-                </b-table-column>
-                <b-table-column field="RoomName" label="Phòng thi" width="100">
-                  {{ props.row.RoomName }}
-                </b-table-column>
-                <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
-                  {{ props.row.Maxcapacity }}
-                </b-table-column>
-              </template>
-            </b-table>
-          </template>
         </b-table>
       </b-field>
     </div>
@@ -265,22 +185,18 @@
                     per_page: 5,
                     ID_Index: [],
                 },
-                registered_shift: {
-                  registered_shift_record_data: [],
-                  date_start: '',
-                  start_at: '',
-                  total: 0,
-                  shift_loading: false,
-                  create_loading: false,
-                  search_loading: false,
-                  ID_Index: [],
-                },
                 room: {
                     roomID: '',
                     room_record_data: [],
+                    total: 0,
                     searchResults: [],
                     room_loading: false,
                     search_loading: false,
+                    sortField: 'RoomID',
+                    sortOrder: 'desc',
+                    defaultSortOrder: 'desc',
+                    page: 1,
+                    per_page: 5,
                 },
                 registered_room: {
                     roomID: '',
@@ -320,26 +236,33 @@
                     'Authorization': authHeader(),
                   }
                 });
-                if (response.status === 200) {
-                    if (response.data.status === 'success') {
-                        this.$buefy.notification.open({
-                              duration: 2000,
-                              message: 'Đã đăng ký thành công!',
-                              position: 'is-bottom-right',
-                              type: 'is-success',
-                              hasIcon: true
-                        });
-                    }
-                    else {
-                        this.$buefy.notification.open({
-                              duration: 2000,
-                              message: 'Bạn đã đăng ký phong thi này rồi!',
-                              position: 'is-bottom-right',
-                              type: 'is-warning',
-                              hasIcon: true
-                        });
-                    }
+                if (response.data.status === 'success') {
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Đã đăng ký thành công!',
+                        position: 'is-bottom-right',
+                        type: 'is-success',
+                        hasIcon: true
+                    });
                 }
+                else if (response.data.status === 'already-registered') {
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Bạn đã đăng ký phòng thi này rồi!',
+                        position: 'is-bottom-right',
+                        type: 'is-warning',
+                        hasIcon: true
+                    });
+                }
+                else if (response.data.status === 'out of capacity') {
+                    this.$buefy.notification.open({
+                        duration: 2000,
+                        message: 'Phòng này hiện tại đã đủ sinh viên đăng ký, bạn hãy đăng ký phòng khác!',
+                        position: 'is-bottom-right',
+                        type: 'is-warning',
+                        hasIcon: true
+                    });
+                  }
               } catch (error) {
                 this.$buefy.notification.open({
                   duration: 2000,
@@ -350,8 +273,7 @@
                 });
                 throw error;
               } finally {
-                  this.getShiftRecordData();
-                  this.getRegisteredRoomShiftRecordData()
+                  this.getRoomRecord();
               }
             },
             async getShiftRecordData() {
@@ -395,54 +317,8 @@
                       throw error;
                   }
             },
-            // lấy data các môn đã thi
-            async getRegisteredRoomShiftRecordData() {
-              this.registered_shift.shift_loading = true;
-              try {
-                const response = await axios({
-                  url: '/shift-register/registered-room-shift-records',
-                  method: 'get',
-                  params: {
-                    StudentID: this.studentid,
-                    page_index: this.registered_shift.page,
-                    per_page: this.registered_shift.per_page,
-                    sort_field: this.registered_shift.sortField,
-                    sort_order: this.registered_shift.sortOrder
-                  },
-                  headers: {
-                    'Authorization': authHeader(),
-                  }
-                });
-                console.log(response.data);
-                if (response.status === 200) {
-                  this.registered_shift.shift_record_data = [];
-                  this.registered_shift.total = response.data.total_results;
-                  response.data.shift_records.forEach((item) => {
-                    this.registered_shift.shift_record_data.push(item);
-                  });
-                  // console.log(this.data);
-                  this.registered_shift.shift_loading = false
-                }
-              } catch (error) {
-                this.registered_shift.shift_record_data = [];
-                this.registered_shift.total = 0;
-                this.registered_shift.shift_loading = false;
-                this.$buefy.notification.open({
-                  duration: 2000,
-                  message: 'Không thể lấy được dữ liệu ca thi!',
-                  position: 'is-bottom-right',
-                  type: 'is-danger',
-                  hasIcon: true
-                });
-                throw error;
-              }
-            },
             closeOtherDetails(row) {
                 this.shift.ID_Index = [row.ShiftID];
-                // console.log(this.student_status.ID_Index);
-            },
-            closeOtherRegisteredDetails(row) {
-                this.registered_shift.ID_Index = [row.ShiftID];
                 // console.log(this.student_status.ID_Index);
             },
             async getRoomRecord() {
@@ -453,18 +329,22 @@
                         method: 'get',
                         params: {
                             shiftID: this.currentShiftID,
+                            page_index: this.room.page,
+                            per_page: this.room.per_page,
+                            sort_field: this.room.sortField,
+                            sort_order: this.room.sortOrder
                         },
                         headers: {
                             'Authorization': authHeader(),
                         }
                     });
-                    console.log(response.data.room_records);
+                    // console.log(response.data.room_records);
                     if (response.status === 200) {
                         this.room.room_record_data = [];
                         this.room.total = response.data.total_results;
                         response.data.room_records.forEach((item) => {
                             this.room.room_record_data.push(item);
-                            console.log(item);
+                            // console.log(item);
                         });
                         this.room.room_loading = false
                     }
@@ -525,25 +405,16 @@
               this.shift.page = page;
               this.getShiftRecordData();
             },
-            onRegisteredShiftPageChange(page) {
-              this.registered_shift.page = page;
-              this.getRegisteredRoomShiftRecordData();
-            },
             onShiftSort(field, order) {
                 this.shift.sortField = field;
                 this.shift.sortOrder = order;
                 this.getShiftRecordData();
             },
-            onRegisteredShiftSort(field, order) {
-                this.registered_shift.sortField = field;
-                this.registered_shift.sortOrder = order;
-                this.getRegisteredRoomShiftRecordData();
-            },
             selectSemesterModal() {
                 this.$buefy.modal.open({
                     parent: this,
                     component: enter_semester,
-                    props: { semesterID: this.semesterID },
+                    props: { semesterID: this.currentSemesterID },
                     hasModalCard: true,
                     customClass: 'custom-class custom-class-2',
                     canCancel: false,
@@ -593,6 +464,7 @@
             },
         },
         mounted() {
+            // console.log(this.currentSemesterID);
             if (this.currentSemesterID === '') {
                 this.selectSemesterModal();
             }

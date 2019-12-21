@@ -124,7 +124,7 @@
             },
             onSubjectSearch: debounce(function (SubjectID) {
                 this.search.searchLoading = true;
-                if (SubjectID.length > 7 || SubjectID.length === 0) {
+                if (SubjectID.length > 15 || SubjectID.length === 0) {
                   this.search.searchResults = [];
                   this.search.searchLoading = false;
                 }

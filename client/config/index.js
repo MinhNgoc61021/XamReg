@@ -58,6 +58,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/student/create-student-subject': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/subject/subject-records': {
         target: 'http://api:5000',
         changeOrigin: true,
@@ -98,6 +102,10 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
+      '/schedule/register-semester-records': {
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
       '/schedule/create-shift': {
           target: 'http://api:5000',
           changeOrigin: true,
@@ -127,6 +135,10 @@ module.exports = {
           changeOrigin: true,
       },
       '/schedule/create-room':{
+          target: 'http://api:5000',
+          changeOrigin: true,
+      },
+      '/schedule/student-records': {
           target: 'http://api:5000',
           changeOrigin: true,
       },
@@ -179,6 +191,18 @@ module.exports = {
         changeOrigin: true,
       },
       '/shift-register/registered-room-shift-records':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/get-info': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/export-records':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/remove-export-records':{
         target: 'http://api:5000',
         changeOrigin: true,
       }

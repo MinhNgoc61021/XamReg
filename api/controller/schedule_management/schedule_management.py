@@ -22,13 +22,13 @@ def add_semester(current_user):
         newSemesterTitle = request.get_json().get('newSemester')
         checkSemester = re.search('^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ' +
                                   'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
-                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ()\\s-]+$', newSemesterTitle)
+                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$', newSemesterTitle)
         print(newSemesterTitle, flush=True)
 
         if checkSemester is None:
             return jsonify({'status': 'bad-request'}), 400
         else:
-            newSemester = Semester_Examination.create(newSemesterTitle)
+            newSemester = Semester_Examination.create(str(newSemesterTitle).strip())
             if newSemester is False:
                 return jsonify({'status': 'already-exist'}), 202
             else:
@@ -43,7 +43,6 @@ def add_semester(current_user):
 @schedule_management.route('/edit-semester', methods=['PUT'])
 @token_required
 def edit_semester(current_user):
-    try:
         semID = request.get_json().get('semID')
         newSemesterTitle = request.get_json().get('newSemTitle')
         newStatus = request.get_json().get('newStatus')
@@ -51,7 +50,7 @@ def edit_semester(current_user):
         print(newSemesterTitle, flush=True)
         check = re.search('^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ' +
                           'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
-                          'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ()\\s-]+$', newSemesterTitle)
+                          'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$', newSemesterTitle)
         if check is not None:
             newSem = Semester_Examination.updateRecord(semID, newSemesterTitle, newStatus)
             if newSem is True:
@@ -63,8 +62,6 @@ def edit_semester(current_user):
                 return jsonify({'status': 'already-exist'}), 202
         else:
             return jsonify({'status': 'bad-request'}), 400
-    except:
-        return jsonify({'status': 'bad-request'}), 400
 
 
 @schedule_management.route('/remove-semester', methods=['DELETE'])
@@ -89,6 +86,18 @@ def remove_semester(current_user):
 def get_semester(current_user):
     try:
         semesterRecords = Semester_Examination.getRecord()
+        return jsonify({'status': 'success',
+                        'semesterRecords': semesterRecords
+                        }), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@schedule_management.route('/register-semester-records', methods=['GET'])
+@token_required
+def get_register_semester(current_user):
+    try:
+        semesterRecords = Semester_Examination.getRegisterRecord()
         return jsonify({'status': 'success',
                         'semesterRecords': semesterRecords
                         }), 200
@@ -162,7 +171,7 @@ def edit_shift(current_user):
                                           new_end_at)
             if newShift is True:
                 Log.create(current_user['ID'],
-                           'Thay đổi thông tin ca thi có mã ' + str(shiftID),
+                           'Chỉnh sửa thông tin ca thi có mã ' + str(shiftID),
                            set_custom_log_time())
                 return jsonify({'status': 'success'}), 200
             else:
@@ -278,7 +287,7 @@ def get_room(current_user):
         print(sort_order, flush=True)
         print(sort_field, flush=True)
 
-        record = Room_Shift.getRecord(shiftID, page_index, per_page, sort_field, sort_order)
+        record = Room_Shift.getRegisterRoom(shiftID, page_index, per_page, sort_field, sort_order)
 
         return jsonify({'status': 'success',
                         'room_records': record[0],
@@ -290,22 +299,25 @@ def get_room(current_user):
     except:
         return jsonify({'status': 'bad-request'}), 400
 
+
 @schedule_management.route('/student-records', methods=['GET'])
 @token_required
 def get_students(current_user):
     try:
-        roomID = request.args.get('roomID')
+        roomshiftID = request.args.get('currentRoomShiftID')
         sort_order = request.args.get('sort_order')
         sort_field = request.args.get('sort_field')
 
-        print(roomID, flush=True)
+        print(roomshiftID, flush=True)
         print(sort_order, flush=True)
         print(sort_field, flush=True)
 
-        record = Student_Shift.getRecord(roomID, sort_field, sort_order)
-        print("Student: ", record, flush=True)
+        record = Student_Shift.getRecord(roomshiftID, sort_field, sort_order)
+        print("Student: ", record[0], flush=True)
+        print("Student_count: ", record[1], flush=True)
         return jsonify({'status': 'success',
-                        'student_records': record
+                        'student_records': record[0],
+                        'total_results': record[1]
                         }), 200
     except:
         return jsonify({'status': 'bad-request'}), 400

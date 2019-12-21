@@ -11,11 +11,14 @@
           </template>
 
           <template slot="start">
-              <b-navbar-item tag="router-link" :to="{ path: '/student-home' }" class="routing-link">
+              <b-navbar-item tag="router-link" :to="{ name: 'student-home', params: { studentid: ID } }" class="routing-link">
                   Trang chủ
               </b-navbar-item>
               <b-navbar-item tag="router-link" :to="{ name: 'shift-register', params: { studentid: ID } }" class="routing-link">
                   Đăng ký dự thi
+              </b-navbar-item>
+              <b-navbar-item tag="router-link" :to="{ name: 'export-ticket', params: { studentid: ID } }" class="routing-link">
+                  In phiếu đăng kí dự thi
               </b-navbar-item>
           </template>
 
@@ -29,6 +32,10 @@
                   <b-navbar-item v-on:click="updatePassword">
                     <b-icon icon-pack="fas" icon="lock"></b-icon>
                     <span>Cập nhật mật khẩu</span>
+                  </b-navbar-item>
+                  <b-navbar-item tag="router-link" :to="{ path: '/student-manual' }">
+                    <b-icon icon-pack="fas" icon="question-circle"></b-icon>
+                    <span>Trợ giúp</span>
                   </b-navbar-item>
                   <b-navbar-item v-on:click="admin_signOut()" >
                     <b-icon icon-pack="fas" icon="sign-out-alt"></b-icon>
@@ -50,7 +57,7 @@
       <div class="content has-text-centered" >
         <p>
           <span>ExamReg</span>
-          <a href=""> <span>Github</span> </a>
+          <a href=""><span>Github</span> </a>
         </p>
       </div>
     </footer>

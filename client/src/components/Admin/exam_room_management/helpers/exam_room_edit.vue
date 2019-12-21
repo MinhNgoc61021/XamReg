@@ -10,6 +10,8 @@
               v-model="newRoomName"
               :value="newRoomName"
               maxlength="30"
+              pattern="^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$"
+              validation-message="Nhập đúng tên phòng thi"
               placeholder="Nhập tên phòng thi"
               required>
             </b-input>
@@ -19,7 +21,7 @@
               type="number"
               v-model="newMaxcapacity"
               :value="newMaxcapacity"
-              min="0"
+              min="1"
               placeholder="Nhập số lượng chỗ thi"
               required>
             </b-input>
@@ -63,15 +65,18 @@
                       },
                   });
                   if (update.status === 200) {
-                      this.$emit('loadRoomData', 200);
+                      this.$emit('loadEditRoomStatus', 200);
                       this.$parent.close();
+                  }
+                  else if (update.status === 202) {
+                      this.$emit('loadEditRoomStatus', 202);
                   }
               } catch (e) {
                   if (e['message'].includes('400')) {
-                      this.$emit('loadRoomData', 400);
+                      this.$emit('loadEditRoomStatus', 400);
                   }
                   else if (e['message'].includes('401')) {
-                      this.$emit('loadRoomData', 401);
+                      this.$emit('loadEditRoomStatus', 401);
                   }
               } finally {
               }

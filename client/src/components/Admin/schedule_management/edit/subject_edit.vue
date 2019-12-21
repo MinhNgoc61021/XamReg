@@ -11,7 +11,7 @@
             type="text"
             v-model="newSubjectID"
             :value="newSubjectID"
-            maxlength="15"
+            maxlength="7"
             validation-message="Nhập đúng mã môn học"
             pattern="(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3}))"
             placeholder="Nhập mã môn học"
@@ -24,6 +24,7 @@
             type="text"
             v-model="newSubjectTitle"
             :value="newSubjectTitle"
+            pattern="^[a-zA-Z1-9_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$"
             maxlength="100"
             validation-message="Nhập đúng tên môn học"
             placeholder="Nhập tên môn học"
@@ -73,6 +74,9 @@
               if (update.status === 200) {
                 this.$emit('loadSubjects', 200);
                 this.$parent.close();
+              }
+              else if (update.status === 202) {
+                this.$emit('loadSubjects', 202);
               }
             } catch (e) {
               if (e['message'].includes('400')) {

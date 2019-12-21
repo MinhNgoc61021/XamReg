@@ -81,11 +81,25 @@ def search_semester(current_user):
 @token_required
 def get_room(current_user):
     shiftID = request.args.get('shiftID')
+    page_index = request.args.get('page_index')
+    per_page = request.args.get('per_page')
+    sort_order = request.args.get('sort_order')
+    sort_field = request.args.get('sort_field')
 
-    record = Room_Shift.getRegisterRoom(shiftID)
+    print(shiftID, flush=True)
+    print(page_index, flush=True)
+    print(per_page, flush=True)
+    print(sort_order, flush=True)
+    print(sort_field, flush=True)
+
+    record = Room_Shift.getRegisterRoom(shiftID, page_index, per_page, sort_field, sort_order)
 
     return jsonify({'status': 'success',
-                    'room_records': record
+                    'room_records': record[0],
+                    'page_number': record[1].page_number,
+                    'page_size': record[1].page_size,
+                    'num_pages': record[1].num_pages,
+                    'total_results': record[1].total_results,
                     }), 200
 
 
@@ -95,7 +109,10 @@ def unregister_shift(current_user):
     try:
         studentID = request.args.get('studentID')
         Room_ShiftID = request.args.get('Room_ShiftID')
-        Student_Shift.delRecord(studentID,  Room_ShiftID)
+        Student_Shift.delRecord(studentID, Room_ShiftID)
+        Log.create(current_user['ID'],
+                   'Đã hủy đăng ký ca thi ' + str(Room_ShiftID),
+                   set_custom_log_time())
         return jsonify({'status': 'success'}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
@@ -107,9 +124,12 @@ def register_shift(current_user):
     try:
         studentID = request.get_json().get('studentID')
         Room_ShiftID = request.get_json().get('Room_ShiftID')
+        print('OK1', flush=True)
         check = Student_Shift.create(Room_ShiftID, studentID)
-        if check is False:
-            return jsonify({'status': 'already-exist'}), 200
+        print('OK12', flush=True)
+        if check != 'success':
+            print(check, flush=True)
+            return jsonify({'status': check}), 202
         else:
             Log.create(current_user['ID'],
                        'Đã đăng ký ca thi ' + str(Room_ShiftID),
@@ -124,7 +144,6 @@ def register_shift(current_user):
 def get_registered_room_shift(current_user):
     try:
         studentID = request.args.get('studentID')
-
 
         # Gọi về backend
         record = Student_Shift.getRegisteredRoom_Shift(studentID)
@@ -161,5 +180,44 @@ def get_registered_shift(current_user):
                         'num_pages': record[1].num_pages,
                         'total_results': record[1].total_results,
                         }), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@shift_register.route('/get-info', methods=['GET'])
+@token_required
+def get_info(current_user):
+    try:
+        return jsonify({'status': 'success',
+                       'info': current_user}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+@shift_register.route('/export-records', methods=['get'])
+@token_required
+def get_export_records(current_user):
+    try:
+        studentID = request.args.get('studentID')
+
+        # query ở đây
+        record = Room_Shift.getTicketExportData(studentID)
+        print(record, flush=True)
+        return jsonify({'status': 'success',
+                        'result_records': record
+                        }), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@shift_register.route('/remove-export-records', methods=['DELETE'])
+@token_required
+def remove_export_records(current_user):
+    try:
+        record = request.get_json()
+        registerID = record.get('delRegisterID')
+        print("Registerrrrrr", registerID, flush=True)
+        Student_Shift.delTicketExportData(str(registerID))
+
+        return jsonify({'status': 'success'}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400

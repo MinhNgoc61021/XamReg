@@ -10,7 +10,7 @@ from marshmallow_sqlalchemy.fields import Nested
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
 from sqlalchemy_filters import apply_pagination
 
-engine = create_engine('mysql+mysqldb://root:baloney1@db/xamreg?charset=utf8mb4',
+engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4',
                        echo=True,
                        pool_size=5)
 # echo is to set up SQLAlchemy logging
@@ -147,15 +147,29 @@ class User(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(User).filter_by(ID=currentStudentID).update(
-                {User.ID: newStudentID,
-                 User.Password: generate_password_hash(newStudentID),
-                 User.Username: newUsername,
-                 User.Fullname: newFullname,
-                 User.CourseID: newCourseID,
-                 User.Dob: newDob,
-                 User.Gender: newGender})
-            sess.commit()
+            if str(currentStudentID) == str(newStudentID):
+                sess.query(User).filter_by(ID=currentStudentID).update(
+                    {
+                        User.Fullname: newFullname,
+                        User.CourseID: newCourseID,
+                        User.Dob: newDob,
+                        User.Gender: newGender
+                    })
+                sess.commit()
+                return True
+            elif sess.query(User).filter(User.ID == newStudentID, User.ID != currentStudentID).scalar() is None:
+                sess.query(User).filter_by(ID=currentStudentID).update(
+                    {User.ID: newStudentID,
+                     User.Password: generate_password_hash(newStudentID),
+                     User.Username: newUsername,
+                     User.Fullname: newFullname,
+                     User.CourseID: newCourseID,
+                     User.Dob: newDob,
+                     User.Gender: newGender})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise
@@ -291,9 +305,15 @@ class Subject(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
-                {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
-            sess.commit()
+            if sess.query(Subject).filter(
+                    or_(Subject.SubjectID == newSubjectID, Subject.SubjectTitle == newSubjectTitle),
+                    Subject.SubjectID != currentSubjectID).scalar() is None:
+                sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
+                    {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise
@@ -386,7 +406,7 @@ class Semester_Examination(Base):
     SemTitle = Column(String(200),
                       nullable=False)
     Status = Column(Boolean,
-                    nullable=False, default=False)  # true là đang thi, false là không thi
+                    nullable=False, default=False)  # true là đang mở đăng kí, false là không mở đăng ký
 
     @classmethod
     def searchSemesterRecord(cls, SemTitle):
@@ -425,6 +445,18 @@ class Semester_Examination(Base):
         sess = Session()
         try:
             semester_list = sess.query(Semester_Examination)
+            return semester_examination_schema.dump(semester_list, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getRegisterRecord(cls):
+        sess = Session()
+        try:
+            semester_list = sess.query(Semester_Examination).filter(Semester_Examination.Status == True)
             return semester_examination_schema.dump(semester_list, many=True)
         except:
             sess.rollback()
@@ -495,7 +527,6 @@ class Shift(Base):
         sess = Session()
         try:
             if sess.query(Shift).filter(Shift.SubjectID == subjectID, Shift.SemID == semID).scalar() is None:
-
                 newShift = Shift(SubjectID=subjectID,
                                  SemID=semID,
                                  Date_Start=date_start,
@@ -560,7 +591,8 @@ class Shift(Base):
         sess = Session()
         try:
             subject = sess.query(Shift).filter(Shift.SubjectID.like(SubjectID + '%'),
-                                               Student_Status.Status.like('Qualified' + '%'))
+                                               Student_Status.Status.like('Qualified' + '%'),
+                                               Student_Status.SubjectID == Shift.SubjectID)
             return shift_schema.dump(subject, many=True)
         except:
             sess.rollback()
@@ -604,19 +636,6 @@ class Shift(Base):
         finally:
             sess.close()
 
-    @classmethod
-    def searchShiftRecord(cls, SubjectID):
-        sess = Session()
-        try:
-            subject = sess.query(Shift).filter(Shift.SubjectID.like(SubjectID + '%'),
-                                               Student_Status.Status.like('Qualified' + '%'))
-            return shift_schema.dump(subject, many=True)
-        except:
-            sess.rollback()
-            raise
-        finally:
-            sess.close()
-
 
 # Room_Shift persistent class (khi tạo ca thi thì thêm phòng thi vào)
 class Room_Shift(Base):
@@ -632,6 +651,8 @@ class Room_Shift(Base):
                              back_populates='room_shift')
     Shift = relationship('Shift',
                          back_populates='room_shift')
+    Student_Shift = relationship('Student_Shift',
+                                 back_populates='room_shift')
 
     @classmethod
     def create(cls, roomID, shiftID):
@@ -675,14 +696,47 @@ class Room_Shift(Base):
 
     # lấy các phòng cho phép đăng ký theo ca
     @classmethod
-    def getRegisterRoom(cls, shiftID):
+    def getRegisterRoom(cls, shiftID, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
             record_query = sess.query(Room_Shift).options(
                 joinedload('Exam_Room')).filter(
-                Room_Shift.ShiftID == shiftID)
-            print(record_query, flush=True)
-            return roomshift_schema.dump(record_query, many=True)
+                Room_Shift.ShiftID == shiftID).order_by(
+                getattr(
+                    getattr(Room_Shift, sort_field), sort_order)())
+
+            # to count current student register (đếm số sinh viên đã đăng ký)
+            # record_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return roomshift_schema.dump(record_query, many=True), get_record_pagination
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    # lấy các phòng cho phép đăng ký theo ca
+    @classmethod
+    def getExportRecord(cls, shiftID, page_index, per_page, sort_field, sort_order):
+        sess = Session()
+        try:
+            record_query = sess.query(Room_Shift).options(
+                joinedload('Exam_Room')).options(
+                joinedload('Student_Shift')).filter(
+                Room_Shift.ShiftID == shiftID).order_by(
+                getattr(
+                    getattr(Room_Shift, sort_field), sort_order)())
+
+            # to count current student register (đếm số sinh viên đã đăng ký)
+            # record_query is the user object and get_record_pagination is the index data
+            record_query, get_record_pagination = apply_pagination(record_query, page_number=int(page_index),
+                                                                   page_size=int(per_page))
+
+            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
+            return roomshift_schema.dump(record_query, many=True), get_record_pagination
         except:
             sess.rollback()
             raise
@@ -696,6 +750,23 @@ class Room_Shift(Base):
             room_shift = sess.query(Room_Shift).filter(Room_Shift.RoomID == roomID, Room_Shift.ShiftID == shiftID).one()
             sess.delete(room_shift)
             sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
+    @classmethod
+    def getTicketExportData(cls, studentID):
+        sess = Session()
+        try:
+            record_query = sess.query(Room_Shift).options(
+                joinedload('Exam_Room')
+            ).options(joinedload('Student_Shift')
+                      ).options(joinedload('Shift')
+                                ).filter(Student_Shift.StudentID == studentID, Student_Shift.Room_ShiftID == Room_Shift.Room_ShiftID)
+
+            return roomshift_schema.dump(record_query, many=True)
         except:
             sess.rollback()
             raise
@@ -725,15 +796,24 @@ class Student_Shift(Base):
     def create(cls, room_shiftID, studentID):
         sess = Session()
         try:
+            registerTotalbyRoom_Shift = sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID).count()
+            getMaxcapacity = sess.query(Exam_Room).join(Room_Shift).filter(
+                Room_Shift.Room_ShiftID == room_shiftID).first()
+            print(registerTotalbyRoom_Shift, flush=True)
+            print(getMaxcapacity.Maxcapacity, flush=True)
+            print('OK1', flush=True)
+
             if sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID,
                                                 Student_Shift.StudentID == studentID).scalar() is None:
-
-                newShift = Student_Shift(Room_ShiftID=room_shiftID, StudentID=str(studentID))
-                sess.add(newShift)
-                sess.commit()
-                return True
+                if int(registerTotalbyRoom_Shift) < int(getMaxcapacity.Maxcapacity):
+                    newShift = Student_Shift(Room_ShiftID=room_shiftID, StudentID=str(studentID))
+                    sess.add(newShift)
+                    sess.commit()
+                    return 'success'
+                else:
+                    return 'out of capacity'
             else:
-                return False
+                return 'already-registered'
         except:
             sess.rollback()
             raise
@@ -762,9 +842,10 @@ class Student_Shift(Base):
                                                                        Student_Shift.Room_ShiftID == Room_ShiftID).order_by(
                 getattr(
                     getattr(User, sort_field), sort_order)())
-
+            count_record_query = record_query.statement.with_only_columns([func.count()]).order_by(None)
+            count = record_query.session.execute(count_record_query).scalar()
             # many=True if user_query is a collection of many results, so that record will be serialized to a list.
-            return user_schema.dump(record_query, many=True)
+            return user_schema.dump(record_query, many=True), count
         except:
             sess.rollback()
             raise
@@ -785,28 +866,13 @@ class Student_Shift(Base):
         finally:
             sess.close()
 
-    # @classmethod
-    # def create(cls, studentID, shiftID, roomID):
-    #     sess = Session()
-    #     try:
-    #
-    #     except:
-    #         sess.rollback()
-    #         raise
-    #     finally:
-    #         sess.close()
-
     @classmethod
-    def getRecord(cls, roomID, sort_field, sort_order):
+    def delTicketExportData(cls, registerID):
         sess = Session()
         try:
-            record_query = sess.query(User).join(Student_Shift).filter(Student_Shift.StudentID == User.ID,
-                                                                       Student_Shift.RoomID == roomID).order_by(
-                getattr(
-                    getattr(User, sort_field), sort_order)())
-
-            # many=True if user_query is a collection of many results, so that record will be serialized to a list.
-            return user_schema.dump(record_query, many=True)
+            ticket_row = sess.query(Student_Shift).filter(Student_Shift.RegisterID == registerID).one()
+            sess.delete(ticket_row)
+            sess.commit()
         except:
             sess.rollback()
             raise
@@ -824,7 +890,8 @@ class Exam_Room(Base):
                       nullable=False)
     Maxcapacity = Column(Integer,
                          nullable=False)
-
+    Room_Shift = relationship('Room_Shift',
+                              back_populates='exam_room')
     @classmethod
     def create(cls, room_name, maxcapacity):
         sess = Session()
@@ -869,9 +936,14 @@ class Exam_Room(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            sess.query(Exam_Room).filter_by(RoomID=currentRoomID).update(
-                {Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
-            sess.commit()
+            if sess.query(Exam_Room).filter(Exam_Room.RoomID != currentRoomID,
+                                            Exam_Room.RoomName == newRoomName).scalar() is None:
+                sess.query(Exam_Room).filter_by(RoomID=currentRoomID).update(
+                    {Exam_Room.RoomName: newRoomName, Exam_Room.Maxcapacity: newMaxcapacity})
+                sess.commit()
+                return True
+            else:
+                return False
         except:
             sess.rollback()
             raise
@@ -992,6 +1064,13 @@ Room_Shift.student_shift = relationship('Student_Shift',
                                         order_by=Student_Shift.Room_ShiftID,
                                         back_populates='Room_Shift',
                                         cascade='all, delete, delete-orphan')
+Room_Shift.exam_room = relationship('Exam_Room',
+                                    order_by=Exam_Room.RoomID,
+                                    back_populates='Room_Shift')
+
+Student_Shift.room_shift = relationship('Room_Shift',
+                                        order_by=Room_Shift.Room_ShiftID,
+                                        back_populates='Student_Shift')
 
 Exam_Room.room_shift = relationship('Room_Shift',
                                     order_by=Room_Shift.RoomID,
@@ -1037,6 +1116,16 @@ class StudentStatusSchema(ModelSchema):
         # sqla_session = scoped_session
 
 
+class ShiftSchema(ModelSchema):
+    Subject = Nested(SubjectSchema)
+
+    class Meta:
+        model = Shift
+        # optionally attach a Session
+        # to use for deserialization
+        # sqla_session = scoped_session
+
+
 class StudentShiftSchema(ModelSchema):
     class Meta:
         model = Student_Shift
@@ -1052,19 +1141,12 @@ class ExamRoomSchema(ModelSchema):
 
 class RoomShiftSchema(ModelSchema):
     Exam_Room = Nested(ExamRoomSchema)
+    Student_Shift = Nested(StudentShiftSchema, many=True, only=['RegisterID'])
+    Subject = Nested(SubjectSchema)
+    Shift = Nested(ShiftSchema)
 
     class Meta:
         model = Room_Shift
-
-
-class ShiftSchema(ModelSchema):
-    Subject = Nested(SubjectSchema)
-
-    class Meta:
-        model = Shift
-        # optionally attach a Session
-        # to use for deserialization
-        # sqla_session = scoped_session
 
 
 class SemesterExaminationSchema(ModelSchema):

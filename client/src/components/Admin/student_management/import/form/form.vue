@@ -12,7 +12,7 @@
         <b-field label="Họ và tên">
             <b-input v-model="newStudent.Fullname" placeholder="Hãy nhập họ và tên sinh viên"
                      validation-message="Nhập đúng họ và tên"
-                     patterns="[a-zA-Z]+"
+                     pattern="^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s ]+$"
                      required>
             </b-input>
         </b-field>
@@ -24,7 +24,7 @@
         <b-field label="Khóa học">
             <b-input v-model="newStudent.CourseID" placeholder="Hãy nhập mã khóa học"
                      validation-message="Nhập đúng khóa học"
-                     patterns="(^[K|k][1-9][0-9][A-Za-z]+[1-9]*)"
+                     pattern="(^[K|k][1-9][0-9][A-Za-z]+[1-9]*)"
                      required>
             </b-input>
         </b-field>
@@ -46,7 +46,9 @@
 <script>
   import axios from 'axios';
   import {authHeader} from "../../../../api/jwt_handling";
+  import lodash from 'lodash.debounce';
   import moment from 'moment/moment';
+  import { eventBus } from "../../../../../main";
 
   export default {
       name: "form",
@@ -79,30 +81,28 @@
                          newGender: this.newStudent.Gender,
                      }
                   });
-                  if (response.status === 200) {
-                      if (response.data.status === 'success') {
-                          this.$buefy.notification.open({
-                              duration: 2500,
-                              message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã được tạo thành công!`,
-                              position: 'is-bottom-right',
-                              type: 'is-success',
-                              hasIcon: true
-                          });
-                      }
-                      else {
-                          this.$buefy.notification.open({
-                              duration: 2500,
-                              message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã tồn tại trước đó!`,
-                              position: 'is-bottom-right',
-                              type: 'is-warning',
-                              hasIcon: true
-                          });
-                      }
+                  if (response.data.status === 'success') {
+                      this.$buefy.notification.open({
+                          duration: 2000,
+                          message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã được tạo thành công!`,
+                          position: 'is-bottom-right',
+                          type: 'is-success',
+                          hasIcon: true
+                      });
+                  }
+                  else {
+                      this.$buefy.notification.open({
+                          duration: 2000,
+                          message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã tồn tại trước đó!`,
+                          position: 'is-bottom-right',
+                          type: 'is-warning',
+                          hasIcon: true
+                      });
                   }
               } catch (e) {
                   if (e['message'].includes('400')) {
                       this.$buefy.notification.open({
-                          duration: 2500,
+                          duration: 2000,
                           message: `Kiểm tra lại, dữ liệu bạn nhập đang có vấn đề!`,
                           position: 'is-bottom-right',
                           type: 'is-danger',
@@ -118,6 +118,8 @@
                           hasIcon: true
                       })
                   }
+              } finally {
+                  eventBus.$emit('up-to-date', '');
               }
           },
       },

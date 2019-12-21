@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-field grouped group-multiline>
+    <b-field group-multiline>
       <b-button
         class="button"
         :class="{'is-loading': semester.loading}"
@@ -30,8 +30,8 @@
                 role="button">
                 <p class="card-header-title">
                     <span>Tiêu đề: {{ collapse.SemTitle }}
-                      <b-tag v-if="collapse.Status === false">Chưa thi</b-tag>
-                      <b-tag v-else type="is-primary"> Đang thi</b-tag>
+                      <b-tag v-if="collapse.Status === false">Chưa mở đăng ký</b-tag>
+                      <b-tag v-else type="is-primary">Đang mở đăng ký</b-tag>
                     </span>
                 </p>
             </div>
@@ -66,8 +66,8 @@
                         :default-sort-direction="shift.defaultSortOrder"
                         :default-sort="[shift.sortField, shift.sortOrder]"
                         @sort="onShiftSort"
-                        @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
-                        @details-close="(row, index) => { room.room_record_data = [] }"
+                        @details-open="(row, index) => { currentShiftID = row.ShiftID; room.page = 1; currentSubjectName = row.Subject.SubjectTitle; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
+                        @details-close="(row, index) => { room.room_record_data = []; room.page = 1 }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
                             <b-table-column field="ShiftID" label="Mã ca thi" width="100" sortable>
@@ -105,7 +105,7 @@
 
                             </b-field>
                             <!--room-->
-                            <b-field v-if="room.room_record_data.length > 0" grouped group-multiline>
+                            <b-field v-if="room.room_record_data.length > 0" group-multiline>
                               <b-table
                                 :data="room.room_record_data"
                                 :loading="room.room_loading"
@@ -121,24 +121,28 @@
                                 aria-current-label="Current page"
                                 backend-sorting
                                 hoverable
-                                detail-key="RoomID"
+                                bordered
+                                detail-key="Room_ShiftID"
                                 :opened-detailed="room.ID_Index"
                                 :default-sort-direction="room.defaultSortOrder"
                                 :default-sort="[room.sortField, room.sortOrder]"
                                 @sort="onRoomSort"
-                                @details-open="(row, index) => { currentRoomID = row.RoomID ; getStudentRecord(); closeOtherDetails_Room(row, index) }"
+                                @details-open="(row, index) => { currentRoomShiftID = row.Room_ShiftID ; currentRoomName = row.Exam_Room.RoomName;  getStudentRecord(); closeOtherDetails_Room(row, index) }"
                                 @details-close="(row, index) => { student.student_record_data = [] }"
                                 :show-detail-icon="true">
                                 <template slot-scope="props">
-                                  <b-table-column field="RoomID" label="Mã phòng" width="200" sortable>
-                                    {{ props.row.RoomID }}
+                                  <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
+                                    {{ props.row.Exam_Room.RoomID }}
                                   </b-table-column>
-                                  <b-table-column field="RoomName" label="Phòng thi" width="200" sortable>
-                                    {{ props.row.RoomName }}
+                                  <b-table-column field="RoomName" label="Phòng thi" width="100">
+                                    {{ props.row.Exam_Room.RoomName }}
                                   </b-table-column>
-                                  <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
-                                    {{ props.row.Maxcapacity }}
+                                  <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
+                                    {{ props.row.Exam_Room.Maxcapacity }}
                                   </b-table-column>
+<!--                                  <b-table-column field="student_count" label="Số lượng sinh viên" width="100" sortable>-->
+<!--                                    {{ room.student_count }}-->
+<!--                                  </b-table-column>-->
                                 </template>
 
                                 <!--Student-->
@@ -150,7 +154,9 @@
                                             class="button"
                                             @click="getStudentRecord">
                                         <b-icon size="is-small" icon="sync"/></b-button>
-                                      <b-button class="button" size="is-small" icon-left="sync" @click="exportExcel">In</b-button>
+                                      <b-button icon-left="file-download" @click="print">
+                                        In danh sách sinh viên
+                                      </b-button>
                                     </b-field>
                                     <b-field v-if="student.student_record_data.length > 0">
                                         <b-table
@@ -168,21 +174,27 @@
                                                 <b-table-column field="ID" label="Mã số sinh viên" width="100" sortable>
                                                 {{ props.row.ID }}
                                                 </b-table-column>
-                                                <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
+                                                <b-table-column field="Fullname" label="Phòng thi" width="100" sortable>
                                                   {{ props.row.Fullname }}
                                                 </b-table-column>
-                                                <b-table-column field="Dob" label="Ngày sinh" width="100">
-                                                  {{ props.row.Dob }}
+                                                <b-table-column field="Dob" label="Ngày sinh" width="100" sortable>
+                                                 <span class="tag is-success">
+                                                    {{ formatDate(props.row.Dob) }}
+                                                 </span>
                                                 </b-table-column>
-                                                <b-table-column field="Dob" label="Giới tính" width="100">
-                                                  {{ props.row.Gender }}
+                                                <b-table-column field="Gender" label="Giới tính" width="100" sortable >
+                                                  <span>
+                                                      <b-icon pack="fas"
+                                                          :icon="props.row.Gender === 'Nam' ? 'mars' : 'venus'">
+                                                      </b-icon>
+                                                      {{ props.row.Gender }}
+                                                  </span>
                                                 </b-table-column>
-                                                <b-table-column field="Dob" label="Lớp" width="100" sortable>
+                                                <b-table-column field="CourseID" label="Lớp" width="100" sortable>
                                                   {{ props.row.CourseID }}
                                                 </b-table-column>
                                               </template>
                                         </b-table>
-
                                     </b-field>
                                     <b-field v-else>
                                          <b-message type="is-danger" has-icon>
@@ -195,7 +207,7 @@
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có dự liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
+                                Hiện tại chưa có dữ liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
                               </b-message>
                             </b-field>
                         </template>
@@ -209,6 +221,12 @@
         </b-collapse>
       </div>
       <div v-else>
+        <b-field>
+          <b-message type="is-danger" has-icon>
+            <p>Hiện tại chưa có kỳ thi nào ở đây!</p>
+            <p>Lưu ý! Ở đây chỉ hiển thị những kỳ thi đang <b>mở đăng ký!</b></p>
+          </b-message>
+        </b-field>
       </div>
     </section>
   </div>
@@ -217,68 +235,85 @@
 
 <script>
     import axios from 'axios';
+    import printJS from 'print-js';
     import moment from 'moment';
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
-    import JsonExcel from 'vue-json-excel';
+    import { eventBus } from "../../../../main";
+
     export default {
-        name: 'export_pdf',
+        name: 'export',
         data() {
             return {
-                semester: {
-                    newSemester: '', // new semester
-                    semester_record_data: [], // semester info
-                    loading: false, // semester loading
-                    create_loading: false, // create semester loading
-                    semester_status: false,
+              semester: {
+                newSemester: '', // new semester
+                semester_record_data: [], // semester info
+                loading: false, // semester loading
+                create_loading: false, // create semester loading
+                semester_status: false,
+              },
+              shift: {
+                shift_record_data: [],
+                date_start: '',
+                start_at: '',
+                total: 0,
+                shift_loading: false,
+                create_loading: false,
+                search_loading: false,
+                sortField: 'ShiftID',
+                sortOrder: 'desc',
+                defaultSortOrder: 'desc',
+                page: 1,
+                per_page: 5,
+                ID_Index: [],
+              },
+              room: {
+                select_search: Object,
+                room_record_data: [],
+                total: 0,
+                student_count: '',
+                searchResults: [],
+                room_loading: false,
+                search_loading: false,
+                sortField: 'RoomID',
+                sortOrder: 'desc',
+                defaultSortOrder: 'desc',
+                page: 1,
+                per_page: 5,
+                ID_Index: [],
+              },
+              student: {
+                select_search: Object,
+                student_record_data: [],
+                total: 0,
+                searchResults: [],
+                student_loading: false,
+                search_loading: false,
+                sortField: 'ID',
+                sortOrder: 'desc',
+                defaultSortOrder: 'desc',
+              },
+              excel_export: {
+                json_fields: {
+                  "Mã sinh viên": "ID",
+                  "Tên sinh viên":"Fullname",
+                  "Ngày sinh": "Dob",
+                  "Giới tính": "Gender",
+                  "Lớp học": "CourseID"
                 },
-                shift: {
-                    shift_record_data: [],
-                    date_start: '',
-                    start_at: '',
-                    total: 0,
-                    shift_loading: false,
-                    create_loading: false,
-                    search_loading: false,
-                    sortField: 'ShiftID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
-                    ID_Index: [],
-                },
-                room: {
-                    select_search: Object,
-                    room_record_data: [],
-                    total: 0,
-                    searchResults: [],
-                    room_loading: false,
-                    search_loading: false,
-                    sortField: 'RoomID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
-                    ID_Index: [],
-                },
-                student: {
-                    select_search: Object,
-                    student_record_data: [],
-                    searchResults: [],
-                    student_loading: false,
-                    search_loading: false,
-                    sortField: 'ID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                },
-                isOpen: null,
-                collapses: [],
-                currentShiftID: '', // current opening shiftID
-                currentSemID: '', // current opening semesterID
-                currentRoomID: '', //current opening roomID
-                hasSemesterError: false,
-                hasSubjectError: false,
-                hasRoomError: false,
+                json_data: [],
+                file_name: ""
+              },
+              isOpen: null,
+              collapses: [],
+              currentShiftID: '', // current opening shiftID
+              currentSemID: '', // current opening semesterID
+              currentRoomShiftID: '', //current opening roomID
+              currentRoomName: '', // for pdf title
+              currentSubjectName: '', // for pdf title
+              hasSemesterError: false,
+              hasSubjectError: false,
+              hasRoomError: false
             }
         },
         methods: {
@@ -289,7 +324,7 @@
                 this.semester.loading = true;
                 try {
                     const response = await axios({
-                        url: '/schedule/semester-records',
+                        url: '/schedule/register-semester-records',
                         method: 'get',
                         headers: {
                             'Authorization': authHeader(),
@@ -302,7 +337,7 @@
                         response.data.semesterRecords.forEach((item) => {
                             this.semester.semester_record_data.push(item);
                         });
-                        console.log(this.semester.semester_record_data);
+                        // console.log(this.semester.semester_record_data);
                         // console.log(this.data);
                         this.semester.loading = false
                     }
@@ -345,6 +380,7 @@
                     if (response.status === 200) {
                         this.shift.shift_record_data = [];
                         this.shift.total = response.data.total_results;
+                        // console.log(response.data.total_results);
                         response.data.shift_records.forEach((item) => {
                             this.shift.shift_record_data.push(item);
                         });
@@ -390,6 +426,7 @@
                     if (response.status === 200) {
                         this.room.room_record_data = [];
                         this.room.total = response.data.total_results;
+                        // console.log(response.data);
                         response.data.room_records.forEach((item) => {
                             this.room.room_record_data.push(item);
                         });
@@ -465,7 +502,7 @@
                         url: '/schedule/student-records',
                         method: 'get',
                         params: {
-                            roomID: this.currentRoomID,
+                            currentRoomShiftID: this.currentRoomShiftID,
                             sort_field: this.student.sortField,
                             sort_order: this.student.sortOrder
                         },
@@ -476,11 +513,12 @@
                     // console.log(response.data.shift_records);
                     if (response.status === 200) {
                         this.student.student_record_data = [];
-                        this.student.total = response.data.total_results;
+                        this.room.student_count = response.data.total_results;
+                        // console.log(response.data.student_records);
                         response.data.student_records.forEach((item) => {
                             this.student.student_record_data.push(item);
                         });
-                        // console.log(this.data);
+                        // console.log(this.room.student_count);
                         this.student.student_loading = false
                     }
                 } catch (error) {
@@ -510,15 +548,35 @@
                 // console.log(this.student_status.ID_Index);
             },
             closeOtherDetails_Room(row) {
-                this.room.ID_Index = [row.RoomID];
+                this.room.ID_Index = [row.Room_ShiftID];
                 // console.log(this.student_status.ID_Index);
             },
-            exportExcel(){
-
+            print(){
+              printJS({
+                  printable: this.student.student_record_data,
+                  properties: [
+                          { field: 'ID', displayName: 'Mã số sinh viên'},
+                          { field: 'Fullname', displayName: 'Tên sinh viên'},
+                          { field: 'Dob', displayName: 'Ngày sinh'},
+                          { field: 'Gender', displayName: 'Giới tính'},
+                          { field: 'CourseID', displayName: 'Mã lớp học'}
+                        ],
+                  documentTitle: "Danh sách sinh viên tại phòng " + this.currentRoomName + ' | Môn thi: ' + this.currentSubjectName,
+                  headerStyle: 'font-weight: 300;',
+                  repeatTableHeader: false,
+                  type: 'json'
+              })
             }
         },
         mounted() {
+
             this.getSemesterRecordData();
+        },
+        created() {
+            eventBus.$on('up-to-date-semester', () => {
+                this.getSemesterRecordData();
+                this.getRoomRecord();
+            })
         }
     }
 </script>

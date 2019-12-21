@@ -57,7 +57,7 @@ def create_new_student(current_user):
         checkStudentID = re.search('^\d{8}$', str(newStudentID).replace(' ', ''))
         checkFullname = re.search("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
                                   "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-                                  "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s]+$", str(newFullname))
+                                  "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s ]+$", str(newFullname))
         checkDob = re.search('([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))',
                              str(newDob))
         checkGender = re.search('(Nam|Nữ)', str(newGender))
@@ -73,7 +73,7 @@ def create_new_student(current_user):
             newStudent = User.create(newStudentID, newStudentID + '@vnu.edu.vn', newStudentID, newFullname, newDob,
                                      newGender, newCourseID, 'Student')
             if newStudent is False:
-                return jsonify({'status': 'already-exist'}), 200
+                return jsonify({'status': 'already-exist'}), 202
             else:
                 return jsonify({'status': 'success'}), 200
         else:
@@ -87,14 +87,10 @@ def create_new_student(current_user):
 def get_student_info_search(current_user):
     try:
         searchID = request.args.get('searchID')
-        check = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchID))
-        if check is None:
-            searchResults = User.searchStudentRecord(searchID)
-            return jsonify({'status': 'success',
-                            'search_results': searchResults,
-                            }), 200
-        else:
-            return jsonify({'status': 'bad-request'}), 400
+        searchResults = User.searchStudentRecord(searchID)
+        return jsonify({'status': 'success',
+                        'search_results': searchResults,
+                        }), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
 
@@ -195,7 +191,7 @@ def update_student_info_record(current_user):
         checkUsername = re.search('^\d{8}@vnu.edu.vn$', str(newUsername))
         checkFullname = re.search("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
                                   "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-                                  "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s]+$", str(newFullname))
+                                  "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s ]+$", str(newFullname))
         checkDob = re.search('([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))',
                              str(newDob))
         checkGender = re.search('(Nam|Nữ)', str(newGender))
@@ -213,12 +209,46 @@ def update_student_info_record(current_user):
                 checkGender is not None) and (checkCourseID is not None) and (
                 newStudentID == newUsername.split('@')[0]):
             #  print('OK1', flush=True)
-            User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob, newGender)
-            Log.create(current_user['ID'],
-                       'Cập nhật thông tin của sinh viên vào hệ thống.',
-                       set_custom_log_time())
+            check = User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob,
+                                      newGender)
+            if check is True:
+                Log.create(current_user['ID'],
+                           'Cập nhật thông tin của sinh viên vào hệ thống.',
+                           set_custom_log_time())
 
-            return jsonify({'status': 'success'}), 200
+                return jsonify({'status': 'success'}), 200
+            else:
+                return jsonify({'status': 'already-exist'}), 202
+        else:
+            return jsonify({'status': 'bad-request'}), 400
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@student_record_management.route('/create-student-subject', methods=['POST'])
+@token_required
+def create_student_subject_status(current_user):
+    try:
+        studentID = request.get_json().get('StudentID')
+        student_subjectID = request.get_json().get('Student_SubjectID')
+        status_type = request.get_json().get('Status_Type')
+
+        print('OK', flush=True)
+        print(student_subjectID, flush=True)
+
+        if status_type == 'Qualified':
+            check = Student_Status.create(str(studentID), str(student_subjectID), 'đủ điều kiện')
+            if check is True:
+                return jsonify({'status': 'success'}), 200
+            else:
+                return jsonify({'status': 'already-exist'}), 202
+
+        elif status_type == 'Unqualified':
+            check = Student_Status.create(str(studentID), str(student_subjectID), 'không đủ điều kiện')
+            if check is True:
+                return jsonify({'status': 'success'}), 200
+            else:
+                return jsonify({'status': 'already-exist'}), 202
         else:
             return jsonify({'status': 'bad-request'}), 400
     except:

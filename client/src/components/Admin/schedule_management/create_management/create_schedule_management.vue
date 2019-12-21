@@ -11,8 +11,14 @@
           icon="sync"/>
         <span>Làm mới</span>
       </b-button>
-      <b-field :message="[{ 'Kỳ thi chưa đánh': hasSemesterError },]" expanded>
-        <b-input v-model="semester.newSemester" placeholder="Nhập tiêu đề để tạo kỳ thi" >
+      <b-field
+        :type="{ 'is-danger':  SemesterNotExist }"
+        :message="[{ 'Tiêu đề kỳ thi chưa đánh': SemesterNotExist }]" expanded>
+        <b-input v-model="semester.newSemester"
+                 @keyup.enter="addNewSemester"
+                 validation-message="Nhập đúng tiêu đề kỳ thi(Không gồm các ký tự đặc biệt)"
+                 pattern="^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$"
+                 placeholder="Nhập tiêu đề để tạo kỳ thi" >
         </b-input>
       </b-field>
       <b-button
@@ -87,8 +93,8 @@
                         :default-sort-direction="shift.defaultSortOrder"
                         :default-sort="[shift.sortField, shift.sortOrder]"
                         @sort="onShiftSort"
-                        @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRoomRecord(); closeOtherDetails(row, index) }"
-                        @details-close="(row, index) => { room.room_record_data = [] }"
+                        @details-open="(row, index) => { currentShiftID = row.ShiftID; room.page = 1; getRoomRecord(); closeOtherDetails(row, index) }"
+                        @details-close="(row, index) => { room.room_record_data = []; room.page = 1 }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
                             <b-table-column field="ShiftID" label="Mã ca thi" width="100" sortable>
@@ -147,7 +153,7 @@
                                 </b-autocomplete>
                             </b-field>
                             <!--shift-->
-                            <b-field v-if="room.room_record_data.length > 0" grouped group-multiline>
+                            <b-field v-if="room.room_record_data.length > 0">
                               <b-table
                                 :data="room.room_record_data"
                                 :loading="room.room_loading"
@@ -164,31 +170,30 @@
                                 bordered
                                 narrowed
                                 hoverable
-                                detail-key="RoomID"
                                 :default-sort-direction="room.defaultSortOrder"
                                 :default-sort="[room.sortField, room.sortOrder]"
                                 @sort="onRoomSort">
                                 <template slot-scope="props">
 
                                   <b-table-column field="RoomID" label="Mã phòng" width="100" sortable>
-                                    {{ props.row.RoomID }}
+                                    {{ props.row.Exam_Room.RoomID }}
                                   </b-table-column>
-                                  <b-table-column field="RoomName" label="Phòng thi" width="100" sortable>
-                                    {{ props.row.RoomName }}
+                                  <b-table-column field="RoomName" label="Phòng thi" width="100">
+                                    {{ props.row.Exam_Room.RoomName }}
                                   </b-table-column>
-                                  <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
-                                    {{ props.row.Maxcapacity }}
+                                  <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
+                                    {{ props.row.Exam_Room.Maxcapacity }}
                                   </b-table-column>
 
                                   <b-table-column field="Action" width="90">
-                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row.RoomID)"></b-button>
+                                    <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row.Exam_Room.RoomID)"></b-button>
                                   </b-table-column>
                                 </template>
                               </b-table>
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có dự liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
+                                Hiện tại chưa có thông tin về phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
                               </b-message>
                             </b-field>
 
@@ -217,6 +222,7 @@
     import semester_edit from "./edit/semester_edit";
     import shift_edit from "./edit/shift_edit";
     import new_shift from "./create/shift_create";
+    import { eventBus } from "../../../../main";
 
     export default {
         name: 'create_management',
@@ -261,7 +267,8 @@
                 collapses: [],
                 currentShiftID: '', // current opening shiftID
                 currentSemID: '', // current opening semesterID
-                hasSemesterError: false,
+                SemesterNotExist: false,
+                invalidSemester: false,
                 hasSubjectError: false,
                 hasRoomError: false,
             }
@@ -272,64 +279,71 @@
             },
             async addNewSemester() {
                 if (this.semester.newSemester.length === 0) {
-                    this.hasSemesterError = true;
+                    this.SemesterNotExist = true;
                 }
                 else {
-                    try {
-                        this.hasSemesterError = false;
-                        this.semester.create_loading = true;
-                        const response = await axios({
-                            url: '/schedule/create-semester',
-                            method: 'post',
-                            headers: {
-                                'Authorization': authHeader(),
-                            },
-                            data: {
-                                newSemester: this.semester.newSemester,
-                            },
-                        });
-                        this.semester.create_loading = false;
-                        if (response.status === 200) {
-                            this.$buefy.notification.open({
-                                duration: 2000,
-                                message: `Đã tạo kỳ thi thành công!`,
-                                position: 'is-bottom-right',
-                                type: 'is-success',
-                                hasIcon: true
-                            });
-                        }
-                        else if (response.status === 202) {
-                            this.$buefy.notification.open({
-                                duration: 2000,
-                                message: `Kỳ thi đã tồn tại từ trước!`,
-                                position: 'is-bottom-right',
-                                type: 'is-warning',
-                                hasIcon: true
-                            });
-                        }
-                    } catch (e) {
-                        this.semester.create_loading = false;
-                        if (e['message'].includes('400')) {
-                            this.$buefy.notification.open({
-                                duration: 2000,
-                                message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
-                                position: 'is-bottom-right',
-                                type: 'is-danger',
-                                hasIcon: true
-                            })
-                        } else if (e['message'].includes('401')) {
-                            this.$buefy.notification.open({
-                                duration: 2000,
-                                message: 'Không được quyền sử dụng!',
-                                position: 'is-bottom-right',
-                                type: 'is-danger',
-                                hasIcon: true
-                            })
-                        }
+                    let pattern = new RegExp("^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s- ]+$");
+                    let check = pattern.test(this.semester.newSemester);
+                    if (check) {
+                        try {
+                          this.SemesterNotExist = false;
+                          this.semester.create_loading = true;
+                          const response = await axios({
+                              url: '/schedule/create-semester',
+                              method: 'post',
+                              headers: {
+                                  'Authorization': authHeader(),
+                              },
+                              data: {
+                                  newSemester: this.semester.newSemester,
+                              },
+                          });
+                          this.semester.create_loading = false;
+                          if (response.status === 200) {
+                              this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: `Đã tạo kỳ thi thành công!`,
+                                  position: 'is-bottom-right',
+                                  type: 'is-success',
+                                  hasIcon: true
+                              });
+                          }
+                          else if (response.status === 202) {
+                              this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: `Kỳ thi đã tồn tại từ trước!`,
+                                  position: 'is-bottom-right',
+                                  type: 'is-warning',
+                                  hasIcon: true
+                              });
+                          }
+                      } catch (e) {
+                          this.semester.create_loading = false;
+                          if (e['message'].includes('400')) {
+                              this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                                  position: 'is-bottom-right',
+                                  type: 'is-danger',
+                                  hasIcon: true
+                              })
+                          } else if (e['message'].includes('401')) {
+                              this.$buefy.notification.open({
+                                  duration: 2000,
+                                  message: 'Không được quyền sử dụng!',
+                                  position: 'is-bottom-right',
+                                  type: 'is-danger',
+                                  hasIcon: true
+                              })
+                          }
+                      }
+                      finally {
+                          this.semester.newSemester = '';
+                          this.getSemesterRecordData();
+                      }
                     }
-                    finally {
-                        this.semester.newSemester = '';
-                        this.getSemesterRecordData();
+                    else {
+                        this.invalidSemester = true;
                     }
                 }
             }, // xong
@@ -410,6 +424,8 @@
                         hasIcon: true
                     });
                     throw error;
+                } finally {
+                    eventBus.$emit('up-to-date-semester',  '');
                 }
             }, // xong
             async onSemesterEdit(record) {
@@ -429,7 +445,7 @@
                        if (http_status === 200) {
                          this.$buefy.notification.open({
                            duration: 2000,
-                           message: `Đã sửa đổi thành công!`,
+                           message: `Đã cập nhật kỳ thi thành công!`,
                            position: 'is-bottom-right',
                            type: 'is-success',
                            hasIcon: true
@@ -576,6 +592,7 @@
             }, // xong
             onShiftPageChange(page) {
                 this.shift.page = page;
+                this.room.page = 1;
                 this.getShiftRecordData();
             }, // xong
             onShiftEdit(record) {
@@ -685,7 +702,19 @@
                                 })
                             }
                         } finally {
-                            this.getShiftRecordData();
+                            if (this.shift.shift_record_data.length === 1) {
+                                if (parseInt(this.shift.total / this.shift.per_page) > 0) {
+                                    this.shift.page--;
+                                    this.getShiftRecordData();
+                                }
+                                else {
+                                    this.shift.page = 1;
+                                    this.getShiftRecordData();
+                                }
+                            }
+                            else {
+                                this.getShiftRecordData();
+                            }
                         }
                     },
                 });
@@ -705,7 +734,7 @@
                         },
                     });
                     if (response.status === 200) {
-                        this.room.room_loading = false;
+
                         if (response.data.status === 'success') {
                             this.$buefy.notification.open({
                                 duration: 2000,
@@ -725,7 +754,6 @@
                         }
                     }
                 } catch (e) {
-                    this.room.room_loading = false;
                     if (e['message'].includes('400')) {
                         this.$buefy.notification.open({
                             duration: 2000,
@@ -745,6 +773,7 @@
                     }
                 }
                 finally {
+                    this.room.room_loading = false;
                     this.getRoomRecord();
                 }
             },
@@ -839,7 +868,19 @@
                                 })
                             }
                         } finally {
-                            this.getRoomRecord();
+                            if (this.room.room_record_data.length === 1) {
+                                if (parseInt(this.room.total / this.room.per_page) > 0) {
+                                    this.room.page--;
+                                    this.getRoomRecord();
+                                }
+                                else {
+                                    this.room.page = 1;
+                                    this.getRoomRecord();
+                                }
+                            }
+                            else {
+                                this.getRoomRecord();
+                            }
                         }
                     },
                 });
@@ -892,6 +933,12 @@
             },
         },
         mounted() {
+            var self = this;
+            window.addEventListener('keyup', function(event) {
+              if (event.keyCode === 13) {
+                  self.addNewSemester();
+              }
+            });
             this.getSemesterRecordData();
         }
     }
