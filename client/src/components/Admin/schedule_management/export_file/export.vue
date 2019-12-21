@@ -148,7 +148,7 @@
                                 <!--Student-->
                                  <template slot="detail" slot-scope="props">
                                     <h4 class="title is-4">Danh sách sinh viên</h4>
-                                    <b-field  expanded>
+                                    <b-field expanded>
                                       <b-button
                                             :class="{'is-loading': student.student_loading}"
                                             class="button"

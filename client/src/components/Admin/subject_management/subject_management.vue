@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="title is-3">Quản lý môn thi</h1>
     <h2 class="subtitle is-6">Cập nhật, quản lý thông tin của môn thi</h2>
-
+    <hr>
     <section>
       <b-field grouped group-multiline >
             <b-button

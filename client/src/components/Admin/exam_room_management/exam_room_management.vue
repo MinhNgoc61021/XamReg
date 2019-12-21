@@ -2,6 +2,7 @@
   <div>
     <h1 class="title is-3">Quản lý phòng thi</h1>
     <h2 class="subtitle is-6">Cập nhật, quản lý thông tin của phòng thi</h2>
+    <hr>
     <b-field grouped group-multiline>
       <b-button icon-pack="fas" icon-left="plus-square" outlined @click.prevent="onRoomAdd">
         Tạo phòng thi
@@ -36,9 +37,11 @@
           <template slot-scope="props">
             <div class="media">
               <div class="media-content">
+                <b>Tên phòng: </b>{{ props.option.RoomName }}
+                <br>
                 <b>Mã phòng: </b>{{ props.option.RoomID }}
                 <br>
-                <b>Tên phòng: </b>{{ props.option.RoomName }}
+                <b>Số lượng máy tính: </b><p style="display: inline-block;">{{ props.option.Maxcapacity }}</p> <b-icon icon-pack="fas" size="is-small" icon="laptop"></b-icon>
               </div>
             </div>
           </template>
@@ -70,10 +73,8 @@
             <b-table-column field="RoomName" label="Tên phòng thi" width="100" sortable>
               {{ props.row.RoomName }}
             </b-table-column>
-            <b-table-column field="Maxcapacity" label="Số lượng chỗ" width="100" sortable>
-              <span class="is-primary">
-                {{ props.row.Maxcapacity }}
-              </span>
+            <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100" sortable>
+              <p style="width: 25px; display: inline-block; text-align: center;">{{ props.row.Maxcapacity }}</p> <b-icon icon-pack="fas" size="is-small" icon="laptop"></b-icon>
             </b-table-column>
              <b-table-column field="Action" width="90">
               <b-button type="is-warning" size="is-small" icon-pack="fas" icon-right="edit" outlined @click.prevent="onRoomEdit(props.row)"></b-button>

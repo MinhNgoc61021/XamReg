@@ -1,7 +1,8 @@
 <template>
     <div class="container">
         <h1 class="title is-3">Quản lý lịch thi</h1>
-        <h2 class="subtitle is-6">Tạo, quản lý lịch, ca thi, danh sách sinh viên dự thi</h2>
+        <h2 class="subtitle is-6">Tạo, quản lý lịch, ca thi và in danh sách sinh viên dự thi</h2>
+        <hr>
         <section id="tab-action">
             <b-tabs type="is-boxed">
                 <b-tab-item label="Tạo và Quản lý danh sách kỳ thi" icon-pack="fas" icon="plus-square">

@@ -147,6 +147,10 @@
                                       <div class="media">
                                         <div class="media-content">
                                           <b>Tên phòng: </b>{{ props.option.RoomName }}
+                                          <br>
+                                          <b>Mã phòng: </b>{{ props.option.RoomID }}
+                                          <br>
+                                          <b>Số lượng máy tính: </b><p style="display: inline-block;">{{ props.option.Maxcapacity }}</p> <b-icon icon-pack="fas" size="is-small" icon="laptop"></b-icon>
                                         </div>
                                       </div>
                                     </template>

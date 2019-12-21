@@ -1,7 +1,8 @@
 <template>
   <div>
     <h1 class="title is-3">Danh sách ca thi đã đăng kí</h1>
-    <h2 class="subtitle is-6">Xem & xóa ca thi đã đăng kí</h2>
+    <h2 class="subtitle is-6">Xem và xóa ca thi đã đăng kí</h2>
+    <hr>
     <b-field group-multiline>
 
       <b-button

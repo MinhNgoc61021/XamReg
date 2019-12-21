@@ -14,7 +14,6 @@
 <style lang="scss">
 // Import Bulma's core
 @import "~bulma/sass/utilities/_all";
-
 // Set your colors
 $primary: #3273dc
 ;
@@ -44,4 +43,5 @@ $link-focus-border: $primary;
 // Import Bulma and Buefy styles
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
+
 </style>

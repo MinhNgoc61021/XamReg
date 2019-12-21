@@ -9,7 +9,7 @@ import student_management from "../components/Admin/student_management/student_m
 import schedule_management from "../components/Admin/schedule_management/schedule_management";
 import log_management from "../components/Admin/log_management/log_management";
 import subject_management from "../components/Admin/subject_management/subject_management";
-import student_home_page from "../components/Student/home_page";
+import info from "../components/Student/info";
 import shift_register from "../components/Student/shift_register/shift_register";
 import export_ticket from "../components/Student/export_ticket/export_ticket";
 import exam_room_management from "../components/Admin/exam_room_management/exam_room_management";
@@ -31,8 +31,8 @@ export const router = new Router({
                   { path: '/exam-room-management', component: exam_room_management },
                   { path: '/admin-manual', name: 'manual', component: manual },],
     },
-    { path: '/student', name: 'student', component: student_page, redirect: { name: 'student-home', props: true, params: { studentid: store.state.ID } },
-      children: [ { path: '/student-home/:studentid', component: student_home_page, name: 'student-home', props: true,
+    { path: '/student', name: 'student', component: student_page, redirect: { name: 'student-info', props: true, params: { studentid: store.state.ID } },
+      children: [ { path: '/student-info/:studentid', component: info, name: 'student-info', props: true,
                     beforeEnter (to, from, next)  {
                         if (getToken(localStorage.getItem('user')).type === 'Admin') {
                             return next('/admin');
@@ -68,7 +68,7 @@ router.beforeEach ((to, from, next) => {
     // redirect to student page if the user is a student
     const publicPages = ['/register'];
     const adminPage = ['/admin', '/student-management', '/schedule-management', '/log-management', '/subject-management', '/exam-room-management', '/admin-manual'];
-    const studentPage = ['/student', '/student-home', '/shift-register', '/student-page', '/student-manual'];
+    const studentPage = ['/student', 'student-info', '/shift-register', '/student-page', '/student-manual'];
     const authRequired = !publicPages.includes(to.path);
     const loggedIn = getToken(localStorage.getItem('user'));
 

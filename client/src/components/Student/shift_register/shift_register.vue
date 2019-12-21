@@ -2,6 +2,7 @@
     <div class="container">
       <h1 class="title is-3">Đăng ký thi</h1>
       <h2 class="subtitle is-6">Sinh viên đăng ký ca thi mà sinh viên đủ điều kiện dự thi và đang còn chỗ trống</h2>
+      <hr>
       <b-field grouped group-multiline>
         <b-button
           :class="{'is-loading': shift.shift_loading}"

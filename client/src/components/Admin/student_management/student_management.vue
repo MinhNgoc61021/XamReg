@@ -2,6 +2,7 @@
   <div class="container">
     <h1 class="title is-3">Quản lý sinh viên</h1>
     <h2 class="subtitle is-6">Cập nhật, quản lý tài khoản và thông tin của sinh viên</h2>
+    <hr>
     <section id="tab-action">
         <b-tabs type="is-boxed">
             <b-tab-item label="Nhập (Import)" icon-pack="fas" icon="file-import">
