@@ -138,7 +138,7 @@
                                     {{ props.row.Exam_Room.RoomName }}
                                   </b-table-column>
                                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
-                                    {{ props.row.Exam_Room.Maxcapacity }}
+                                    <p style="width: 25px; display: inline-block; text-align: center;">{{ props.row.Exam_Room.Maxcapacity }}</p> <b-icon icon-pack="fas" size="is-small" icon="laptop"></b-icon>
                                   </b-table-column>
 <!--                                  <b-table-column field="student_count" label="Số lượng sinh viên" width="100" sortable>-->
 <!--                                    {{ room.student_count }}-->
@@ -154,7 +154,10 @@
                                             class="button"
                                             @click="getStudentRecord">
                                         <b-icon size="is-small" icon="sync"/></b-button>
-                                      <b-button icon-left="file-download" @click="print">
+                                      <b-button v-if="student.student_record_data.length > 0" icon-left="file-pdf" @click="print">
+                                        In danh sách sinh viên
+                                      </b-button>
+                                      <b-button v-else icon-left="file-pdf" disabled>
                                         In danh sách sinh viên
                                       </b-button>
                                     </b-field>
@@ -182,6 +185,9 @@
                                                     {{ formatDate(props.row.Dob) }}
                                                  </span>
                                                 </b-table-column>
+                                                <b-table-column field="CourseID" label="Lớp" width="100" sortable>
+                                                  {{ props.row.CourseID }}
+                                                </b-table-column>
                                                 <b-table-column field="Gender" label="Giới tính" width="100" sortable >
                                                   <span>
                                                       <b-icon pack="fas"
@@ -189,9 +195,6 @@
                                                       </b-icon>
                                                       {{ props.row.Gender }}
                                                   </span>
-                                                </b-table-column>
-                                                <b-table-column field="CourseID" label="Lớp" width="100" sortable>
-                                                  {{ props.row.CourseID }}
                                                 </b-table-column>
                                               </template>
                                         </b-table>
@@ -207,7 +210,7 @@
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có dữ liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
+                                Hiện tại chưa có dữ liệu phòng thi trong ca thi này, bạn hãy nhập vào phòng thi!
                               </b-message>
                             </b-field>
                         </template>

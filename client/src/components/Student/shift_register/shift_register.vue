@@ -84,7 +84,9 @@
               <b></b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}
             </b-table-column>
             <b-table-column field="Date_Start" label="Ngày thi" sortable>
-              {{ formatDate(props.row.Date_Start) }}
+              <span class="tag is-success">
+                {{ formatDate(props.row.Date_Start) }}
+              </span>
             </b-table-column>
             <b-table-column field="Start_At" label="Thời gian bắt đầu" sortable>
               {{ props.row.Start_At }}

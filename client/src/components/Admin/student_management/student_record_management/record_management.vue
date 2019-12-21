@@ -715,13 +715,13 @@
         created() {
             eventBus.$on('up-to-date', () => {
                 this.getStudentRecordData();
-                this.$buefy.notification.open({
-                    duration: 2000,
-                    message: `Đã cập nhật danh sách sinh viên thành công!`,
-                    position: 'is-bottom-right',
-                    type: 'is-success',
-                    hasIcon: true
-                });
+                // this.$buefy.notification.open({
+                //     duration: 2000,
+                //     message: `Đã cập nhật danh sách sinh viên thành công!`,
+                //     position: 'is-bottom-right',
+                //     type: 'is-success',
+                //     hasIcon: true
+                // });
             })
         }
     }

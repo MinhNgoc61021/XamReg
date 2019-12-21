@@ -136,7 +136,7 @@
                               </b-button>
                               <b-autocomplete clear-on-select
                                   :data="room.searchResults"
-                                  placeholder="Tìm kiếm để chọn phòng thi"
+                                  placeholder="Tìm kiếm để nhập phòng thi"
                                   icon="search"
                                   field="RoomName"
                                   :loading="room.search_loading"
@@ -182,7 +182,7 @@
                                     {{ props.row.Exam_Room.RoomName }}
                                   </b-table-column>
                                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
-                                    {{ props.row.Exam_Room.Maxcapacity }}
+                                    <p style="width: 25px; display: inline-block; text-align: center;">{{ props.row.Exam_Room.Maxcapacity }}</p> <b-icon icon-pack="fas" size="is-small" icon="laptop"></b-icon>
                                   </b-table-column>
 
                                   <b-table-column field="Action" width="90">
@@ -193,7 +193,7 @@
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có thông tin về phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
+                                Hiện tại chưa có thông tin về phòng thi trong ca thi này, bạn hãy nhập vào phòng thi!
                               </b-message>
                             </b-field>
 
@@ -300,6 +300,7 @@
                           });
                           this.semester.create_loading = false;
                           if (response.status === 200) {
+                              this.semester.newSemester = '';
                               this.$buefy.notification.open({
                                   duration: 2000,
                                   message: `Đã tạo kỳ thi thành công!`,
@@ -338,7 +339,6 @@
                           }
                       }
                       finally {
-                          this.semester.newSemester = '';
                           this.getSemesterRecordData();
                       }
                     }
