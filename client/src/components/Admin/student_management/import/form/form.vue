@@ -12,7 +12,7 @@
         <b-field label="Họ và tên">
             <b-input v-model="newStudent.Fullname" placeholder="Hãy nhập họ và tên sinh viên"
                      validation-message="Nhập đúng họ và tên"
-                     patterns="[a-zA-Z]+"
+                     pattern="^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s ]+$"
                      required>
             </b-input>
         </b-field>
@@ -24,7 +24,7 @@
         <b-field label="Khóa học">
             <b-input v-model="newStudent.CourseID" placeholder="Hãy nhập mã khóa học"
                      validation-message="Nhập đúng khóa học"
-                     patterns="(^[K|k][1-9][0-9][A-Za-z]+[1-9]*)"
+                     pattern="(^[K|k][1-9][0-9][A-Za-z]+[1-9]*)"
                      required>
             </b-input>
         </b-field>

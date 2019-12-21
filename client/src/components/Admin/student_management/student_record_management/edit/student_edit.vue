@@ -23,7 +23,7 @@
               v-model="newUsername"
               :value="newUsername"
               maxlength="19"
-              patterns="^\d{8}@vnu.edu.vn$"
+              pattern="^\d{8}@vnu.edu.vn$"
               validation-message="Nhập đúng tài khoản"
               placeholder="Sửa tài khoản"
               required>
@@ -33,7 +33,7 @@
             <b-input
               type="text"
               v-model="newFullname"
-              patterns="[a-zA-Z]+"
+              pattern="^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s ]+$"
               validation-message="Nhập đúng họ và tên"
               :value="newFullname"
               placeholder="Sửa họ và tên"
@@ -44,7 +44,7 @@
             <b-input
               type="text"
               v-model="newCourseID"
-              patterns="(^[K|k][1-9][0-9][A-Za-z]+[1-9]*)"
+              pattern="(^[K|k][1-9][0-9][A-Za-z]+[1-9]*)"
               validation-message="Nhập đúng khóa học"
               :value="newCourseID"
               placeholder="Sửa mã khóa học"
@@ -117,6 +117,9 @@
                   if (update.status === 200) {
                       this.$emit('editStatus', 200);
                       this.$parent.close();
+                  }
+                  else {
+                      this.$emit('editStatus', 202);
                   }
               } catch (e) {
                   if (e['message'].includes('400')) {

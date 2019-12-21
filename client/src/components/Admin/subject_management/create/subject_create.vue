@@ -11,9 +11,9 @@
             type="text"
             v-model="newSubjectID"
             :value="newSubjectID"
-            maxlength="15"
+            maxlength="7"
             validation-message="Nhập đúng mã môn học"
-            pattern="^(([A-Z]|[a-z]){3})([0-9]{4})"
+            pattern="(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3}))"
             placeholder="Nhập mã môn học"
             required
           >
@@ -24,6 +24,7 @@
             type="text"
             v-model="newSubjectTitle"
             :value="newSubjectTitle"
+            pattern="^[a-zA-Z1-9_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$"
             maxlength="100"
             validation-message="Nhập đúng tên môn học"
             placeholder="Nhập tên môn học"

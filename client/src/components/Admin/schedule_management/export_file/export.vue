@@ -127,7 +127,7 @@
                                 :default-sort-direction="room.defaultSortOrder"
                                 :default-sort="[room.sortField, room.sortOrder]"
                                 @sort="onRoomSort"
-                                @details-open="(row, index) => { currentRoomShiftID = row.Room_ShiftID ; currentRoomName = row.Exam_Room.RoomName; getStudentRecord(); closeOtherDetails_Room(row, index) }"
+                                @details-open="(row, index) => { currentRoomShiftID = row.Room_ShiftID ; currentRoomName = row.Exam_Room.RoomName;  getStudentRecord(); closeOtherDetails_Room(row, index) }"
                                 @details-close="(row, index) => { student.student_record_data = [] }"
                                 :show-detail-icon="true">
                                 <template slot-scope="props">
@@ -151,11 +151,9 @@
                                             class="button"
                                             @click="getStudentRecord">
                                         <b-icon size="is-small" icon="sync"/></b-button>
-
                                       <b-button icon-left="file-download" @click="print">
-                                          In danh sách sinh viên
-                                       </b-button>
-
+                                        In danh sách sinh viên
+                                      </b-button>
                                     </b-field>
                                     <b-field v-if="student.student_record_data.length > 0">
                                         <b-table
@@ -206,7 +204,7 @@
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có dự liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
+                                Hiện tại chưa có dữ liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
                               </b-message>
                             </b-field>
                         </template>
@@ -220,19 +218,25 @@
         </b-collapse>
       </div>
       <div v-else>
+        <b-field>
+          <b-message type="is-danger" has-icon>
+            <p>Hiện tại chưa có kỳ thi nào ở đây!</p>
+            <p>Lưu ý! Ở đây chỉ hiển thị những kỳ thi đang <b>mở đăng ký!</b></p>
+          </b-message>
+        </b-field>
       </div>
     </section>
   </div>
 
 </template>
 
-
 <script>
     import axios from 'axios';
+    import printJS from 'print-js';
     import moment from 'moment';
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
-    import printJS from 'print-js'
+    import { eventBus } from "../../../../main";
 
     export default {
         name: 'export',
@@ -292,8 +296,8 @@
               currentShiftID: '', // current opening shiftID
               currentSemID: '', // current opening semesterID
               currentRoomShiftID: '', //current opening roomID
-              currentRoomName: '', // for excel title
-              currentSubjectName: '', // for excel title
+              currentRoomName: '', // for pdf title
+              currentSubjectName: '', // for pdf title
               hasSemesterError: false,
               hasSubjectError: false,
               hasRoomError: false
@@ -545,16 +549,23 @@
                           { field: 'Gender', displayName: 'Giới tính'},
                           { field: 'CourseID', displayName: 'Mã lớp học'}
                         ],
-                  documentTitle: `Danh sách sinh viên tại phòng ` + this.currentRoomName + ` | Môn thi:`  + this.currentSubjectName,
+                  documentTitle: "Danh sách sinh viên tại phòng " + this.currentRoomName + ' | Môn thi: ' + this.currentSubjectName,
                   headerStyle: 'font-weight: 300;',
                   repeatTableHeader: false,
                   type: 'json'
               })
             }
-
         },
+
         mounted() {
             this.getSemesterRecordData();
         },
+
+        created() {
+            eventBus.$on('up-to-date-semester', () => {
+                this.getSemesterRecordData();
+                this.getRoomRecord();
+            })
+        }
     }
 </script>

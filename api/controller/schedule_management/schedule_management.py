@@ -22,7 +22,7 @@ def add_semester(current_user):
         newSemesterTitle = request.get_json().get('newSemester')
         checkSemester = re.search('^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ' +
                                   'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
-                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ()\\s-]+$', newSemesterTitle)
+                                  'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$', newSemesterTitle)
         print(newSemesterTitle, flush=True)
 
         if checkSemester is None:
@@ -43,7 +43,6 @@ def add_semester(current_user):
 @schedule_management.route('/edit-semester', methods=['PUT'])
 @token_required
 def edit_semester(current_user):
-    try:
         semID = request.get_json().get('semID')
         newSemesterTitle = request.get_json().get('newSemTitle')
         newStatus = request.get_json().get('newStatus')
@@ -51,7 +50,7 @@ def edit_semester(current_user):
         print(newSemesterTitle, flush=True)
         check = re.search('^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ' +
                           'ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ' +
-                          'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ()\\s-]+$', newSemesterTitle)
+                          'ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$', newSemesterTitle)
         if check is not None:
             newSem = Semester_Examination.updateRecord(semID, newSemesterTitle, newStatus)
             if newSem is True:
@@ -63,8 +62,6 @@ def edit_semester(current_user):
                 return jsonify({'status': 'already-exist'}), 202
         else:
             return jsonify({'status': 'bad-request'}), 400
-    except:
-        return jsonify({'status': 'bad-request'}), 400
 
 
 @schedule_management.route('/remove-semester', methods=['DELETE'])

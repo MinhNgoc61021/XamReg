@@ -56,7 +56,7 @@ export default {
   methods: {
     go_home() {
       this.$parent.close();
-      this.$router.push({ path: '/student-home' })
+      this.$router.push({ name: 'student-home' })
     },
     async submitSemesterData() {
         if (this.semester_record !== []) {

@@ -352,6 +352,22 @@
                                     hasIcon: true
                                 })
                             }
+                        } finally {
+                            if (this.exam_room_list.length === 1) {
+                                // console.log(this.student.total);
+                                // console.log(this.student.per_page);
+                                if (parseInt(this.total / this.per_page) > 0) {
+                                    this.page--;
+                                    this.getRoomRecord();
+                                }
+                                else {
+                                    this.page = 1;
+                                    this.getRoomRecord();
+                                }
+                            }
+                            else {
+                                this.getRoomRecord();
+                            }
                         }
                     },
                 });

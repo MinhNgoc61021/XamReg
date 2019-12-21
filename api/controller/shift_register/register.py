@@ -109,7 +109,10 @@ def unregister_shift(current_user):
     try:
         studentID = request.args.get('studentID')
         Room_ShiftID = request.args.get('Room_ShiftID')
-        Student_Shift.delRecord(studentID,  Room_ShiftID)
+        Student_Shift.delRecord(studentID, Room_ShiftID)
+        Log.create(current_user['ID'],
+                   'Đã hủy đăng ký ca thi ' + str(Room_ShiftID),
+                   set_custom_log_time())
         return jsonify({'status': 'success'}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
@@ -121,9 +124,12 @@ def register_shift(current_user):
     try:
         studentID = request.get_json().get('studentID')
         Room_ShiftID = request.get_json().get('Room_ShiftID')
+        print('OK1', flush=True)
         check = Student_Shift.create(Room_ShiftID, studentID)
-        if check[0] is False:
-                return jsonify({'status': check[1]}), 202
+        print('OK12', flush=True)
+        if check != 'success':
+            print(check, flush=True)
+            return jsonify({'status': check}), 202
         else:
             Log.create(current_user['ID'],
                        'Đã đăng ký ca thi ' + str(Room_ShiftID),
@@ -179,6 +185,15 @@ def get_registered_shift(current_user):
         return jsonify({'status': 'bad-request'}), 400
 
 
+@shift_register.route('/get-info', methods=['GET'])
+@token_required
+def get_info(current_user):
+    try:
+        return jsonify({'status': 'success',
+                       'info': current_user}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
 @shift_register.route('/export-records', methods=['get'])
 @token_required
 def get_export_records(current_user):
@@ -202,7 +217,7 @@ def remove_export_records(current_user):
         record = request.get_json()
         registerID = record.get('delRegisterID')
         print("Registerrrrrr", registerID, flush=True)
-        Room_Shift.delTicketExportData(str(registerID))
+        Student_Shift.delTicketExportData(str(registerID))
 
         return jsonify({'status': 'success'}), 200
     except:

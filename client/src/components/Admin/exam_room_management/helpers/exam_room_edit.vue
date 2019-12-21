@@ -10,6 +10,8 @@
               v-model="newRoomName"
               :value="newRoomName"
               maxlength="30"
+              pattern="^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$"
+              validation-message="Nhập đúng tên phòng thi"
               placeholder="Nhập tên phòng thi"
               required>
             </b-input>
@@ -19,7 +21,7 @@
               type="number"
               v-model="newMaxcapacity"
               :value="newMaxcapacity"
-              min="0"
+              min="1"
               placeholder="Nhập số lượng chỗ thi"
               required>
             </b-input>

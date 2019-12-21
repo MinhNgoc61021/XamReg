@@ -152,52 +152,6 @@
             </template>
         </b-table>
       </b-field>
-
-      <h1 class="title is-3">Các môn đã đăng ký</h1>
-      <b-field group-multiline>
-        <b-button
-          :class="{'is-loading': registered_shift.create_loading}"
-          class="button"
-          @click="getRegisteredRoomShiftRecordData"
-        >
-          <b-icon
-            size="is-small"
-            icon="sync"/>
-          <span>Làm mới</span>
-        </b-button>
-      </b-field>
-
-      <b-field v-if="registered_shift.registered_shift_record_data.length === 0">
-        <b-message type="is-danger" has-icon>
-          Bạn chưa đăng ký môn
-        </b-message>
-      </b-field>
-
-      <b-field v-else>
-        <b-table
-          :data="registered_shift.registered_shift_record_data"
-          :loading="registered_shift.shift_loading"
-          hoverable
-        >
-          <template slot-scope="props">
-            <b-table-column field="ShiftID" label="Mã ca thi" sortable>
-              {{ props.row.ShiftID }}
-            </b-table-column>
-            <b-table-column field="SubjectID" label="Môn thi" sortable>
-              <b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}</b>
-            </b-table-column>
-            <b-table-column field="Date_Start" label="Ngày thi" sortable>
-              {{ formatDate(props.row.Date_Start) }}
-            </b-table-column>
-            <b-table-column field="Start_At" label="Thời gian bắt đầu" sortable>
-              {{ props.row.Start_At }}
-            </b-table-column>
-            <b-table-column field="End_At" label="Thời gian kết thúc" sortable>
-              {{ props.row.End_At }}
-            </b-table-column>
-          </template>
-        </b-table>
-      </b-field>
     </div>
 </template>
 
@@ -230,21 +184,6 @@
                     page: 1,
                     per_page: 5,
                     ID_Index: [],
-                },
-                registered_shift: {
-                  registered_shift_record_data: [],
-                  date_start: '',
-                  start_at: '',
-                  total: 0,
-                  shift_loading: false,
-                  create_loading: false,
-                  search_loading: false,
-                  sortField: 'ShiftID',
-                  sortOrder: 'desc',
-                  defaultSortOrder: 'desc',
-                  page: 1,
-                  per_page: 5,
-                  ID_Index: [],
                 },
                 room: {
                     roomID: '',
@@ -335,7 +274,6 @@
                 throw error;
               } finally {
                   this.getRoomRecord();
-                  this.getRegisteredRoomShiftRecordData()
               }
             },
             async getShiftRecordData() {
@@ -379,53 +317,8 @@
                       throw error;
                   }
             },
-            async getRegisteredRoomShiftRecordData() {
-              this.registered_shift.shift_loading = true;
-              try {
-                const response = await axios({
-                  url: '/shift-register/registered-room-shift-records',
-                  method: 'get',
-                  params: {
-                    StudentID: this.studentid,
-                    page_index: this.registered_shift.page,
-                    per_page: this.registered_shift.per_page,
-                    sort_field: this.registered_shift.sortField,
-                    sort_order: this.registered_shift.sortOrder
-                  },
-                  headers: {
-                    'Authorization': authHeader(),
-                  }
-                });
-                console.log(response.data);
-                if (response.status === 200) {
-                  this.registered_shift.shift_record_data = [];
-                  this.registered_shift.total = response.data.total_results;
-                  response.data.shift_records.forEach((item) => {
-                    this.registered_shift.shift_record_data.push(item);
-                  });
-                  // console.log(this.data);
-                  this.registered_shift.shift_loading = false
-                }
-              } catch (error) {
-                this.registered_shift.shift_record_data = [];
-                this.registered_shift.total = 0;
-                this.registered_shift.shift_loading = false;
-                this.$buefy.notification.open({
-                  duration: 2000,
-                  message: 'Không thể lấy được dữ liệu ca thi!',
-                  position: 'is-bottom-right',
-                  type: 'is-danger',
-                  hasIcon: true
-                });
-                throw error;
-              }
-            },
             closeOtherDetails(row) {
                 this.shift.ID_Index = [row.ShiftID];
-                // console.log(this.student_status.ID_Index);
-            },
-            closeOtherRegisteredDetails(row) {
-                this.registered_shift.ID_Index = [row.ShiftID];
                 // console.log(this.student_status.ID_Index);
             },
             async getRoomRecord() {
@@ -445,13 +338,13 @@
                             'Authorization': authHeader(),
                         }
                     });
-                    console.log(response.data.room_records);
+                    // console.log(response.data.room_records);
                     if (response.status === 200) {
                         this.room.room_record_data = [];
                         this.room.total = response.data.total_results;
                         response.data.room_records.forEach((item) => {
                             this.room.room_record_data.push(item);
-                            console.log(item);
+                            // console.log(item);
                         });
                         this.room.room_loading = false
                     }
@@ -571,7 +464,7 @@
             },
         },
         mounted() {
-            console.log(this.currentSemesterID);
+            // console.log(this.currentSemesterID);
             if (this.currentSemesterID === '') {
                 this.selectSemesterModal();
             }

@@ -57,7 +57,7 @@ def create_new_student(current_user):
         checkStudentID = re.search('^\d{8}$', str(newStudentID).replace(' ', ''))
         checkFullname = re.search("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
                                   "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-                                  "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s]+$", str(newFullname))
+                                  "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s ]+$", str(newFullname))
         checkDob = re.search('([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))',
                              str(newDob))
         checkGender = re.search('(Nam|Nữ)', str(newGender))
@@ -191,7 +191,7 @@ def update_student_info_record(current_user):
         checkUsername = re.search('^\d{8}@vnu.edu.vn$', str(newUsername))
         checkFullname = re.search("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
                                   "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-                                  "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s]+$", str(newFullname))
+                                  "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s ]+$", str(newFullname))
         checkDob = re.search('([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))',
                              str(newDob))
         checkGender = re.search('(Nam|Nữ)', str(newGender))
@@ -209,12 +209,16 @@ def update_student_info_record(current_user):
                 checkGender is not None) and (checkCourseID is not None) and (
                 newStudentID == newUsername.split('@')[0]):
             #  print('OK1', flush=True)
-            User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob, newGender)
-            Log.create(current_user['ID'],
-                       'Cập nhật thông tin của sinh viên vào hệ thống.',
-                       set_custom_log_time())
+            check = User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob,
+                                      newGender)
+            if check is True:
+                Log.create(current_user['ID'],
+                           'Cập nhật thông tin của sinh viên vào hệ thống.',
+                           set_custom_log_time())
 
-            return jsonify({'status': 'success'}), 200
+                return jsonify({'status': 'success'}), 200
+            else:
+                return jsonify({'status': 'already-exist'}), 202
         else:
             return jsonify({'status': 'bad-request'}), 400
     except:

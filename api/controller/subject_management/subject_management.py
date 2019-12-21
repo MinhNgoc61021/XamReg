@@ -42,12 +42,16 @@ def create_subject(current_user):
         newSubjectTitle = request.get_json().get('SubjectTitle')
         print(newSubjectID, flush=True)
         print(newSubjectTitle, flush=True)
-        validateSubjectID = re.search('([A-Z]{3})([0-9]{4})', str(newSubjectID))
-        if validateSubjectID is not None:
-            isNew = Subject.create(str(newSubjectID).lower().strip(), newSubjectTitle)
+        validateSubjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})$)', str(newSubjectID))
+        validateSubjectTitle = re.search("^[a-zA-Z1-9_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
+                                         "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+                                         "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$", newSubjectTitle)
+        if validateSubjectID is not None or validateSubjectTitle is not None:
+            isNew = Subject.create(str(newSubjectID).upper().strip(), newSubjectTitle)
             if isNew:
                 Log.create(current_user['ID'],
-                           'Thêm môn học: ' + newSubjectID + ' ' + newSubjectTitle + ' vào hệ thống.',
+                           'Thêm môn học: ' + str(newSubjectID).upper().strip() + ' ' + newSubjectTitle + 'vào hệ '
+                                                                                                          'thống.',
                            set_custom_log_time())
                 return jsonify({'status': 'success'}), 200
             else:
@@ -67,12 +71,18 @@ def edit_subject(current_user):
         newSubjectTitle = request.get_json().get('SubjectTitle')
         print(newSubjectID, flush=True)
         print(newSubjectTitle, flush=True)
-        validateSubjectID = re.search('([A-Z]|[a-z]{3})([0-9]{4})', str(newSubjectID))
-        if validateSubjectID is not None:
-            success = Subject.updateRecord(currentSubjectID, str(newSubjectID).strip(), str(newSubjectTitle).strip())
+        validateSubjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})$)', str(newSubjectID).strip())
+        validateSubjectTitle = re.search("^[a-zA-Z1-9_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
+                                         "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+                                         "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$", newSubjectTitle)
+        print(validateSubjectID, flush=True)
+        if validateSubjectID is not None or validateSubjectTitle is not None:
+            success = Subject.updateRecord(currentSubjectID, str(newSubjectID).upper().strip(),
+                                           str(newSubjectTitle).strip())
             if success is True:
                 Log.create(current_user['ID'],
-                           'Thay đổi thông tin môn học: ' + currentSubjectID + ' thành ' + newSubjectID + ' | ' + newSubjectTitle,
+                           'Thay đổi thông tin môn học: ' + currentSubjectID + ' thành ' + str(
+                               newSubjectID).upper().strip() + ' | ' + newSubjectTitle,
                            set_custom_log_time())
                 return jsonify({'status': 'success'}), 200
             else:
@@ -88,7 +98,7 @@ def edit_subject(current_user):
 def remove_subject(current_user):
     try:
         delSubjectID = request.get_json().get('delSubjectID')
-        validate = re.search('([A-Z]{3})([0-9]{4})', str(delSubjectID))
+        validate = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})$)', str(delSubjectID))
         if validate:
             Subject.delRecord(delSubjectID)
             Log.create(current_user['ID'],
