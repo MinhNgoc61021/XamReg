@@ -128,6 +128,7 @@ def register_shift(current_user):
         check = Student_Shift.create(Room_ShiftID, studentID)
         print('OK12', flush=True)
         if check != 'success':
+            print(check, flush=True)
             return jsonify({'status': check}), 202
         else:
             Log.create(current_user['ID'],

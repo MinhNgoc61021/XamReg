@@ -810,9 +810,9 @@ class Student_Shift(Base):
                     sess.commit()
                     return 'success'
                 else:
-                    'already-registered'
+                    return 'already-registered'
             else:
-                'out of capacity'
+                return 'out of capacity'
         except:
             sess.rollback()
             raise
