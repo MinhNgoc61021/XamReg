@@ -11,6 +11,7 @@ import log_management from "../components/Admin/log_management/log_management";
 import subject_management from "../components/Admin/subject_management/subject_management";
 import student_home_page from "../components/Student/home_page";
 import shift_register from "../components/Student/shift_register/shift_register";
+import export_ticket from "../components/Student/export_ticket/export_ticket";
 import exam_room_management from "../components/Admin/exam_room_management/exam_room_management";
 import manual from "../components/manual_script/manual";
 import { getToken } from "../components/api/jwt_handling";
@@ -42,6 +43,7 @@ export const router = new Router({
                     }
                     },
                   { path: '/student-manual', name: 'manual', component: manual },
+                  { path: '/export-ticket/:studentid', component: export_ticket, name: 'export-ticket',  props: true },
                   { path: '/shift-register/:studentid', component: shift_register, name: 'shift-register' , props: true,
                     beforeEnter (to, from, next)  {
                         if (getToken(localStorage.getItem('user')).type === 'Admin') {

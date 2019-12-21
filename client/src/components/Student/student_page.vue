@@ -17,6 +17,9 @@
               <b-navbar-item tag="router-link" :to="{ name: 'shift-register', params: { studentid: ID } }" class="routing-link">
                   Đăng ký dự thi
               </b-navbar-item>
+              <b-navbar-item tag="router-link" :to="{ name: 'export-ticket', params: { studentid: ID } }" class="routing-link">
+                  In phiếu đăng kí dự thi
+              </b-navbar-item>
           </template>
 
           <template slot="end">
@@ -54,7 +57,7 @@
       <div class="content has-text-centered" >
         <p>
           <span>ExamReg</span>
-          <a href=""> <b-icon icon-pack="fas" icon="github-circle"></b-icon> <span>Github</span> </a>
+          <a href=""><span>Github</span> </a>
         </p>
       </div>
     </footer>

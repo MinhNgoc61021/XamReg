@@ -150,10 +150,10 @@ class User(Base):
             if str(currentStudentID) == str(newStudentID):
                 sess.query(User).filter_by(ID=currentStudentID).update(
                     {
-                     User.Fullname: newFullname,
-                     User.CourseID: newCourseID,
-                     User.Dob: newDob,
-                     User.Gender: newGender
+                        User.Fullname: newFullname,
+                        User.CourseID: newCourseID,
+                        User.Dob: newDob,
+                        User.Gender: newGender
                     })
                 sess.commit()
                 return True
@@ -305,7 +305,9 @@ class Subject(Base):
         try:
             # A dictionary of key - values with key being the attribute to be updated, and value being the new
             # contents of attribute
-            if sess.query(Subject).filter(or_(Subject.SubjectID == newSubjectID, Subject.SubjectTitle == newSubjectTitle), Subject.SubjectID != currentSubjectID).scalar() is None:
+            if sess.query(Subject).filter(
+                    or_(Subject.SubjectID == newSubjectID, Subject.SubjectTitle == newSubjectTitle),
+                    Subject.SubjectID != currentSubjectID).scalar() is None:
                 sess.query(Subject).filter_by(SubjectID=currentSubjectID).update(
                     {Subject.SubjectID: newSubjectID, Subject.SubjectTitle: newSubjectTitle})
                 sess.commit()
@@ -589,7 +591,8 @@ class Shift(Base):
         sess = Session()
         try:
             subject = sess.query(Shift).filter(Shift.SubjectID.like(SubjectID + '%'),
-                                               Student_Status.Status.like('Qualified' + '%'), Student_Status.SubjectID == Shift.SubjectID)
+                                               Student_Status.Status.like('Qualified' + '%'),
+                                               Student_Status.SubjectID == Shift.SubjectID)
             return shift_schema.dump(subject, many=True)
         except:
             sess.rollback()
@@ -753,6 +756,23 @@ class Room_Shift(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def getTicketExportData(cls, studentID):
+        sess = Session()
+        try:
+            record_query = sess.query(Room_Shift).options(
+                joinedload('Exam_Room')
+            ).options(joinedload('Student_Shift')
+                      ).options(joinedload('Shift')
+                                ).filter(Student_Shift.StudentID == studentID, Student_Shift.Room_ShiftID == Room_Shift.Room_ShiftID)
+
+            return roomshift_schema.dump(record_query, many=True)
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
 
 # Student_Shift persistent class
 # dùng bảng này đăng ký nhé
@@ -776,14 +796,15 @@ class Student_Shift(Base):
     def create(cls, room_shiftID, studentID):
         sess = Session()
         try:
-            registerTotalbyRoom_Shift = sess.query(Room_Shift).filter(Room_Shift.Room_ShiftID == room_shiftID).group_by(Room_Shift.Room_ShiftID).count()
-            getMaxcapacity = sess.query(Exam_Room).join(Room_Shift).filter(Room_Shift.Room_ShiftID == room_shiftID).first()
-            # print(registerTotalbyRoom_Shift, flush=True)
-            # print(getMaxcapacity.Maxcapacity, flush=True)
-            # print('OK1', flush=True)
+            registerTotalbyRoom_Shift = sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID).count()
+            getMaxcapacity = sess.query(Exam_Room).join(Room_Shift).filter(
+                Room_Shift.Room_ShiftID == room_shiftID).first()
+            print(registerTotalbyRoom_Shift, flush=True)
+            print(getMaxcapacity.Maxcapacity, flush=True)
+            print('OK1', flush=True)
             if int(registerTotalbyRoom_Shift) < int(getMaxcapacity.Maxcapacity):
                 if sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID,
-                                                Student_Shift.StudentID == studentID).scalar() is None:
+                                                    Student_Shift.StudentID == studentID).scalar() is None:
                     newShift = Student_Shift(Room_ShiftID=room_shiftID, StudentID=str(studentID))
                     sess.add(newShift)
                     sess.commit()
@@ -844,6 +865,19 @@ class Student_Shift(Base):
         finally:
             sess.close()
 
+    @classmethod
+    def delTicketExportData(cls, registerID):
+        sess = Session()
+        try:
+            ticket_row = sess.query(Student_Shift).filter(Student_Shift.RegisterID == registerID).one()
+            sess.delete(ticket_row)
+            sess.commit()
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()
+
 
 # Exam Room persistent class
 class Exam_Room(Base):
@@ -855,7 +889,8 @@ class Exam_Room(Base):
                       nullable=False)
     Maxcapacity = Column(Integer,
                          nullable=False)
-
+    Room_Shift = relationship('Room_Shift',
+                              back_populates='exam_room')
     @classmethod
     def create(cls, room_name, maxcapacity):
         sess = Session()
@@ -1028,6 +1063,9 @@ Room_Shift.student_shift = relationship('Student_Shift',
                                         order_by=Student_Shift.Room_ShiftID,
                                         back_populates='Room_Shift',
                                         cascade='all, delete, delete-orphan')
+Room_Shift.exam_room = relationship('Exam_Room',
+                                    order_by=Exam_Room.RoomID,
+                                    back_populates='Room_Shift')
 
 Student_Shift.room_shift = relationship('Room_Shift',
                                         order_by=Room_Shift.Room_ShiftID,
@@ -1077,6 +1115,16 @@ class StudentStatusSchema(ModelSchema):
         # sqla_session = scoped_session
 
 
+class ShiftSchema(ModelSchema):
+    Subject = Nested(SubjectSchema)
+
+    class Meta:
+        model = Shift
+        # optionally attach a Session
+        # to use for deserialization
+        # sqla_session = scoped_session
+
+
 class StudentShiftSchema(ModelSchema):
     class Meta:
         model = Student_Shift
@@ -1093,19 +1141,11 @@ class ExamRoomSchema(ModelSchema):
 class RoomShiftSchema(ModelSchema):
     Exam_Room = Nested(ExamRoomSchema)
     Student_Shift = Nested(StudentShiftSchema, many=True, only=['RegisterID'])
+    Subject = Nested(SubjectSchema)
+    Shift = Nested(ShiftSchema)
 
     class Meta:
         model = Room_Shift
-
-
-class ShiftSchema(ModelSchema):
-    Subject = Nested(SubjectSchema)
-
-    class Meta:
-        model = Shift
-        # optionally attach a Session
-        # to use for deserialization
-        # sqla_session = scoped_session
 
 
 class SemesterExaminationSchema(ModelSchema):

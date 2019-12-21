@@ -194,6 +194,14 @@ module.exports = {
         target: 'http://api:5000',
         changeOrigin: true,
       },
+      '/shift-register/export-records':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/remove-export-records':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      }
     },
 
     // Various Dev Server settings

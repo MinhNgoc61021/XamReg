@@ -121,10 +121,11 @@ def unregister_shift(current_user):
 @shift_register.route('/register-shift', methods=['POST'])
 @token_required
 def register_shift(current_user):
-    try:
         studentID = request.get_json().get('studentID')
         Room_ShiftID = request.get_json().get('Room_ShiftID')
+        print('OK2', flush=True)
         check = Student_Shift.create(Room_ShiftID, studentID)
+        print('OK1', flush=True)
         if check[0] is False:
             return jsonify({'status': check[1]}), 202
         else:
@@ -132,8 +133,6 @@ def register_shift(current_user):
                        'Đã đăng ký ca thi ' + str(Room_ShiftID),
                        set_custom_log_time())
             return jsonify({'status': 'success'}), 200
-    except:
-        return jsonify({'status': 'bad-request'}), 400
 
 
 @shift_register.route('/registered-room-shift-records', methods=['GET'])
@@ -187,5 +186,34 @@ def get_info(current_user):
     try:
         return jsonify({'status': 'success',
                        'info': current_user}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+@shift_register.route('/export-records', methods=['get'])
+@token_required
+def get_export_records(current_user):
+    try:
+        studentID = request.args.get('studentID')
+
+        # query ở đây
+        record = Room_Shift.getTicketExportData(studentID)
+        print(record, flush=True)
+        return jsonify({'status': 'success',
+                        'result_records': record
+                        }), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@shift_register.route('/remove-export-records', methods=['DELETE'])
+@token_required
+def remove_export_records(current_user):
+    try:
+        record = request.get_json()
+        registerID = record.get('delRegisterID')
+        print("Registerrrrrr", registerID, flush=True)
+        Student_Shift.delTicketExportData(str(registerID))
+
+        return jsonify({'status': 'success'}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
