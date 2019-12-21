@@ -171,9 +171,7 @@
                 </div>
                 <div class="notification">
                   <div class="content">
-                    <!--add anh form thêm từng thông tin về sinh viên-->
-                    • Nhấn vào nút <b-icon pack="fas" icon="trash" size="is-small"></b-icon> để xóa thông tin của sinh viên đó khỏi bảng.<br>
-                    • Quản trị viên nhập Mã môn thi tại thanh tìm kiếm <b-input placeholder="Tìm kiếm bằng mã môn học"></b-input> để tìm kiếm thông tin về ca thi mà sinh viên mong muốn.<br>
+                    • Sinh viên nhập Mã môn thi tại thanh tìm kiếm <b-input placeholder="Tìm kiếm bằng mã môn học"></b-input> để tìm kiếm thông tin về ca thi mà sinh viên mong muốn.<br>
                     • Nhấn vào nút  <b-button><b-icon size="is-small" icon="sync"/><span>Làm mới</span></b-button> để tải lại bảng.<br>
                     • Nhấn vào nút <b-icon pack="fas" icon="chevron-right" size="is-small"></b-icon> đầu mỗi hàng để xem thông tin chi tiết về <b>ca thi</b> và <b>phòng thi</b> của sinh viên:
                     <p style="padding-left: 30px;">
@@ -182,6 +180,19 @@
                     </p>
                     • Nhấn vào mũi tên <b-icon pack="fas" icon="arrow-up" size="is-small"></b-icon> hoặc <b-icon pack="fas" icon="arrow-down" size="is-small"></b-icon> tại tên cột để sắp xếp lại theo thứ tự tăng dần hoặc giảm dần.<br>
                     <p><b-icon pack="fas" icon="exclamation-triangle" size="is-small"></b-icon><strong style="color: red"> Chú ý:</strong> Sẽ có trường hợp sinh viên bị thiếu môn: có thể do hệ thống chưa cập nhật thêm hoặc do sinh viên không đủ điều kiện thi những môn thi đó.</p>
+                  </div>
+                </div>
+            </b-collapse>
+            <b-collapse :open="false" aria-id="contentIdForA11y1">
+                <div class = "header1"
+                     slot="trigger"
+                     aria-controls="student-manual"><i>3.3. In phiếu đăng ký dự thi</i>
+                </div>
+                <div class="notification">
+                  <div class="content">
+                    • Nhấn vào nút <b-icon pack="fas" icon="trash" size="is-small"></b-icon> để hủy đăng ký ca thi<br>
+                    • Nhấn vào nút  <b-button><b-icon size="is-small" icon="sync"/><span>Làm mới</span></b-button> để tải lại bảng.<br>
+                    • Nhấn vào nút <b-button icon-left="file-pdf">In phiếu đăng ký dự thi</b-button> để in phiếu đăng ký dự thi.<br>
                   </div>
                 </div>
             </b-collapse>
