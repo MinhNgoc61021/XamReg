@@ -87,7 +87,7 @@
                 </b-table-column>
 
                 <b-table-column field="Dob" label="Ngày sinh" sortable>
-                    <span class="tag is-success">
+                    <span class="tag is-primary">
                      {{ formatDate(props.row.Dob) }}
                     </span>
                 </b-table-column>

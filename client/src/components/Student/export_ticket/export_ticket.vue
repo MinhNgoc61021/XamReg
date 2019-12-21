@@ -29,7 +29,7 @@
               <b>{{ props.row.Shift.Subject.SubjectID }} | {{ props.row.Shift.Subject.SubjectTitle }}</b>
             </b-table-column>
             <b-table-column field="Date_Start" label="Ngày thi">
-              <span class="tag is-success">
+              <span class="tag is-primary">
                 {{ formatDate(props.row.Shift.Date_Start) }}
               </span>
             </b-table-column>

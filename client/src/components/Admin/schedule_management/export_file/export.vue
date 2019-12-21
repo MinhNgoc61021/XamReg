@@ -77,7 +77,7 @@
                               <b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}</b>
                             </b-table-column>
                             <b-table-column field="Date_Start" label="Ngày thi" width="100" sortable>
-                              <span class="tag is-success">
+                              <span class="tag is-primary">
                                 {{ formatDate(props.row.Date_Start) }}
                               </span>
                             </b-table-column>
@@ -181,7 +181,7 @@
                                                   {{ props.row.Fullname }}
                                                 </b-table-column>
                                                 <b-table-column field="Dob" label="Ngày sinh" width="100" sortable>
-                                                 <span class="tag is-success">
+                                                 <span class="tag is-primary">
                                                     {{ formatDate(props.row.Dob) }}
                                                  </span>
                                                 </b-table-column>

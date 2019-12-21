@@ -52,7 +52,7 @@
                     </b-table-column>
 
                     <b-table-column field="Created_At" label="Thời gian" width="120" sortable>
-                        <span class="tag is-success">
+                        <span class="tag is-primary">
                           {{ formatDate(props.row.Created_At) }}
                         </span>
                     </b-table-column>

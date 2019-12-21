@@ -151,6 +151,6 @@
 
 <style scoped>
 .header1:hover {
-  color: midnightblue;
+  color: #3273dc;
 }
 </style>
