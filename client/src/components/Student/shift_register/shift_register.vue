@@ -4,7 +4,7 @@
       <h2 class="subtitle is-6">Sinh viên đăng ký ca thi mà sinh viên đủ điều kiện dự thi và đang còn chỗ trống</h2>
       <b-field grouped group-multiline>
         <b-button
-          :class="{'is-loading': shift.create_loading}"
+          :class="{'is-loading': shift.shift_loading}"
           class="button"
           @click="getShiftRecordData"
         >
