@@ -83,6 +83,9 @@
       </b-table>
     </b-field>
     <b-field v-else>
+        <b-message type="is-danger" has-icon>
+            Hiện tại chưa có dữ liệu phòng thi, bạn hãy nhập thêm phòng thi!
+        </b-message>
     </b-field>
   </div>
 </template>

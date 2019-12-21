@@ -142,10 +142,6 @@ module.exports = {
           target: 'http://api:5000',
           changeOrigin: true,
       },
-      '/schedule/student-records': {
-          target: 'http://api:5000',
-          changeOrigin: true,
-      },
       '/room/room-records': {
           target: 'http://api:5000',
           changeOrigin: true,
@@ -191,6 +187,14 @@ module.exports = {
         changeOrigin: true,
       },
       '/shift-register/registered-room-shift-records':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/export-records':{
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+      '/shift-register/remove-export-records':{
         target: 'http://api:5000',
         changeOrigin: true,
       }

@@ -177,3 +177,33 @@ def get_registered_shift(current_user):
                         }), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
+
+
+@shift_register.route('/export-records', methods=['get'])
+@token_required
+def get_export_records(current_user):
+    try:
+        studentID = request.args.get('studentID')
+
+        # query ở đây
+        record = Room_Shift.getTicketExportData(studentID)
+        print(record, flush=True)
+        return jsonify({'status': 'success',
+                        'result_records': record
+                        }), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
+
+
+@shift_register.route('/remove-export-records', methods=['DELETE'])
+@token_required
+def remove_export_records(current_user):
+    try:
+        record = request.get_json()
+        registerID = record.get('delRegisterID')
+        print("Registerrrrrr", registerID, flush=True)
+        Room_Shift.delTicketExportData(str(registerID))
+
+        return jsonify({'status': 'success'}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400

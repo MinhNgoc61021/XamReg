@@ -233,7 +233,6 @@
     import {authHeader} from "../../../api/jwt_handling";
     import debounce from 'lodash/debounce';
     import printJS from 'print-js'
-    import XLSX from 'xlsx';
 
     export default {
         name: 'export',
@@ -546,7 +545,7 @@
                           { field: 'Gender', displayName: 'Giới tính'},
                           { field: 'CourseID', displayName: 'Mã lớp học'}
                         ],
-                  documentTitle: "Danh sách sinh viên tại phòng " + this.currentRoomName + 'Môn thi: ' + this.currentSubjectName,
+                  documentTitle: `Danh sách sinh viên tại phòng ` + this.currentRoomName + ` | Môn thi:`  + this.currentSubjectName,
                   headerStyle: 'font-weight: 300;',
                   repeatTableHeader: false,
                   type: 'json'
