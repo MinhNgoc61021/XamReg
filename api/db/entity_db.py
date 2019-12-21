@@ -802,17 +802,18 @@ class Student_Shift(Base):
             print(registerTotalbyRoom_Shift, flush=True)
             print(getMaxcapacity.Maxcapacity, flush=True)
             print('OK1', flush=True)
-            if int(registerTotalbyRoom_Shift) < int(getMaxcapacity.Maxcapacity):
-                if sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID,
-                                                    Student_Shift.StudentID == studentID).scalar() is None:
+
+            if sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID,
+                                                Student_Shift.StudentID == studentID).scalar() is None:
+                if int(registerTotalbyRoom_Shift) < int(getMaxcapacity.Maxcapacity):
                     newShift = Student_Shift(Room_ShiftID=room_shiftID, StudentID=str(studentID))
                     sess.add(newShift)
                     sess.commit()
                     return 'success'
                 else:
-                    return 'already-registered'
+                    return 'out of capacity'
             else:
-                return 'out of capacity'
+                return 'already-registered'
         except:
             sess.rollback()
             raise
