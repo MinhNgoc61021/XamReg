@@ -177,24 +177,13 @@
         <b-table
           :data="registered_shift.registered_shift_record_data"
           :loading="registered_shift.shift_loading"
-          detailed
-          backend-sorting
-          hoverable
-          detail-key="ShiftID"
-          :opened-detailed="registered_shift.ID_Index"
-          :default-sort-direction="registered_shift.defaultSortOrder"
-          :default-sort="[registered_shift.sortField, registered_shift.sortOrder]"
-          @sort="onRegisteredShiftSort"
-          @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRegisteredRoomShiftRecordData(); closeOtherRegisteredDetails(row, index) }"
-          @details-close="(row, index) => { registered_room.room_record_data = [] }"
-          :show-detail-icon="true"
         >
           <template slot-scope="props">
-            <b-table-column field="ShiftID" label="Mã ca thi" sortable>
-              {{ props.row.ShiftID }}
-            </b-table-column>
             <b-table-column field="SubjectID" label="Môn thi" sortable>
               <b></b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}
+            </b-table-column>
+            <b-table-column field="RoomName" label="Phòng thi" sortable>
+              {{ props.row.RoomName }}
             </b-table-column>
             <b-table-column field="Date_Start" label="Ngày thi" sortable>
               {{ formatDate(props.row.Date_Start) }}
@@ -284,38 +273,21 @@
                   shift_loading: false,
                   create_loading: false,
                   search_loading: false,
-                  sortField: 'ShiftID',
-                  sortOrder: 'desc',
-                  defaultSortOrder: 'desc',
-                  page: 1,
-                  per_page: 5,
                   ID_Index: [],
                 },
                 room: {
                     roomID: '',
                     room_record_data: [],
-                    total: 0,
                     searchResults: [],
                     room_loading: false,
                     search_loading: false,
-                    sortField: 'RoomID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
                 },
                 registered_room: {
                     roomID: '',
                     room_record_data: [],
-                    total: 0,
                     searchResults: [],
                     room_loading: false,
                     search_loading: false,
-                    sortField: 'RoomID',
-                    sortOrder: 'desc',
-                    defaultSortOrder: 'desc',
-                    page: 1,
-                    per_page: 5,
                 },
                 search: {
                   searchResults: [],
@@ -423,6 +395,7 @@
                       throw error;
                   }
             },
+            // lấy data các môn đã thi
             async getRegisteredRoomShiftRecordData() {
               this.registered_shift.shift_loading = true;
               try {
@@ -480,10 +453,6 @@
                         method: 'get',
                         params: {
                             shiftID: this.currentShiftID,
-                            page_index: this.room.page,
-                            per_page: this.room.per_page,
-                            sort_field: this.room.sortField,
-                            sort_order: this.room.sortOrder
                         },
                         headers: {
                             'Authorization': authHeader(),
