@@ -36,9 +36,9 @@
                         <!--add anh Import danh sách sinh viên-->
                                 • Quản trị viên có thể upload <b>file excel (.xlsx)</b>:
                                   <p style="padding-left: 30px;">
-                                    ◦ File excel <b>Danh sách thông tin sinh viên</b> bao gồm các cột: Mã số sinh viên, tên sinh viên, ngày sinh, giới tính và mã khóa học của sinh viên. <br>
-                                    ◦ File excel <b>Danh sách sinh viên đủ điều kiện và không đủ điều kiện tham gia kì thi học phần </b> bao gồm các cột: Mã số sinh viên, mã số môn học, tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện) <br>
-                                    ◦ File excel tổng hợp của hai file trên bao gồm các cột: Mã số sinh viên, tên sinh viên, ngày sinh, giới tính, mã khóa học của sinh viên, mã số môn học, tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện) <br>
+                                    ◦ File excel <b>Danh sách thông tin sinh viên</b> bao gồm các cột: <b>Mã số sinh viên (VD: 17021000), tên sinh viên, ngày sinh, giới tính và mã khóa học của sinh viên.</b> <br>
+                                    ◦ File excel <b>Danh sách sinh viên đủ điều kiện và không đủ điều kiện tham gia kì thi học phần </b> bao gồm các cột: <b>Mã số sinh viên, mã số môn học (VD: INT1005), tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
+                                    ◦ File excel tổng hợp của của ca hai file trên bao gồm các cột: <b>Mã số sinh viên, tên sinh viên, ngày sinh, giới tính, mã khóa học (VD: K62CACLC2) của sinh viên, mã số môn học, tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
                                   </p>
                         <p><b-icon pack="fas" icon="exclamation-triangle" size="is-small"></b-icon><strong style="color: red">Chú ý</strong>: Yêu cầu file excel phải nhập đúng thứ tự các cột như trên, đặc biệt file <b>Danh sách thông tin sinh viên</b> chỉ bao gồm danh sách các sinh viên đã có tài khoản trên hệ thống.</p>
                       </div>

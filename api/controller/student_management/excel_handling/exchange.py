@@ -66,13 +66,13 @@ def upload(current_user):
                 subjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})$)',
                                       str(excel_data['subjectID']))
                 status = re.search('(đủ điều kiện|không đủ điều kiện)', excel_data['status'].lower())
-                # print(ID, flush=True)
-                # print(fullname, flush=True)
-                # print(dob, flush=True)
-                # print(gender, flush=True)
-                # print(courseID, flush=True)
-                # print(subjectID, flush=True)
-                # print(status, flush=True)
+                print(ID, flush=True)
+                print(fullname, flush=True)
+                print(dob, flush=True)
+                print(gender, flush=True)
+                print(courseID, flush=True)
+                print(subjectID, flush=True)
+                print(status, flush=True)
 
                 if (ID is not None) and (fullname is not None) and (dob is not None) and (gender is not None) and (
                         courseID is not None) and (subjectID is not None) and (status is not None):
@@ -90,7 +90,7 @@ def upload(current_user):
                                    excel_data['subjectTitle'])
                     # add qualified and unqualified students to database
                     Student_Status.create(excel_data['ID'],
-                                          excel_data['subjectID'].upper(), excel_data['status'])
+                                          str(excel_data['subjectID']).upper(), str(excel_data['status']).lower())
                 else:
                     return jsonify({'status': 'error', 'message': 'Du'}), 400
 
@@ -174,8 +174,8 @@ def upload(current_user):
                                            excel_data['subjectTitle'])
                             # add qualified and unqualified students to database
                             Student_Status.create(str(excel_data['ID']).replace(' ', ''),
-                                                  excel_data['subjectID'].upper(),
-                                                  excel_data['status'])
+                                                  str(excel_data['subjectID']).upper(),
+                                                  str(excel_data['status']).lower())
                         else:
                             return jsonify({'status': 'bad-request'}), 400
                     else:

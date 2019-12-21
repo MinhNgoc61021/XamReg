@@ -103,7 +103,7 @@
                         this.register_result.push(item);
                       });
                   this.loading = false;
-                  console.log(response.data);
+                  // console.log(response.data);
                   // const subject_data = response.data.result_records['Shift']['Subject'];
                   // this.subject_data['SubjectID'] = subject_data['SubjectID'];
                   // this.subject_data['SubjectTitle'] = subject_data['SubjectTitle'];
@@ -135,38 +135,48 @@
               }
             },
             async onDelete(row) {
-              try {
-                const removeData = await axios({
-                  url: '/shift-register/remove-export-records',
-                  method: 'delete',
-                  headers: {
-                    'Authorization': authHeader(),
-                  },
-                  data: {
-                    delRegisterID: row['Student_Shift'][0]['RegisterID'],
-                  },
+              this.$buefy.dialog.confirm({
+                  title: 'Hủy ca thi',
+                  message: `Bạn có chắc chắn là muốn <b>hủy</b> ca thi số ${row.Shift.ShiftID} này không? Đã làm thì tự chịu đấy.`,
+                  confirmText: 'Hủy!',
+                  cancelText: 'Bỏ qua',
+                  type: 'is-danger',
+                  hasIcon: true,
+                  onConfirm: async () => {
+                      try {
+                          const removeData = await axios({
+                              url: '/shift-register/remove-export-records',
+                              method: 'delete',
+                              headers: {
+                                'Authorization': authHeader(),
+                              },
+                              data: {
+                                delRegisterID: row['Student_Shift'][0]['RegisterID'],
+                              },
+                          });
+                          if (removeData.status === 200) {
+                              this.$buefy.notification.open({
+                                duration: 2000,
+                                message: `Đã hủy ca thi đăng kí thành công.`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                              });
+                          }
+                          this.getRecord();
+                        } catch (e) {
+                            if (e['message'].includes('401')) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                })
+                            }
+                        }
+                    }
                 });
-                if (removeData.status === 200) {
-                  this.$buefy.notification.open({
-                    duration: 2000,
-                    message: `Đã xóa ca thi đăng kí thành công.`,
-                    position: 'is-bottom-right',
-                    type: 'is-success',
-                    hasIcon: true
-                  });
-                }
-                this.getRecord();
-              } catch (e) {
-                if (e['message'].includes('401')) {
-                  this.$buefy.notification.open({
-                    duration: 2000,
-                    message: 'Không được quyền sử dụng!',
-                    position: 'is-bottom-right',
-                    type: 'is-danger',
-                    hasIcon: true
-                  })
-                }
-              }
             }
         },
           mounted() {
