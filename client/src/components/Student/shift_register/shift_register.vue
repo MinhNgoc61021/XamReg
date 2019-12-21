@@ -321,10 +321,6 @@
                 this.shift.ID_Index = [row.ShiftID];
                 // console.log(this.student_status.ID_Index);
             },
-            closeOtherRegisteredDetails(row) {
-                this.registered_shift.ID_Index = [row.ShiftID];
-                // console.log(this.student_status.ID_Index);
-            },
             async getRoomRecord() {
                 this.room.room_loading = true;
                 try {
@@ -342,13 +338,13 @@
                             'Authorization': authHeader(),
                         }
                     });
-                    console.log(response.data.room_records);
+                    // console.log(response.data.room_records);
                     if (response.status === 200) {
                         this.room.room_record_data = [];
                         this.room.total = response.data.total_results;
                         response.data.room_records.forEach((item) => {
                             this.room.room_record_data.push(item);
-                            console.log(item);
+                            // console.log(item);
                         });
                         this.room.room_loading = false
                     }
@@ -468,7 +464,7 @@
             },
         },
         mounted() {
-            console.log(this.currentSemesterID);
+            // console.log(this.currentSemesterID);
             if (this.currentSemesterID === '') {
                 this.selectSemesterModal();
             }

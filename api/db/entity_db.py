@@ -808,11 +808,11 @@ class Student_Shift(Base):
                     newShift = Student_Shift(Room_ShiftID=room_shiftID, StudentID=str(studentID))
                     sess.add(newShift)
                     sess.commit()
-                    return True
+                    return 'success'
                 else:
-                    return False, 'already-registered'
+                    'already-registered'
             else:
-                return False, 'out of capacity'
+                'out of capacity'
         except:
             sess.rollback()
             raise

@@ -121,18 +121,21 @@ def unregister_shift(current_user):
 @shift_register.route('/register-shift', methods=['POST'])
 @token_required
 def register_shift(current_user):
+    try:
         studentID = request.get_json().get('studentID')
         Room_ShiftID = request.get_json().get('Room_ShiftID')
-        print('OK2', flush=True)
-        check = Student_Shift.create(Room_ShiftID, studentID)
         print('OK1', flush=True)
-        if check[0] is False:
-            return jsonify({'status': check[1]}), 202
+        check = Student_Shift.create(Room_ShiftID, studentID)
+        print('OK12', flush=True)
+        if check != 'success':
+            return jsonify({'status': check}), 202
         else:
             Log.create(current_user['ID'],
                        'Đã đăng ký ca thi ' + str(Room_ShiftID),
                        set_custom_log_time())
             return jsonify({'status': 'success'}), 200
+    except:
+        return jsonify({'status': 'bad-request'}), 400
 
 
 @shift_register.route('/registered-room-shift-records', methods=['GET'])
