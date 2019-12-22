@@ -412,7 +412,7 @@ class Semester_Examination(Base):
     def searchSemesterRecord(cls, SemTitle):
         sess = Session()
         try:
-            semester = sess.query(Semester_Examination).filter(Semester_Examination.SemTitle.like(SemTitle + '%'),
+            semester = sess.query(Semester_Examination).filter(Semester_Examination.SemTitle.like('%' + SemTitle + '%'),
                                                                Semester_Examination.Status == True)
             return semester_examination_schema.dump(semester, many=True)
         except:
