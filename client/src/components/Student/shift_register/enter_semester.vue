@@ -38,6 +38,8 @@
 import axios from "axios";
 import {authHeader} from "../../api/jwt_handling";
 import debounce from 'lodash/debounce';
+import { mapState } from 'vuex';
+
 export default {
   props: ['semesterID'],
   name: "enter_semester",
@@ -53,10 +55,15 @@ export default {
       }
     }
   },
+  computed: {
+      ...mapState([
+          'ID',
+      ]),
+  },
   methods: {
     go_home() {
       this.$parent.close();
-      this.$router.push({ name: 'student-home' })
+      this.$router.push({ name: 'student-info', params: { studentid: this.ID }, props: true})
     },
     async submitSemesterData() {
         if (this.semester_record !== []) {

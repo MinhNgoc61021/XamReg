@@ -24,7 +24,8 @@
           <div class="column" v-for="item in register_result">
             <div class="card">
               <div style="padding: 10px; margin: 10px;">
-                <h3><b>Mã ca thi: </b>{{ item.Shift.ShiftID }}</h3>
+                <p><b>MSSV: </b> {{ studentid }}</p>
+                <p><b>Mã ca thi: </b>{{ item.Shift.ShiftID }}</p>
                 <p><b>Môn thi: </b>{{ item.Shift.Subject.SubjectID }} | {{ item.Shift.Subject.SubjectTitle }}</p>
                 <p><b>Phòng thi:</b> {{ item.Exam_Room.RoomName}}</p>
                 <p><b>Ngày thi:</b> {{ formatDate(item.Shift.Date_Start) }}</p>

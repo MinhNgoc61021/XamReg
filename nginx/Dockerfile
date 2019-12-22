@@ -1,4 +1,16 @@
-# building from the latest nginx image
-FROM nginx:latest
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d/
+# This image will contain the javascript code as well since it's nginx serving it.
+# Using multi-stage docker build for a smaller final image.
+FROM node:9.5 AS jsbuilder
+
+COPY ./client /client
+WORKDIR /client
+
+RUN npm install
+RUN npm run build
+
+# Multi-stage means the build context needs to be the same, that's a bit disappointing (coupling!)...
+FROM nginx:1.13.9-alpine
+
+COPY deploy/nginx.conf /etc/nginx/nginx.conf
+
+COPY --from=jsbuilder /client/dist/ app/
