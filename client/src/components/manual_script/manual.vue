@@ -192,7 +192,7 @@
                   <div class="content">
                     • Nhấn vào nút <b-icon pack="fas" icon="trash" size="is-small"></b-icon> để hủy đăng ký ca thi<br>
                     • Nhấn vào nút  <b-button><b-icon size="is-small" icon="sync"/><span>Làm mới</span></b-button> để tải lại bảng.<br>
-                    • Nhấn vào nút <b-button icon-left="file-pdf">In phiếu đăng ký dự thi</b-button> để in phiếu đăng ký dự thi.<br>
+                    • Nhấn vào nút <b-button icon-left="file-pdf">In phiếu báo dự thi</b-button> để in phiếu báo dự thi.<br>
                   </div>
                 </div>
             </b-collapse>

@@ -16,7 +16,7 @@
         <span>Làm mới</span>
       </b-button>
       <b-button icon-left="file-pdf" @click="print">
-        In phiếu đăng ký dự thi
+        In phiếu báo dự thi
       </b-button>
     </b-field>
     <div id = "printTickets">
