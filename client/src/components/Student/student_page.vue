@@ -18,7 +18,7 @@
                   Đăng ký dự thi
               </b-navbar-item>
               <b-navbar-item tag="router-link" :to="{ name: 'export-ticket', params: { studentid: ID } }" class="routing-link">
-                  In phiếu đăng kí dự thi
+                  In phiếu báo dự thi
               </b-navbar-item>
           </template>
 
