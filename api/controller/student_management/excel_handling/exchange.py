@@ -83,7 +83,7 @@ def upload(current_user):
                                 str(excel_data['fullname']).title(),
                                 excel_data['dob'],
                                 excel_data['gender'],
-                                excel_data['courseID'],
+                                str(excel_data['courseID']).upper(),
                                 'Student')
                     # add subject to database
                     Subject.create(str(excel_data['subjectID']).upper(),
@@ -137,7 +137,7 @@ def upload(current_user):
                                 str(excel_data['fullname']).title(),
                                 excel_data['dob'],
                                 excel_data['gender'],
-                                excel_data['courseID'],
+                                str(excel_data['courseID']).upper(),
                                 'Student')
                 else:
                     return jsonify({'status': 'error'}), 400
