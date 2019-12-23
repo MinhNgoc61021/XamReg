@@ -48,7 +48,7 @@
 
       <b-field group-multiline v-if="shift.shift_record_data.length === 0">
         <b-message type="is-danger" has-icon>
-          Hiện tại bạn không chưa môn nào được cho phép đăng ký
+          Hiện tại bạn không chưa ca thi(môn thi) nào được cho phép đăng ký
         </b-message>
       </b-field>
 

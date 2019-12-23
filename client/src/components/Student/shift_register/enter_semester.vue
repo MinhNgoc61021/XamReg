@@ -66,12 +66,19 @@ export default {
       this.$router.push({ name: 'student-info', params: { studentid: this.ID }, props: true})
     },
     async submitSemesterData() {
-        if (this.semester_record !== []) {
+        console.log(this.semester.semester_record[0]);
+        if (this.semester.semester_record[0] !== undefined) {
             this.$emit('loadSemesterShifts', this.semester.semester_record[0]);
-          this.$parent.close();
+            this.$parent.close();
         }
         else {
-            this.go_home();
+            this.$buefy.notification.open({
+            duration: 2000,
+            message: 'Kỳ thi này không tồn tại, bạn hãy chọn đúng kỳ thi!',
+            position: 'is-bottom-right',
+            type: 'is-warning',
+            hasIcon: true
+          });
         }
     },
     onSemesterSearch: debounce(function (SemTitle) {
