@@ -1,7 +1,7 @@
 <template>
     <div class="container">
       <h1 class="title is-3">Trợ giúp</h1>
-      <h2 class="subtitle is-6">Hướng dẫn sử dụng về phần mềm ExamReg cho quản trị viên và sinh viên</h2>
+      <h2 class="subtitle is-6">Hướng dẫn sử dụng về phần mềm ExamReg cho sinh viên</h2>
 <!--1/ Đăng nhập-->
         <b-collapse :open="false" aria-id="contentIdForA11y1">
             <div class = "header1"
@@ -12,7 +12,6 @@
 <!--                    add anh register-->
                     <p>
                       • Đối với sinh viên, sử dụng tài khoản được cấp bởi Quản trị viên (Administrator/Admin) để đăng nhập. <br>
-                      • Đối với Quản trị viên sẽ được cấp và thông báo tài khoản đăng nhập
                     </p>
                 </div>
             </div>
@@ -138,19 +137,15 @@
             </div>
           </b-collapse>
         </b-collapse>
-
-
     </div>
 </template>
 
 <script>
     export default {
-        name: "manual"
+        name: "student_manual"
     }
 </script>
 
 <style scoped>
-.header1:hover {
-  color: midnightblue;
-}
+
 </style>

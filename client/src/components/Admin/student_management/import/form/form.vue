@@ -18,7 +18,7 @@
         </b-field>
 
         <b-field label="Ngày sinh">
-            <b-datepicker v-model="newStudent.Dob" placeholder="Hãy nhập họ tên ngày sinh" required></b-datepicker>
+            <b-datepicker v-model="newStudent.Dob" placeholder="Hãy nhập ngày sinh" required></b-datepicker>
         </b-field>
 
         <b-field label="Khóa học">

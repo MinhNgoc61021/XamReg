@@ -10,7 +10,7 @@ from marshmallow_sqlalchemy.fields import Nested
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
 from sqlalchemy_filters import apply_pagination
 
-engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4',
+engine = create_engine('mysql+mysqldb://root:baloney1@db/xamreg?charset=utf8mb4',
                        echo=True,
                        pool_size=5)
 # echo is to set up SQLAlchemy logging

@@ -14,14 +14,14 @@
               <b-navbar-item tag="router-link" :to="{ path: '/student-management' }" class="routing-link">
                   Quản lý sinh viên
               </b-navbar-item>
-              <b-navbar-item tag="router-link" :to="{ path: '/schedule-management' }" class="routing-link">
-                  Quản lý lịch thi
-              </b-navbar-item>
               <b-navbar-item tag="router-link" :to="{ path: '/subject-management' }" class="routing-link">
                   Quản lý môn thi
               </b-navbar-item>
               <b-navbar-item tag="router-link" :to="{ path: '/exam-room-management' }" class="routing-link">
                   Quản lý phòng thi
+              </b-navbar-item>
+              <b-navbar-item tag="router-link" :to="{ path: '/schedule-management' }" class="routing-link">
+                  Quản lý lịch thi
               </b-navbar-item>
               <b-navbar-item tag="router-link" :to="{ path: '/log-management' }" class="routing-link">
                   Quản lý nhật ký
