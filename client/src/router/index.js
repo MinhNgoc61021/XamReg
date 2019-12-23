@@ -13,8 +13,8 @@ import info from "../components/Student/info";
 import shift_register from "../components/Student/shift_register/shift_register";
 import export_ticket from "../components/Student/export_ticket/export_ticket";
 import exam_room_management from "../components/Admin/exam_room_management/exam_room_management";
-import admin_manual from "../components/manual_script/admin_manual";
-import student_manual from "../components/manual_script/student_manual";
+import admin_manual from "../components/manual_instruction/admin_manual";
+import student_manual from "../components/manual_instruction/student_manual";
 import { getToken } from "../components/api/jwt_handling";
 import { store } from '../store/store'
 Vue.use(VeeValidate);
