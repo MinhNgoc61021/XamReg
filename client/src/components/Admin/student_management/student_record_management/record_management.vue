@@ -200,7 +200,7 @@
         </b-field>
         <b-field v-else>
           <b-message type="is-danger" has-icon>
-            Hiện tại chưa có dự liệu sinh viên, bạn hãy nhập vào sinh viên!
+            Hiện tại chưa có dữ liệu sinh viên, bạn hãy nhập vào sinh viên!
           </b-message>
         </b-field>
     </section>
