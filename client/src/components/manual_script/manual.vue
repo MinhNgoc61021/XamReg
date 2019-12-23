@@ -187,8 +187,8 @@
                 </div>
                 <div class="notification">
                   <div class="content">
-                    • Sinh viên nhập tìm kiếm tên kỳ thi tại thanh tìm kiếm <b-input placeholder="Nhập tên kỳ thi"></b-input> để truy cập chọn ca thi mình muốn đăng ký.<br>
-                    • Sinh viên nhập Mã môn thi tại thanh tìm kiếm <b-input placeholder="Tìm kiếm bằng mã môn học"></b-input> để tìm kiếm thông tin về ca thi mà sinh viên mong muốn.<br>
+                    • Sinh viên nhập tìm kiếm tên kỳ thi tại thanh tìm kiếm <b-input placeholder="Nhập tên kỳ thi"></b-input> và chọn kỳ thi để truy cập chọn ca thi mình muốn đăng ký.<br>
+                    • Sinh viên nhập Mã môn thi tại thanh tìm kiếm <b-input placeholder="Tìm kiếm bằng mã môn thi"></b-input>và chọn môn để tìm kiếm thông tin về ca thi mà sinh viên mong muốn.<br>
                     • Nhấn vào nút  <b-button><b-icon size="is-small" icon="sync"/><span>Làm mới</span></b-button> để tải lại bảng.<br>
                     • Nhấn vào nút <b-icon pack="fas" icon="chevron-right" size="is-small"></b-icon> đầu mỗi hàng để xem thông tin chi tiết về <b>ca thi</b> và <b>phòng thi</b> của sinh viên:
                     <p style="padding-left: 30px;">
