@@ -13,7 +13,8 @@ import info from "../components/Student/info";
 import shift_register from "../components/Student/shift_register/shift_register";
 import export_ticket from "../components/Student/export_ticket/export_ticket";
 import exam_room_management from "../components/Admin/exam_room_management/exam_room_management";
-import manual from "../components/manual_script/manual";
+import admin_manual from "../components/manual_script/admin_manual";
+import student_manual from "../components/manual_script/student_manual";
 import { getToken } from "../components/api/jwt_handling";
 import { store } from '../store/store'
 Vue.use(VeeValidate);
@@ -29,7 +30,7 @@ export const router = new Router({
                   { path: '/log-management', component: log_management },
                   { path: '/subject-management', component: subject_management },
                   { path: '/exam-room-management', component: exam_room_management },
-                  { path: '/admin-manual', name: 'manual', component: manual },],
+                  { path: '/admin-manual', name: 'admin-manual', component: admin_manual },],
     },
     { path: '/student', name: 'student', component: student_page, redirect: { name: 'student-info', props: true, params: { studentid: store.state.ID } },
       children: [ { path: '/student-info/:studentid', component: info, name: 'student-info', props: true,
@@ -42,7 +43,7 @@ export const router = new Router({
                         }
                     }
                     },
-                  { path: '/student-manual', name: 'manual', component: manual },
+                  { path: '/student-manual', name: 'student-manual', component: student_manual },
                   { path: '/export-ticket/:studentid', component: export_ticket, name: 'export-ticket',  props: true },
                   { path: '/shift-register/:studentid', component: shift_register, name: 'shift-register' , props: true,
                     beforeEnter (to, from, next)  {
