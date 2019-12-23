@@ -33,7 +33,7 @@
 
             <b-autocomplete
                 :data="search.searchResults"
-                placeholder="Tìm kiếm bằng mã môn học"
+                placeholder="Tìm kiếm bằng mã môn thi"
                 icon="search"
                 field="SubjectID"
                 :loading="search.searchLoading"
@@ -46,8 +46,8 @@
                           <b-icon icon-pack="fas" icon="book"></b-icon>
                         </div>
                         <div class="media-content">
-                          <div><b>Mã môn học: </b>{{ props.option.SubjectID }}</div>
-                          <div><b>Tên môn học: </b>{{ props.option.SubjectTitle }}</div>
+                          <div><b>Mã môn thi: </b>{{ props.option.SubjectID }}</div>
+                          <div><b>Tên môn thi: </b>{{ props.option.SubjectTitle }}</div>
                         </div>
                     </div>
                 </template>
@@ -73,10 +73,10 @@
             @sort="onStatusSort"
           >
             <template slot-scope="props" style="width: 500px">
-              <b-table-column field="SubjectID" label="Mã môn học" sortable width="200px">
+              <b-table-column field="SubjectID" label="Mã môn thi" sortable width="200px">
                 {{props.row.SubjectID}}
               </b-table-column>
-              <b-table-column field="SubjectTitle" label="Tên môn học" sortable  width="200px">
+              <b-table-column field="SubjectTitle" label="Tên môn thi" sortable  width="200px">
                 {{props.row.SubjectTitle}}
               </b-table-column>
               <b-table-column field="Action"  width="90px">
@@ -261,8 +261,8 @@
           },
           async onSubjectDelete(row) {
             this.$buefy.dialog.confirm({
-              title: 'Xóa môn học',
-              message: `Bạn có chắc chắn là muốn <b>xóa</b> môn học ${row.SubjectID} này không? Đã làm là tự chịu đấy.`,
+              title: 'Xóa môn thi',
+              message: `Bạn có chắc chắn là muốn <b>xóa</b> môn thi ${row.SubjectID} này không? Đã làm là tự chịu đấy.`,
               confirmText: 'Xóa!',
               cancelText: 'Hủy bỏ',
               type: 'is-danger',
@@ -282,7 +282,7 @@
                   if (removeData.status === 200) {
                     this.$buefy.notification.open({
                       duration: 2000,
-                      message: `Đã xóa thành công môn học.`,
+                      message: `Đã xóa thành công môn thi.`,
                       position: 'is-bottom-right',
                       type: 'is-success',
                       hasIcon: true
@@ -342,7 +342,7 @@
                    else if (http_status === 202) {
                      this.$buefy.notification.open({
                        duration: 2000,
-                       message: `Tên hoặc mã môn của môn học này đang bị trùng với của môn khác!`,
+                       message: `Tên hoặc mã môn của môn thi này đang bị trùng với của môn khác!`,
                        position: 'is-bottom-right',
                        type: 'is-warning',
                        hasIcon: true

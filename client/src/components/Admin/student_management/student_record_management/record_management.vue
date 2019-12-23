@@ -115,7 +115,7 @@
                 </b-table-column>
             </template>
             <template slot="detail" slot-scope="props">
-                <h4 class="title is-4">Danh sách môn học</h4>
+                <h4 class="title is-4">Danh sách môn thi</h4>
                 <b-field group-multiline>
                   <b-button
                     :class="{'is-loading': student_status.loading}"
@@ -131,7 +131,7 @@
                     icon="search"
                     type="text"
                     :data="subject_search.searchResults"
-                    placeholder="Tìm kiếm để nhập môn thi"
+                    placeholder="Tìm kiếm mã môn thi để nhập"
                     field="SubjectID"
                     :loading="subject_search.searchLoading"
                     @typing="onSubjectSearch"
@@ -143,8 +143,8 @@
                                 <b-icon icon-pack="fas" icon="book"></b-icon>
                               </div>
                               <div class="media-content">
-                                <div><b>Mã môn học: </b>{{ props.option.SubjectID }}</div>
-                                <div><b>Tên môn học: </b>{{ props.option.SubjectTitle }}</div>
+                                <div><b>Mã môn thi: </b>{{ props.option.SubjectID }}</div>
+                                <div><b>Tên môn thi: </b>{{ props.option.SubjectTitle }}</div>
                               </div>
                           </div>
                       </template>
@@ -192,7 +192,7 @@
                 </b-field>
                 <b-field v-else>
                   <b-message type="is-danger" has-icon>
-                    Hiện tại sinh viên này chưa có thông tin về danh sách môn học, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b> hoặc đánh vào <b>Tìm kiếm</b> để nhập môn học cho sinh viên!
+                    Hiện tại sinh viên này chưa có thông tin về danh sách môn thi, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b> hoặc đánh vào <b>Tìm kiếm</b> để nhập môn thi cho sinh viên!
                   </b-message>
                 </b-field>
             </template>
@@ -508,7 +508,7 @@
                     if (response.data.status === 'success') {
                         this.$buefy.notification.open({
                             duration: 2000,
-                            message: `Đã thêm môn học cho sinh viên có MSSV ${this.student_status.currentStudentID} thành công.`,
+                            message: `Đã thêm môn thi cho sinh viên có MSSV ${this.student_status.currentStudentID} thành công.`,
                             position: 'is-bottom-right',
                             type: 'is-success',
                             hasIcon: true
@@ -516,7 +516,7 @@
                     } else {
                         this.$buefy.notification.open({
                             duration: 2000,
-                            message: `Môn học đã tồn tại từ trước!`,
+                            message: `Môn thi đã tồn tại từ trước!`,
                             position: 'is-bottom-right',
                             type: 'is-warning',
                             hasIcon: true
@@ -605,7 +605,7 @@
             async onStatusDelete(SubjectID) {
               this.$buefy.dialog.confirm({
                     title: 'Xóa môn',
-                    message: `Bạn có chắc chắn là muốn <b>xóa</b> môn học ${SubjectID} của sinh viên có MSSV ${this.student_status.currentStudentID} này không? Đã làm thì tự chịu đấy.`,
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> môn thi ${SubjectID} của sinh viên có MSSV ${this.student_status.currentStudentID} này không? Đã làm thì tự chịu đấy.`,
                     confirmText: 'Xóa!',
                     cancelText: 'Bỏ qua',
                     type: 'is-danger',
@@ -626,7 +626,7 @@
                             if (removeData.status === 200) {
                                 this.$buefy.notification.open({
                                     duration: 2000,
-                                    message: `Đã xóa thành công môn học ${SubjectID} của sinh viên có MSSV <b>${this.student_status.currentStudentID}</b>!`,
+                                    message: `Đã xóa thành công môn thi ${SubjectID} của sinh viên có MSSV <b>${this.student_status.currentStudentID}</b>!`,
                                     position: 'is-bottom-right',
                                     type: 'is-success',
                                     hasIcon: true
@@ -693,7 +693,7 @@
                     this.student_status.loading = false;
                     this.$buefy.notification.open({
                         duration: 2000,
-                        message: `Không thể lấy được dữ liệu môn học của sinh viên có MSSV ${this.student_status.currentStudentID} này!`,
+                        message: `Không thể lấy được dữ liệu môn thi của sinh viên có MSSV ${this.student_status.currentStudentID} này!`,
                         position: 'is-bottom-right',
                         type: 'is-danger',
                         hasIcon: true

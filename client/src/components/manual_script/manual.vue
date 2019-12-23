@@ -30,7 +30,7 @@
                     aria-controls="student-management-manual"><i>2.1. Quản lí sinh viên</i>
                 </div>
                 <b-collapse :open="false" aria-id="contentIdForA11y1">
-                    <div class = "header1"
+                    <div class = "header2"
                         slot="trigger"
                         aria-controls="student-management-manual"><i>2.1.1. Import danh sách sinh viên tại tab Nhập bằng Excel</i></div>
                     <div class="notification">
@@ -38,9 +38,12 @@
                         <!--add anh Import danh sách sinh viên-->
                                 • Quản trị viên có thể upload <b>file excel (.xlsx)</b>:
                                   <p style="padding-left: 30px;">
-                                    ◦ File excel <b>Danh sách thông tin sinh viên</b> bao gồm các cột: <b>Mã số sinh viên (VD: 17021000), tên sinh viên, ngày sinh, giới tính và mã khóa học của sinh viên.</b> <br>
-                                    ◦ File excel <b>Danh sách sinh viên đủ điều kiện và không đủ điều kiện tham gia kì thi học phần </b> bao gồm các cột: <b>Mã số sinh viên, mã số môn học (VD: INT1005), tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
-                                    ◦ File excel tổng hợp của của ca hai file trên bao gồm các cột: <b>Mã số sinh viên, tên sinh viên, ngày sinh, giới tính, mã khóa học (VD: K62CACLC2) của sinh viên, mã số môn học, tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
+                                    ◦ <u>Loại 1</u>: File excel <b>Danh sách thông tin sinh viên</b> bao gồm các cột: <b>Mã số sinh viên (VD: 17021000), tên sinh viên, ngày sinh, giới tính và mã khóa học của sinh viên.</b> <br>
+                                    <img :src="'/static/img/manual_pics/Input_format/Excel_format_01.png'" style="margin: 10px;" alt="Loại 1"><br>
+                                    ◦ <u>Loại 2</u>: File excel <b>Danh sách sinh viên đủ điều kiện và không đủ điều kiện tham gia kì thi học phần </b> bao gồm các cột: <b>Mã số sinh viên, mã số môn học (VD: INT1005), tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
+                                    <img :src="'/static/img/manual_pics/Input_format/Excel_format_02.png'" style="margin: 10px;" alt="Loại 2"><br>
+                                    ◦ <u>Loại 3</u>: File excel tổng hợp của của ca hai file trên bao gồm các cột: <b>Mã số sinh viên, tên sinh viên, ngày sinh, giới tính, mã khóa học (VD: K62CACLC2) của sinh viên, mã số môn học, tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
+                                    <img :src="'/static/img/manual_pics/Input_format/Excel_format_03.png'" style="margin: 10px;" alt="Loại 3">
                                   </p>
                         <p><b-icon pack="fas" icon="exclamation-triangle" size="is-small"></b-icon><strong style="color: red"> Chú ý:</strong> Yêu cầu file excel phải nhập đúng thứ tự các cột như trên, đặc biệt file <b>Danh sách thông tin sinh viên</b> chỉ bao gồm danh sách các sinh viên đã có tài khoản trên hệ thống.</p>
                       </div>
@@ -131,7 +134,19 @@
             <b-collapse :open="false" aria-id="contentIdForA11y1">
               <div class = "header1"
                       slot="trigger"
-                      aria-controls="log-management-manual"><i>2.4. Quản lí nhật ký</i>
+                      aria-controls="log-management-manual"><i>2.4. Quản lí lịch thi</i>
+              </div>
+              <div class="notification">
+                  <div class="content">
+
+                  </div>
+              </div>
+            </b-collapse>
+
+            <b-collapse :open="false" aria-id="contentIdForA11y1">
+              <div class = "header1"
+                      slot="trigger"
+                      aria-controls="log-management-manual"><i>2.5. Quản lí nhật ký</i>
               </div>
               <div class="notification">
                   <div class="content">
@@ -144,6 +159,7 @@
                   </div>
               </div>
             </b-collapse>
+
         </b-collapse>
 <!--        Đối với Sinh viên -->
         <b-collapse :open="false" aria-id="contentIdForA11y1">
@@ -159,7 +175,7 @@
                   <div class="notification">
                       <div class="content">
                           <p>
-                            • Trang thông tin chung sẽ hiểm thị những thông tin của sinh viên như: Tài khoản, Họ và tên, Ngày sinh, Khóa học, Giới tính.
+                            • Trang thông tin chung sẽ hiểm thị những thông tin của sinh viên như: <b>Tài khoản, Họ và tên, Ngày sinh, Khóa học,...</b>.
                           </p>
                       </div>
                   </div>
@@ -171,6 +187,7 @@
                 </div>
                 <div class="notification">
                   <div class="content">
+                    • Sinh viên nhập tìm kiếm tên kỳ thi tại thanh tìm kiếm <b-input placeholder="Nhập tên kỳ thi"></b-input> để truy cập chọn ca thi mình muốn đăng ký.<br>
                     • Sinh viên nhập Mã môn thi tại thanh tìm kiếm <b-input placeholder="Tìm kiếm bằng mã môn học"></b-input> để tìm kiếm thông tin về ca thi mà sinh viên mong muốn.<br>
                     • Nhấn vào nút  <b-button><b-icon size="is-small" icon="sync"/><span>Làm mới</span></b-button> để tải lại bảng.<br>
                     • Nhấn vào nút <b-icon pack="fas" icon="chevron-right" size="is-small"></b-icon> đầu mỗi hàng để xem thông tin chi tiết về <b>ca thi</b> và <b>phòng thi</b> của sinh viên:

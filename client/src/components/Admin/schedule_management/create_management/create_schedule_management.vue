@@ -136,7 +136,7 @@
                               </b-button>
                               <b-autocomplete clear-on-select
                                   :data="room.searchResults"
-                                  placeholder="Tìm kiếm để nhập phòng thi"
+                                  placeholder="Tìm kiếm tên phòng để nhập"
                                   icon="search"
                                   field="RoomName"
                                   :loading="room.search_loading"

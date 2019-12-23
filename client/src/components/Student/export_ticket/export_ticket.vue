@@ -15,7 +15,10 @@
           icon="sync"/>
         <span>Làm mới</span>
       </b-button>
-      <b-button icon-left="file-pdf" @click="print">
+      <b-button icon-left="file-pdf" v-if="register_result.length > 0" @click="print">
+        In phiếu báo dự thi
+      </b-button>
+      <b-button icon-left="file-pdf" v-else disabled @click="print">
         In phiếu báo dự thi
       </b-button>
     </b-field>
@@ -37,38 +40,6 @@
             </div>
           </div>
          </div>
-<!--        <b-field v-if="register_result.length > 0">-->
-<!--          <b-table-->
-<!--            :data="register_result"-->
-<!--            :loading="loading"-->
-<!--            :bordered="true">-->
-<!--              <template slot-scope="props">-->
-<!--                <b-table-column field="ShiftID" label="Ca thi số" width="100">-->
-<!--                  {{ props.row.Shift.ShiftID }}-->
-<!--                </b-table-column>-->
-<!--                <b-table-column field="SubjectTitle" label="Môn thi">-->
-<!--                  <b>{{ props.row.Shift.Subject.SubjectID }} | {{ props.row.Shift.Subject.SubjectTitle }}</b>-->
-<!--                </b-table-column>-->
-<!--                <b-table-column field="Date_Start" label="Ngày thi">-->
-<!--                  <span class="tag is-primary">-->
-<!--                    {{ formatDate(props.row.Shift.Date_Start) }}-->
-<!--                  </span>-->
-<!--                </b-table-column>-->
-<!--                <b-table-column field="Start_At" label="Ca thi bắt đầu">-->
-<!--                  {{ props.row.Shift.Start_At }}-->
-<!--                </b-table-column>-->
-<!--                <b-table-column field="End_At" label="Ca thi kết thúc">-->
-<!--                  {{ props.row.Shift.End_At }}-->
-<!--                </b-table-column>-->
-<!--                <b-table-column field="RoomName" label="Phòng thi">-->
-<!--                  {{ props.row.Exam_Room.RoomName}}-->
-<!--                </b-table-column>-->
-<!--                 <b-table-column field="Action" width="100">-->
-<!--                   <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onDelete(props.row)"></b-button>-->
-<!--                </b-table-column>-->
-<!--              </template>-->
-<!--          </b-table>-->
-<!--        </b-field>-->
         <b-field v-else>
           <b-message type="is-danger" has-icon>
             Hiện tại chưa có dữ liệu ca thi đã đăng kí, yêu cầu sinh viên hãy đăng kí thêm!

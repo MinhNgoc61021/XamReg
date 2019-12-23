@@ -124,9 +124,7 @@ def register_shift(current_user):
     try:
         studentID = request.get_json().get('studentID')
         Room_ShiftID = request.get_json().get('Room_ShiftID')
-        print('OK1', flush=True)
         check = Student_Shift.create(Room_ShiftID, studentID)
-        print('OK12', flush=True)
         if check != 'success':
             print(check, flush=True)
             return jsonify({'status': check}), 202
@@ -215,8 +213,10 @@ def remove_export_records(current_user):
     try:
         record = request.get_json()
         registerID = record.get('delRegisterID')
-        print("Registerrrrrr", registerID, flush=True)
         Student_Shift.delTicketExportData(str(registerID))
+        Log.create(current_user['ID'],
+                   'Đã hủy phiếu dự thi ' + str(registerID),
+                   set_custom_log_time())
 
         return jsonify({'status': 'success'}), 200
     except:

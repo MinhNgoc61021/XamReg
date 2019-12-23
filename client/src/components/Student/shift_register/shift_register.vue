@@ -17,7 +17,7 @@
 
         <b-autocomplete
           :data="search.searchResults"
-          placeholder="Tìm kiếm bằng mã môn học"
+          placeholder="Tìm kiếm bằng mã môn thi"
           icon="search"
           field="ID"
           :loading="search.searchLoading"
@@ -30,7 +30,7 @@
                 <b-icon icon-pack="fas" icon="user-circle"></b-icon>
               </div>
               <div class="media-content">
-                <b>Mã môn học: </b>{{ props.option.Subject.SubjectID }}
+                <b>Mã môn thi: </b>{{ props.option.Subject.SubjectID }}
                 <br>
                 <b>Mã ca thi: </b>{{ props.option.ShiftID }}
               </div>
