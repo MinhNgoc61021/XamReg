@@ -28,7 +28,7 @@
               <b-collapse :open="false" aria-id="contentIdForA11y1">
                     <div class = "header1"
                         slot="trigger"
-                        aria-controls="student-manual"><i>3.1. Thông tin chung</i>
+                        aria-controls="student-manual"><i>2.1. Thông tin chung</i>
                     </div>
                     <div class="notification">
                         <div class="content">
@@ -41,7 +41,7 @@
               <b-collapse :open="false" aria-id="contentIdForA11y1">
                   <div class = "header1"
                        slot="trigger"
-                       aria-controls="student-manual"><i>3.2. Đăng ký dự thi</i>
+                       aria-controls="student-manual"><i>2.2. Đăng ký dự thi</i>
                   </div>
                   <div class="notification">
                     <div class="content">
@@ -65,7 +65,7 @@
               <b-collapse :open="false" aria-id="contentIdForA11y1">
                   <div class = "header1"
                        slot="trigger"
-                       aria-controls="student-manual"><i>3.3. In phiếu đăng ký dự thi</i>
+                       aria-controls="student-manual"><i>2.3. In phiếu đăng ký dự thi</i>
                   </div>
                   <div class="notification">
                     <div class="content">
