@@ -11,13 +11,13 @@
           icon="sync"/>
         <span>Làm mới</span>
       </b-button>
-      <b-field
-        :type="{ 'is-danger':  SemesterNotExist }"
-        :message="[{ 'Tiêu đề kỳ thi chưa đánh': SemesterNotExist }]" expanded>
+      <b-field :type="{ 'is-danger':  semesterAlert }"
+               :message="[{ 'Tiêu đề kỳ thi chưa đánh': SemesterNotExist,
+                            'Nhập đúng tiêu đề kỳ thi (Không gồm các ký tự đặc biệt ngoài (), -)': invalidSemester  }]"
+         expanded>
         <b-input v-model="semester.newSemester"
+                 @blur="() => { SemesterNotExist = false; invalidSemester = false; semesterAlert = false }"
                  @keyup.enter="addNewSemester"
-                 validation-message="Nhập đúng tiêu đề kỳ thi(Không gồm các ký tự đặc biệt)"
-                 pattern="^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$"
                  placeholder="Nhập tiêu đề để tạo kỳ thi" >
         </b-input>
       </b-field>
@@ -275,6 +275,7 @@
                 invalidSemester: false,
                 hasSubjectError: false,
                 hasRoomError: false,
+                semesterAlert: false,
             }
         },
         methods: {
@@ -284,13 +285,16 @@
             async addNewSemester() {
                 if (this.semester.newSemester.length === 0) {
                     this.SemesterNotExist = true;
+                    this.semesterAlert = true;
+                    this.invalidSemester = false;
                 }
                 else {
-                    let pattern = new RegExp("^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s- ]+$");
+                    this.SemesterNotExist = false;
+                    let pattern = new RegExp("^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\-\\s() ]+$");
                     let check = pattern.test(this.semester.newSemester);
                     if (check) {
                         try {
-                          this.SemesterNotExist = false;
+                          this.semesterAlert = false;
                           this.semester.create_loading = true;
                           const response = await axios({
                               url: '/schedule/create-semester',
@@ -347,6 +351,7 @@
                       }
                     }
                     else {
+                        this.semesterAlert = true;
                         this.invalidSemester = true;
                     }
                 }
