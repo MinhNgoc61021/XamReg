@@ -14,7 +14,7 @@
           <p>
             • Sinh viên sử dụng tài khoản được cấp bởi Quản trị viên (Administrator/Admin) để đăng nhập. <br>
           </p>
-          <p><b-icon pack="fas" icon="exclamation-triangle" size="is-small"></b-icon><strong style="color: red"> Chú ý:</strong> Sinh viên được cấp tài khoản mặc định mật khẩu sẽ là MSSV của sinh viên đó.</p>
+          <p><b-icon pack="fas" icon="exclamation-triangle" size="is-small"></b-icon><strong style="color: red"> Chú ý:</strong> Sinh viên được cấp tài khoản mặc định mật khẩu ban đầu sẽ là MSSV của sinh viên đó, khuyến cáo sinh viên thay đổi mật khẩu để bảo vệ quyền lợi và thông tin của mình.</p>
         </div>
       </div>
     </b-collapse>
