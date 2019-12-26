@@ -73,7 +73,7 @@
           :default-sort-direction="shift.defaultSortOrder"
           :default-sort="[shift.sortField, shift.sortOrder]"
           @sort="onShiftSort"
-          @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRoomRecord(); closeOtherDetails(row, index) }"
+          @details-open="(row, index) => { currentShiftID = row.ShiftID ; room.page = 1; getRoomRecord(); closeOtherDetails(row, index) }"
           @details-close="(row, index) => { room.room_record_data = [] }"
           :show-detail-icon="true"
         >
@@ -132,9 +132,6 @@
                 bordered
                 narrowed
                 hoverable
-                detail-key="RoomID"
-                :default-sort-direction="room.defaultSortOrder"
-                :default-sort="[room.sortField, room.sortOrder]"
                 @sort="onRoomSort">
 
                 <template slot-scope="props">
