@@ -24,7 +24,6 @@
 
           <template slot="end">
               <b-dropdown
-                    mobile-modal="false"
                     position="is-bottom-left"
                     aria-role="menu">
                     <a
