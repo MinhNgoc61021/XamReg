@@ -20,7 +20,7 @@
             v-for="(collapse, index) of semester.semester_record_data"
             :key="index"
             :open="isOpen === index"
-            @open="() => { isOpen = index; currentSemID = collapse.SemID ;  getShiftRecordData() }"
+            @open="() => { isOpen = index; shift.page = 1; currentSemID = collapse.SemID ;  getShiftRecordData() }"
             @close="destroySemesterData()"
             >
             <div
@@ -66,7 +66,7 @@
                         :default-sort-direction="shift.defaultSortOrder"
                         :default-sort="[shift.sortField, shift.sortOrder]"
                         @sort="onShiftSort"
-                        @details-open="(row, index) => { currentShiftID = row.ShiftID; shift.page = 1; currentSubjectName = row.Subject.SubjectTitle; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
+                        @details-open="(row, index) => { currentShiftID = row.ShiftID; room.page = 1; currentSubjectName = row.Subject.SubjectTitle; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
                         @details-close="(row, index) => { room.room_record_data = []; room.page = 1 }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
