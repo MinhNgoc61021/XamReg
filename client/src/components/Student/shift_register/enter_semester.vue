@@ -63,7 +63,7 @@ export default {
       this.$router.push({ name: 'student-info', params: { studentid: this.ID }, props: true})
     },
     async submitSemesterData() {
-        console.log(this.semester.semester_record[0]);
+        // console.log(this.semester.semester_record[0]);
         this.$emit('loadSemesterShifts', this.semester.semester_record[0]);
         this.$parent.close();
     },
