@@ -658,7 +658,6 @@ class Room_Shift(Base):
     def create(cls, roomID, shiftID):
         sess = Session()
         try:
-            # # lấy các thời gian bắt đầu & kết thúc của ca thi có cùng ca thi khác
             if sess.query(Room_Shift).filter(Room_Shift.RoomID == roomID,
                                              Room_Shift.ShiftID == shiftID).scalar() is None:
 

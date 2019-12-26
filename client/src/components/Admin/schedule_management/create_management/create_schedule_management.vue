@@ -35,7 +35,7 @@
             v-for="(collapse, index) of semester.semester_record_data"
             :key="index"
             :open="isOpen === index"
-            @open="() => { isOpen = index; currentSemID = collapse.SemID ;  getShiftRecordData() }"
+            @open="() => { isOpen = index; currentSemID = collapse.SemID ; shift.page = 1; getShiftRecordData() }"
             @close="destroySemesterData()"
             >
             <div

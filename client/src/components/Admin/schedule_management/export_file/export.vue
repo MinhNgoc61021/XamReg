@@ -66,7 +66,7 @@
                         :default-sort-direction="shift.defaultSortOrder"
                         :default-sort="[shift.sortField, shift.sortOrder]"
                         @sort="onShiftSort"
-                        @details-open="(row, index) => { currentShiftID = row.ShiftID; room.page = 1; currentSubjectName = row.Subject.SubjectTitle; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
+                        @details-open="(row, index) => { currentShiftID = row.ShiftID; shift.page = 1; currentSubjectName = row.Subject.SubjectTitle; getRoomRecord(); closeOtherDetails_Shift(row, index) }"
                         @details-close="(row, index) => { room.room_record_data = []; room.page = 1 }"
                         :show-detail-icon="true">
                         <template slot-scope="props">
