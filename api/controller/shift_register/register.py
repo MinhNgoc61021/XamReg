@@ -47,10 +47,10 @@ def get_shift(current_user):
 @token_required
 def search_subject(current_user):
     try:
-        searchID = request.args.get('searchID')
+        searchID = request.args.get('subjectID')
         validatesearchID = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchID))
         if validatesearchID is None:
-            search_results = Shift.searchShiftRecord(searchID)
+            search_results = Shift.searchShiftRecord(current_user['ID'], searchID)
             return jsonify({'status': 'success',
                             'search_results': search_results,
                             }), 200
@@ -187,9 +187,10 @@ def get_registered_shift(current_user):
 def get_info(current_user):
     try:
         return jsonify({'status': 'success',
-                       'info': current_user}), 200
+                        'info': current_user}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
+
 
 @shift_register.route('/export-records', methods=['get'])
 @token_required

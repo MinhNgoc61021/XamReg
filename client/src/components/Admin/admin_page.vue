@@ -29,25 +29,41 @@
           </template>
 
           <template slot="end">
-              <b-navbar-dropdown right arrowless v-bind:label="fullname">
-                  <b-navbar-item>
-                    <b-icon icon-pack="fas" icon="id-badge"></b-icon>
-                    <strong>{{ ID }}</strong>
-                  </b-navbar-item>
-                  <hr class="dropdown-divider" aria-role="menuitem">
-                  <b-navbar-item v-on:click="updatePassword">
-                    <b-icon icon-pack="fas" icon="lock"></b-icon>
-                    <span>Cập nhật mật khẩu</span>
-                  </b-navbar-item>
-                  <b-navbar-item tag="router-link" :to="{ name: 'admin-manual' }">
-                    <b-icon icon-pack="fas" icon="question-circle"></b-icon>
-                    <span>Trợ giúp</span>
-                  </b-navbar-item>
-                  <b-navbar-item v-on:click="admin_signOut()" >
-                    <b-icon icon-pack="fas" icon="sign-out-alt"></b-icon>
-                    <span>Đăng xuất</span>
-                  </b-navbar-item>
-              </b-navbar-dropdown>
+              <b-dropdown
+                    mobile-modal="false"
+                    position="is-bottom-left"
+                    aria-role="menu">
+                    <a
+                        class="navbar-item"
+                        slot="trigger"
+                        role="button">
+                        <span>{{ fullname }}</span>
+                    </a>
+
+                    <b-dropdown-item custom aria-role="menuitem">
+                        <b-icon icon-pack="fas" icon="id-badge"></b-icon>
+                        <strong>{{ ID }}</strong>
+                    </b-dropdown-item>
+                    <hr class="dropdown-divider">
+                    <b-dropdown-item has-link aria-role="menuitem">
+                        <a v-on:click="updatePassword" target="_blank">
+                            <b-icon icon-pack="fas" icon="lock"></b-icon>
+                            <span>Cập nhật mật khẩu</span>
+                        </a>
+                    </b-dropdown-item>
+                    <b-dropdown-item has-link aria-role="menuitem">
+                      <router-link :to="{ name: 'admin-manual' }">
+                        <b-icon icon-pack="fas" icon="question-circle"></b-icon>
+                        <span>Trợ giúp</span>
+                      </router-link>
+                    </b-dropdown-item>
+                    <b-dropdown-item has-link aria-role="menuitem">
+                      <a v-on:click="admin_signOut">
+                        <b-icon icon-pack="fas" icon="sign-out-alt"></b-icon>
+                        <span>Đăng xuất</span>
+                      </a>
+                    </b-dropdown-item>
+                </b-dropdown>
           </template>
       </b-navbar>
     </div>

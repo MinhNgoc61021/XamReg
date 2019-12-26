@@ -587,12 +587,12 @@ class Shift(Base):
             sess.close()
 
     @classmethod
-    def searchShiftRecord(cls, SubjectID):
+    def searchShiftRecord(cls, StudentID, SubjectID):
         sess = Session()
         try:
             subject = sess.query(Shift).filter(Shift.SubjectID.like('%' + SubjectID + '%'),
                                                Student_Status.Status.like('Qualified' + '%'),
-                                               Student_Status.SubjectID == Shift.SubjectID)
+                                               Student_Status.SubjectID == Shift.SubjectID, Student_Status.StudentID == StudentID)
             return shift_schema.dump(subject, many=True)
         except:
             sess.rollback()

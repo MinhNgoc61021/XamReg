@@ -377,7 +377,8 @@
                     'Authorization': authHeader(),
                   },
                   params: {
-                    searchID: SubjectID,
+                      studentID: this.studentid,
+                      subjectID: SubjectID,
                   },
                 }).then((response) => {
                   if (response.status === 200) {
