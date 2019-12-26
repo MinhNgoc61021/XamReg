@@ -48,7 +48,7 @@
 
       <b-field group-multiline v-if="shift.shift_record_data.length === 0">
         <b-message type="is-danger" has-icon>
-          Hiện tại bạn không chưa ca thi(môn thi) nào được cho phép đăng ký
+          Hiện tại bạn không chưa ca thi (môn thi) nào được cho phép đăng ký
         </b-message>
       </b-field>
 
@@ -423,38 +423,31 @@
                     canCancel: false,
                     events: {
                       'loadSemesterShifts': (semester_record) => {
-                        if (semester_record.SemTitle !== '') {
                           this.semester.semester_record = semester_record;
                           this.SetCurrentSemesterID(semester_record.SemID);
-                          this.getShiftRecordData();
-                          this.$buefy.notification.open({
-                            duration: 2000,
-                            message: `Đã lấy ca thi thành công!`,
-                            position: 'is-bottom-right',
-                            type: 'is-success',
-                            hasIcon: true
-                          });
-                        } else if (semester_record.SemTitle === '') {
-                          this.$buefy.notification.open({
-                            duration: 2000,
-                            message: 'Không lấy được dữ liệu!',
-                            position: 'is-bottom-right',
-                            type: 'is-danger',
-                            hasIcon: true
-                          });
+                          if (semester_record.shift.length !== 0) {
+                              this.getShiftRecordData();
+                              this.$buefy.notification.open({
+                                duration: 2000,
+                                message: `Kỳ thi đã được truy cập và ca thi đã được lấy thành công!`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                              });
+                          }
+                          else {
+                              this.getShiftRecordData();
+                              this.$buefy.notification.open({
+                                duration: 2000,
+                                message: 'Kỳ thi đã được truy cập nhưng tuy nhiên hiện tại chưa có ca thi nào được mở!',
+                                position: 'is-bottom-right',
+                                type: 'is-warning',
+                                hasIcon: true
+                              });
+                          }
                         }
-                        // } else if (http_status === 401) {
-                        //   this.$buefy.notification.open({
-                        //     duration: 2000,
-                        //     message: 'Không được quyền sử dụng!',
-                        //     position: 'is-bottom-right',
-                        //     type: 'is-danger',
-                        //     hasIcon: true
-                        //   });
-                        // }
-                      }
                     }
-                  })
+                })
             },
             onRoomPageChange(page) {
                 this.room.page = page;
