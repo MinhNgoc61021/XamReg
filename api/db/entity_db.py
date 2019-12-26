@@ -659,10 +659,6 @@ class Room_Shift(Base):
         sess = Session()
         try:
             # # lấy các thời gian bắt đầu & kết thúc của ca thi có cùng ca thi khác
-            # otherRoomShift = sess.query(Shift.End_At).join(Room_Shift).filter(Room_Shift.RoomID == roomID, Room_Shift.ShiftID != shiftID).scalar()
-            # # lấy thời gian bắt đâu
-            # pending = sess.query()
-
             if sess.query(Room_Shift).filter(Room_Shift.RoomID == roomID,
                                              Room_Shift.ShiftID == shiftID).scalar() is None:
 

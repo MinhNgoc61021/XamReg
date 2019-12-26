@@ -82,31 +82,44 @@
         methods: {
             async createShift() {
                 try {
-                    console.log(this.optionedSubject[0]);
-                  const response = await axios({
-                    method: 'post',
-                    url: '/schedule/create-shift',
-                    headers: {
-                      'Authorization': authHeader(),
-                    },
-                    data: {
-                        semID: this.currentSemesterID,
-                        subjectID: this.optionedSubject[0].SubjectID,
-                        date_start: moment(this.Date_Start).format('YYYY-MM-DD'),
-                        start_at: moment(this.Start_At).format("HH:mm:ss"),
-                        end_at: moment(this.End_At).format("HH:mm:ss"),
-                    },
-                  });
-                    if (response.data.status === 'success') {
-                        this.$parent.close();
-                        this.$emit('loadShifts', 200);
+                    console.log(this.optionedSubject);
+                    if (this.optionedSubject.length !== 0) {
+                        const response = await axios({
+                          method: 'post',
+                          url: '/schedule/create-shift',
+                          headers: {
+                            'Authorization': authHeader(),
+                          },
+                          data: {
+                              semID: this.currentSemesterID,
+                              subjectID: this.optionedSubject[0].SubjectID,
+                              date_start: moment(this.Date_Start).format('YYYY-MM-DD'),
+                              start_at: moment(this.Start_At).format("HH:mm:ss"),
+                              end_at: moment(this.End_At).format("HH:mm:ss"),
+                          },
+                        });
+                        if (response.data.status === 'success') {
+                            this.$parent.close();
+                            this.$emit('loadShifts', 200);
+                        }
+                        else if (response.data.status === 'time-false') {
+                            this.$emit('loadShifts', '202-time-false');
+                        }
+                        else if (response.data.status === 'already-exist-subject') {
+                            this.$emit('loadShifts', '202-already-exist-subject');
+                        }
                     }
-                    else if (response.data.status === 'time-false') {
-                        this.$emit('loadShifts', '202-time-false');
+                    else {
+                        this.$buefy.notification.open({
+                          duration: 2000,
+                          message: 'Kiểm tra lại, dữ liệu bạn nhập đang không đúng!',
+                          position: 'is-bottom-right',
+                          type: 'is-danger',
+                          hasIcon: true
+                        });
                     }
-                    else if (response.data.status === 'already-exist-subject') {
-                        this.$emit('loadShifts', '202-already-exist-subject');
-                    }
+
+
                 } catch (e) {
                   if (e['message'].includes('400')) {
                     this.$emit('loadShifts', 400);
