@@ -18,9 +18,9 @@ export function authHeader() {
             iconPack: 'fa',
             ariaRole: 'alertdialog',
             ariaModal: true,
-            onConfirm: async () => {
+            onConfirm: () => {
               localStorage.removeItem('user');
-              await router.push('/register');
+              router.push('/register');
             },
         });
     }

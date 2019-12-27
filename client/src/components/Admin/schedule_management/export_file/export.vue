@@ -568,7 +568,7 @@
                           { field: 'Gender', displayName: 'Giới tính'},
                           { field: 'CourseID', displayName: 'Mã lớp học'}
                         ],
-                  documentTitle: "Danh sách sinh viên tại phòng " + this.currentRoomName + ' | Môn thi: ' + this.currentSubjectName,
+                  documentTitle: "Danh sách sinh viên tại phòng: " + this.currentRoomName + ' | Môn thi: ' + this.currentSubjectName,
                   headerStyle: 'font-weight: 300;',
                   repeatTableHeader: false,
                   type: 'json'
@@ -576,7 +576,6 @@
             }
         },
         mounted() {
-
             this.getSemesterRecordData();
         },
         created() {
