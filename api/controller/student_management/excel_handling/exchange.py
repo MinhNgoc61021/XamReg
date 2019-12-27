@@ -62,9 +62,9 @@ def upload(current_user):
                 dob = re.search('^(((0)[1-9])|((1)[0-2]))(\/)([0-2][0-9]|(3)[0-1])(\/)\d{4}',
                                 str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')))
                 gender = re.search('(Nam|Nữ)', str(excel_data['gender']))
-                courseID = re.search('^[K|k][1-9][0-9][A-Za-z]+[1-9]*', str(excel_data['courseID']))
+                courseID = re.search('^[K|k][1-9][0-9][A-Za-z]+[1-9]*', str(excel_data['courseID']).replace(' ', ''))
                 subjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})$)',
-                                      str(excel_data['subjectID']))
+                                      str(excel_data['subjectID']).replace(' ', ''))
                 status = re.search('(đủ điều kiện|không đủ điều kiện)', excel_data['status'].lower())
                 print(ID, flush=True)
                 print(fullname, flush=True)
@@ -83,14 +83,14 @@ def upload(current_user):
                                 str(excel_data['fullname']).title(),
                                 excel_data['dob'],
                                 excel_data['gender'],
-                                str(excel_data['courseID']).upper(),
+                                str(excel_data['courseID']).upper().replace(' ', ''),
                                 'Student')
                     # add subject to database
-                    Subject.create(str(excel_data['subjectID']).upper(),
+                    Subject.create(str(excel_data['subjectID']).upper().replace(' ', ''),
                                    excel_data['subjectTitle'])
                     # add qualified and unqualified students to database
                     Student_Status.create(excel_data['ID'],
-                                          str(excel_data['subjectID']).upper(), str(excel_data['status']).lower())
+                                          str(excel_data['subjectID']).upper().replace(' ', ''), str(excel_data['status']).lower())
                 else:
                     return jsonify({'status': 'error', 'message': 'Du'}), 400
 
@@ -121,7 +121,7 @@ def upload(current_user):
                 dob = re.search('(((0)[1-9])|((1)[0-2]))(\/)([0-2][0-9]|(3)[0-1])(\/)\d{4}',
                                 str(excel_data['dob'].strftime('%m/%d/%Y, %H:%M:%S')))
                 gender = re.search('(Nam|Nữ)', str(excel_data['gender']))
-                courseID = re.search('^[K|k][1-9][0-9][A-Za-z]+[1-9]*', excel_data['courseID'])
+                courseID = re.search('^[K|k][1-9][0-9][A-Za-z]+[1-9]*', str(excel_data['courseID']).replace(' ', ''))
                 # print(ID, flush=True)
                 # print(fullname, flush=True)
                 # print(dob, flush=True)
@@ -137,7 +137,7 @@ def upload(current_user):
                                 str(excel_data['fullname']).title(),
                                 excel_data['dob'],
                                 excel_data['gender'],
-                                str(excel_data['courseID']).upper(),
+                                str(excel_data['courseID']).upper().replace(' ', ''),
                                 'Student')
                 else:
                     return jsonify({'status': 'error'}), 400
@@ -166,15 +166,15 @@ def upload(current_user):
                         # add subject to database
                         # check validation
                         subjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})$)',
-                                              str(excel_data['subjectID']))
+                                              str(excel_data['subjectID']).replace(' ', ''))
                         status = re.search('(đủ điều kiện|không đủ điều kiện)', str(excel_data['status']).lower())
 
                         if (subjectID is not None) and (status is not None):
-                            Subject.create(excel_data['subjectID'],
+                            Subject.create(excel_data['subjectID'].upper().replace(' ', ''),
                                            excel_data['subjectTitle'])
                             # add qualified and unqualified students to database
                             Student_Status.create(str(excel_data['ID']).replace(' ', ''),
-                                                  str(excel_data['subjectID']).upper(),
+                                                  str(excel_data['subjectID']).upper().replace(' ', ''),
                                                   str(excel_data['status']).lower())
                         else:
                             return jsonify({'status': 'bad-request'}), 400

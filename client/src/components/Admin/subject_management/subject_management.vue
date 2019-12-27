@@ -38,7 +38,7 @@
                 field="SubjectID"
                 :loading="search.searchLoading"
                 @typing="onSubjectSearch"
-                @select="option => subject_info.subject_record = [option]"
+                @select="option => { subject_info.subject_record = [option]; subject_info.total = 1 }"
                 expanded>
               <template slot-scope="props">
                     <div class="media">

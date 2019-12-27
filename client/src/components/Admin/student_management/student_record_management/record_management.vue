@@ -26,7 +26,7 @@
                 field="ID"
                 :loading="search.searchLoading"
                 @typing="onStudentSearch"
-                @select="option => student.student_record = [option]"
+                @select="option => { student.student_record = [option]; student.total = 1; }"
                 expanded>
               <template slot-scope="props">
                     <div class="media">

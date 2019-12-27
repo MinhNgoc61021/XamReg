@@ -114,7 +114,7 @@ class User(Base):
     def searchStudentRecord(cls, studentID):
         sess = Session()
         try:
-            user = sess.query(User).filter(User.ID.like('%' + studentID + '%'))
+            user = sess.query(User).filter(User.ID.like('%' + studentID + '%'), User.Role_Type == 'Student')
             return user_schema.dump(user, many=True)
         except:
             sess.rollback()
