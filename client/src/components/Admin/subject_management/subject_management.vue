@@ -53,9 +53,9 @@
                 </template>
             </b-autocomplete>
         </b-field>
-        <b-field v-if="subject_info.subject_record.length > 0">
+        <b-field>
           <b-table
-            :data="subject_info.subject_record"
+            :data="subject_info.isSubjectEmpty ? [] : subject_info.subject_record"
             :loading="subject_info.loading"
             paginated
             backend-pagination
@@ -84,9 +84,14 @@
                 <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onSubjectDelete(props.row)"></b-button>
               </b-table-column>
             </template>
+            <template slot="empty">
+              <section class="section">
+                <b-message type="is-danger" has-icon>
+                  Hiện tại chưa có thông tin về môn thi, bạn hãy nhập vào môn thi!
+                </b-message>
+              </section>
+            </template>
           </b-table>
-        </b-field>
-        <b-field v-else>
         </b-field>
     </section>
   </div>
@@ -106,6 +111,7 @@
         data() {
           return {
             subject_info: {
+              isSubjectEmpty: false,
               subject_record: [],
               total: 0,
               loading: false,

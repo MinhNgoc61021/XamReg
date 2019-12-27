@@ -6,19 +6,19 @@
       <p class="subtitle is-6">Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</p>
       <form @submit.prevent="handleSubmit">
         <b-field label="Username"
-            :type="{ 'is-danger': hasError, 'is-danger': isNotExist   }"
-            :message="[{ 'Username chưa được đánh': hasError },
+            :type="{ 'is-warning': hasError, 'is-danger': isNotExist   }"
+            :message="[{ 'Username hoặc mật khẩu chưa đủ ít nhất 5 ký tự': hasError },
                       {'Tài khoản không tồn tại hoặc mật khẩu sai': isNotExist },
                       ]">
-            <b-input placeholder="Hãy nhập username" v-model="username" required></b-input>
+            <b-input placeholder="Hãy nhập username" icon="user" v-model="username" required></b-input>
         </b-field>
 
         <b-field label="Password"
-            :type="{ 'is-danger': hasError, 'is-danger': isNotExist }"
-            :message="[{ 'Mật khẩu chưa được đánh': hasError },
+            :type="{ 'is-warning': hasError, 'is-danger': isNotExist }"
+            :message="[{ 'Username hoặc mật khẩu chưa đủ ít nhất 5 ký tự': hasError },
                       {'Tài khoản không tồn tại hoặc mật khẩu sai': isNotExist },
                       ]">
-            <b-input placeholder="Hãy nhập mật khẩu" v-model="password" type="password" required></b-input>
+            <b-input placeholder="Hãy nhập mật khẩu" icon="lock" v-model="password" type="password" required></b-input>
         </b-field>
         <div class="buttons">
             <b-button native-type="submit">Đăng nhập</b-button>

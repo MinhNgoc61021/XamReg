@@ -13,7 +13,7 @@
                   <p>{{ student_info.Fullname }}</p>
                 </b-field>
                 <b-field label="Ngày sinh">
-                  <p>{{ student_info.Dob }}</p>
+                  <p>{{ formatDate(student_info.Dob) }}</p>
                 </b-field>
                 <b-field label="Khóa học">
                   <p>{{ student_info.CourseID }}</p>
@@ -29,6 +29,7 @@
 
 <script>
   import axios from 'axios';
+  import moment from 'moment';
   import {authHeader} from "../api/jwt_handling";
 
     export default {
@@ -46,6 +47,9 @@
             }
         },
         methods: {
+            formatDate(date) {
+                return moment(date).format('L');
+            },
             async getStudentInfo() {
                 try {
                     const response = await axios({

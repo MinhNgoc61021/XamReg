@@ -47,9 +47,9 @@
           </template>
       </b-autocomplete>
     </b-field>
-    <b-field v-if="exam_room_list.length > 0">
+    <b-field>
       <b-table
-        :data="exam_room_list"
+        :data="isRoomEmpty ? [] : exam_room_list"
         :loading="loading"
         paginated
         backend-pagination
@@ -81,9 +81,14 @@
               <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row)"></b-button>
             </b-table-column>
           </template>
+          <template slot="empty">
+                <section class="section">
+                    <b-message type="is-danger" has-icon>
+                      Hiện tại chưa có thông tin về phòng thi, bạn hãy nhập vào phòng thi!
+                    </b-message>
+                </section>
+          </template>
       </b-table>
-    </b-field>
-    <b-field v-else>
     </b-field>
   </div>
 </template>
@@ -103,6 +108,7 @@
         },
         data(){
           return{
+              isRoomEmpty: false,
               exam_room_list: [],
               total: 0,
               loading: false,

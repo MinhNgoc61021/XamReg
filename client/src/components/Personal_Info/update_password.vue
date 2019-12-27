@@ -8,9 +8,11 @@
         <section class="modal-card-body">
           <b-field label="Mật khẩu mới">
             <b-input
+              icon="lock"
               type="password"
               v-model="newPassword"
               placeholder="Mật khẩu mới"
+              validation-message="Yêu cầu mật khẩu mới phải ít nhất 5 ký tự"
               password-reveal
               required>
             </b-input>
@@ -21,7 +23,9 @@
           <b-field label="Xác nhận mật khẩu">
             <b-input
               type="password"
+              icon="lock"
               v-model="confirmPassword"
+              validation-message="Nhập đúng mật khẩu xác nhật"
               placeholder="Xác nhận mật khẩu"
               password-reveal
               required>

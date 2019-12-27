@@ -47,9 +47,9 @@
                 </template>
             </b-autocomplete>
         </b-field>
-        <b-field v-if="student.student_record.length > 0">
+        <b-field>
           <b-table
-            :data="student.student_record"
+            :data="student.isStudentEmpty ? [] : student.student_record"
             :loading="student.loading"
             paginated
             backend-pagination
@@ -114,6 +114,13 @@
                     <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStudentDelete(props.row.ID)"></b-button>
                 </b-table-column>
             </template>
+            <template slot="empty">
+              <section class="section">
+                <b-message type="is-danger" has-icon>
+                  Hiện tại chưa có dữ liệu sinh viên, bạn hãy nhập vào sinh viên!
+                </b-message>
+              </section>
+            </template>
             <template slot="detail" slot-scope="props">
                 <h4 class="title is-4">Danh sách môn thi</h4>
                 <b-field group-multiline>
@@ -154,9 +161,9 @@
                     <option value="Unqualified">Không đủ điều kiện thi</option>
                   </b-select>
                 </b-field>
-                <b-field v-if="student_status.student_subject_record.length > 0" group-multiline>
+                <b-field group-multiline>
                   <b-table
-                    :data="student_status.student_subject_record"
+                    :data="student_status.isStatusEmpty ? [] : student_status.student_subject_record"
                     :loading="student_status.loading"
                     paginated
                     backend-pagination
@@ -188,20 +195,17 @@
                         <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onStatusDelete(props.row.SubjectID)"></b-button>
                       </b-table-column>
                     </template>
+                    <template slot="empty">
+                      <section class="section">
+                          <b-message type="is-danger" has-icon>
+                             Hiện tại sinh viên này chưa có thông tin về danh sách môn thi, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b> hoặc đánh vào <b>Tìm kiếm</b> để nhập môn thi cho sinh viên!
+                          </b-message>
+                      </section>
+                    </template>
                   </b-table>
-                </b-field>
-                <b-field v-else>
-                  <b-message type="is-danger" has-icon>
-                    Hiện tại sinh viên này chưa có thông tin về danh sách môn thi, bạn hãy tải lên file <b-icon icon="file-excel"></b-icon> Excel định dạng <b>.xlsx</b> ở phần <b>Nhập (Import)</b> hoặc đánh vào <b>Tìm kiếm</b> để nhập môn thi cho sinh viên!
-                  </b-message>
                 </b-field>
             </template>
         </b-table>
-        </b-field>
-        <b-field v-else>
-          <b-message type="is-danger" has-icon>
-            Hiện tại chưa có dữ liệu sinh viên, bạn hãy nhập vào sinh viên!
-          </b-message>
         </b-field>
     </section>
 </template>
@@ -224,6 +228,7 @@
         data() {
             return {
                 student: { // This is used to for student info
+                    isStudentEmpty: false,
                     student_record: [],
                     total: 0,
                     loading: false,
@@ -234,6 +239,7 @@
                     per_page: 5,
                 },
                 student_status: { // This is used to for student subject status
+                    isStatusEmpty: false,
                     student_subject_record: [],
                     currentStudentID: '',
                     total: 0,

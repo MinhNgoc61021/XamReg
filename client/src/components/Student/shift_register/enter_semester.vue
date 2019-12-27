@@ -1,13 +1,13 @@
 <template>
     <div class="modal-card" style="width: 450px; height: 300px">
         <header class="modal-card-head">
-            <p class="modal-card-title">Chọn tên kỳ thi</p>
+            <p class="modal-card-title">Chọn kỳ thi</p>
         </header>
 
         <section class="modal-card-body">
           <b-autocomplete
             :data="search.searchResults"
-            placeholder="Tìm kiếm và chọn tên kỳ thi"
+            placeholder="Tìm kiếm và chọn tiêu đề kỳ thi"
             icon="search"
             field="SemTitle"
             :loading="search.searchLoading"
@@ -17,7 +17,7 @@
             <template slot-scope="props">
               <div class="media">
                 <div class="media-content">
-                  <b>Tên kỳ thi: </b>{{ props.option.SemTitle }}
+                  <b>Tiêu đề kỳ thi: </b>{{ props.option.SemTitle }}
                 </div>
               </div>
             </template>

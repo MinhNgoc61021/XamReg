@@ -15,6 +15,7 @@
               :data="search.searchResults"
               placeholder="Tìm kiếm mã môn thi để nhập"
               field="SubjectID"
+              validation-message="Nhập đúng mã môn thi"
               :loading="search.searchLoading"
               @typing="onSubjectSearch"
               @select="option =>  optionedSubject = [option]"

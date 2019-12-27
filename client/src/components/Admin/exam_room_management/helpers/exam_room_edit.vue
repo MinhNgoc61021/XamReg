@@ -16,13 +16,14 @@
               required>
             </b-input>
           </b-field>
-          <b-field label="Số lượng chỗ thi">
+          <b-field label="Số lượng máy tính">
             <b-input
               type="number"
               v-model="newMaxcapacity"
               :value="newMaxcapacity"
               min="1"
-              placeholder="Nhập số lượng chỗ thi"
+              validation-message="Nhập ít nhất 1 máy"
+              placeholder="Nhập số lượng máy tính"
               required>
             </b-input>
           </b-field>

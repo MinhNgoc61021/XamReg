@@ -35,8 +35,8 @@
             v-for="(collapse, index) of semester.semester_record_data"
             :key="index"
             :open="isOpen === index"
-            @open="() => { isOpen = index; currentSemID = collapse.SemID ; shift.page = 1; getShiftRecordData() }"
-            @close="destroySemesterData()"
+            @open="() => { isOpen = index; shift.page = 1; currentSemID = collapse.SemID ; getShiftRecordData() }"
+            @close="() => { destroyShiftData() }"
             >
             <div
                 slot="trigger"
@@ -65,20 +65,15 @@
                   </b-button>
                 </b-field>
                 <div>
-                  <b-field group-multiline v-if="shift.shift_record_data.length === 0">
-                    <b-message type="is-danger" has-icon>
-                      Hiện tại chưa có thông tin về ca thi trong <b>{{ collapse.SemTitle }}</b>, bạn hãy nhập vào ca thi!
-                    </b-message>
-                  </b-field>
-                  <b-field expanded v-else>
-
+                  <b-field expanded>
                     <!--Shift Record-->
                     <b-table
-                        :data="shift.shift_record_data"
+                        :data="shift.isShiftEmpty ? [] : shift.shift_record_data"
                         :loading="shift.shift_loading"
                         paginated
                         backend-pagination
                         detailed
+                        :current-page.sync="shift.page"
                         :total="shift.total"
                         :per-page="shift.per_page"
                         @page-change="onShiftPageChange"
@@ -120,7 +115,13 @@
                                 <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onShiftDelete(props.row.ShiftID)"></b-button>
                             </b-table-column>
                         </template>
-
+                        <template slot="empty">
+                          <section class="section">
+                            <b-message type="is-danger" has-icon>
+                              Hiện tại chưa có thông tin về ca thi trong <b>{{ collapse.SemTitle }}</b>, bạn hãy nhập vào ca thi!
+                            </b-message>
+                          </section>
+                        </template>
                         <!--Room-->
                         <template slot="detail" slot-scope="props">
                             <h4 class="title is-4">Danh sách phòng thi</h4>
@@ -157,9 +158,9 @@
                                 </b-autocomplete>
                             </b-field>
                             <!--shift-->
-                            <b-field v-if="room.room_record_data.length > 0">
+                            <b-field>
                               <b-table
-                                :data="room.room_record_data"
+                                :data="room.isRoomEmpty ? [] : room.room_record_data"
                                 :loading="room.room_loading"
                                 paginated
                                 backend-pagination
@@ -193,12 +194,14 @@
                                     <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onRoomDelete(props.row.Exam_Room.RoomID)"></b-button>
                                   </b-table-column>
                                 </template>
+                                <template slot="empty">
+                                  <section class="section">
+                                    <b-message type="is-danger" has-icon>
+                                      Hiện tại chưa có thông tin về phòng thi trong ca thi này, bạn hãy nhập vào phòng thi!
+                                    </b-message>
+                                  </section>
+                                </template>
                               </b-table>
-                            </b-field>
-                            <b-field v-else>
-                              <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có thông tin về phòng thi trong ca thi này, bạn hãy nhập vào phòng thi!
-                              </b-message>
                             </b-field>
 
                             <!--shift-->
@@ -212,6 +215,11 @@
         </b-collapse>
       </div>
       <div v-else>
+        <section class="section">
+          <b-message type="is-danger" has-icon>
+            Hiện tại chưa có thông tin về kỳ thi, bạn hay nhập vào tiêu đề kỳ thi
+          </b-message>
+        </section>
       </div>
     </section>
   </div>
@@ -240,6 +248,7 @@
                     semester_status: false,
                 },
                 shift: {
+                    isShiftEmpty: false,
                     shift_record_data: [],
                     date_start: '',
                     start_at: '',
@@ -255,6 +264,7 @@
                     ID_Index: [],
                 },
                 room: {
+                    isRoomEmpty: false,
                     select_search: Object,
                     room_record_data: [],
                     total: 0,
@@ -560,6 +570,7 @@
             }, // xong
             async getShiftRecordData() {
                 this.shift.shift_loading = true;
+                console.log(this.shift.page);
                 try {
                     const response = await axios({
                         url: '/schedule/shift-records',
@@ -933,8 +944,10 @@
                     });
                 }
             }, 500), // xong
-            destroySemesterData() { // destroy subject data for scalability when closing accordion
+            destroyShiftData() { // destroy subject data for scalability when closing accordion
                 this.shift.shift_record_data = [];
+                this.shift.page = 1;
+                this.shift.shift_loading = false;
             },
             closeOtherDetails(row) {
                 this.shift.ID_Index = [row.ShiftID];

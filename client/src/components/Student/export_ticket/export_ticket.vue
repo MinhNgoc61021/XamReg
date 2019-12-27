@@ -39,14 +39,13 @@
               </div>
             </div>
           </div>
-         </div>
-        <b-field v-else>
-          <b-message type="is-danger" has-icon>
-            Hiện tại chưa có dữ liệu ca thi đã đăng kí, yêu cầu sinh viên hãy đăng kí thêm!
-          </b-message>
-        </b-field>
+       </div>
+      <b-field v-else>
+        <b-message type="is-danger" has-icon>
+          Hiện tại chưa có dữ liệu ca thi đã đăng kí, yêu cầu sinh viên hãy vào phần <b>Đăng ký dự thi</b> để đăng kí!
+        </b-message>
+      </b-field>
     </div>
-
   </div>
 </template>
 
