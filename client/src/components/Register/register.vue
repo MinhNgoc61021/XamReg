@@ -7,7 +7,7 @@
       <form @submit.prevent="handleSubmit">
         <b-field label="Username"
             :type="{ 'is-warning': hasError, 'is-danger': isNotExist   }"
-            :message="[{ 'Username hoặc mật khẩu chưa đủ ít nhất 5 ký tự': hasError },
+            :message="[{ 'Username hoặc mật khẩu có ít nhất 5 ký tự': hasError },
                       {'Tài khoản không tồn tại hoặc mật khẩu sai': isNotExist },
                       ]">
             <b-input placeholder="Hãy nhập username" icon="user" v-model="username" required></b-input>
@@ -15,7 +15,7 @@
 
         <b-field label="Password"
             :type="{ 'is-warning': hasError, 'is-danger': isNotExist }"
-            :message="[{ 'Username hoặc mật khẩu chưa đủ ít nhất 5 ký tự': hasError },
+            :message="[{ 'Username hoặc mật khẩu có ít nhất 5 ký tự': hasError },
                       {'Tài khoản không tồn tại hoặc mật khẩu sai': isNotExist },
                       ]">
             <b-input placeholder="Hãy nhập mật khẩu" icon="lock" v-model="password" type="password" required></b-input>

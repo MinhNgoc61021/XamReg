@@ -12,7 +12,7 @@
               type="password"
               v-model="newPassword"
               placeholder="Mật khẩu mới"
-              validation-message="Yêu cầu mật khẩu mới phải ít nhất 5 ký tự"
+              validation-message="Yêu cầu mật khẩu mới phải có ít nhất 5 ký tự"
               password-reveal
               required>
             </b-input>
