@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { authHeader, isValidJwt } from './jwt_handling.js';
-import { router } from "../../router";
 
 
 //This is where the client call the api server

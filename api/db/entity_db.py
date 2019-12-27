@@ -114,7 +114,7 @@ class User(Base):
     def searchStudentRecord(cls, studentID):
         sess = Session()
         try:
-            user = sess.query(User).filter(User.ID.like(studentID + '%'))
+            user = sess.query(User).filter(User.ID.like('%' + studentID + '%'))
             return user_schema.dump(user, many=True)
         except:
             sess.rollback()
@@ -324,7 +324,7 @@ class Subject(Base):
     def searchSubjectRecord(cls, SubjectID):
         sess = Session()
         try:
-            subject = sess.query(Subject).filter(Subject.SubjectID.like(SubjectID + '%'))
+            subject = sess.query(Subject).filter(Subject.SubjectID.like('%' + SubjectID + '%'))
             return subject_schema.dump(subject, many=True)
         except:
             sess.rollback()
@@ -412,7 +412,7 @@ class Semester_Examination(Base):
     def searchSemesterRecord(cls, SemTitle):
         sess = Session()
         try:
-            semester = sess.query(Semester_Examination).filter(Semester_Examination.SemTitle.like(SemTitle + '%'),
+            semester = sess.query(Semester_Examination).filter(Semester_Examination.SemTitle.like('%' + SemTitle + '%'),
                                                                Semester_Examination.Status == True)
             return semester_examination_schema.dump(semester, many=True)
         except:
@@ -587,12 +587,12 @@ class Shift(Base):
             sess.close()
 
     @classmethod
-    def searchShiftRecord(cls, SubjectID):
+    def searchShiftRecord(cls, StudentID, SubjectID):
         sess = Session()
         try:
-            subject = sess.query(Shift).filter(Shift.SubjectID.like(SubjectID + '%'),
+            subject = sess.query(Shift).filter(Shift.SubjectID.like('%' + SubjectID + '%'),
                                                Student_Status.Status.like('Qualified' + '%'),
-                                               Student_Status.SubjectID == Shift.SubjectID)
+                                               Student_Status.SubjectID == Shift.SubjectID, Student_Status.StudentID == StudentID)
             return shift_schema.dump(subject, many=True)
         except:
             sess.rollback()
@@ -967,7 +967,7 @@ class Exam_Room(Base):
     def searchRoomRecord(cls, roomName):
         sess = Session()
         try:
-            room = sess.query(Exam_Room).filter(Exam_Room.RoomName.like(roomName + '%'))
+            room = sess.query(Exam_Room).filter(Exam_Room.RoomName.like('%' + roomName + '%'))
             return room_schema.dump(room, many=True)
         except:
             sess.rollback()

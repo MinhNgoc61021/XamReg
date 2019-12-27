@@ -11,13 +11,13 @@
           icon="sync"/>
         <span>Làm mới</span>
       </b-button>
-      <b-field
-        :type="{ 'is-danger':  SemesterNotExist }"
-        :message="[{ 'Tiêu đề kỳ thi chưa đánh': SemesterNotExist }]" expanded>
+      <b-field :type="{ 'is-danger':  semesterAlert }"
+               :message="[{ 'Tiêu đề kỳ thi chưa đánh': SemesterNotExist,
+                            'Nhập đúng tiêu đề kỳ thi (Không gồm các ký tự đặc biệt ngoài (), -)': invalidSemester  }]"
+         expanded>
         <b-input v-model="semester.newSemester"
+                 @blur="() => { SemesterNotExist = false; invalidSemester = false; semesterAlert = false }"
                  @keyup.enter="addNewSemester"
-                 validation-message="Nhập đúng tiêu đề kỳ thi(Không gồm các ký tự đặc biệt)"
-                 pattern="^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$"
                  placeholder="Nhập tiêu đề để tạo kỳ thi" >
         </b-input>
       </b-field>
@@ -35,7 +35,7 @@
             v-for="(collapse, index) of semester.semester_record_data"
             :key="index"
             :open="isOpen === index"
-            @open="() => { isOpen = index; currentSemID = collapse.SemID ;  getShiftRecordData() }"
+            @open="() => { isOpen = index; currentSemID = collapse.SemID ; shift.page = 1; getShiftRecordData() }"
             @close="destroySemesterData()"
             >
             <div
@@ -104,7 +104,7 @@
                               <b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}</b>
                             </b-table-column>
                             <b-table-column field="Date_Start" label="Ngày thi" width="100" sortable>
-                              <span class="tag is-success">
+                              <span class="tag is-primary">
                                 {{ formatDate(props.row.Date_Start) }}
                               </span>
                             </b-table-column>
@@ -136,7 +136,7 @@
                               </b-button>
                               <b-autocomplete clear-on-select
                                   :data="room.searchResults"
-                                  placeholder="Tìm kiếm để chọn phòng thi"
+                                  placeholder="Tìm kiếm tên phòng để nhập"
                                   icon="search"
                                   field="RoomName"
                                   :loading="room.search_loading"
@@ -147,6 +147,10 @@
                                       <div class="media">
                                         <div class="media-content">
                                           <b>Tên phòng: </b>{{ props.option.RoomName }}
+                                          <br>
+                                          <b>Mã phòng: </b>{{ props.option.RoomID }}
+                                          <br>
+                                          <b>Số lượng máy tính: </b><p style="display: inline-block;">{{ props.option.Maxcapacity }}</p> <b-icon icon-pack="fas" size="is-small" icon="laptop"></b-icon>
                                         </div>
                                       </div>
                                     </template>
@@ -182,7 +186,7 @@
                                     {{ props.row.Exam_Room.RoomName }}
                                   </b-table-column>
                                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
-                                    {{ props.row.Exam_Room.Maxcapacity }}
+                                    <p style="width: 25px; display: inline-block; text-align: center;">{{ props.row.Exam_Room.Maxcapacity }}</p> <b-icon icon-pack="fas" size="is-small" icon="laptop"></b-icon>
                                   </b-table-column>
 
                                   <b-table-column field="Action" width="90">
@@ -193,7 +197,7 @@
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có thông tin về phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
+                                Hiện tại chưa có thông tin về phòng thi trong ca thi này, bạn hãy nhập vào phòng thi!
                               </b-message>
                             </b-field>
 
@@ -271,6 +275,7 @@
                 invalidSemester: false,
                 hasSubjectError: false,
                 hasRoomError: false,
+                semesterAlert: false,
             }
         },
         methods: {
@@ -280,13 +285,16 @@
             async addNewSemester() {
                 if (this.semester.newSemester.length === 0) {
                     this.SemesterNotExist = true;
+                    this.semesterAlert = true;
+                    this.invalidSemester = false;
                 }
                 else {
-                    let pattern = new RegExp("^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\s- ]+$");
+                    this.SemesterNotExist = false;
+                    let pattern = new RegExp("^[0-9a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\\-\\s() ]+$");
                     let check = pattern.test(this.semester.newSemester);
                     if (check) {
                         try {
-                          this.SemesterNotExist = false;
+                          this.semesterAlert = false;
                           this.semester.create_loading = true;
                           const response = await axios({
                               url: '/schedule/create-semester',
@@ -300,6 +308,7 @@
                           });
                           this.semester.create_loading = false;
                           if (response.status === 200) {
+                              this.semester.newSemester = '';
                               this.$buefy.notification.open({
                                   duration: 2000,
                                   message: `Đã tạo kỳ thi thành công!`,
@@ -338,11 +347,11 @@
                           }
                       }
                       finally {
-                          this.semester.newSemester = '';
                           this.getSemesterRecordData();
                       }
                     }
                     else {
+                        this.semesterAlert = true;
                         this.invalidSemester = true;
                     }
                 }

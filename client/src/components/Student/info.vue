@@ -1,7 +1,8 @@
 <template>
   <div class="container">
-    <h1 class="title is-3">Trang chủ</h1>
+    <h1 class="title is-3">Thông tin chung</h1>
     <h2 class="subtitle is-6">Thông tin chung của sinh viên có MSSV <b>{{ this.studentid }}</b></h2>
+    <hr>
     <section>
         <b-tabs type="is-boxed">
             <b-tab-item label="Thông tin về sinh viên" icon="info-circle">
@@ -32,7 +33,7 @@
 
     export default {
         props: ['studentid'],
-        name: "student-home",
+        name: "student-info",
         data() {
             return {
                 student_info: {

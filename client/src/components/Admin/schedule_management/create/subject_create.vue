@@ -2,32 +2,32 @@
   <form @submit.prevent="createSubject()">
     <div class="modal-card" style="width: 450px;">
         <header class="modal-card-head">
-            <p class="modal-card-title">Form tạo môn học</p>
+            <p class="modal-card-title">Form tạo môn thi</p>
         </header>
 
       <section class="modal-card-body">
-        <b-field label="Mã môn học">
+        <b-field label="Mã môn thi">
           <b-input
             type="text"
             v-model="newSubjectID"
             :value="newSubjectID"
             maxlength="7"
-            validation-message="Nhập đúng mã môn học"
+            validation-message="Nhập đúng mã môn thi"
             pattern="(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3}))"
-            placeholder="Nhập mã môn học"
+            placeholder="Nhập mã môn thi"
             required
           >
           </b-input>
         </b-field>
-        <b-field label="Tên môn học">
+        <b-field label="Tên môn thi">
           <b-input
             type="text"
             v-model="newSubjectTitle"
             :value="newSubjectTitle"
             pattern="^[a-zA-Z1-9_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$"
             maxlength="100"
-            validation-message="Nhập đúng tên môn học"
-            placeholder="Nhập tên môn học"
+            validation-message="Nhập đúng tên môn thi"
+            placeholder="Nhập tên môn thi"
             required
           >
           </b-input>

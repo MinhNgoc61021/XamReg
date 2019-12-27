@@ -47,10 +47,10 @@ def get_shift(current_user):
 @token_required
 def search_subject(current_user):
     try:
-        searchID = request.args.get('searchID')
+        searchID = request.args.get('subjectID')
         validatesearchID = re.search('[!#$%^&*()='',.?":{}|<>]', str(searchID))
         if validatesearchID is None:
-            search_results = Shift.searchShiftRecord(searchID)
+            search_results = Shift.searchShiftRecord(current_user['ID'], searchID)
             return jsonify({'status': 'success',
                             'search_results': search_results,
                             }), 200
@@ -124,9 +124,7 @@ def register_shift(current_user):
     try:
         studentID = request.get_json().get('studentID')
         Room_ShiftID = request.get_json().get('Room_ShiftID')
-        print('OK1', flush=True)
         check = Student_Shift.create(Room_ShiftID, studentID)
-        print('OK12', flush=True)
         if check != 'success':
             print(check, flush=True)
             return jsonify({'status': check}), 202
@@ -189,9 +187,10 @@ def get_registered_shift(current_user):
 def get_info(current_user):
     try:
         return jsonify({'status': 'success',
-                       'info': current_user}), 200
+                        'info': current_user}), 200
     except:
         return jsonify({'status': 'bad-request'}), 400
+
 
 @shift_register.route('/export-records', methods=['get'])
 @token_required
@@ -215,8 +214,10 @@ def remove_export_records(current_user):
     try:
         record = request.get_json()
         registerID = record.get('delRegisterID')
-        print("Registerrrrrr", registerID, flush=True)
         Student_Shift.delTicketExportData(str(registerID))
+        Log.create(current_user['ID'],
+                   'Đã hủy phiếu dự thi ' + str(registerID),
+                   set_custom_log_time())
 
         return jsonify({'status': 'success'}), 200
     except:

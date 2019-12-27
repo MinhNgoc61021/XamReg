@@ -14,7 +14,7 @@
               icon="search"
               type="text"
               :data="search.searchResults"
-              placeholder="Tìm kiếm để nhập môn thi"
+              placeholder="Tìm kiếm mã môn thi để nhập"
               field="SubjectID"
               :value="SubjectID"
               v-model="SubjectID"

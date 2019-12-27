@@ -71,7 +71,7 @@ def create_new_student(current_user):
                 checkGender is not None) and (checkCourseID is not None):
 
             newStudent = User.create(newStudentID, newStudentID + '@vnu.edu.vn', newStudentID, newFullname, newDob,
-                                     newGender, newCourseID, 'Student')
+                                     newGender, str(newCourseID).upper(), 'Student')
             if newStudent is False:
                 return jsonify({'status': 'already-exist'}), 202
             else:
@@ -209,7 +209,7 @@ def update_student_info_record(current_user):
                 checkGender is not None) and (checkCourseID is not None) and (
                 newStudentID == newUsername.split('@')[0]):
             #  print('OK1', flush=True)
-            check = User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, newCourseID, newDob,
+            check = User.updateRecord(currentStudentID, newStudentID, newUsername, newFullname, str(newCourseID).upper(), newDob,
                                       newGender)
             if check is True:
                 Log.create(current_user['ID'],

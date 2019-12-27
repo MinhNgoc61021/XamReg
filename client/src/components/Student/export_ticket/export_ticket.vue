@@ -1,7 +1,8 @@
 <template>
   <div>
-    <h1 class="title is-3">Danh sách ca thi đã đăng kí</h1>
-    <h2 class="subtitle is-6">Xem & xóa ca thi đã đăng kí</h2>
+    <h1 class="title is-3">In phiếu báo dự thi</h1>
+    <h2 class="subtitle is-6">Xem, hủy và in phiếu báo dự thi</h2>
+    <hr>
     <b-field group-multiline>
 
       <b-button
@@ -14,45 +15,38 @@
           icon="sync"/>
         <span>Làm mới</span>
       </b-button>
+      <b-button icon-left="file-pdf" v-if="register_result.length > 0" @click="print">
+        In phiếu báo dự thi
+      </b-button>
+      <b-button icon-left="file-pdf" v-else disabled @click="print">
+        In phiếu báo dự thi
+      </b-button>
+    </b-field>
+    <div id = "printTickets">
+       <div class="row" v-if="register_result.length > 0" >
+          <div class="column" v-for="item in register_result">
+            <div class="card">
+              <div style="padding: 10px; margin: 10px;">
+                <p><b>MSSV: </b> {{ studentid }}</p>
+                <p><b>Mã ca thi: </b>{{ item.Shift.ShiftID }}</p>
+                <p><b>Môn thi: </b>{{ item.Shift.Subject.SubjectID }} | {{ item.Shift.Subject.SubjectTitle }}</p>
+                <p><b>Phòng thi:</b> {{ item.Exam_Room.RoomName}}</p>
+                <p><b>Ngày thi:</b> {{ formatDate(item.Shift.Date_Start) }}</p>
+                <p><b>{{ item.Shift.Start_At }} - {{ item.Shift.End_At }}</b></p>
+              </div>
+              <div id="deleteRegister">
+                <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onDelete(item)"></b-button>
+              </div>
+            </div>
+          </div>
+         </div>
+        <b-field v-else>
+          <b-message type="is-danger" has-icon>
+            Hiện tại chưa có dữ liệu ca thi đã đăng kí, yêu cầu sinh viên hãy đăng kí thêm!
+          </b-message>
+        </b-field>
+    </div>
 
-    </b-field>
-    <b-field v-if="register_result.length > 0">
-      <b-table
-        :data="register_result"
-        :loading="loading"
-        :bordered="true">
-          <template slot-scope="props">
-            <b-table-column field="ShiftID" label="Ca thi số" width="100">
-              {{ props.row.Shift.ShiftID }}
-            </b-table-column>
-            <b-table-column field="SubjectTitle" label="Môn thi">
-              <b>{{ props.row.Shift.Subject.SubjectID }} | {{ props.row.Shift.Subject.SubjectTitle }}</b>
-            </b-table-column>
-            <b-table-column field="Date_Start" label="Ngày thi">
-              <span class="tag is-success">
-                {{ formatDate(props.row.Shift.Date_Start) }}
-              </span>
-            </b-table-column>
-            <b-table-column field="Start_At" label="Ca thi bắt đầu">
-              {{ props.row.Shift.Start_At }}
-            </b-table-column>
-            <b-table-column field="End_At" label="Ca thi kết thúc">
-              {{ props.row.Shift.End_At }}
-            </b-table-column>
-            <b-table-column field="RoomName" label="Phòng thi">
-              {{ props.row.Exam_Room.RoomName}}
-            </b-table-column>
-             <b-table-column field="Action" width="100">
-               <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onDelete(props.row)"></b-button>
-            </b-table-column>
-          </template>
-      </b-table>
-    </b-field>
-    <b-field v-else>
-      <b-message type="is-danger" has-icon>
-        Hiện tại chưa có dữ liệu ca thi đã đăng kí, yêu cầu sinh viên hãy đăng kí thêm!
-      </b-message>
-    </b-field>
   </div>
 </template>
 
@@ -103,7 +97,7 @@
                         this.register_result.push(item);
                       });
                   this.loading = false;
-                  console.log(response.data);
+                  // console.log(response.data);
                   // const subject_data = response.data.result_records['Shift']['Subject'];
                   // this.subject_data['SubjectID'] = subject_data['SubjectID'];
                   // this.subject_data['SubjectTitle'] = subject_data['SubjectTitle'];
@@ -134,39 +128,68 @@
                 throw error;
               }
             },
-            async onDelete(row) {
-              try {
-                const removeData = await axios({
-                  url: '/shift-register/remove-export-records',
-                  method: 'delete',
-                  headers: {
-                    'Authorization': authHeader(),
-                  },
-                  data: {
-                    delRegisterID: row['Student_Shift'][0]['RegisterID'],
-                  },
+            async onDelete(item) {
+              this.$buefy.dialog.confirm({
+                  title: 'Hủy ca thi',
+                  message: `Bạn có chắc chắn là muốn <b>hủy</b> ca thi số ${item.Shift.ShiftID} này không? Đã làm thì tự chịu đấy.`,
+                  confirmText: 'Hủy!',
+                  cancelText: 'Bỏ qua',
+                  type: 'is-danger',
+                  hasIcon: true,
+                  onConfirm: async () => {
+                      try {
+                          const removeData = await axios({
+                              url: '/shift-register/remove-export-records',
+                              method: 'delete',
+                              headers: {
+                                'Authorization': authHeader(),
+                              },
+                              data: {
+                                delRegisterID: item['Student_Shift'][0]['RegisterID'],
+                              },
+                          });
+                          if (removeData.status === 200) {
+                              this.$buefy.notification.open({
+                                duration: 2000,
+                                message: `Đã hủy ca thi đăng kí thành công.`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                              });
+                          }
+                          this.getRecord();
+                        } catch (e) {
+                            if (e['message'].includes('401')) {
+                                this.$buefy.notification.open({
+                                    duration: 2000,
+                                    message: 'Không được quyền sử dụng!',
+                                    position: 'is-bottom-right',
+                                    type: 'is-danger',
+                                    hasIcon: true
+                                })
+                            }
+                        }
+                    }
                 });
-                if (removeData.status === 200) {
-                  this.$buefy.notification.open({
-                    duration: 2000,
-                    message: `Đã xóa ca thi đăng kí thành công.`,
-                    position: 'is-bottom-right',
-                    type: 'is-success',
-                    hasIcon: true
-                  });
-                }
-                this.getRecord();
-              } catch (e) {
-                if (e['message'].includes('401')) {
-                  this.$buefy.notification.open({
-                    duration: 2000,
-                    message: 'Không được quyền sử dụng!',
-                    position: 'is-bottom-right',
-                    type: 'is-danger',
-                    hasIcon: true
-                  })
-                }
-              }
+            },
+            print(){
+              this.isPrinting = true;
+              printJS({
+                  printable: 'printTickets',
+                  // properties: [
+                  //         { field: 'ID', displayName: 'Mã số sinh viên'},
+                  //         { field: 'Fullname', displayName: 'Tên sinh viên'},
+                  //         { field: 'Dob', displayName: 'Ngày sinh'},
+                  //         { field: 'Gender', displayName: 'Giới tính'},
+                  //         { field: 'CourseID', displayName: 'Mã lớp học'}
+                  //       ],
+                  documentTitle : "PHIẾU BÁO DỰ THI",
+                  css : "../../css/ticket.css",
+                  scanStyles: true,
+                  ignoreElements: ['deleteRegister'],
+                  targetStyles: ['*'],
+                  type: 'html'
+              })
             }
         },
           mounted() {
@@ -174,3 +197,4 @@
           }
     }
 </script>
+<style src="../../css/ticket.css" scoped></style>

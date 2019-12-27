@@ -1,7 +1,8 @@
 <template>
       <div class="container">
           <h1 class="title is-3">Quản lý nhật ký</h1>
-          <h2 class="subtitle is-6">Xem, quản lý hành vi, hoạt động của từng người dùng</h2>
+          <h2 class="subtitle is-6">Xem, quản lý hành vi và hoạt động của từng người dùng</h2>
+          <hr>
           <b-field grouped group-multiline>
               <b-button
                 :class="{'is-loading': loading}"
@@ -52,7 +53,7 @@
                     </b-table-column>
 
                     <b-table-column field="Created_At" label="Thời gian" width="120" sortable>
-                        <span class="tag is-success">
+                        <span class="tag is-primary">
                           {{ formatDate(props.row.Created_At) }}
                         </span>
                     </b-table-column>

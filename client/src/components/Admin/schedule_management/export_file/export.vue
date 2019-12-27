@@ -20,7 +20,7 @@
             v-for="(collapse, index) of semester.semester_record_data"
             :key="index"
             :open="isOpen === index"
-            @open="() => { isOpen = index; currentSemID = collapse.SemID ;  getShiftRecordData() }"
+            @open="() => { isOpen = index; shift.page = 1; currentSemID = collapse.SemID ;  getShiftRecordData() }"
             @close="destroySemesterData()"
             >
             <div
@@ -77,7 +77,7 @@
                               <b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}</b>
                             </b-table-column>
                             <b-table-column field="Date_Start" label="Ngày thi" width="100" sortable>
-                              <span class="tag is-success">
+                              <span class="tag is-primary">
                                 {{ formatDate(props.row.Date_Start) }}
                               </span>
                             </b-table-column>
@@ -138,7 +138,7 @@
                                     {{ props.row.Exam_Room.RoomName }}
                                   </b-table-column>
                                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
-                                    {{ props.row.Exam_Room.Maxcapacity }}
+                                    <p style="width: 25px; display: inline-block; text-align: center;">{{ props.row.Exam_Room.Maxcapacity }}</p> <b-icon icon-pack="fas" size="is-small" icon="laptop"></b-icon>
                                   </b-table-column>
 <!--                                  <b-table-column field="student_count" label="Số lượng sinh viên" width="100" sortable>-->
 <!--                                    {{ room.student_count }}-->
@@ -148,13 +148,16 @@
                                 <!--Student-->
                                  <template slot="detail" slot-scope="props">
                                     <h4 class="title is-4">Danh sách sinh viên</h4>
-                                    <b-field  expanded>
+                                    <b-field expanded>
                                       <b-button
                                             :class="{'is-loading': student.student_loading}"
                                             class="button"
                                             @click="getStudentRecord">
                                         <b-icon size="is-small" icon="sync"/></b-button>
-                                      <b-button icon-left="file-download" @click="print">
+                                      <b-button v-if="student.student_record_data.length > 0" icon-left="file-pdf" @click="print">
+                                        In danh sách sinh viên
+                                      </b-button>
+                                      <b-button v-else icon-left="file-pdf" disabled>
                                         In danh sách sinh viên
                                       </b-button>
                                     </b-field>
@@ -178,9 +181,12 @@
                                                   {{ props.row.Fullname }}
                                                 </b-table-column>
                                                 <b-table-column field="Dob" label="Ngày sinh" width="100" sortable>
-                                                 <span class="tag is-success">
+                                                 <span class="tag is-primary">
                                                     {{ formatDate(props.row.Dob) }}
                                                  </span>
+                                                </b-table-column>
+                                                <b-table-column field="CourseID" label="Lớp" width="100" sortable>
+                                                  {{ props.row.CourseID }}
                                                 </b-table-column>
                                                 <b-table-column field="Gender" label="Giới tính" width="100" sortable >
                                                   <span>
@@ -189,9 +195,6 @@
                                                       </b-icon>
                                                       {{ props.row.Gender }}
                                                   </span>
-                                                </b-table-column>
-                                                <b-table-column field="CourseID" label="Lớp" width="100" sortable>
-                                                  {{ props.row.CourseID }}
                                                 </b-table-column>
                                               </template>
                                         </b-table>
@@ -207,7 +210,7 @@
                             </b-field>
                             <b-field v-else>
                               <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có dữ liệu phòng thi trong ca thi này, bạn hãy nhập vào môn thi!
+                                Hiện tại chưa có dữ liệu phòng thi trong ca thi này, bạn hãy nhập vào phòng thi!
                               </b-message>
                             </b-field>
                         </template>

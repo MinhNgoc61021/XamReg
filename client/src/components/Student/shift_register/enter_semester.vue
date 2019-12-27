@@ -1,43 +1,42 @@
 <template>
-    <form @submit.prevent="submitSemesterData()">
     <div class="modal-card" style="width: 450px; height: 300px">
         <header class="modal-card-head">
-            <p class="modal-card-title">Nhập tên kỳ thi</p>
+            <p class="modal-card-title">Chọn tên kỳ thi</p>
         </header>
 
-      <section class="modal-card-body">
-        <b-autocomplete
-          :data="search.searchResults"
-          placeholder="Nhập tên kỳ thi"
-          icon="search"
-          field="SemTitle"
-          :loading="search.searchLoading"
-          @typing="onSemesterSearch"
-          @select="option => semester.semester_record = [option]"
-        expanded required>
-          <template slot-scope="props">
-            <div class="media">
-              <div class="media-content">
-                <b>Tên kỳ thi: </b>{{ props.option.SemTitle }}
+        <section class="modal-card-body">
+          <b-autocomplete
+            :data="search.searchResults"
+            placeholder="Tìm kiếm và chọn tên kỳ thi"
+            icon="search"
+            field="SemTitle"
+            :loading="search.searchLoading"
+            @typing="onSemesterSearch"
+            @select="option => { semester.semester_record = [option]; submitSemesterData() }"
+            expanded required>
+            <template slot-scope="props">
+              <div class="media">
+                <div class="media-content">
+                  <b>Tên kỳ thi: </b>{{ props.option.SemTitle }}
+                </div>
               </div>
-            </div>
-          </template>
-        </b-autocomplete>
-      </section>
+            </template>
+          </b-autocomplete>
+        </section>
 
-      <footer class="modal-card-foot">
-          <button v-if="semester.currentSemesterID === ''" class="button" type="button" @click="go_home()">Về trang chủ</button>
-          <button v-else class="button" type="button" @click="$parent.close()">Bỏ qua</button>
-          <button class="button is-primary" type="submit">Xác nhận</button>
-      </footer>
+        <footer class="modal-card-foot">
+            <button v-if="semester.currentSemesterID === ''" class="button" type="button" @click="go_home()">Về trang chủ</button>
+            <button v-else class="button" type="button" @click="$parent.close()">Bỏ qua</button>
+        </footer>
     </div>
-  </form>
 </template>
 
 <script>
 import axios from "axios";
 import {authHeader} from "../../api/jwt_handling";
 import debounce from 'lodash/debounce';
+import { mapState } from 'vuex';
+
 export default {
   props: ['semesterID'],
   name: "enter_semester",
@@ -53,19 +52,20 @@ export default {
       }
     }
   },
+  computed: {
+      ...mapState([
+          'ID',
+      ]),
+  },
   methods: {
     go_home() {
       this.$parent.close();
-      this.$router.push({ name: 'student-home' })
+      this.$router.push({ name: 'student-info', params: { studentid: this.ID }, props: true})
     },
     async submitSemesterData() {
-        if (this.semester_record !== []) {
-          this.$emit('loadSemesterShifts', this.semester.semester_record[0]);
-          this.$parent.close();
-        }
-        else {
-            this.go_home();
-        }
+        // console.log(this.semester.semester_record[0]);
+        this.$emit('loadSemesterShifts', this.semester.semester_record[0]);
+        this.$parent.close();
     },
     onSemesterSearch: debounce(function (SemTitle) {
       this.search.searchLoading = true;

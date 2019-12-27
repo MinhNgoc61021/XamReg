@@ -2,6 +2,7 @@
     <div class="container">
       <h1 class="title is-3">Đăng ký thi</h1>
       <h2 class="subtitle is-6">Sinh viên đăng ký ca thi mà sinh viên đủ điều kiện dự thi và đang còn chỗ trống</h2>
+      <hr>
       <b-field grouped group-multiline>
         <b-button
           :class="{'is-loading': shift.shift_loading}"
@@ -16,7 +17,7 @@
 
         <b-autocomplete
           :data="search.searchResults"
-          placeholder="Tìm kiếm bằng mã môn học"
+          placeholder="Tìm kiếm bằng mã môn thi"
           icon="search"
           field="ID"
           :loading="search.searchLoading"
@@ -29,7 +30,7 @@
                 <b-icon icon-pack="fas" icon="user-circle"></b-icon>
               </div>
               <div class="media-content">
-                <b>Mã môn học: </b>{{ props.option.Subject.SubjectID }}
+                <b>Mã môn thi: </b>{{ props.option.Subject.SubjectID }}
                 <br>
                 <b>Mã ca thi: </b>{{ props.option.ShiftID }}
               </div>
@@ -47,7 +48,7 @@
 
       <b-field group-multiline v-if="shift.shift_record_data.length === 0">
         <b-message type="is-danger" has-icon>
-          Hiện tại bạn không chưa môn nào được cho phép đăng ký
+          Hiện tại chưa có ca thi (môn thi) nào được cho phép đăng ký
         </b-message>
       </b-field>
 
@@ -72,7 +73,7 @@
           :default-sort-direction="shift.defaultSortOrder"
           :default-sort="[shift.sortField, shift.sortOrder]"
           @sort="onShiftSort"
-          @details-open="(row, index) => { currentShiftID = row.ShiftID ; getRoomRecord(); closeOtherDetails(row, index) }"
+          @details-open="(row, index) => { currentShiftID = row.ShiftID ; room.page = 1; getRoomRecord(); closeOtherDetails(row, index) }"
           @details-close="(row, index) => { room.room_record_data = [] }"
           :show-detail-icon="true"
         >
@@ -84,7 +85,9 @@
               <b></b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}
             </b-table-column>
             <b-table-column field="Date_Start" label="Ngày thi" sortable>
-              {{ formatDate(props.row.Date_Start) }}
+              <span class="tag is-primary">
+                {{ formatDate(props.row.Date_Start) }}
+              </span>
             </b-table-column>
             <b-table-column field="Start_At" label="Thời gian bắt đầu" sortable>
               {{ props.row.Start_At }}
@@ -129,9 +132,6 @@
                 bordered
                 narrowed
                 hoverable
-                detail-key="RoomID"
-                :default-sort-direction="room.defaultSortOrder"
-                :default-sort="[room.sortField, room.sortOrder]"
                 @sort="onRoomSort">
 
                 <template slot-scope="props">
@@ -377,7 +377,8 @@
                     'Authorization': authHeader(),
                   },
                   params: {
-                    searchID: SubjectID,
+                      studentID: this.studentid,
+                      subjectID: SubjectID,
                   },
                 }).then((response) => {
                   if (response.status === 200) {
@@ -420,38 +421,31 @@
                     canCancel: false,
                     events: {
                       'loadSemesterShifts': (semester_record) => {
-                        if (semester_record.SemTitle !== '') {
                           this.semester.semester_record = semester_record;
                           this.SetCurrentSemesterID(semester_record.SemID);
-                          this.getShiftRecordData();
-                          this.$buefy.notification.open({
-                            duration: 2000,
-                            message: `Đã lấy ca thi thành công!`,
-                            position: 'is-bottom-right',
-                            type: 'is-success',
-                            hasIcon: true
-                          });
-                        } else if (semester_record.SemTitle === '') {
-                          this.$buefy.notification.open({
-                            duration: 2000,
-                            message: 'Không lấy được dữ liệu!',
-                            position: 'is-bottom-right',
-                            type: 'is-danger',
-                            hasIcon: true
-                          });
+                          if (semester_record.shift.length !== 0) {
+                              this.getShiftRecordData();
+                              this.$buefy.notification.open({
+                                duration: 2000,
+                                message: `Kỳ thi đã được truy cập và ca thi đã được lấy thành công!`,
+                                position: 'is-bottom-right',
+                                type: 'is-success',
+                                hasIcon: true
+                              });
+                          }
+                          else {
+                              this.getShiftRecordData();
+                              this.$buefy.notification.open({
+                                duration: 2000,
+                                message: 'Kỳ thi đã được truy cập nhưng tuy nhiên hiện tại chưa có ca thi nào được mở!',
+                                position: 'is-bottom-right',
+                                type: 'is-warning',
+                                hasIcon: true
+                              });
+                          }
                         }
-                        // } else if (http_status === 401) {
-                        //   this.$buefy.notification.open({
-                        //     duration: 2000,
-                        //     message: 'Không được quyền sử dụng!',
-                        //     position: 'is-bottom-right',
-                        //     type: 'is-danger',
-                        //     hasIcon: true
-                        //   });
-                        // }
-                      }
                     }
-                  })
+                })
             },
             onRoomPageChange(page) {
                 this.room.page = page;
