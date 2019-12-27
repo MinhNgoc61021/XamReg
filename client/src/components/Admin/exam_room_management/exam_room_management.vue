@@ -32,7 +32,7 @@
         field="RoomName"
         :loading="search.searchLoading"
         @typing="onRoomSearch"
-        @select="option => { exam_room_list = [option]; total = 1;}"
+        @select="option => { exam_room_list = [option]; total = 1; }"
         expanded>
           <template slot-scope="props">
             <div class="media">

@@ -1,3 +1,4 @@
+
 <template>
     <div class="container">
       <h1 class="title is-3">Trợ giúp</h1>
@@ -36,13 +37,13 @@
                     <div class="notification">
                       <div class="content">
                         <!--add anh Import danh sách sinh viên-->
-                                • Quản trị viên có thể upload <b>file excel (.xlsx)</b>:
+                                • Quản trị viên có thể upload 1 trong các <b>format file excel (.xlsx)</b>:
                                   <p style="padding-left: 30px;">
-                                    ◦ <u>Loại 1</u>: File excel <b>Danh sách thông tin sinh viên</b> bao gồm các cột: <b>Mã số sinh viên (VD: 17021000), tên sinh viên (VD: Phạm Ngọc H), ngày sinh (VD: 2000/01/01), giới tính (VD: Nam) và mã khóa học (VD: K61CACLC) của sinh viên.</b> <br>
+                                    ◦ <u>Loại 1</u>: File excel <b>Danh sách thông tin sinh viên</b> bao gồm các cột: <b> <br>Mã số sinh viên (VD: 17021000) <br>- Tên sinh viên (VD: Phạm Ngọc H) <br> Ngày sinh (VD: 2000/01/01) <br> Giới tính (VD: Nam) <br> Mã khóa học (VD: K61CACLC) của sinh viên.</b> <br>
                                     <img :src="'/static/img/manual_pics/Input_format/Excel_format_01.png'" style="margin: 10px;" alt="Loại 1"><br>
-                                    ◦ <u>Loại 2</u>: File excel <b>Danh sách sinh viên đủ điều kiện và không đủ điều kiện tham gia kì thi học phần </b> bao gồm các cột: <b>Mã số sinh viên, mã số môn thi (VD: INT1005), tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
+                                    ◦ <u>Loại 2</u>: File excel <b>Danh sách sinh viên đủ điều kiện và không đủ điều kiện tham gia kì thi học phần </b> bao gồm các cột:<br> <b>Mã số sinh viên <br> Mã số môn thi (VD: INT1005) <br> Tên môn học <br> Thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
                                     <img :src="'/static/img/manual_pics/Input_format/Excel_format_02.png'" style="margin: 10px;" alt="Loại 2"><br>
-                                    ◦ <u>Loại 3</u>: File excel tổng hợp của của ca hai file trên bao gồm các cột: <b>Mã số sinh viên, tên sinh viên, ngày sinh, giới tính, mã khóa học của sinh viên, mã số môn thi, tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
+                                    ◦ <u>Loại 3</u>: File excel tổng hợp của của ca hai file trên bao gồm các cột: <br> <b>Mã số sinh viên <br> Tên sinh viên <br> Ngày sinh <br> Giới tính <br> Mã khóa học của sinh viên <br> Mã số môn thi <br> Tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
                                     <img :src="'/static/img/manual_pics/Input_format/Excel_format_03.png'" style="margin: 10px;" alt="Loại 3">
                                   </p>
                         <p><b-icon pack="fas" icon="exclamation-triangle" size="is-small"></b-icon><strong style="color: red"> Chú ý:</strong> Yêu cầu file excel phải nhập đúng thứ tự các cột như trên, đặc biệt file <b>Danh sách thông tin sinh viên</b> chỉ bao gồm danh sách các sinh viên đã có tài khoản trên hệ thống.</p>
@@ -58,7 +59,12 @@
                       <div class="notification">
                           <div class="content">
                              <!--add anh form thêm từng thông tin về sinh viên-->
-                              <p>• Quản trị viên có thể nhập tài khoản sinh viên bằng form bao gồm: <b>Mã số sinh viên (VD: 17021000), tên sinh viên (VD: Phạm Ngọc H), ngày sinh (VD: 2000/01/01), giới tính (VD: Nam) và mã khóa học (VD: K61CACLC) của sinh viên.</b> <br></p>
+                              <p>• Quản trị viên có thể nhập tài khoản sinh viên bằng form bao gồm: <br>
+                                <b>Mã số sinh viên (VD: 17021000) <br>
+                                    Tên sinh viên (VD: Phạm Ngọc H) <br>
+                                    Ngày sinh (VD: 2000/01/01) <br>
+                                    Giới tính (VD: Nam) <br>
+                                    Mã khóa học (VD: K61CACLC) của sinh viên.</b> <br></p>
                           </div>
                       </div>
                   </b-collapse>
@@ -146,14 +152,23 @@
                         Chức năng Quản lý lịch thi chỉ <b>tổng hợp</b> lại những dữ liệu về môn thi, phòng thi và sinh viên từ những chức năng khác,
                         mọi thay đổi về những dữ liệu nói trên cần được thực hiện ở những chức năng tương ứng.
                       </p>
-                      <p style="padding-left: 30px;">
+                      <span style="padding-left: 30px;">
                       • Nhấn vào nút <b-button icon-pack="fas" icon-left="plus-square"><span>Tạo kỳ thi</span></b-button> để bắt đầu một kỳ thi mới (một kỳ thi gồm nhiều ca thi).<br>
                       • Nhấn vào tiêu đề của kỳ thi để xem thông tin chi tiết những ca thi
                       • Nhấn vào nút <b-icon pack="fas" icon="edit" size="is-small"></b-icon> để sửa trạng thái kỳ thi (sinh viên chỉ có thể đăng ký kỳ thi ở trạng thái "Mở đăng ký").<br>
                       • Nhấn vào nút <b-icon pack="fas" icon="trash" size="is-small"></b-icon> để xóa kỳ thi.<br>
                       • Nhấn vào nút <b-button><b-icon size="is-small" icon="sync"/><span>Làm mới</span></b-button> để tải lại trang.<br>
                       • Phòng thi có thể được chọn trực tiếp từ đề xuất của thanh tìm kiếm.
-                      </p>
+                      • Chọn tab "Xem & In danh sách sinh viên dự thi" để xem và in danh sách sinh viên. <br>
+                        <p>
+                            <b-icon pack="fas" icon="exclamation-triangle" size="is-small"></b-icon>
+                            <strong style="color: red">Chú ý</strong>:
+                        Chức năng "Xem & In danh sách sinh viên dự thi" xuất ra danh sách sinh viên theo <b> phòng thi</b>.
+                          <img src="../../../static/img/manual_pics/print_student_list.png" alt="Chú ý"/>
+                        </p>
+                      • Định dạng của danh sách sinh viên như sau: <br>
+                      <img :src="'/static/img/manual_pics/student_list.png'" alt=""/>
+                      </span>
                 </div>
                 </div>
               </b-collapse>

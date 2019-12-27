@@ -65,11 +65,11 @@ def register():
     if request.method == 'POST':
         user_form = request.get_json()
         username = user_form.get('username')
-        check_username = re.search('[!#$%^&*()='',?";:{}|<>]', str(username))
+        check_username = re.search('[!#$%^&*()='',?";:{}|<>]', str(username).strip())
         password = user_form.get('password')
         check_password = re.search('[!#$%^&*()='',?";:{}|<>]', str(password))
         if (check_username is None) and (check_password is None):
-            check_user = User.check_register(username, password)
+            check_user = User.check_register(str(username).strip(), password)
             if check_user == 'Not found':
                 return jsonify({'status': 'fail'})
             else:
