@@ -317,7 +317,7 @@
           async onRoomDelete(record) {
                 this.$buefy.dialog.confirm({
                     title: 'Xóa tài khoản',
-                    message: `Bạn có chắc chắn là muốn <b>xóa</b> phòng thi ${record.RoomName} không?'`,
+                    message: `Bạn có chắc chắn là muốn <b>xóa</b> phòng thi ${record.RoomName} không? Đã làm thì tự chịu đấy.`,
                     confirmText: 'Xóa!',
                     cancelText: 'Bỏ qua',
                     type: 'is-danger',
