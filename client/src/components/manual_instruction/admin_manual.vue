@@ -158,7 +158,15 @@
                       • Nhấn vào nút <b-icon pack="fas" icon="trash" size="is-small"></b-icon> để xóa kỳ thi.<br>
                       • Nhấn vào nút <b-button><b-icon size="is-small" icon="sync"/><span>Làm mới</span></b-button> để tải lại trang.<br>
                       • Phòng thi có thể được chọn trực tiếp từ đề xuất của thanh tìm kiếm.
-                      • Chọn tab "Xem & In danh sách sinh viên dự thi" để xem và in danh sách sinh viên theo phòng thi.
+                      • Chọn tab "Xem & In danh sách sinh viên dự thi" để xem và in danh sách sinh viên. <br>
+                        <p>
+                            <b-icon pack="fas" icon="exclamation-triangle" size="is-small"></b-icon>
+                            <strong style="color: red">Chú ý</strong>:
+                        Chức năng "Xem & In danh sách sinh viên dự thi" xuất ra danh sách sinh viên theo <b> phòng thi</b>.
+                          <img src="../../../static/img/manual_pics/print_student_list.png" alt="Chú ý"/>
+                        </p>
+                      • Định dạng của danh sách sinh viên như sau. <br>
+                      <img src="../../../static/img/manual_pics/student_list.png"/>
                       </p>
                 </div>
                 </div>
