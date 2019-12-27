@@ -141,7 +141,7 @@
                   <b-table-column field="RoomName" label="Phòng thi" width="100">
                     {{ props.row.Exam_Room.RoomName }}
                   </b-table-column>
-                  <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
+                  <b-table-column field="Maxcapacity" label="Số lượng đã đăng ký" width="100">
                     {{ props.row.Student_Shift.length }}   / {{ props.row.Exam_Room.Maxcapacity }}
                   </b-table-column>
                   <b-table-column width="10">

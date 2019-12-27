@@ -36,13 +36,13 @@
                     <div class="notification">
                       <div class="content">
                         <!--add anh Import danh sách sinh viên-->
-                                • Quản trị viên có thể upload <b>file excel (.xlsx)</b>:
+                                • Quản trị viên có thể upload 1 trong các <b>format file excel (.xlsx)</b>:
                                   <p style="padding-left: 30px;">
-                                    ◦ <u>Loại 1</u>: File excel <b>Danh sách thông tin sinh viên</b> bao gồm các cột: <b>Mã số sinh viên (VD: 17021000), tên sinh viên (VD: Phạm Ngọc H), ngày sinh (VD: 2000/01/01), giới tính (VD: Nam) và mã khóa học (VD: K61CACLC) của sinh viên.</b> <br>
+                                    ◦ <u>Loại 1</u>: File excel <b>Danh sách thông tin sinh viên</b> bao gồm các cột: <b> <br>Mã số sinh viên (VD: 17021000) <br> Tên sinh viên (VD: Phạm Ngọc H) <br> Ngày sinh (VD: 2000/01/01) <br> Giới tính (VD: Nam) <br> Mã khóa học (VD: K61CACLC) của sinh viên.</b> <br>
                                     <img :src="'/static/img/manual_pics/Input_format/Excel_format_01.png'" style="margin: 10px;" alt="Loại 1"><br>
-                                    ◦ <u>Loại 2</u>: File excel <b>Danh sách sinh viên đủ điều kiện và không đủ điều kiện tham gia kì thi học phần </b> bao gồm các cột: <b>Mã số sinh viên, mã số môn thi (VD: INT1005), tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
+                                    ◦ <u>Loại 2</u>: File excel <b>Danh sách sinh viên đủ điều kiện và không đủ điều kiện tham gia kì thi học phần </b> bao gồm các cột:<br> <b>Mã số sinh viên <br> Mã số môn thi (VD: INT1005) <br> Tên môn học <br> Thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
                                     <img :src="'/static/img/manual_pics/Input_format/Excel_format_02.png'" style="margin: 10px;" alt="Loại 2"><br>
-                                    ◦ <u>Loại 3</u>: File excel tổng hợp của của ca hai file trên bao gồm các cột: <b>Mã số sinh viên, tên sinh viên, ngày sinh, giới tính, mã khóa học của sinh viên, mã số môn thi, tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
+                                    ◦ <u>Loại 3</u>: File excel tổng hợp của của ca hai file trên bao gồm các cột: <br> <b>Mã số sinh viên <br> Tên sinh viên <br> Ngày sinh <br> Giới tính <br> Mã khóa học của sinh viên <br> Mã số môn thi <br> Tên môn học và thông tin sinh viên (Đủ điều kiện/Không đủ điều kiện)</b>. <br>
                                     <img :src="'/static/img/manual_pics/Input_format/Excel_format_03.png'" style="margin: 10px;" alt="Loại 3">
                                   </p>
                         <p><b-icon pack="fas" icon="exclamation-triangle" size="is-small"></b-icon><strong style="color: red"> Chú ý:</strong> Yêu cầu file excel phải nhập đúng thứ tự các cột như trên, đặc biệt file <b>Danh sách thông tin sinh viên</b> chỉ bao gồm danh sách các sinh viên đã có tài khoản trên hệ thống.</p>
@@ -58,7 +58,12 @@
                       <div class="notification">
                           <div class="content">
                              <!--add anh form thêm từng thông tin về sinh viên-->
-                              <p>• Quản trị viên có thể nhập tài khoản sinh viên bằng form bao gồm: <b>Mã số sinh viên (VD: 17021000), tên sinh viên (VD: Phạm Ngọc H), ngày sinh (VD: 2000/01/01), giới tính (VD: Nam) và mã khóa học (VD: K61CACLC) của sinh viên.</b> <br></p>
+                              <p>• Quản trị viên có thể nhập tài khoản sinh viên bằng form bao gồm: <br>
+                                <b>Mã số sinh viên (VD: 17021000) <br>
+                                    Tên sinh viên (VD: Phạm Ngọc H) <br>
+                                    Ngày sinh (VD: 2000/01/01) <br>
+                                    Giới tính (VD: Nam) <br>
+                                    Mã khóa học (VD: K61CACLC) của sinh viên.</b> <br></p>
                           </div>
                       </div>
                   </b-collapse>
@@ -153,6 +158,7 @@
                       • Nhấn vào nút <b-icon pack="fas" icon="trash" size="is-small"></b-icon> để xóa kỳ thi.<br>
                       • Nhấn vào nút <b-button><b-icon size="is-small" icon="sync"/><span>Làm mới</span></b-button> để tải lại trang.<br>
                       • Phòng thi có thể được chọn trực tiếp từ đề xuất của thanh tìm kiếm.
+                      • Chọn tab "Xem & In danh sách sinh viên dự thi" để xem và in danh sách sinh viên theo phòng thi.
                       </p>
                 </div>
                 </div>
