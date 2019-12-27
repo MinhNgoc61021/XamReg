@@ -86,7 +86,7 @@
                       this.newStudent.StudentID = '';
                       this.newStudent.Fullname = '';
                       this.newStudent.Gender = '';
-                      this.newStudent.Dob = '';
+                      this.newStudent.Dob =   null;
                       this.newStudent.CourseID = '';
                       this.$buefy.notification.open({
                           duration: 2000,
@@ -100,7 +100,7 @@
                   else {
                       this.$buefy.notification.open({
                           duration: 2000,
-                          message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã tồn tại trước đó!`,
+                          message: `Dữ liệu sinh viên có MSSV: <b>${this.newStudent.StudentID}</b> đã tồn tại trước đó!`,
                           position: 'is-bottom-right',
                           type: 'is-warning',
                           hasIcon: true
