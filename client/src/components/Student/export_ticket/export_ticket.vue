@@ -119,7 +119,7 @@
                 this.loading = false;
                 this.$buefy.notification.open({
                   duration: 2000,
-                  message: 'Không thể lấy được dữ liệu !',
+                  message: 'Không thể lấy được dữ liệu ca thi đã đăng ký!',
                   position: 'is-bottom-right',
                   type: 'is-danger',
                   hasIcon: true
