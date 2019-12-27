@@ -86,7 +86,7 @@
                       this.newStudent.StudentID = '';
                       this.newStudent.Fullname = '';
                       this.newStudent.Gender = '';
-                      this.newStudent.Dob =   null;
+                      this.newStudent.Dob = null;
                       this.newStudent.CourseID = '';
                       this.$buefy.notification.open({
                           duration: 2000,
