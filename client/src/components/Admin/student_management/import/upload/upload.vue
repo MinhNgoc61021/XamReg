@@ -27,9 +27,13 @@
                 :key="index"
                 class="tag is-primary" >
                 {{ file.name }}
-                <button class="delete is-small"
+                <button class="delete is-small" v-if="dropFiles.length !== 0"
                     type="button"
                     @click="deleteDropFile(index)">
+                </button>
+                <button class="delete is-small" v-else
+                    type="button"
+                    @click="deleteDropFile(index)" disabled>
                 </button>
             </span>
         </div>
