@@ -3,7 +3,7 @@
 ## Công nghệ sử dụng
 | Structure   | Description                                     |
 | ----------- | ----------------------------------------------- |
-| Client Side | VueJS, Vuex                                     |
+| Client Side | VueJS, Vuex, Buefy, PrintJS                     |
 | Server Side | Flask (Python)                                  |
 | Database    | MySQL, SQLAlchemy ORM                           |
 ## Thành viên nhóm tham gia:
