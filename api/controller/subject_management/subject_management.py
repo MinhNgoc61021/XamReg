@@ -103,7 +103,7 @@ def remove_subject(current_user):
         if validate:
             Subject.delRecord(delSubjectID)
             Log.create(current_user['ID'],
-                       'Xóa môn học: ' + delSubjectID,
+                       'Xóa môn học: ' + delSubjectID + ' khỏi hệ thống',
                        set_custom_log_time())
             return jsonify({'status': 'success'}), 200
         else:

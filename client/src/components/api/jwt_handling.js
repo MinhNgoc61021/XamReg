@@ -1,6 +1,7 @@
 // The authHeader is used to make authenticated HTTP requests to the server api using JWT authentication.
 import { router } from "../../router";
 import  Vue from 'vue';
+import { apiService } from '../api/api_service';
 export function authHeader() {
     // return authorization header with jwt token
     let user = JSON.parse(localStorage.getItem('user'));
@@ -9,9 +10,10 @@ export function authHeader() {
         return 'Bearer: ' + user.token; // send encoded jwt token
     }
     else {
-        Vue.prototype.$buefy.dialog.confirm({
+        apiService.signOut();
+        Vue.prototype.$buefy.dialog.alert({
             title: 'Hết thời gian sử dụng',
-            message: 'Hãy đăng nhập vào hệ thống để sử dụng tiếp',
+            message: 'Hãy đăng nhập vào hệ thống để sử dụng tiếp!',
             type: 'is-danger',
             hasIcon: true,
             icon: 'times-circle',
@@ -19,10 +21,9 @@ export function authHeader() {
             ariaRole: 'alertdialog',
             ariaModal: true,
             onConfirm: () => {
-              localStorage.removeItem('user');
               router.push('/register');
             },
-        });
+          });
     }
 }
 

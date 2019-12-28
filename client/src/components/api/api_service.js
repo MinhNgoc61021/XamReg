@@ -38,7 +38,6 @@ async function getUserData() {
   }
 }
 
-
 function signOut() {
   console.log('Signed Out');
   // remove user token from local storage

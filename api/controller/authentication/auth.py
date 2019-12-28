@@ -78,7 +78,7 @@ def register():
                 token = jwt.encode({
                     'sub': username,  # representing username
                     'iat': datetime.utcnow(),  # issued at timestamp in seconds
-                    'exp': datetime.utcnow() + timedelta(minutes=90)},
+                    'exp': datetime.utcnow() + timedelta(minutes=30)},
                     # the time in which the token will expire as seconds
                     current_app.config['SECRET_KEY'])
                 return jsonify({'status': 'success',
