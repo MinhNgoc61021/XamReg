@@ -1,5 +1,11 @@
 # ̶<del>ExamReg</del> XamReg
 Đăng ký dự thi
+## Công nghệ sử dụng
+| Structure   | Description                                     |
+| ----------- | ----------------------------------------------- |
+| Client Side | VueJS, Vuex                                     |
+| Server Side | Flask (Python)                                  |
+| Database    | MySQL, SQLAlchemy ORM                           |
 ## Thành viên nhóm tham gia:
 - Nguyễn Ngọc Minh
 - Phạm Công Nam
