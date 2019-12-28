@@ -46,15 +46,9 @@
         </b-button>
       </b-field>
 
-      <b-field group-multiline v-if="shift.shift_record_data.length === 0">
-        <b-message type="is-danger" has-icon>
-          Hiện tại chưa có ca thi (môn thi) nào được cho phép đăng ký
-        </b-message>
-      </b-field>
-
-      <b-field expanded v-else>
+      <b-field expanded>
         <b-table
-          :data="shift.shift_record_data"
+          :data="shift.isShiftEmpty ? [] : shift.shift_record_data"
           :loading="shift.shift_loading"
           paginated
           backend-pagination
@@ -82,7 +76,7 @@
               {{ props.row.ShiftID }}
             </b-table-column>
             <b-table-column field="SubjectID" label="Môn thi" sortable>
-              <b></b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}
+              <b>{{ props.row.Subject.SubjectID }} | {{ props.row.Subject.SubjectTitle }}</b>
             </b-table-column>
             <b-table-column field="Date_Start" label="Ngày thi" sortable>
               <span class="tag is-primary">
@@ -110,17 +104,12 @@
                     icon="sync"/>
                 </b-button>
               </b-field>
-
-              <b-field v-if="room.room_record_data.length === 0 ">
-                <b-message type="is-danger" has-icon>
-                  Hiện tại ca thi này chưa có phòng thi
-                </b-message>
-              </b-field>
-              <b-table v-else
-                :data="room.room_record_data"
+              <b-table
+                :data="room.isRoomEmpty ? [] : room.room_record_data"
                 :loading="room.room_loading"
                 paginated
                 backend-pagination
+                :current-page.sync="room.page"
                 :total="room.total"
                 :per-page="room.per_page"
                 @page-change="onRoomPageChange"
@@ -141,15 +130,30 @@
                   <b-table-column field="RoomName" label="Phòng thi" width="100">
                     {{ props.row.Exam_Room.RoomName }}
                   </b-table-column>
-                  <b-table-column field="Maxcapacity" label="Số lượng đã đăng ký" width="100">
-                    {{ props.row.Student_Shift.length }}   / {{ props.row.Exam_Room.Maxcapacity }}
+                  <b-table-column field="Maxcapacity" label="Số người dự thi / Số lượng máy tính" width="100">
+                    {{ props.row.Student_Shift.length }} / {{ props.row.Exam_Room.Maxcapacity }}
                   </b-table-column>
                   <b-table-column width="10">
                     <b-button type="is-success" style="float: right" icon-pack="fas" icon-left="plus-square" outlined @click.prevent="registerShift(props.row.Room_ShiftID)">Đăng ký</b-button>
                   </b-table-column>
                 </template>
+                <template slot="empty">
+                  <section class="section">
+                    <b-message type="is-danger" has-icon>
+                      Hiện tại ca thi này chưa có phòng thi!
+                    </b-message>
+                  </section>
+                </template>
               </b-table>
             </template>
+          <template slot="empty">
+            <section class="section">
+              <b-message type="is-danger" has-icon>
+                Hiện tại chưa có ca thi (môn thi) nào được cho phép đăng ký!
+              </b-message>
+            </section>
+          </template>
+
         </b-table>
       </b-field>
     </div>
@@ -171,6 +175,7 @@
                   semester_record: []
                 },
                 shift: {
+                    isShiftEmpty: false,
                     shift_record_data: [],
                     date_start: '',
                     start_at: '',
@@ -186,6 +191,7 @@
                     ID_Index: [],
                 },
                 room: {
+                    isRoomEmpty: false,
                     roomID: '',
                     room_record_data: [],
                     total: 0,
@@ -198,16 +204,9 @@
                     page: 1,
                     per_page: 5,
                 },
-                registered_room: {
-                    roomID: '',
-                    room_record_data: [],
-                    searchResults: [],
-                    room_loading: false,
-                    search_loading: false,
-                },
                 search: {
-                  searchResults: [],
-                  searchLoading: false,
+                    searchResults: [],
+                    searchLoading: false,
                 }
             }
         },

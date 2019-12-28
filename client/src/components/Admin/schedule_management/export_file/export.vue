@@ -38,20 +38,16 @@
               <div class="card-content">
                 <h4 class="title is-4">Danh sách ca thi</h4>
                 <div>
-                  <b-field group-multiline v-if="shift.shift_record_data.length === 0">
-                    <b-message type="is-danger" has-icon>
-                      Hiện tại chưa có thông tin về ca thi trong <b>{{ collapse.SemTitle }}</b>, bạn hãy nhập vào ca thi!
-                    </b-message>
-                  </b-field>
-                  <b-field expanded v-else>
+                  <b-field expanded>
 
                     <!--Shift Record-->
                     <b-table
-                        :data="shift.shift_record_data"
+                        :data="shift.isShiftEmpty ? [] : shift.shift_record_data"
                         :loading="shift.shift_loading"
                         paginated
                         backend-pagination
                         detailed
+                        :current-page.sync="shift.page"
                         :total="shift.total"
                         :per-page="shift.per_page"
                         @page-change="onShiftPageChange"
@@ -88,7 +84,6 @@
                               {{ props.row.End_At }}
                             </b-table-column>
                         </template>
-
                         <!--Room-->
                         <template slot="detail" slot-scope="props">
                             <h4 class="title is-4">Danh sách phòng thi</h4>
@@ -105,9 +100,9 @@
 
                             </b-field>
                             <!--room-->
-                            <b-field v-if="room.room_record_data.length > 0" group-multiline>
+                            <b-field group-multiline>
                               <b-table
-                                :data="room.room_record_data"
+                                :data="room.isRoomEmpty ? [] : room.room_record_data"
                                 :loading="room.room_loading"
                                 paginated
                                 backend-pagination
@@ -140,9 +135,11 @@
                                   <b-table-column field="Maxcapacity" label="Số lượng máy tính" width="100">
                                     <p style="width: 25px; display: inline-block; text-align: center;">{{ props.row.Exam_Room.Maxcapacity }}</p> <b-icon icon-pack="fas" size="is-small" icon="laptop"></b-icon>
                                   </b-table-column>
-<!--                                  <b-table-column field="student_count" label="Số lượng sinh viên" width="100" sortable>-->
-<!--                                    {{ room.student_count }}-->
-<!--                                  </b-table-column>-->
+                                </template>
+                                <template slot="empty">
+                                  <b-message type="is-danger" has-icon>
+                                    Hiện tại chưa có dữ liệu phòng thi trong ca thi này, bạn hãy nhập vào phòng thi!
+                                  </b-message>
                                 </template>
 
                                 <!--Student-->
@@ -161,9 +158,9 @@
                                         In danh sách sinh viên
                                       </b-button>
                                     </b-field>
-                                    <b-field v-if="student.student_record_data.length > 0">
+                                    <b-field>
                                         <b-table
-                                              :data="student.student_record_data"
+                                              :data="student.isStudentEmpty ? [] : student.student_record_data"
                                               :loading="student.student_loading"
                                               backend-sorting
                                               bordered
@@ -197,24 +194,28 @@
                                                   </span>
                                                 </b-table-column>
                                               </template>
+                                              <template slot="empty">
+                                                <section class="section">
+                                                  <b-message type="is-danger" has-icon>
+                                                    Hiện tại chưa có sinh viên đăng kí phòng thi này!
+                                                 </b-message>
+                                                </section>
+                                              </template>
                                         </b-table>
-                                    </b-field>
-                                    <b-field v-else>
-                                         <b-message type="is-danger" has-icon>
-                                          Hiện tại chưa có sinh viên đăng kí phòng thi này!
-                                          </b-message>
                                     </b-field>
                                   </template>
                                   <!--Student-->
                               </b-table>
                             </b-field>
-                            <b-field v-else>
-                              <b-message type="is-danger" has-icon>
-                                Hiện tại chưa có dữ liệu phòng thi trong ca thi này, bạn hãy nhập vào phòng thi!
-                              </b-message>
-                            </b-field>
                         </template>
                         <!--room-->
+                        <template slot="empty">
+                          <section class="section">
+                            <b-message type="is-danger" has-icon>
+                              Hiện tại chưa có thông tin về ca thi trong <b>{{ collapse.SemTitle }}</b>, bạn hãy nhập vào ca thi!
+                            </b-message>
+                          </section>
+                        </template>
                     </b-table>
                     <!--Shift Record-->
 
@@ -256,6 +257,7 @@
                 semester_status: false,
               },
               shift: {
+                isShiftEmpty: false,
                 shift_record_data: [],
                 date_start: '',
                 start_at: '',
@@ -271,10 +273,11 @@
                 ID_Index: [],
               },
               room: {
+                isRoomEmpty: false,
                 select_search: Object,
                 room_record_data: [],
                 total: 0,
-                student_count: '',
+                // student_count: '',
                 searchResults: [],
                 room_loading: false,
                 search_loading: false,
@@ -286,6 +289,7 @@
                 ID_Index: [],
               },
               student: {
+                isStudentEmpty: false,
                 select_search: Object,
                 student_record_data: [],
                 total: 0,
@@ -516,8 +520,8 @@
                     // console.log(response.data.shift_records);
                     if (response.status === 200) {
                         this.student.student_record_data = [];
-                        this.room.student_count = response.data.total_results;
-                        // console.log(response.data.student_records);
+                        // this.room.student_count = response.data.total_results;
+                        // console.log(response.data.total_results);
                         response.data.student_records.forEach((item) => {
                             this.student.student_record_data.push(item);
                         });
@@ -564,7 +568,7 @@
                           { field: 'Gender', displayName: 'Giới tính'},
                           { field: 'CourseID', displayName: 'Mã lớp học'}
                         ],
-                  documentTitle: "Danh sách sinh viên tại phòng " + this.currentRoomName + ' | Môn thi: ' + this.currentSubjectName,
+                  documentTitle: "Danh sách sinh viên tại phòng: " + this.currentRoomName + ' | Môn thi: ' + this.currentSubjectName,
                   headerStyle: 'font-weight: 300;',
                   repeatTableHeader: false,
                   type: 'json'
@@ -572,7 +576,6 @@
             }
         },
         mounted() {
-
             this.getSemesterRecordData();
         },
         created() {

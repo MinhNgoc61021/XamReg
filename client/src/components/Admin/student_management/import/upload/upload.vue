@@ -103,7 +103,7 @@
                         else if (e['message'].includes('403')) {
                             this.$buefy.notification.open({
                                 duration: 2500,
-                                message: 'Đối với nhập danh sách tình trang môn học của sinh viên, hãy đảm bảo là tài khoản của sinh viên đó đã tồn tại sẵn!',
+                                message: `File <b>${file.name}</b> có MSSV chưa tồn tại trong hệ thống!<br> <b>Chú ý</b>: Đối với nhập danh sách tình trạng môn thi của sinh viên, hãy đảm bảo là tài khoản của sinh viên đó đã tồn tại sẵn!`,
                                 position: 'is-bottom-right',
                                 type: 'is-warning',
                                 hasIcon: true

@@ -39,14 +39,13 @@
               </div>
             </div>
           </div>
-         </div>
-        <b-field v-else>
-          <b-message type="is-danger" has-icon>
-            Hiện tại chưa có dữ liệu ca thi đã đăng kí, yêu cầu sinh viên hãy đăng kí thêm!
-          </b-message>
-        </b-field>
+       </div>
+      <b-field v-else>
+        <b-message type="is-danger" has-icon>
+          Hiện tại chưa có dữ liệu ca thi đã đăng kí, yêu cầu sinh viên hãy vào phần <b>Đăng ký dự thi</b> để đăng kí!
+        </b-message>
+      </b-field>
     </div>
-
   </div>
 </template>
 
@@ -120,7 +119,7 @@
                 this.loading = false;
                 this.$buefy.notification.open({
                   duration: 2000,
-                  message: 'Không thể lấy được dữ liệu !',
+                  message: 'Không thể lấy được dữ liệu ca thi đã đăng ký!',
                   position: 'is-bottom-right',
                   type: 'is-danger',
                   hasIcon: true

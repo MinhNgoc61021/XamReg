@@ -15,6 +15,7 @@
               type="text"
               :data="search.searchResults"
               placeholder="Tìm kiếm mã môn thi để nhập"
+              validation-message="Nhập đúng mã môn thi"
               field="SubjectID"
               :value="SubjectID"
               v-model="SubjectID"

@@ -21,9 +21,9 @@
               <option value="20">20 dòng/trang</option>
             </b-select>
           </b-field>
-          <b-field v-if="log_data.length > 0">
+          <b-field>
               <b-table
-                  :data="log_data"
+                  :data="isLogEmpty ? [] : log_data"
                   :loading="loading"
                   paginated
                   backend-pagination
@@ -59,9 +59,14 @@
                     </b-table-column>
 
                   </template>
+                  <template slot="empty">
+                        <section class="section">
+                            <b-message type="is-danger" has-icon>
+                              Hiện tại chưa có thông tin về nhật ký!
+                            </b-message>
+                        </section>
+                  </template>
               </b-table>
-            </b-field>
-          <b-field v-else>
           </b-field>
       </div>
 </template>
@@ -75,6 +80,7 @@
       name: 'log_management',
       data() {
           return {
+              isLogEmpty: false,
               log_data: [],
               total: 0,
               loading: false,

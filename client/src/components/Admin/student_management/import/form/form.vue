@@ -31,8 +31,9 @@
 
         <b-field label="Giới tính">
             <b-select v-model="newStudent.Gender"
-                placeholder="Hãy chọn giới tính"
-                expanded required>
+                      placeholder="Hãy chọn giới tính"
+                      validation-message="Chọn đúng giới tính"
+                      expanded required>
                 <option value="Nam">Nam</option>
                 <option value="Nữ">Nữ</option>
             </b-select>
@@ -82,6 +83,11 @@
                      }
                   });
                   if (response.data.status === 'success') {
+                      this.newStudent.StudentID = '';
+                      this.newStudent.Fullname = '';
+                      this.newStudent.Gender = '';
+                      this.newStudent.Dob = '';
+                      this.newStudent.CourseID = '';
                       this.$buefy.notification.open({
                           duration: 2000,
                           message: `Dữ liệu sinh viên có MSSV: ${this.newStudent.StudentID} đã được tạo thành công!`,
@@ -89,6 +95,7 @@
                           type: 'is-success',
                           hasIcon: true
                       });
+                      eventBus.$emit('up-to-date', '');
                   }
                   else {
                       this.$buefy.notification.open({
@@ -118,8 +125,6 @@
                           hasIcon: true
                       })
                   }
-              } finally {
-                  eventBus.$emit('up-to-date', '');
               }
           },
       },

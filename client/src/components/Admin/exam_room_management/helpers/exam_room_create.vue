@@ -21,7 +21,7 @@
               type="number"
               v-model="newMaxcapacity"
               :value="newMaxcapacity"
-              validation-message="Nhập ít nhất 1 phòng thi"
+              validation-message="Nhập ít nhất 1 máy"
               min="1"
               placeholder="Nhập số lượng máy tính"
               required>
