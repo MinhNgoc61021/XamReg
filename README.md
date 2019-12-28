@@ -3,6 +3,7 @@
 ## Công nghệ sử dụng
 - Mẩu thiết kế kiến trúc: MVVM
 - Container: Docker
+
 | Thành phần  | Miêu tả                                         |
 | ----------- | ----------------------------------------------- |
 | Client Side | VueJS, Vuex, Buefy, PrintJS                     |
