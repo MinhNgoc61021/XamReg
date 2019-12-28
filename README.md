@@ -1,7 +1,7 @@
 # ̶<del>ExamReg</del> XamReg
 Đăng ký dự thi
 ## Công nghệ sử dụng
-| Structure   | Description                                     |
+| Thành phần  | Miêu tả                                         |
 | ----------- | ----------------------------------------------- |
 | Client Side | VueJS, Vuex, Buefy, PrintJS                     |
 | Server Side | Flask (Python)                                  |
