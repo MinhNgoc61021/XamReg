@@ -6,7 +6,7 @@
 
 | Thành phần  | Miêu tả                                         |
 | ----------- | ----------------------------------------------- |
-| Client Side | VueJS, Vuex, Buefy, PrintJS                     |
+| Client Side | VueJS, Vuex, Buefy, PrintJS, Webpack            |
 | Server Side | Flask (Python)                                  |
 | Database    | MySQL, SQLAlchemy ORM, phpMyAdmin               |
 ## Thành viên nhóm tham gia:
