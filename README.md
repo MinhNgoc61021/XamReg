@@ -1,5 +1,18 @@
 # ̶<del>ExamReg</del> XamReg
 Đăng ký dự thi
+## Công nghệ sử dụng
+- Mẩu thiết kế kiến trúc áp dụng: MVVM
+- Container: Docker
+
+| Thành phần  | Miêu tả                                         |
+| ----------- | ----------------------------------------------- |
+| Client Side | VueJS, Vuex, Buefy, PrintJS, Webpack            |
+| Server Side | Flask (Python)                                  |
+| Database    | MySQL, SQLAlchemy ORM, phpMyAdmin               |
+## Thành viên nhóm tham gia:
+- Nguyễn Ngọc Minh
+- Phạm Công Nam
+- Nguyễn Nam
 ## Thực hiện
 - Thực hiện theo nhóm (team) 3 sinh viên.
 - Trình bày sản phẩm tại buổi thi vấn đáp.
