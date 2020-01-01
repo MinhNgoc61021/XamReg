@@ -19,7 +19,8 @@
         </b-field>
         <b-field>
             <div class="buttons" style="float: right;">
-              <b-button @click="uploadExcelFile()" outlined>Tạo</b-button>
+              <b-button @click="uploadExcelFile()" v-if="dropFiles.length !== 0" outlined>Tạo</b-button>
+              <b-button @click="uploadExcelFile()" v-else disabled outlined>Tạo</b-button>
             </div>
         </b-field>
         <div class="tags" style="max-width: 350px;">
@@ -27,13 +28,9 @@
                 :key="index"
                 class="tag is-primary" >
                 {{ file.name }}
-                <button class="delete is-small" v-if="dropFiles.length !== 0"
+                <button class="delete is-small"
                     type="button"
                     @click="deleteDropFile(index)">
-                </button>
-                <button class="delete is-small" v-else
-                    type="button"
-                    @click="deleteDropFile(index)" disabled>
                 </button>
             </span>
         </div>

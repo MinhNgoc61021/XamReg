@@ -44,9 +44,8 @@ def create_subject(current_user):
         print(newSubjectID, flush=True)
         print(newSubjectTitle, flush=True)
         validateSubjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})$)', str(newSubjectID))
-        validateSubjectTitle = re.search("^[a-zA-Z1-9_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
-                                         "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-                                         "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$", newSubjectTitle)
+        validateSubjectTitle = re.search("^[a-zA-Z1-9_" +
+                                         "ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-—\s() ]+$", newSubjectTitle)
         if validateSubjectID is not None or validateSubjectTitle is not None:
             isNew = Subject.create(str(newSubjectID).upper().strip(), newSubjectTitle)
             if isNew:
@@ -73,9 +72,8 @@ def edit_subject(current_user):
         print(newSubjectID, flush=True)
         print(newSubjectTitle, flush=True)
         validateSubjectID = re.search('(^(([A-Z]|[a-z]){3})([1-9][(0-9)]{3})$)', str(newSubjectID).strip())
-        validateSubjectTitle = re.search("^[a-zA-Z1-9_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
-                                         "ẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-                                         "ụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-\s() ]+$", newSubjectTitle)
+        validateSubjectTitle = re.search("^[a-zA-Z1-9_" +
+                                         "ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀẾỂưăạảấầẩẫậắằẳẵặẹẻẽềếểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\-—\s() ]+$", newSubjectTitle)
         print(validateSubjectID, flush=True)
         if validateSubjectID is not None or validateSubjectTitle is not None:
             success = Subject.updateRecord(currentSubjectID, str(newSubjectID).upper().strip(),
