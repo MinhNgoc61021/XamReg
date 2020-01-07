@@ -25,7 +25,7 @@
               type="password"
               icon="lock"
               v-model="confirmPassword"
-              validation-message="Nhập đúng mật khẩu xác nhật"
+              validation-message="Nhập đúng mật khẩu xác nhận"
               placeholder="Xác nhận mật khẩu"
               password-reveal
               required>

@@ -24,11 +24,23 @@ services:
         - 8070:80
 
   api:
-      image: xamreg/api
-      build: api # setting build to ./api because Dockerfile is inside the api folder.
-      container_name: api
+      command: python run.py
       environment:
-        - QUIZ_ENV=production
+        - QUIZ_ENV=development
       volumes:
         - ./:/run
-      restart: always
+      depends_on:
+        - db
+      ports:
+        - "5000:5000"
+
+  client:
+    image: xamreg/client
+    build: client
+    container_name: client
+    command: npm run dev
+    ports:
+      - "8080:8080"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: always

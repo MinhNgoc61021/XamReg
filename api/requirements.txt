@@ -7,6 +7,7 @@ flask_restful
 Flask-SQLAlchemy
 pyexcel-xlsx
 mysqlclient
+uwsgi
 PyJWT
 marshmallow-sqlalchemy
 sqlalchemy-filters

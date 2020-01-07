@@ -1,0 +1,33 @@
+version: '3'
+services:
+  nginx:
+    image: docker-tutorial/nginx_front
+    build:
+      context: ""
+      dockerfile: ../nginx/Dockerfile
+    ports:
+      - "80:80"
+    logging: &logging
+      driver: "json-file"
+      options:
+        # Rotate the files when they reach max-size.
+        max-size: "200k"
+        max-file: "10"
+    depends_on:
+      - api  # nginx crashes if it does not find web. It checks hostname in the startup phase.
+    restart: always
+
+  api:
+      image: xamreg/api
+      build: api # setting build to ./api because Dockerfile is inside the api folder.
+      container_name: api
+      command: uwsgi --ini uwsgi.ini
+      environment:
+        - QUIZ_ENV=production
+      volumes:
+        - ./:/run
+      logging:
+        <<: *logging
+      depends_on:
+        - db
+
