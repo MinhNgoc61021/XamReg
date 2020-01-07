@@ -2,7 +2,7 @@
   "name": "client",
   "version": "1.0.0",
   "description": "front-end of XamReg",
-  "author": "Communist217 <Needforspeed1900@gmail.com>",
+  "author": "Nguyễn Ngọc Minh & Phạm Công Nam & Nguyễn Nam <Needforspeed1900@gmail.com>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

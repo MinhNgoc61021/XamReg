@@ -21,8 +21,9 @@
               type="number"
               v-model="newMaxcapacity"
               :value="newMaxcapacity"
-              validation-message="Nhập ít nhất 1 máy"
+              validation-message="Nhập từ 1-120 máy"
               min="1"
+              max="120"
               placeholder="Nhập số lượng máy tính"
               required>
             </b-input>

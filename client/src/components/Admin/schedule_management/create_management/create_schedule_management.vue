@@ -217,7 +217,7 @@
       <div v-else>
         <section class="section">
           <b-message type="is-danger" has-icon>
-            Hiện tại chưa có thông tin về kỳ thi, bạn hay nhập vào tiêu đề kỳ thi
+            Hiện tại chưa có thông tin về kỳ thi, bạn hay nhập vào tiêu đề kỳ thi!
           </b-message>
         </section>
       </div>
@@ -965,7 +965,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

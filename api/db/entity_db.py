@@ -802,7 +802,6 @@ class Student_Shift(Base):
             print(registerTotalbyRoom_Shift, flush=True)
             print(getMaxcapacity.Maxcapacity, flush=True)
             print('OK1', flush=True)
-
             if sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID,
                                                 Student_Shift.StudentID == studentID).scalar() is None:
                 if int(registerTotalbyRoom_Shift) < int(getMaxcapacity.Maxcapacity):

@@ -2,7 +2,7 @@ version: '3'
 # cmd: docker-compose build & docker-compose up (build & run docker)
 services:
   db:
-    image: mysql:5.7
+    image: mysql
     volumes:
       - ./db:/docker-entrypoint-initdb.d
     restart: always
@@ -11,17 +11,6 @@ services:
       - MYSQL_PASSWORD=528491
       - MYSQL_ROOT_PASSWORD=528491
       - MYSQL_DATABASE=xamreg
-
-  phpmyadmin:
-      image: phpmyadmin/phpmyadmin
-      restart: always
-      depends_on:
-        - db
-      environment:
-        - PMA_HOST=db
-        - MYSQL_ROOT_PASSWORD=root
-      ports:
-        - 8070:80
 
   api:
       image: xamreg/api

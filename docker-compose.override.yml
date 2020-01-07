@@ -2,7 +2,7 @@ version: '3'
 # cmd: docker-compose build & docker-compose up (build & run docker)
 services:
   db:
-    image: mysql:5.7
+    image: mysql
     volumes:
       - ./db:/docker-entrypoint-initdb.d
     restart: always

@@ -1,4 +1,4 @@
-# ̶<del>ExamReg</del> XamReg
+# <del>ExamReg</del> XamReg
 Đăng ký dự thi
 ## Công nghệ sử dụng
 - Mẩu thiết kế kiến trúc áp dụng: MVVM
