@@ -4,35 +4,26 @@ services:
   db:
     image: mysql
     volumes:
-      - ./db:/docker-entrypoint-initdb.d
+      - ./mysql-data:/var/lib/mysql
     restart: always
     environment:
       - MYSQL_USER=newroot
       - MYSQL_PASSWORD=528491
       - MYSQL_ROOT_PASSWORD=528491
       - MYSQL_DATABASE=xamreg
-
-  phpmyadmin:
-      image: phpmyadmin/phpmyadmin
-      restart: always
-      depends_on:
-        - db
-      environment:
-        - PMA_HOST=db
-        - MYSQL_ROOT_PASSWORD=root
-      ports:
-        - 8070:80
+    ports:
+      - "3307:3307"
 
   api:
-      command: python run.py
-      environment:
-        - QUIZ_ENV=development
-      volumes:
-        - ./:/run
-      depends_on:
-        - db
-      ports:
-        - "5000:5000"
+    command: python run.py
+    environment:
+      - QUIZ_ENV=development
+    volumes:
+      - ./:/run
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
 
   client:
     image: xamreg/client
