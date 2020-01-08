@@ -23,7 +23,7 @@ services:
     container_name: api
     command: uwsgi --ini uwsgi.ini
     environment:
-      - SQLALCHEMY_DATABASE_URI=mysql://newroot:528491@3307/xamreg
+      - SQLALCHEMY_DATABASE_URI=mysql://newroot:528491@3306/xamreg
       - QUIZ_ENV=production
     volumes:
       - ./:/run

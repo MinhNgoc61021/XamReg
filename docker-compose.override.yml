@@ -2,9 +2,9 @@ version: '3'
 # cmd: docker-compose build & docker-compose up (build & run docker)
 services:
   db:
-    image: mysql
+    image: mysql:5.7
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d
     restart: always
     environment:
       - MYSQL_USER=newroot
@@ -13,17 +13,14 @@ services:
       - MYSQL_DATABASE=xamreg
     ports:
       - "3307:3307"
-
   api:
     command: python run.py
     environment:
       - QUIZ_ENV=development
-    volumes:
-      - ./:/run
-    depends_on:
-      - db
     ports:
       - "5000:5000"
+    depends_on:
+      - db
 
   client:
     image: xamreg/client
