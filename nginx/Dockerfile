@@ -2,7 +2,7 @@
 # Using multi-stage docker build for a smaller final image.
 FROM node:lts AS jsbuilder
 
-WORKDIR ./client
+WORKDIR /app
 COPY . .
 
 RUN npm install
@@ -11,5 +11,5 @@ RUN npm install
 FROM nginx:1.13.9-alpine
 WORKDIR /app
 COPY ./nginx.conf /etc/nginx/nginx.conf
-COPY --from=jsbuilder ./app/dist ./usr/share/nginx/html
+COPY --from=jsbuilder /app/dist /usr/share/nginx/html
 
