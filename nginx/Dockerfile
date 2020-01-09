@@ -2,12 +2,10 @@
 # Using multi-stage docker build for a smaller final image.
 FROM node:lts AS jsbuilder
 
-WORKDIR /usr/src/app
-COPY package.json ./
-
-RUN npm install
+WORKDIR ./client
 COPY . .
 
+RUN npm install
 RUN npm run build
 
 # Multi-stage means the build context needs to be the same, that's a bit disappointing (coupling!)...
