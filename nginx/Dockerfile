@@ -3,7 +3,7 @@
 FROM node:9.5 AS jsbuilder
 
 WORKDIR /client
-COPY ./client //client
+COPY ./client ./client
 
 
 RUN npm install
