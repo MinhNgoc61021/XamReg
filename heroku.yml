@@ -1,5 +1,5 @@
 build:
   docker:
     api: api/Dockerfile
-#    nginx: nginx/Dockerfile
-    client: client/Dockerfile
+    # nginx: nginx/Dockerfile
+    # client: client/Dockerfile
