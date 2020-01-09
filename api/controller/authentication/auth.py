@@ -36,7 +36,7 @@ def token_required(f):
             'authenticated': False
         }
         expired_msg = {
-            'message': 'Expired token. Reauthentication is required.',
+            'message': 'Expired token. Authentication is required.',
             'authenticated': False
         }
 
