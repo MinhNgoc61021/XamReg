@@ -8,7 +8,6 @@ from flask import (
 from controller.authentication.auth import token_required
 from db.entity_db import Exam_Room, Log
 from controller.time_conversion.asia_timezone import set_custom_log_time
-import re
 
 exam_room_management = Blueprint('exam_room_management', __name__, url_prefix='/room')
 

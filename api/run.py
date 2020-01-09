@@ -2,6 +2,7 @@ from flask_cors import CORS
 from flask_restful import Api
 from db.entity_db import User
 from controller import create_app
+from flask import jsonify
 
 # write this in cmd
 # for Windows
@@ -32,6 +33,11 @@ def init_admin():
         # print(fullname, flush=True)
         add_admin = User.create('Admin2', 'IAMLEGEND', '12345', 'Nguyễn Ngọc Minh', '1999-12-18',
                                 'Nam', 'Admin', 'Admin')
+
+
+@app.route('/hello_world')
+def hello_world():
+    return jsonify({'object': 'hello'})
 
 
 # @app.route('/hello')
