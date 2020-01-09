@@ -6,7 +6,6 @@ WORKDIR ./client
 COPY . .
 
 RUN npm install
-RUN npm run build
 
 # Multi-stage means the build context needs to be the same, that's a bit disappointing (coupling!)...
 FROM nginx:1.13.9-alpine
