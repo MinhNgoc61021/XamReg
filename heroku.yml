@@ -3,5 +3,3 @@ build:
     api: api/Dockerfile
     nginx: nginx/Dockerfile
     client: client/Dockerfile
-run:
-    web: bundle exec puma -C config/puma.rb
