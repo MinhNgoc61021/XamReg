@@ -2,7 +2,7 @@
 # Using multi-stage docker build for a smaller final image.
 FROM node:9.5 AS jsbuilder
 
-WORKDIR /client
+WORKDIR ./client
 COPY ./client ./client
 
 
