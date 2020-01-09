@@ -1,8 +1,8 @@
 FROM node:lts-alpine
 WORKDIR /usr/src/app
-ADD package.json .
+ADD package.json ./
 RUN npm install
-ADD . .
+ADD . ./
 #RUN npm run build
 
 
