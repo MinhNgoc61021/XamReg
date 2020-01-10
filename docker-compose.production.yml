@@ -27,6 +27,7 @@ services:
     image: xamreg/api
     build: api # setting build to ./api because Dockerfile is inside the api folder.
     container_name: api
+    command: uwsgi --ini uwsgi.ini
     environment:
       - QUIZ_ENV=production
     volumes:
