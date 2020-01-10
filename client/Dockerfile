@@ -4,7 +4,7 @@ COPY package*.json ./
 RUN yarn
 COPY . .
 # All of these below are for production mode, comment all of them while using for development mode
-RUN npm run build
+#RUN npm run build
 
 
 # Production stage
