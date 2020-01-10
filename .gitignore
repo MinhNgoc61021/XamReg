@@ -1,2 +1,4 @@
 db/
 .idea/
+mysql-data/
+docker-compose.override.yml

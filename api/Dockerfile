@@ -3,5 +3,5 @@ WORKDIR ./api
 COPY  requirements.txt ./
 RUN pip install -r requirements.txt
 COPY . .
-CMD [ "python", "run.py" ]
+CMD [ "uwsgi", "uwsgi.ini" ]
 #CMD [ "uwsgi", "app.ini" ]

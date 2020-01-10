@@ -1,36 +1,53 @@
 version: '3'
+# cmd: docker-compose build & docker-compose up (build & run docker)
 services:
-  nginx:
-    image: docker-tutorial/nginx_front
-    build:
-      context: ""
-      dockerfile: ../nginx/Dockerfile
-    ports:
-      - "80:80"
-    logging: &logging
-      driver: "json-file"
-      options:
-        # Rotate the files when they reach max-size.
-        max-size: "200k"
-        max-file: "10"
-    depends_on:
-      - api  # nginx crashes if it does not find web. It checks hostname in the startup phase.
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./mysql-data:/var/lib/mysql
     restart: always
+    environment:
+      - MYSQL_USER=newroot
+      - MYSQL_PASSWORD=528491
+      - MYSQL_ROOT_PASSWORD=528491
+      - MYSQL_DATABASE=xamreg
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - PMA_HOST=db
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 8090:80
 
   api:
     image: xamreg/api
     build: api # setting build to ./api because Dockerfile is inside the api folder.
     container_name: api
-    command: uwsgi --ini uwsgi.ini
     environment:
-      - SQLALCHEMY_DATABASE_URI=mysql://newroot:528491@3306/xamreg
       - QUIZ_ENV=production
     volumes:
       - ./:/run
-    logging:
-      <<: *logging
+    restart: always
     depends_on:
       - db
-  db:
-    volumes:
-      - ./mysql-data:/var/lib/mysql
+
+  client:
+    image: xamreg/client
+    build: client
+    container_name: client
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: always
+
+  nginx:
+    build: client/nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - api

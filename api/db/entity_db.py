@@ -31,22 +31,22 @@ class User(Base):
     __tablename__ = 'user'
     __table_args__ = {'mysql_engine': 'InnoDB'}
 
-    ID = Column(String(45),
+    ID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                 primary_key=True)
-    Username = Column(String(45),
+    Username = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                       nullable=False,
                       unique=True)
-    Password = Column(String(240),
+    Password = Column(String(240, collation='utf8mb4_vietnamese_ci'),
                       nullable=False)
-    Fullname = Column(String(45),
+    Fullname = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                       nullable=False)
     Dob = Column(Date,
                  nullable=False)
-    Gender = Column(String(45),
+    Gender = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                     nullable=False)
     CourseID = Column(String(45),
                       nullable=False)
-    Role_Type = Column(String(45),
+    Role_Type = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                        nullable=False)
 
     # unqualified_student = relationship("unqualified_student", cascade="all, delete, delete-orphan", passive_deletes=True)
@@ -223,9 +223,9 @@ class Subject(Base):
     __tablename__ = 'subject'
     __table_args__ = {'mysql_engine': 'InnoDB'}
 
-    SubjectID = Column(String(45),
+    SubjectID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                        primary_key=True)
-    SubjectTitle = Column(String(45),
+    SubjectTitle = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                           nullable=False)
 
     @classmethod
@@ -341,10 +341,10 @@ class Student_Status(Base):
     StatusID = Column(Integer,
                       primary_key=True,
                       autoincrement=True)
-    StudentID = Column(String(45),
+    StudentID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                        ForeignKey('user.ID', onupdate="cascade"),
                        nullable=False)
-    SubjectID = Column(String(45),
+    SubjectID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                        ForeignKey('subject.SubjectID', onupdate="cascade"),
                        nullable=False)
     Status = Column(String(45),
@@ -403,7 +403,7 @@ class Semester_Examination(Base):
 
     SemID = Column(Integer,
                    primary_key=True)
-    SemTitle = Column(String(200),
+    SemTitle = Column(String(200, collation='utf8mb4_vietnamese_ci'),
                       nullable=False)
     Status = Column(Boolean,
                     nullable=False, default=False)  # true là đang mở đăng kí, false là không mở đăng ký
@@ -505,7 +505,7 @@ class Shift(Base):
 
     ShiftID = Column(Integer,
                      primary_key=True)
-    SubjectID = Column(String(45),
+    SubjectID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                        ForeignKey('subject.SubjectID', onupdate="cascade"),
                        nullable=False)
     SemID = Column(Integer,
@@ -781,7 +781,7 @@ class Student_Shift(Base):
 
     RegisterID = Column(Integer,
                         primary_key=True)
-    StudentID = Column(String(45),
+    StudentID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                        ForeignKey('user.ID', onupdate="cascade"),
                        nullable=False)
     Room_ShiftID = Column(Integer,
@@ -885,7 +885,7 @@ class Exam_Room(Base):
     __table_args__ = {'mysql_engine': 'InnoDB'}
     RoomID = Column(Integer,
                     primary_key=True)
-    RoomName = Column(String(45),
+    RoomName = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                       nullable=False)
     Maxcapacity = Column(Integer,
                          nullable=False)
@@ -981,11 +981,11 @@ class Log(Base):
 
     LogID = Column(Integer,
                    primary_key=True)
-    UserID = Column(String(45),
+    UserID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
                     ForeignKey('user.ID'),
                     nullable=False,
                     onupdate="cascade")
-    Action = Column(String(200),
+    Action = Column(String(200, collation='utf8mb4_vietnamese_ci'),
                     nullable=False)
     Created_At = Column(DateTime,
                         nullable=False)

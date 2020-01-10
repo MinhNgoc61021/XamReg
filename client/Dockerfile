@@ -1,14 +1,15 @@
-FROM node:lts-alpine
-WORKDIR ./client
-COPY package.json ./
-RUN npm install
+FROM node:lts-alpine as build-stage
+WORKDIR /app
+COPY package*.json ./
+RUN yarn
 COPY . .
 # RUN npm run build
 
 
-## Production stage
-#FROM nginx:1.16.1-alpine as production-stage
-#COPY --from=build-stage /app/dist /usr/share/nginx/html
+# Production stage
+#FROM nginx as production-stage
+#RUN mkdir /app
+#COPY --from=build-stage /app/dist /app
 #EXPOSE 80
-## Here we can serve the Vue app using port 80, however it runs port 8001 on PC and 80 in the container
-#CMD [ "nginx", "-g", "daemon off;"]
+#COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+
