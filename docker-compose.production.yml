@@ -2,31 +2,41 @@ version: '3'
 # cmd: docker-compose build & docker-compose up (build & run docker)
 services:
   db:
-    image: mysql:5.7
-    volumes:
-      - ./mysql-data:/var/lib/mysql
-    restart: always
+    image: postgres:11.6-alpine
     environment:
-      - MYSQL_USER=newroot
-      - MYSQL_PASSWORD=528491
-      - MYSQL_ROOT_PASSWORD=528491
-      - MYSQL_DATABASE=xamreg
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    depends_on:
-      - db
-    environment:
-      - PMA_HOST=db
-      - MYSQL_ROOT_PASSWORD=root
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=528491
     ports:
-      - 8090:80
+      - "5432:5432"
+# mysql db
+#    image: mysql:5.7
+#    volumes:
+#      - ./mysql-data:/var/lib/mysql
+#    restart: always
+#    environment:
+#      - MYSQL_USER=newroot
+#      - MYSQL_PASSWORD=528491
+#      - MYSQL_ROOT_PASSWORD=528491
+#      - MYSQL_DATABASE=xamreg
+
+# postgres
+
+
+#  phpmyadmin:
+#    image: phpmyadmin/phpmyadmin
+#    restart: always
+#    depends_on:
+#      - db
+#    environment:
+#      - PMA_HOST=db
+#      - MYSQL_ROOT_PASSWORD=root
+#    ports:
+#      - 8090:80
 
   api:
     image: xamreg/api
     build: api # setting build to ./api because Dockerfile is inside the api folder.
-    container_name: api
+    container_name: "flask_api_container"
     command: uwsgi --ini uwsgi.ini
     environment:
       - QUIZ_ENV=production
@@ -38,8 +48,8 @@ services:
 
   client:
     image: xamreg/client
+    container_name: "vue_client_container"
     build: client
-    container_name: client
     environment:
       - CHOKIDAR_USEPOLLING=true
     restart: always

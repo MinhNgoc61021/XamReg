@@ -581,7 +581,6 @@
         created() {
             eventBus.$on('up-to-date-semester', () => {
                 this.getSemesterRecordData();
-                this.getRoomRecord();
             })
         }
     }

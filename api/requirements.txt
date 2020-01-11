@@ -2,11 +2,9 @@ sqlalchemy
 flask
 flask_cors
 flask_bcrypt
-flask-mysql
 flask_restful
 Flask-SQLAlchemy
 pyexcel-xlsx
-mysqlclient
 psycopg2
 uwsgi
 PyJWT

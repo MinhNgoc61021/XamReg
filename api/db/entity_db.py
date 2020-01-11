@@ -10,9 +10,14 @@ from marshmallow_sqlalchemy.fields import Nested
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
 from sqlalchemy_filters import apply_pagination
 
-engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4',
+# Postgres
+engine = create_engine('postgresql://postgres:528491@postgres',
                        echo=True,
                        pool_size=5)
+# MySQL
+# engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4',
+#                        echo=True,
+#                        pool_size=5)
 # echo is to set up SQLAlchemy logging
 
 
@@ -29,24 +34,23 @@ Session.configure(bind=engine)
 # User persistent class
 class User(Base):
     __tablename__ = 'user'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
 
-    ID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    ID = Column(String(45),
                 primary_key=True)
-    Username = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    Username = Column(String(45),
                       nullable=False,
                       unique=True)
-    Password = Column(String(240, collation='utf8mb4_vietnamese_ci'),
+    Password = Column(String(240),
                       nullable=False)
-    Fullname = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    Fullname = Column(String(45),
                       nullable=False)
     Dob = Column(Date,
                  nullable=False)
-    Gender = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    Gender = Column(String(45),
                     nullable=False)
     CourseID = Column(String(45),
                       nullable=False)
-    Role_Type = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    Role_Type = Column(String(45),
                        nullable=False)
 
     # unqualified_student = relationship("unqualified_student", cascade="all, delete, delete-orphan", passive_deletes=True)
@@ -60,7 +64,7 @@ class User(Base):
             if sess.query(User).filter(User.Username == username).scalar() is None:
                 new_user = User(ID=id,
                                 Username=username,
-                                Password=generate_password_hash(password),
+                                Password=generate_password_hash(password).decode('utf-8'),
                                 Fullname=fullname,
                                 Dob=dob,
                                 Gender=gender,
@@ -126,7 +130,7 @@ class User(Base):
     def getRecord(cls, page_index, per_page, sort_field, sort_order):
         sess = Session()
         try:
-            record_query = sess.query(User).filter(text('Role_Type = :type')).params(type='Student').order_by(getattr(
+            record_query = sess.query(User).filter(User.Role_Type == 'Student').order_by(getattr(
                 getattr(User, sort_field), sort_order)())
 
             # user_query is the user object and get_record_pagination is the index data
@@ -221,11 +225,10 @@ class User(Base):
 # Subject persistent class
 class Subject(Base):
     __tablename__ = 'subject'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
 
-    SubjectID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    SubjectID = Column(String(45),
                        primary_key=True)
-    SubjectTitle = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    SubjectTitle = Column(String(45),
                           nullable=False)
 
     @classmethod
@@ -336,15 +339,14 @@ class Subject(Base):
 # Student_Status persistent class
 class Student_Status(Base):
     __tablename__ = 'student_status'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
 
     StatusID = Column(Integer,
                       primary_key=True,
                       autoincrement=True)
-    StudentID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    StudentID = Column(String(45),
                        ForeignKey('user.ID', onupdate="cascade"),
                        nullable=False)
-    SubjectID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    SubjectID = Column(String(45),
                        ForeignKey('subject.SubjectID', onupdate="cascade"),
                        nullable=False)
     Status = Column(String(45),
@@ -399,11 +401,10 @@ class Student_Status(Base):
 # Semester_Examination persistent class
 class Semester_Examination(Base):
     __tablename__ = 'semester_examination'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
 
     SemID = Column(Integer,
                    primary_key=True)
-    SemTitle = Column(String(200, collation='utf8mb4_vietnamese_ci'),
+    SemTitle = Column(String(200),
                       nullable=False)
     Status = Column(Boolean,
                     nullable=False, default=False)  # true là đang mở đăng kí, false là không mở đăng ký
@@ -505,7 +506,7 @@ class Shift(Base):
 
     ShiftID = Column(Integer,
                      primary_key=True)
-    SubjectID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    SubjectID = Column(String(45),
                        ForeignKey('subject.SubjectID', onupdate="cascade"),
                        nullable=False)
     SemID = Column(Integer,
@@ -781,7 +782,7 @@ class Student_Shift(Base):
 
     RegisterID = Column(Integer,
                         primary_key=True)
-    StudentID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    StudentID = Column(String(45),
                        ForeignKey('user.ID', onupdate="cascade"),
                        nullable=False)
     Room_ShiftID = Column(Integer,
@@ -882,10 +883,10 @@ class Student_Shift(Base):
 # Exam Room persistent class
 class Exam_Room(Base):
     __tablename__ = 'exam_room'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
+
     RoomID = Column(Integer,
                     primary_key=True)
-    RoomName = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    RoomName = Column(String(45),
                       nullable=False)
     Maxcapacity = Column(Integer,
                          nullable=False)
@@ -977,15 +978,14 @@ class Exam_Room(Base):
 
 class Log(Base):
     __tablename__ = 'log'
-    __table_args__ = {'mysql_engine': 'InnoDB'}
 
     LogID = Column(Integer,
                    primary_key=True)
-    UserID = Column(String(45, collation='utf8mb4_vietnamese_ci'),
+    UserID = Column(String(45),
                     ForeignKey('user.ID'),
                     nullable=False,
                     onupdate="cascade")
-    Action = Column(String(200, collation='utf8mb4_vietnamese_ci'),
+    Action = Column(String(200),
                     nullable=False)
     Created_At = Column(DateTime,
                         nullable=False)

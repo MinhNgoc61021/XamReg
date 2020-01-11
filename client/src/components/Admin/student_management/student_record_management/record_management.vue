@@ -11,7 +11,6 @@
                 icon="sync"/>
               <span>Làm mới</span>
             </b-button>
-
             <b-select v-model="student.per_page">
               <option value="5">5 dòng/trang</option>
               <option value="10">10 dòng/trang</option>

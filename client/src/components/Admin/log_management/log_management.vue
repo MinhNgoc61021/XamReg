@@ -5,9 +5,20 @@
           <hr>
           <b-field grouped group-multiline>
               <b-button
+                v-if="log_data.length !== 0"
                 :class="{'is-loading': loading}"
                 class="button"
                 @click="getLogRecordData"
+              >
+                <b-icon
+                  size="is-small"
+                  icon="sync"/>
+                <span>Làm mới</span>
+              </b-button>
+              <b-button
+                v-else
+                class="button"
+                disabled
               >
                 <b-icon
                   size="is-small"
