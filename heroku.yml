@@ -7,11 +7,11 @@ setup:
 build:
   docker:
     api: api/Dockerfile
-    nginx: client/nginx/Dockerfile
-    client: client/Dockerfile
+    nginx: nginx/Dockerfile
   config:
     QUIZ_ENV: development
 run:
+  api: uwsgi --ini uwsgi.ini
 
 
 
