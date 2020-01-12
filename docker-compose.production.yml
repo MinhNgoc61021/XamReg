@@ -1,13 +1,30 @@
 version: '3'
 # cmd: docker-compose build & docker-compose up (build & run docker)
 services:
-  postgres:
-    image: postgres:11.6-alpine
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=528491
+  nginx:
+    container_name: "nginx_container"
+    build: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "5432:5432"
+      - "80:80"
+    depends_on:
+      - api
+    logging: &logging
+      driver: "json-file"
+      options:
+        # Rotate the files when they reach max-size.
+        max-size: "200k"
+        max-file: "10"
+    restart: always
+
+  postgres:
+    container_name: "postgresDB_container"
+    volumes:
+      - /postgres:/var/lib/postgresql/data
+    logging:
+      <<: *logging
+    restart: always
 
   api:
     image: xamreg/api
@@ -20,21 +37,5 @@ services:
       - ./:/run
     restart: always
     depends_on:
-      - db
+      - postgres
 
-  client:
-    image: xamreg/client
-    container_name: "vue_client_container"
-    build: client
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    restart: always
-
-  nginx:
-    build: client/nginx
-    container_name: nginx
-    restart: always
-    ports:
-      - "80:80"
-    depends_on:
-      - api

@@ -11,15 +11,26 @@ from marshmallow_sqlalchemy.fields import Nested
 from sqlalchemy_filters import apply_pagination
 
 # Postgres
-engine = create_engine('postgresql://postgres:528491@postgres',
-                       echo=True,
-                       pool_size=5)
+env = 'production'  # production is used for heroku-postgres
+engine = None
+
+if env == 'development':
+    engine = create_engine('postgresql://postgres:528491@postgres',
+                           echo=True,
+                           pool_size=5)
+elif env == 'production':
+    engine = create_engine('postgres://mflezjldgwbgtu'
+                           ':76aac81888a252781683276033eeeedaf7a58e7ffe656ce37098121762e88cdc@ec2-54-83-36-37.compute'
+                           '-1.amazonaws.com:5432/d106rtlbbnhlde',
+                           echo=True,
+                           pool_size=5)
 # MySQL
 # engine = create_engine('mysql+mysqldb://newroot:528491@db/xamreg?charset=utf8mb4',
 #                        echo=True,
 #                        pool_size=5)
-# echo is to set up SQLAlchemy logging
 
+
+# echo is to set up SQLAlchemy logging
 
 # Once base class is declared, any number of mapped classes can be defined in terms of it
 # Any class below is mapped, contains the table names, columns in the database
@@ -593,7 +604,8 @@ class Shift(Base):
         try:
             subject = sess.query(Shift).filter(Shift.SubjectID.like('%' + SubjectID + '%'),
                                                Student_Status.Status.like('Qualified' + '%'),
-                                               Student_Status.SubjectID == Shift.SubjectID, Student_Status.StudentID == StudentID)
+                                               Student_Status.SubjectID == Shift.SubjectID,
+                                               Student_Status.StudentID == StudentID)
             return shift_schema.dump(subject, many=True)
         except:
             sess.rollback()
@@ -765,7 +777,8 @@ class Room_Shift(Base):
                 joinedload('Exam_Room')
             ).options(joinedload('Student_Shift')
                       ).options(joinedload('Shift')
-                                ).filter(Student_Shift.StudentID == studentID, Student_Shift.Room_ShiftID == Room_Shift.Room_ShiftID)
+                                ).filter(Student_Shift.StudentID == studentID,
+                                         Student_Shift.Room_ShiftID == Room_Shift.Room_ShiftID)
 
             return roomshift_schema.dump(record_query, many=True)
         except:
@@ -797,7 +810,8 @@ class Student_Shift(Base):
     def create(cls, room_shiftID, studentID):
         sess = Session()
         try:
-            registerTotalbyRoom_Shift = sess.query(Student_Shift).filter(Student_Shift.Room_ShiftID == room_shiftID).count()
+            registerTotalbyRoom_Shift = sess.query(Student_Shift).filter(
+                Student_Shift.Room_ShiftID == room_shiftID).count()
             getMaxcapacity = sess.query(Exam_Room).join(Room_Shift).filter(
                 Room_Shift.Room_ShiftID == room_shiftID).first()
             print(registerTotalbyRoom_Shift, flush=True)
@@ -892,6 +906,7 @@ class Exam_Room(Base):
                          nullable=False)
     Room_Shift = relationship('Room_Shift',
                               back_populates='exam_room')
+
     @classmethod
     def create(cls, room_name, maxcapacity):
         sess = Session()
