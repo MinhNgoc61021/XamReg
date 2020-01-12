@@ -12,8 +12,10 @@ build:
   config:
     QUIZ_ENV: production
 run:
-  api: uwsgi --ini uwsgi.ini
-  client: npm run build
+  api:
+    command: uwsgi --ini uwsgi.ini
+  client:
+    command: npm run build
 
 
 
