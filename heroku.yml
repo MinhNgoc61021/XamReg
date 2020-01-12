@@ -6,8 +6,8 @@ setup:
     S3_BUCKET: my-example-bucket
 build:
   docker:
-    api: deploy/api.Dockerfile
-    nginx: deploy/nginx.Dockerfile
+    api: api/Dockerfile
+    nginx: nginx/Dockerfile
   config:
     QUIZ_ENV: production
 run:
