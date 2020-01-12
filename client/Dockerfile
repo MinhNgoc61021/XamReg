@@ -5,9 +5,9 @@ COPY package.json .
 RUN npm install
 COPY . .
 # All of these below are for production mode, comment all of them while using for development mode
-#RUN npm run build
-#
-## Production stage
-#FROM nginx:1.13.9-alpine as production-stage
-#COPY --from=build-stage /client/dist /usr/share/nginx/html
-#CMD [ "nginx", "-g", "daemon off;" ]
+RUN npm run build
+
+# Production stage
+FROM nginx:1.13.9-alpine as production-stage
+COPY --from=build-stage /client/dist /usr/share/nginx/html
+CMD [ "nginx", "-g", "daemon off;" ]
