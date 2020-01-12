@@ -6,10 +6,10 @@ setup:
     S3_BUCKET: my-example-bucket
 build:
   docker:
-    api: api/Dockerfile
-    nginx: nginx/Dockerfile
+    api: deploy/api.Dockerfile
+    nginx: deploy/nginx.Dockerfile
   config:
-    QUIZ_ENV: development
+    QUIZ_ENV: production
 run:
   api: uwsgi --ini uwsgi.ini
 
