@@ -48,7 +48,7 @@ services:
       - "5432:5432"
 
   api:
-    command: python run.py
+    command: python api/run.py
     environment:
       - QUIZ_ENV=development
     ports:

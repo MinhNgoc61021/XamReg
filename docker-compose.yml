@@ -21,7 +21,9 @@ services:
   api:
     image: xamreg/api
     container_name: "flask_api_container"
-    build: api # setting build to ./api because Dockerfile is inside the api folder.
+    build:
+      context: ./
+      dockerfile: deploy/api.Dockerfile # setting build to ./api because Dockerfile is inside the api folder.
     environment:
       - QUIZ_ENV=production
     depends_on:

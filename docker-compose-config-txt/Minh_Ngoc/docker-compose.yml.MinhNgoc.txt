@@ -39,22 +39,44 @@ version: '3'
 # cmd: docker-compose build & docker-compose up (build & run docker)
 services:
   pgAdmin:
-    ports:
-      - "8070:80"
+    image: dpage/pgadmin4
+    container_name: "pgAdmin_container"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@admin.com
+      PGADMIN_DEFAULT_PASSWORD: 528491
+    restart: always
+    volumes:
+      - pgadmin:/var/lib/pgadmin
 
   postgres:
-    ports:
-      - "5432:5432"
+    image: postgres:11.6-alpine
+    container_name: "postgresDB_container"
+    restart: always
+    volumes:
+      - postgres:/var/lib/postgresql/data
 
   api:
-    command: python run.py
+    image: xamreg/api
+    container_name: "flask_api_container"
+    build:
+      context: ./
+      dockerfile: deploy/api.Dockerfile # setting build to ./api because Dockerfile is inside the api folder.
     environment:
-      - QUIZ_ENV=development
-    ports:
-      - "5000:5000"
+      - QUIZ_ENV=production
+    depends_on:
+      - postgres
+    restart: always
+    volumes:
+      - ./:/run
 
   client:
-    command: npm run dev
-    ports:
-      - "8080:8080"
+    image: xamreg/client
+    container_name: "vue_client_container"
+    build: client
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: always
 
+volumes:
+  pgadmin:
+  postgres:
