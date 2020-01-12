@@ -1,7 +1,7 @@
 version: '3'
 # cmd: docker-compose build & docker-compose up (build & run docker)
 services:
-  db:
+  postgres:
     image: postgres:11.6-alpine
     environment:
       - POSTGRES_USER=postgres

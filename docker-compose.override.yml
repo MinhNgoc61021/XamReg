@@ -1,6 +1,14 @@
 version: '3'
 # cmd: docker-compose build & docker-compose up (build & run docker)
 services:
+  pgAdmin:
+    ports:
+      - "8070:80"
+
+  postgres:
+    ports:
+      - "5432:5432"
+
   api:
     command: python run.py
     environment:
@@ -8,4 +16,8 @@ services:
     ports:
       - "5000:5000"
 
+  client:
+    command: npm run dev
+    ports:
+      - "8080:8080"
 
