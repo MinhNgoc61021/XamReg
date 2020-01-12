@@ -4,9 +4,7 @@ services:
   nginx:
     image: xamreg/nginx_vue
     container_name: "nginx_container"
-    build:
-      context: ./
-      dockerfile: nginx/Dockerfile
+    build: nginx
     ports:
       - "80:80"
     depends_on:

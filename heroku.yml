@@ -14,6 +14,6 @@ build:
 run:
   api: uwsgi --ini uwsgi.ini
   client: npm run build
-  
+
 
 
