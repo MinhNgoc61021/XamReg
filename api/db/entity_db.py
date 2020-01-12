@@ -10,10 +10,10 @@ from marshmallow_sqlalchemy.fields import Nested
 # WARNING --- dialect+driver://username:password@host:port/database --- Warning, port is db, dont change it,
 from sqlalchemy_filters import apply_pagination
 
-# Postgres
 env = 'production'  # production is used for heroku-postgres
 engine = None
 
+# Postgres
 if env == 'development':
     engine = create_engine('postgresql://postgres:528491@postgres',
                            echo=True,
