@@ -1,3 +1,4 @@
+# MySQL version
 version: '3'
 # cmd: docker-compose build & docker-compose up (build & run docker)
 services:
@@ -32,3 +33,57 @@ services:
     volumes:
       - ./:/run
     restart: always
+
+# Postgres version
+version: '3'
+# cmd: docker-compose build & docker-compose up (build & run docker)
+services:
+  pgAdmin:
+    restart: always
+    image: dpage/pgadmin4
+    container_name: "pgAdmin_container"
+    ports:
+      - "8070:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@admin.com
+      PGADMIN_DEFAULT_PASSWORD: 528491
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
+  postgres:
+    image: postgres:11.6-alpine
+    container_name: "postgresDB_container"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=528491
+      - POSTGRES_DB=xamreg
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  api:
+    image: xamreg/api
+    container_name: "flask_api_container"
+    environment:
+      - QUIZ_ENV=production
+    depends_on:
+      - postgres
+    restart: always
+    volumes:
+      - ./:/run
+
+  client:
+    image: xamreg/client
+    container_name: "vue_client_container"
+    build: client
+    command: npm run dev
+    ports:
+      - "8080:8080"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: always
+
+volumes:
+  pgadmin:
+  postgres:

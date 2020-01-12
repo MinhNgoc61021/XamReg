@@ -1,32 +1,52 @@
 version: '3'
 # cmd: docker-compose build & docker-compose up (build & run docker)
 services:
-#  db:
-#    image: mysql:5.7
-#    volumes:
-#      - ./mysql-data:/var/lib/mysql
-#    restart: always
-#    environment:
-#      - MYSQL_USER=newroot
-#      - MYSQL_PASSWORD=528491
-#      - MYSQL_ROOT_PASSWORD=528491
-#      - MYSQL_DATABASE=xamreg
-#
-#  phpmyadmin:
-#    image: phpmyadmin/phpmyadmin
-#    restart: always
-#    depends_on:
-#      - db
-#    environment:
-#      - PMA_HOST=db
-#      - MYSQL_ROOT_PASSWORD=root
-#    ports:
-#      - 8070:80
+  pgAdmin:
+    restart: always
+    image: dpage/pgadmin4
+    container_name: "pgAdmin_container"
+    ports:
+      - "8070:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@admin.com
+      PGADMIN_DEFAULT_PASSWORD: 528491
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
+  postgres:
+    image: postgres:11.6-alpine
+    container_name: "postgresDB_container"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=528491
+      - POSTGRES_DB=xamreg
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
 
   api:
     image: xamreg/api
-    build: api # setting build to ./api because Dockerfile is inside the api folder.
+    container_name: "flask_api_container"
     environment:
       - QUIZ_ENV=production
+    depends_on:
+      - postgres
+    restart: always
     volumes:
       - ./:/run
+
+  client:
+    image: xamreg/client
+    container_name: "vue_client_container"
+    build: client
+    command: npm run dev
+    ports:
+      - "8080:8080"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: always
+
+volumes:
+  pgadmin:
+  postgres:

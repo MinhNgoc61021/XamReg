@@ -18,9 +18,9 @@
             </b-upload>
         </b-field>
         <b-field>
-            <div class="buttons" style="float: right;">
-              <b-button @click="uploadExcelFile()" v-if="dropFiles.length !== 0" outlined>Tạo</b-button>
-              <b-button @click="uploadExcelFile()" v-else disabled outlined>Tạo</b-button>
+            <div class="buttons" id="button-list">
+              <b-button id="on-upload-btn" @click="uploadExcelFile()" v-if="dropFiles.length !== 0" outlined>Tạo</b-button>
+              <b-button id="unable-upload-btn" @click="uploadExcelFile()" v-else disabled outlined>Tạo</b-button>
             </div>
         </b-field>
         <div class="tags" style="max-width: 350px;">
@@ -128,3 +128,18 @@
         }
     }
 </script>
+<style scoped>
+  #button-list {
+    float: right;
+  }
+  @media screen and (max-width: 650px) {
+    #button-list {
+      float: none;
+    }
+    #on-upload-btn, #unable-upload-btn {
+      width: 100%;
+      display: block;
+      margin: auto;
+    }
+  }
+</style>

@@ -8,30 +8,6 @@ services:
       - POSTGRES_PASSWORD=528491
     ports:
       - "5432:5432"
-# mysql db
-#    image: mysql:5.7
-#    volumes:
-#      - ./mysql-data:/var/lib/mysql
-#    restart: always
-#    environment:
-#      - MYSQL_USER=newroot
-#      - MYSQL_PASSWORD=528491
-#      - MYSQL_ROOT_PASSWORD=528491
-#      - MYSQL_DATABASE=xamreg
-
-# postgres
-
-
-#  phpmyadmin:
-#    image: phpmyadmin/phpmyadmin
-#    restart: always
-#    depends_on:
-#      - db
-#    environment:
-#      - PMA_HOST=db
-#      - MYSQL_ROOT_PASSWORD=root
-#    ports:
-#      - 8090:80
 
   api:
     image: xamreg/api

@@ -40,8 +40,8 @@
                 <option value="Nữ">Nữ</option>
             </b-select>
         </b-field>
-          <div class="buttons" style="float: right;">
-            <button class="button" type="submit" outlined>Tạo</button>
+          <div class="buttons" id="submit">
+            <button class="button" type="submit" id="submit-btn" outlined>Tạo</button>
           </div>
       </form>
     </section>
@@ -136,6 +136,19 @@
   #create-user-form {
     width: 70%;
     margin: auto;
+  }
+  #submit {
+    float: right;
+  }
+  @media screen and (max-width: 650px) {
+    #submit{
+      float: none;
+    }
+    #submit-btn {
+      width: 100%;
+      display: block;
+      margin: auto;
+    }
   }
 </style>
 

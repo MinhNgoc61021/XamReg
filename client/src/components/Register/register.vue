@@ -21,7 +21,7 @@
             <b-input placeholder="Hãy nhập mật khẩu" icon="lock" v-model="password" type="password"></b-input>
         </b-field>
         <div class="buttons">
-            <b-button native-type="submit">Đăng nhập</b-button>
+            <b-button native-type="submit" id="sign-in-btn">Đăng nhập</b-button>
         </div>
       </form>
     </section>
@@ -103,38 +103,36 @@
   }
 
   #container input {
-      margin-top: 10px;
+    margin-top: 10px;
   }
 
-    #container button {
-        margin-top: 10px;
-    }
+  #container button {
+    margin-top: 10px;
+  }
 
   #container a {
-      outline: none;
-      text-decoration: none;
+    outline: none;
+    text-decoration: none;
   }
 
-  #sign-up-call-button {
-      display: inline-block;
-      float: right;
-  }
+  @media only screen and (max-width: 550px) {
+    #sign-in-form {
+      margin: 0;
+      min-width: 300px;
+      font-size: 12px;
+    }
+    #sign-in-btn {
+      width: 100%;
+    }
 
-  @media only screen and (max-width: 500px) {
-      #sign-in-form {
-          margin: 0;
-          min-width: 300px;
-          font-size: 12px;
-      }
   }
-
   @media only screen and (max-height: 700px) {
-      #container {
-          transform: translate(0%, 0%);
+    #container {
+      transform: translate(0%, 0%);
           /*-moz-transform: translate(50%,-50%);*/
           /*-webkit-transform: translate(50%,-50%);*/
           /*-o-transform: translate(50%,-50%);*/
-      }
+    }
   }
 
 </style>
