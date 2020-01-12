@@ -9,5 +9,5 @@ RUN npm run build
 
 # Production stage
 FROM nginx:1.13.9-alpine as production-stage
-COPY --from=build-stage /client/dist /usr/share/nginx/html
+COPY --from=build-stage /client/dist/ /app
 CMD [ "nginx", "-g", "daemon off;" ]
