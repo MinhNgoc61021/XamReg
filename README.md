@@ -8,7 +8,7 @@
 | ----------- | ----------------------------------------------- |
 | Client Side | VueJS, Vuex, Buefy, PrintJS, Webpack            |
 | Server Side | Flask (Python)                                  |
-| Database    | MySQL, SQLAlchemy ORM, phpMyAdmin               |
+| Database    | Postgres, SQLAlchemy ORM,                       |
 ## Thành viên nhóm tham gia:
 - Nguyễn Ngọc Minh
 - Phạm Công Nam
