@@ -1,6 +1,6 @@
 # Build stage
 FROM node:lts-alpine as build-stage
-COPY ./client /client
+COPY /client /client
 WORKDIR /client
 RUN yarn
 RUN npm run build
