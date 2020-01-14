@@ -64,7 +64,7 @@ postgresql://yourusername:yourpassword@postgres
           PGADMIN_DEFAULT_EMAIL: postgres@admin.com
           PGADMIN_DEFAULT_PASSWORD: yourpassword
     ```
- - Và tạo thêm một file docker-compose.override.yml ở gốc project với nội dung như trong thư mục docker-compose-config-txt/Minh_Ngoc      có nội dung như sau
+ - Và tạo thêm một file docker-compose.override.yml ở gốc project với nội dung như trong thư mục docker-compose-config-txt/Minh_Ngoc       có nội dung như sau
    ```
     version: '3'
     # cmd: docker-compose build & docker-compose up (build & run docker)
