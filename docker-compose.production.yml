@@ -1,0 +1,40 @@
+version: '3'
+# cmd: docker-compose build & docker-compose up (build & run docker)
+services:
+  nginx:
+    image: xamreg/nginx_vue
+    container_name: "nginx_container"
+    build: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    logging: &logging
+      driver: "json-file"
+      options:
+        # Rotate the files when they reach max-size.
+        max-size: "200k"
+        max-file: "10"
+    restart: always
+
+  postgres:
+    container_name: "postgresDB_container"
+    volumes:
+      - /postgres:/var/lib/postgresql/data
+    logging:
+      <<: *logging
+    restart: always
+
+  api:
+    image: xamreg/api
+    build: api # setting build to ./api because Dockerfile is inside the api folder.
+    container_name: "flask_api_container"
+    command: uwsgi --ini uwsgi.ini
+    environment:
+      - QUIZ_ENV=production
+    volumes:
+      - ./:/run
+    restart: always
+    depends_on:
+      - postgres
+

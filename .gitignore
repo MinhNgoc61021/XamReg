@@ -1,0 +1,5 @@
+.idea/
+__pycache__/
+mysql-data/
+docker-compose.override.yml
+api/env
