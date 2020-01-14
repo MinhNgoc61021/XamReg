@@ -58,13 +58,13 @@ postgresql://yourusername:yourpassword@postgres
 ```
 #### Lưu ý:
  - @postgres ở cuối thực tế sử dụng database image đc tạo ra từ docker-compose, username và password là của superuser bạn tạo ra.
- - Nếu muốn quản lý dữ liệu, bạn nên thay đổi  môi trường trong pgAdmin 4.
+ - Nếu muốn quản lý dữ liệu, bạn nên thay đổi  môi trường trong pgAdmin 4 như sau
     ```
     environment:
           PGADMIN_DEFAULT_EMAIL: postgres@admin.com
           PGADMIN_DEFAULT_PASSWORD: yourpassword
     ```
-   - Và tạo thêm một file docker-compose.override.yml ở gốc project với nội dung như trong thư mục docker-compose-config-txt/Minh_Ngoc      có nội dung như sau
+ - Và tạo thêm một file docker-compose.override.yml ở gốc project với nội dung như trong thư mục docker-compose-config-txt/Minh_Ngoc      có nội dung như sau
    ```
     version: '3'
     # cmd: docker-compose build & docker-compose up (build & run docker)
