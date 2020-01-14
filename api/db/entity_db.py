@@ -175,7 +175,7 @@ class User(Base):
             elif sess.query(User).filter(User.ID == newStudentID, User.ID != currentStudentID).scalar() is None:
                 sess.query(User).filter_by(ID=currentStudentID).update(
                     {User.ID: newStudentID,
-                     User.Password: generate_password_hash(newStudentID),
+                     User.Password: generate_password_hash(newStudentID).decode('utf-8'),
                      User.Username: newUsername,
                      User.Fullname: newFullname,
                      User.CourseID: newCourseID,
@@ -224,7 +224,7 @@ class User(Base):
         sess = Session()
         try:
             sess.query(User).filter_by(ID=currentUserID).update(
-                {User.Password: generate_password_hash(newPassword)})
+                {User.Password: generate_password_hash(newPassword).decode('utf-8')})
             sess.commit()
         except:
             sess.rollback()
