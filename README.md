@@ -48,11 +48,11 @@ Hệ thống có 2 vai trò sử dụng: quản trị viên, sinh viên.
 ### Theo từng bước
 1. Cài đặt Docker Desktop 64 bit
 2. Cài đặt Anaconda 2019.10 64 bit và Node.js 64 bit
-2. Sau khi cài xong hết, chuyển sang Linux containers(nếu dùng Windows 64 bit)
-3. Cài đặt Postgres DB phiên bản 11.6-3 64 bit, cổng mặc định 5432 (Xem cài đặt chi tiết Postgres và pgAdmin 4: https://www.youtube.com/watch?v=e1MwsT5FJRQ)
+2. Sau khi cài xong hết, chuyển sang Linux containers (nếu dùng Windows 64 bit)
+3. Cài đặt Postgres DB phiên bản 11.6-3 64 bit, cổng mặc định 5432 (Xem cài đặt chi tiết Postgres và pgAdmin 4: [Youtube](https://www.youtube.com/watch?v=e1MwsT5FJRQ))
 4. Cài đặt xong, bạn hãy tạo superuser cho Postgres mà bạn sử dụng
 ### Cài đặt trong api/db/entitydb.py 
-Ở create engine trong mục development hãy thay đổi theo dạng sau
+Ở create_engine trong mục development hãy thay đổi theo dạng sau
 ```
 postgresql://yourusername:yourpassword@postgres
 ```
