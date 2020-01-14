@@ -1,4 +1,4 @@
-# ̶<del>ExamReg</del> XamReg
+# <del>ExamReg</del> XamReg
 Đăng ký dự thi
 ## Công nghệ sử dụng
 - Mẩu thiết kế kiến trúc áp dụng: MVVM
@@ -8,11 +8,11 @@
 | ----------- | ----------------------------------------------- |
 | Client Side | VueJS, Vuex, Buefy, PrintJS, Webpack            |
 | Server Side | Flask (Python)                                  |
-| Database    | MySQL, SQLAlchemy ORM, phpMyAdmin               |
+| Database    | Postgres, SQLAlchemy ORM                        |
 ## Thành viên nhóm tham gia:
-- Nguyễn Ngọc Minh
-- Phạm Công Nam
-- Nguyễn Nam
+- [Nguyễn Ngọc Minh](https://www.facebook.com/minh.nguyen18121999)
+- [Phạm Công Nam](https://www.facebook.com/nam.pham120799)
+- [Nguyễn Nam](https://www.facebook.com/NguyenNam12399)
 ## Thực hiện
 - Thực hiện theo nhóm (team) 3 sinh viên.
 - Trình bày sản phẩm tại buổi thi vấn đáp.
@@ -42,3 +42,53 @@ Hệ thống có 2 vai trò sử dụng: quản trị viên, sinh viên.
 - Sinh viên đăng ký ca thi mà sinh viên đủ điều kiện dự thi và đang còn chỗ trống (chưa đủ số lượng đăng ký theo số máy).
 - Sinh viên download/in phiếu báo dự thi sau khi đăng ký thành công.
 - Quản trị viên in danh sách thí sinh dự thi theo từng phòng thi của các ca thi.
+
+## Cách cài đặt/Configuration cấu hình
+
+### Theo từng bước
+1. Cài đặt Docker Desktop 64 bit
+2. Cài đặt Anaconda 2019.10 64 bit và Node.js 64 bit
+2. Sau khi cài xong hết, chuyển sang Linux containers (nếu dùng Windows 64 bit)
+3. Cài đặt Postgres DB phiên bản 11.6-3 64 bit, cổng mặc định 5432 (Xem cài đặt chi tiết Postgres và pgAdmin 4: [Youtube](https://www.youtube.com/watch?v=e1MwsT5FJRQ))
+4. Cài đặt xong, bạn hãy tạo superuser cho Postgres mà bạn sử dụng
+### Cài đặt trong api/db/entitydb.py 
+Ở create_engine trong mục development hãy thay đổi theo dạng sau
+```
+postgresql://yourusername:yourpassword@postgres
+```
+#### Lưu ý:
+ - @postgres ở cuối thực tế sử dụng image đc tạo ra từ docker-compose, username và password là của superuser bạn tạo ra.
+ - Nếu muốn quản lý dữ liệu, bạn nên thay đổi  môi trường trong pgAdmin 4.
+    ```
+    environment:
+          PGADMIN_DEFAULT_EMAIL: postgres@admin.com
+          PGADMIN_DEFAULT_PASSWORD: yourpassword
+    ```
+### Để chạy
+Tạo image bằng
+```
+docker-compose build
+```
+Và chạy container bằng
+```
+docker-compose up
+```
+Sau đó truy cập
+
+- Đối với Ubuntu/Linux
+```
+http://0.0.0.0:8080
+```
+- Đối với Windows
+```
+http://localhost:8080
+```
+#### Lưu ý
+- Flask chạy trên cổng 5000 còn Vue chạy trên cổng 8080.
+- Để tạo tài khoản admin, trong init_admin ở run.py có sẵn user để tạo (bạn có thể thay đổi tùy ý).
+    
+    Truy cập
+    ```
+    http://localhost:5000/init_admin
+    ```
+    và sau đó bạn đăng nhập thôi :).
