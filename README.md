@@ -98,14 +98,14 @@ docker-compose up
 ```
 Sau đó truy cập
 
-- Đối với Ubuntu/Linux
-```
-http://0.0.0.0:8080
-```
-- Đối với Windows
-```
-http://localhost:8080
-```
+ - Đối với Ubuntu/Linux
+ ```
+ http://0.0.0.0:8080
+ ```
+ - Đối với Windows
+ ```
+ http://localhost:8080
+ ```
 #### Lưu ý
 - Flask chạy trên cổng 5000 còn Vue chạy trên cổng 8080.
 - Để tạo tài khoản admin, trong init_admin ở run.py có sẵn user để tạo (bạn có thể thay đổi tùy ý).
