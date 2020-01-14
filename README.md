@@ -57,12 +57,35 @@ Hệ thống có 2 vai trò sử dụng: quản trị viên, sinh viên.
 postgresql://yourusername:yourpassword@postgres
 ```
 #### Lưu ý:
- - @postgres ở cuối thực tế sử dụng image đc tạo ra từ docker-compose, username và password là của superuser bạn tạo ra.
+ - @postgres ở cuối thực tế sử dụng database image đc tạo ra từ docker-compose, username và password là của superuser bạn tạo ra.
  - Nếu muốn quản lý dữ liệu, bạn nên thay đổi  môi trường trong pgAdmin 4.
     ```
     environment:
           PGADMIN_DEFAULT_EMAIL: postgres@admin.com
           PGADMIN_DEFAULT_PASSWORD: yourpassword
+    ```
+   - Và tạo thêm một file docker-compose.override.yml ở gốc project với nội dung như trong thư mục docker-compose-config-txt/Minh_Ngoc      có nội dung như sau
+   ```
+    version: '3'
+    # cmd: docker-compose build & docker-compose up (build & run docker)
+    services:
+      pgAdmin:
+        ports:
+          - "8070:80"
+      postgres:
+        ports:
+          - "5432:5432"
+
+      api:
+        command: python run.py
+        environment:
+          - QUIZ_ENV=development
+        ports:
+          - "5000:5000"
+      client:
+        command: npm run dev
+        ports:
+          - "8080:8080"
     ```
 ### Để chạy
 Tạo image bằng
