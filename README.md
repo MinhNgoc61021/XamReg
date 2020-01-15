@@ -10,9 +10,9 @@
 | Server Side | Flask (Python)                                  |
 | Database    | Postgres, SQLAlchemy ORM                        |
 ## Thành viên nhóm tham gia:
-- [Nguyễn Ngọc Minh](https://www.facebook.com/minh.nguyen18121999)
-- [Phạm Công Nam](https://www.facebook.com/nam.pham120799)
-- [Nguyễn Nam](https://www.facebook.com/NguyenNam12399)
+- [Nguyễn Ngọc Minh](https://www.facebook.com/minh.nguyen18121999) (MSSV: 17021300)
+- [Phạm Công Nam](https://www.facebook.com/nam.pham120799) (MSSV: 17021304)
+- [Nguyễn Nam](https://www.facebook.com/NguyenNam12399) (MSSV: 17021306)
 ## Thực hiện
 - Thực hiện theo nhóm (team) 3 sinh viên.
 - Trình bày sản phẩm tại buổi thi vấn đáp.
