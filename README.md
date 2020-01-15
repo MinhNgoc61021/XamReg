@@ -6,9 +6,9 @@
 
 | Thành phần  | Miêu tả                                         |
 | ----------- | ----------------------------------------------- |
-| Client Side | VueJS, Vuex, Buefy, PrintJS, Webpack            |
-| Server Side | Flask (Python)                                  |
-| Database    | Postgres, SQLAlchemy ORM                        |
+| Client Side (client) | VueJS, Vuex, Buefy, PrintJS, Webpack            |
+| Server Side (api) | Flask (Python)                                  |
+| Database (entity_db)   | Postgres, SQLAlchemy ORM                        |
 ## Thành viên nhóm tham gia:
 - [Nguyễn Ngọc Minh](https://www.facebook.com/minh.nguyen18121999) (MSSV: 17021300) (Maintainer)
 - [Phạm Công Nam](https://www.facebook.com/nam.pham120799) (MSSV: 17021304)
