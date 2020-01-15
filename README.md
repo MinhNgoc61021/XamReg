@@ -114,4 +114,4 @@ Sau đó truy cập
     ```
     http://localhost:5000/init_admin
     ```
-    và sau đó bạn đăng nhập thôi :).
+    và sau đó bạn đăng nhập và sử dụng.
