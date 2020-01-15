@@ -10,7 +10,7 @@
 | Server Side | Flask (Python)                                  |
 | Database    | Postgres, SQLAlchemy ORM                        |
 ## Thành viên nhóm tham gia:
-- [Nguyễn Ngọc Minh](https://www.facebook.com/minh.nguyen18121999) (MSSV: 17021300) (Bảo trì)
+- [Nguyễn Ngọc Minh](https://www.facebook.com/minh.nguyen18121999) (MSSV: 17021300) (Maintainer/Bảo trì)
 - [Phạm Công Nam](https://www.facebook.com/nam.pham120799) (MSSV: 17021304)
 - [Nguyễn Nam](https://www.facebook.com/NguyenNam12399) (MSSV: 17021306)
 ## Thực hiện
