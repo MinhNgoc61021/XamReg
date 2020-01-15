@@ -18,7 +18,7 @@
             :message="[{ 'Tài khoản và mật khẩu có ít nhất 5 ký tự': hasError },
                       {'Tài khoản không tồn tại hoặc mật khẩu sai': isNotExist },
                       ]">
-            <b-input placeholder="Hãy nhập mật khẩu" icon="lock" v-model="password" type="password"></b-input>
+            <b-input placeholder="Hãy nhập mật khẩu" icon="lock" v-model="password" password-reveal type="password"></b-input>
         </b-field>
         <div class="buttons">
             <b-button native-type="submit" id="sign-in-btn">Đăng nhập</b-button>
