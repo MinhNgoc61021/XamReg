@@ -59,7 +59,7 @@ postgresql://yourusername:yourpassword@postgres
 #### Lưu ý:
  - Chuyển env sang development.
  - @postgres ở cuối thực tế sử dụng database image đc tạo ra từ docker-compose, username và password là của superuser bạn tạo ra.
- - Nếu muốn quản lý dữ liệu, bạn nên thay đổi môi trường trong pgAdmin 4 như sau
+ - Nếu muốn quản lý dữ liệu, bạn nên thay đổi môi trường trong pgAdmin 4 trong docker-compose.yml như sau
     ```
     environment:
           PGADMIN_DEFAULT_EMAIL: postgres@admin.com
