@@ -28,12 +28,13 @@ def init_admin():
     check_user = User.isExist('Needforspeed1900')
     # check_user_role = User_Role.isExist(check_user.UserID)
     if check_user:
-        return 'OK, an admin has already been created.'
+        return 'Oops, an admin has already been created.'
     else:
         # fullname = 'Nguyễn Ngọc Minh'
         # print(fullname, flush=True)
         add_admin = User.create('Administrator', 'Needforspeed1900', '12345', 'Minh Nguyễn', '1999-12-18',
                                 'Nam', 'Admin', 'Admin')
+        return 'OK, it is created.'
 
 
 @app.route('/')
