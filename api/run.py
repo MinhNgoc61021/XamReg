@@ -18,7 +18,6 @@ import os
 app = create_app()
 app.config['SECRET_KEY'] = 'IsBLK8lCfYOF7VHNflxkSg'
 api = Api(app)
-port = int(os.environ.get("PORT", 5000))
 CORS(app)
 
 
