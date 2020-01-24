@@ -36,7 +36,7 @@ def init_admin():
                                 'Nam', 'Admin', 'Admin')
 
 
-@app.route('/hello_world')
+@app.route('/')
 def hello_world():
     return jsonify({'object': 'hello'})
 
