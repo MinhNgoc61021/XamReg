@@ -7,17 +7,12 @@ setup:
 build:
   docker:
     api: api/Dockerfile
-    nginx: nginx/Dockerfile
-    client: client/Dockerfile
   config:
     QUIZ_ENV: production
 run:
   api:
     command:
       - uwsgi --ini uwsgi.ini
-  client:
-    command:
-      - npm run build
 
 
 
