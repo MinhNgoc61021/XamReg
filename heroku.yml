@@ -8,6 +8,6 @@ build:
   docker:
     web: api/Dockerfile
 run:
-  web: gunicorn run:app
+  web: gunicorn -b :$PORT run:app
 
 
