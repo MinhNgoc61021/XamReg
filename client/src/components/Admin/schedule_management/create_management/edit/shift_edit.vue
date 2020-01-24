@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="updateShift()">
-    <div class="modal-card" style="width: 450px;">
+    <div class="modal-card has-mobile-cards">
         <header class="modal-card-head">
             <p class="modal-card-title">Form chỉnh sửa</p>
         </header>

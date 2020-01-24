@@ -1,5 +1,5 @@
 <template>
-    <div class="modal-card" style="width: 450px; height: 300px">
+    <div class="modal-card" style="height: 300px">
         <header class="modal-card-head">
             <p class="modal-card-title">Chọn kỳ thi</p>
         </header>

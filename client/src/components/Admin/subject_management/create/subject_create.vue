@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="createSubject()">
-    <div class="modal-card" style="width: 450px;">
+    <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">Form tạo môn thi</p>
         </header>

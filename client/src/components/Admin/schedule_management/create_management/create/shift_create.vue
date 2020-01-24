@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="createShift()">
-    <div class="modal-card" style="width: 450px;">
+    <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">Form tạo ca thi</p>
         </header>
