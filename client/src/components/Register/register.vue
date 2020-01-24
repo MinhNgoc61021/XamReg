@@ -21,7 +21,12 @@
             <b-input placeholder="Hãy nhập mật khẩu" icon="lock" v-model="password" password-reveal type="password"></b-input>
         </b-field>
         <div class="buttons">
-            <b-button native-type="submit" id="sign-in-btn">Đăng nhập</b-button>
+            <b-button native-type="submit" id="sign-in-btn" :class="{'is-loading': register_loading}">
+              <b-icon
+                size="is-small"
+                icon="sign-in-alt"/>
+              <span>Đăng nhập</span>
+            </b-button>
         </div>
       </form>
     </section>
@@ -42,7 +47,7 @@
         },
         computed: {
             ...mapState([
-                'isNotExist'
+                'isNotExist', 'register_loading'
             ]),
         },
         methods: {
@@ -118,7 +123,7 @@
   @media only screen and (max-width: 550px) {
     #sign-in-form {
       margin: 0;
-      min-width: 300px;
+      min-width: 350px;
       font-size: 12px;
     }
     #sign-in-btn {

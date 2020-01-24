@@ -15,10 +15,11 @@ export const store = new Vuex.Store ({
     fullname: '',
     isNotExist: false,
     currentSemesterID: '', // dùng cái này thì khi sinh viên vào nó ko phải nhập lại Kỳ thi lần 2 nữa, chỉ có khi nào đăng xuất rồi sau mới phải đánh lại
+    register_loading: false,
   },
   plugins: [createPersistedState()],
   mutations: {
-        signInSuccess(state, user) {
+        Exist(state, user) {
             state.userStatus = { signedIn: true };
             state.isNotExist = false;
         },
@@ -26,35 +27,47 @@ export const store = new Vuex.Store ({
             state.ID = data.ID;
             state.fullname = data.Fullname;
         },
-        signInFailure(state) {
+        notExist(state) {
             state.isNotExist = true;
         },
         signOut(state) {
-          state.userStatus = {};
+            state.userStatus = {};
         },
         setCurrentSemesterID(state, CurrentSemesterID) {
-          state.currentSemesterID = CurrentSemesterID;
+            state.currentSemesterID = CurrentSemesterID;
         },
         delCurrentSemesterID(state) {
-          state.currentSemesterID = '';
+            state.currentSemesterID = '';
+        },
+        loadingFalse(state) {
+            state.register_loading = false;
+        },
+        loadingTrue(state) {
+            state.register_loading = true;
         }
   },
   actions: {
       SignIn: (context, { username, password }) => {
+        context.commit('loadingTrue');
         apiService.signIn(username, password)
           .then(
             (response) => {
               if (response.type === 'Admin') {
-                context.commit('signInSuccess', response.token);
-                //console.log(user.token);
+                context.commit('Exist', response.token);
+                context.commit('loadingFalse');
                 router.push('/admin');
               }
               else if (response.type === 'Student'){
-                context.commit('signInSuccess', response.token);
+                context.commit('Exist', response.token);
+                context.commit('loadingFalse');
                 router.push('/student');
               }
               else if (response.status === 'fail') {
-                context.commit('signInFailure');
+                context.commit('notExist');
+                setTimeout(function () {
+                  context.commit('Exist');
+                }, 2000);
+                context.commit('loadingFalse');
               }
             })
       },
