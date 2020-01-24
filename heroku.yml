@@ -6,8 +6,8 @@ setup:
     S3_BUCKET: bucket
 build:
   docker:
-    api: api/Dockerfile
+    web: api/Dockerfile
 run:
-  api: gunicorn run:app
+  web: gunicorn run:app
 
 
