@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="updatePassword()">
-      <div class="modal-card" style="width: 450px;">
+      <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">Cập nhật mật khẩu mới</p>
         </header>
@@ -66,7 +66,7 @@
                   // console.log(moment(this.newDob).format('MM/DD/YYYY'));
                   const update = await axios({
                       method: 'put',
-                      url: '/auth/update-password',
+                      url: 'https://xamreg-uet-vnu-edu.herokuapp.com/auth/update-password',
                       headers: {
                           'Authorization': authHeader(),
                       },

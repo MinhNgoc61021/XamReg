@@ -12,7 +12,7 @@
                                 size="is-large">
                             </b-icon>
                         </p>
-                        <p>Chọn hoặc kéo thả file Excel (.xlsx) của bạn để tải lên</p>
+                        <p>Chọn hoặc kéo thả file <b-icon icon="file-excel"></b-icon> Excel (.xlsx) của bạn để tải lên</p>
                     </div>
                 </section>
             </b-upload>
@@ -63,7 +63,7 @@
                       container: this.isFullPage ? null : this.$refs.element.$el
                     });
                     try {
-                      const excel_upload = await axios.post('/handling/upload', formData, {
+                      const excel_upload = await axios.post('https://xamreg-uet-vnu-edu.herokuapp.com/handling/upload', formData, {
                         headers: {
                           'Content-Type': 'multipart/form-data',
                           'Authorization': authHeader(),
