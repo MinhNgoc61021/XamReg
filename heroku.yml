@@ -7,7 +7,6 @@ setup:
 build:
   docker:
     api: api/Dockerfile
-    worker: api/Dockerfile
 run:
   api: gunicorn run:app
 
