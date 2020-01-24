@@ -118,4 +118,4 @@ Sau đó truy cập
     và sau đó bạn đăng nhập và sử dụng.
 ## Địa chỉ triển khai
 - https://examreg-uet-vnu-edu.netlify.com/
-- Tình trạng: Tạm thành công (đang cần config Nginx để optimize)
+- Tình trạng: :white_check_mark: Tạm thành công (đang cần config Nginx để optimize)
