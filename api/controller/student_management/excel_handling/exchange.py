@@ -19,7 +19,6 @@ excel_handling = Blueprint('import_export', __name__, url_prefix='/handling')
 @excel_handling.route('/upload', methods=['POST'])
 @token_required
 def upload(current_user):
-    try:
         print(request.files['student_list_excel'], flush=True)
         # load file
         excel_file = load_workbook(request.files['student_list_excel'])
@@ -89,7 +88,7 @@ def upload(current_user):
                     Subject.create(str(excel_data['subjectID']).upper().replace(' ', ''),
                                    excel_data['subjectTitle'])
                     # add qualified and unqualified students to database
-                    Student_Status.create(excel_data['ID'],
+                    Student_Status.create(str(excel_data['ID']).replace(' ', ''),
                                           str(excel_data['subjectID']).upper().replace(' ', ''), str(excel_data['status']).lower())
                 else:
                     return jsonify({'status': 'error', 'message': 'Du'}), 400
@@ -193,5 +192,3 @@ def upload(current_user):
 
         # when the loop ends, which means all the data has been saved successfully
         return jsonify({'status': 'success'}), 200
-    except:
-        return jsonify({'status': 'bad-request'}), 400
