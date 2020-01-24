@@ -116,3 +116,6 @@ Sau đó truy cập
     http://localhost:5000/init_admin
     ```
     và sau đó bạn đăng nhập và sử dụng.
+## Địa chỉ triển khai
+- https://examreg-uet-vnu-edu.netlify.com/
+- Tình trạng: Tạm thành công (đang cần config Nginx để optimize)
