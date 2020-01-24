@@ -8,7 +8,7 @@ export const apiService = {
 };
 
 function signIn(username, password) {
-  const path = 'https://xamreg-uet-vnu-edu.herokuapp.com/auth/register';
+  const path = '/auth/register';
   return axios.post(path, {
     username, password
   })
