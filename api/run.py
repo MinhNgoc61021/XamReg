@@ -3,7 +3,7 @@ from flask_restful import Api
 from db.entity_db import User
 from controller import create_app
 from flask import jsonify
-
+import os
 # write this in cmd
 # for Windows
 # set FLASK_ENV=run.py
@@ -18,6 +18,7 @@ from flask import jsonify
 app = create_app()
 app.config['SECRET_KEY'] = 'IsBLK8lCfYOF7VHNflxkSg'
 api = Api(app)
+port = int(os.environ.get("PORT", 5000))
 CORS(app)
 
 

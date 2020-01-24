@@ -6,7 +6,7 @@ flask_restful
 Flask-SQLAlchemy
 pyexcel-xlsx
 psycopg2
-uwsgi
 PyJWT
 marshmallow-sqlalchemy
 sqlalchemy-filters
+gunicorn
