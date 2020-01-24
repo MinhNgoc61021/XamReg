@@ -8,8 +8,5 @@ build:
   docker:
     api: api/Dockerfile
     worker: api/Dockerfile
-  config:
-    QUIZ_ENV: production
-
 
 
