@@ -1,7 +1,6 @@
 <template>
   <div id="container">
     <section id="sign-in-form">
-<!--        <b-checkbox v-model="hasError">Show errors</b-checkbox>-->
       <h3 class="title is-3">Đăng nhập</h3>
       <p class="subtitle is-6">Hãy đăng nhập bằng tài khoản mà bạn đã được cấp</p>
       <form @submit.prevent="handleSubmit">

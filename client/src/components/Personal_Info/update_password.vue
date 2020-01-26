@@ -44,8 +44,8 @@
 
 <script>
   import axios from 'axios';
-  import  { mapActions } from 'vuex';
-  import {authHeader} from "../api/jwt_handling";
+  import { mapActions } from 'vuex';
+  import { authHeader } from "../api/jwt_handling";
 
   export default {
       name: "update_password",

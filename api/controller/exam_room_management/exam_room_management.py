@@ -26,7 +26,7 @@ def create_room_record(current_user):
                    'Tạo thêm phòng thi ' + newRoomName,
                    set_custom_log_time())
 
-        newRoom = Exam_Room.create(str(newRoomName).strip(), newMaxcapacity)
+        newRoom = Exam_Room.create(str(newRoomName).strip().upper(), newMaxcapacity)
         if newRoom is False:
             return jsonify({'status': 'already-exist'}), 202
         else:
@@ -77,7 +77,7 @@ def update_room_record(current_user):
         # print(newUsername, flush=True)
         # print(newFullname, flush=True)
 
-        check = Exam_Room.updateRecord(currentRoomID, str(newRoomName).strip(), newMaxcapacity)
+        check = Exam_Room.updateRecord(currentRoomID, str(newRoomName).strip().upper(), newMaxcapacity)
         if check is True:
             Log.create(current_user['ID'],
                        'Cập nhật thông tin của phòng thi ' + newRoomName,
@@ -114,7 +114,7 @@ def remove_room_record(current_user):
 def get_room_info_search(current_user):
     try:
         searchName = request.args.get('searchName')
-        searchResults = Exam_Room.searchRoomRecord(searchName)
+        searchResults = Exam_Room.searchRoomRecord(str(searchName).upper())
         return jsonify({'status': 'success',
                             'search_results': searchResults,
                             }), 200
