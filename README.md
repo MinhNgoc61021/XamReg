@@ -116,6 +116,6 @@ Sau đó truy cập
     http://localhost:5000/init_admin
     ```
     và sau đó bạn đăng nhập và sử dụng.
-## Địa chỉ triển khai
+## Địa chỉ triển khai (Deploy Site)
 - https://examreg.netlify.com
 - Tình trạng: :smiley: Tạm thành công (đang cần config Nginx để optimize)
