@@ -117,5 +117,5 @@ Sau đó truy cập
     ```
     và sau đó bạn đăng nhập và sử dụng.
 ## Địa chỉ triển khai
-- https://examreg-uet-vnu-edu.netlify.com/
+- https://examreg.netlify.com/
 - Tình trạng: :smiley: Tạm thành công (đang cần config Nginx để optimize)
