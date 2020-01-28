@@ -571,7 +571,7 @@
             }, // xong
             async getShiftRecordData() {
                 this.shift.shift_loading = true;
-                console.log(this.shift.page);
+                // console.log(this.shift.page);
                 try {
                     const response = await axios({
                         url: '/schedule/shift-records',

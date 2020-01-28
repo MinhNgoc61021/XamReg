@@ -117,7 +117,7 @@
       },
       created() {
           this.GetUserData();
-      }
+      },
   }
 </script>
 <style>

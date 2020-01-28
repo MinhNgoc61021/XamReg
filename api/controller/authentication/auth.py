@@ -64,7 +64,7 @@ def token_required(f):
 def register():
     if request.method == 'POST':
         user_form = request.get_json()
-        username = str(user_form.get('username')).strip()
+        username = user_form.get('username')
         check_username = re.search('[!#$%^&*()='',?";:{}|<>]', username)
         password = user_form.get('password')
         check_password = re.search('[!#$%^&*()='',?";:{}|<>]', username)
@@ -78,7 +78,7 @@ def register():
                 token = jwt.encode({
                     'sub': username,  # representing username
                     'iat': datetime.utcnow(),  # issued at timestamp in seconds
-                    'exp': datetime.utcnow() + timedelta(minutes=60)},
+                    'exp': datetime.utcnow() + timedelta(minutes=120)},
                     # the time in which the token will expire as seconds
                     current_app.config['SECRET_KEY'])
                 return jsonify({'status': 'success',
