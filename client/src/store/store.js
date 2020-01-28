@@ -32,12 +32,12 @@ export const store = new Vuex.Store ({
         },
         signOut(state) {
             state.userStatus = {};
+            state.ID = '';
+            state.fullname = '';
+            state.currentSemesterID = '';
         },
         setCurrentSemesterID(state, CurrentSemesterID) {
             state.currentSemesterID = CurrentSemesterID;
-        },
-        delCurrentSemesterID(state) {
-            state.currentSemesterID = '';
         },
         loadingFalse(state) {
             state.register_loading = false;
@@ -72,7 +72,6 @@ export const store = new Vuex.Store ({
             })
       },
       SignOut: (context) => {
-        context.commit('delCurrentSemesterID');
         apiService.signOut();
         router.push('/register');
       },
