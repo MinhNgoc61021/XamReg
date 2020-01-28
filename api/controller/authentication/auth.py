@@ -64,12 +64,12 @@ def token_required(f):
 def register():
     if request.method == 'POST':
         user_form = request.get_json()
-        username = user_form.get('username')
-        check_username = re.search('[!#$%^&*()='',?";:{}|<>]', str(username).strip())
+        username = str(user_form.get('username')).strip()
+        check_username = re.search('[!#$%^&*()='',?";:{}|<>]', username)
         password = user_form.get('password')
-        check_password = re.search('[!#$%^&*()='',?";:{}|<>]', str(password))
+        check_password = re.search('[!#$%^&*()='',?";:{}|<>]', username)
         if (check_username is None) and (check_password is None):
-            check_user = User.check_register(str(username).strip(), password)
+            check_user = User.check_register(username, password)
             if check_user == 'Not found':
                 return jsonify({'status': 'fail'})
             else:
