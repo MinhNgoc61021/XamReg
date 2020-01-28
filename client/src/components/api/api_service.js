@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { authHeader, isValidJwt } from './jwt_handling.js';
 
-
 //This is where the client call the api server
 export const apiService = {
   signIn, signOut, getUserData

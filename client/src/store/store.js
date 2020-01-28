@@ -72,6 +72,7 @@ export const store = new Vuex.Store ({
             })
       },
       SignOut: (context) => {
+        context.commit('signOut');
         apiService.signOut();
         router.push('/register');
       },

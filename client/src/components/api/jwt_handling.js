@@ -2,6 +2,8 @@
 import { router } from "../../router";
 import  Vue from 'vue';
 import { apiService } from '../api/api_service';
+import { store } from '../../store/store.js'
+
 export function authHeader() {
     // return authorization header with jwt token
     let user = JSON.parse(localStorage.getItem('user'));
@@ -10,7 +12,6 @@ export function authHeader() {
         return 'Bearer: ' + user.token; // send encoded jwt token
     }
     else {
-        apiService.signOut();
         Vue.prototype.$buefy.dialog.alert({
             title: 'Hết thời gian sử dụng',
             message: 'Hãy đăng nhập vào hệ thống để sử dụng tiếp!',
@@ -21,9 +22,11 @@ export function authHeader() {
             ariaRole: 'alertdialog',
             ariaModal: true,
             onConfirm: () => {
+              store.commit('signOut');
+              apiService.signOut();
               router.push('/register');
             },
-          });
+        });
     }
 }
 
