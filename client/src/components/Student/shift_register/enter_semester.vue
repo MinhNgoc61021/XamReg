@@ -60,7 +60,7 @@ export default {
   methods: {
     go_home() {
       this.$parent.close();
-      this.$router.push({ name: 'student-info', params: { studentid: this.ID }, props: true})
+      this.$router.push({ name: 'student-info'})
     },
     async submitSemesterData() {
         // console.log(this.semester.semester_record[0]);

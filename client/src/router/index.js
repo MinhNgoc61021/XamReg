@@ -33,17 +33,8 @@ export const router = new Router({
                   { path: '/exam-room-management', component: exam_room_management },
                   { path: '/admin-manual', name: 'admin-manual', component: admin_manual },],
     },
-    { path: '/student', name: 'student', component: student_page, redirect: { name: 'student-info', props: true, params: { studentid: store.state.ID } },
-      children: [ { path: '/student-info/:studentid', component: info, name: 'student-info', props: true,
-                    beforeEnter (to, from, next)  {
-                        if (getToken(localStorage.getItem('user')).type === 'Admin') {
-                            return next('/admin');
-                        }
-                        else {
-                          return next();
-                        }
-                    }
-                    },
+    { path: '/student', name: 'student', component: student_page, redirect: { name: 'student-info'},
+      children: [ { path: '/student-info', component: info, name: 'student-info' },
                   { path: '/student-manual', name: 'student-manual', component: student_manual },
                   { path: '/export-ticket/:studentid', component: export_ticket, name: 'export-ticket',  props: true,
                     beforeEnter (to, from, next)  {
@@ -79,7 +70,7 @@ router.beforeEach ((to, from, next) => {
     // redirect to student page if the user is a student
     const publicPages = ['/register'];
     const adminPage = ['/admin', '/student-management', '/schedule-management', '/log-management', '/subject-management', '/exam-room-management', '/admin-manual'];
-    const studentPage = ['/student', 'student-info', '/shift-register', '/student-manual'];
+    const studentPage = ['/student', '/student-info', '/shift-register', '/student-manual'];
     const authRequired = !publicPages.includes(to.path);
     const loggedIn = getToken(localStorage.getItem('user'));
 

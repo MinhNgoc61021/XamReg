@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1 class="title is-3">Thông tin chung</h1>
-    <h2 class="subtitle is-6">Thông tin chung của sinh viên có MSSV <b>{{ this.studentid }}</b></h2>
+    <h2 class="subtitle is-6">Thông tin chung của sinh viên có MSSV <b>{{ this.student_info.ID }}</b></h2>
     <hr>
     <section>
         <b-tabs type="is-boxed">
@@ -34,11 +34,11 @@
   import {authHeader} from "../api/jwt_handling";
 
     export default {
-        props: ['studentid'],
         name: "student-info",
         data() {
             return {
                 student_info: {
+                    ID: '',
                     Fullname: '',
                     Username: '',
                     Dob: '',
@@ -61,6 +61,7 @@
                     });
                     // console.log(response);
                     let info_data = response.data.info;
+                    this.student_info.ID = info_data.ID;
                     this.student_info.Username = info_data.Username;
                     this.student_info.Fullname = info_data.Fullname;
                     this.student_info.Gender = info_data.Gender;

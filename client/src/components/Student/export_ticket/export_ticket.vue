@@ -1,51 +1,57 @@
 <template>
-  <div>
+  <div class="container">
     <h1 class="title is-3">In phiếu báo dự thi</h1>
     <h2 class="subtitle is-6">Xem, hủy và in phiếu báo dự thi</h2>
     <hr>
-    <b-field group-multiline>
-
-      <b-button
-        class="button"
-        @click="getRecord"
-        :class="{'is-loading': loading}"
-      >
-        <b-icon
-          size="is-small"
-          icon="sync"/>
-        <span>Làm mới</span>
-      </b-button>
-      <b-button icon-left="file-pdf" v-if="register_result.length > 0" @click="print">
-        In phiếu báo dự thi
-      </b-button>
-      <b-button icon-left="file-pdf" v-else disabled @click="print">
-        In phiếu báo dự thi
-      </b-button>
-    </b-field>
-    <div id = "printTickets">
-       <div class="row" v-if="register_result.length > 0" >
-          <div class="column" v-for="item in register_result">
-            <div class="card">
-              <div style="padding: 10px; margin: 10px;">
-                <p><b>MSSV: </b> {{ studentid }}</p>
-                <p><b>Mã ca thi: </b>{{ item.Shift.ShiftID }}</p>
-                <p><b>Môn thi: </b>{{ item.Shift.Subject.SubjectID }} | {{ item.Shift.Subject.SubjectTitle }}</p>
-                <p><b>Phòng thi:</b> {{ item.Exam_Room.RoomName}}</p>
-                <p><b>Ngày thi:</b> {{ formatDate(item.Shift.Date_Start) }}</p>
-                <p><b>{{ item.Shift.Start_At }} - {{ item.Shift.End_At }}</b></p>
+    <section>
+      <b-tabs type="is-boxed">
+        <b-tab-item label="Xem & In danh sách phiếu" icon="print">
+          <b-field group-multiline>
+            <b-button
+              class="button"
+              @click="getRecord"
+              :class="{'is-loading': loading}"
+            >
+              <b-icon
+                size="is-small"
+                icon="sync"/>
+              <span>Làm mới</span>
+            </b-button>
+            <b-button icon-left="file-pdf" v-if="register_result.length > 0" @click="print">
+              In phiếu báo dự thi
+            </b-button>
+            <b-button icon-left="file-pdf" v-else disabled @click="print">
+              In phiếu báo dự thi
+            </b-button>
+          </b-field>
+          <div id = "printTickets">
+              <div class="row" v-if="register_result.length > 0" >
+                  <div class="column" v-for="item in register_result">
+                    <div class="card">
+                      <div style="padding: 10px; margin: 10px;">
+                        <p><b>MSSV: </b> {{ studentid }}</p>
+                        <p><b>Mã ca thi: </b>{{ item.Shift.ShiftID }}</p>
+                        <p><b>Môn thi: </b>{{ item.Shift.Subject.SubjectID }} | {{ item.Shift.Subject.SubjectTitle }}</p>
+                        <p><b>Phòng thi:</b> {{ item.Exam_Room.RoomName}}</p>
+                        <p><b>Ngày thi:</b> {{ formatDate(item.Shift.Date_Start) }}</p>
+                        <p><b>{{ item.Shift.Start_At }} - {{ item.Shift.End_At }}</b></p>
+                      </div>
+                      <div id="deleteRegister">
+                        <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onDelete(item)"></b-button>
+                      </div>
+                    </div>
+                  </div>
               </div>
-              <div id="deleteRegister">
-                <b-button type="is-danger" size="is-small" icon-pack="fas" icon-right="trash" outlined @click.prevent="onDelete(item)"></b-button>
-              </div>
-            </div>
+              <b-field v-else>
+                  <b-message type="is-danger" has-icon>
+                    Hiện tại chưa có dữ liệu ca thi đã đăng kí, yêu cầu sinh viên hãy vào phần <b>Đăng ký dự thi</b> để đăng kí!
+                  </b-message>
+              </b-field>
+              <b-loading :is-full-page="false" :active.sync="loading" :can-cancel="false"></b-loading>
           </div>
-       </div>
-      <b-field v-else>
-        <b-message type="is-danger" has-icon>
-          Hiện tại chưa có dữ liệu ca thi đã đăng kí, yêu cầu sinh viên hãy vào phần <b>Đăng ký dự thi</b> để đăng kí!
-        </b-message>
-      </b-field>
-    </div>
+        </b-tab-item>
+      </b-tabs>
+    </section>
   </div>
 </template>
 
@@ -61,15 +67,6 @@
             return {
               loading: false,
               register_result: [],
-              // room_data: {'RoomID' : '',
-              //             'RoomName' : '',
-              //             'Maxcapacity' : ''},
-              // subject_data: {'SubjectID' : '',
-              //                'SubjectTitle' : ''},
-              // shift_data: {'ShifID' : '',
-              //              'Start_At' : '',
-              //              'Date_Start' : '',
-              //              'End_At' : ''}
             }
         },
         methods: {
@@ -175,13 +172,6 @@
               this.isPrinting = true;
               printJS({
                   printable: 'printTickets',
-                  // properties: [
-                  //         { field: 'ID', displayName: 'Mã số sinh viên'},
-                  //         { field: 'Fullname', displayName: 'Tên sinh viên'},
-                  //         { field: 'Dob', displayName: 'Ngày sinh'},
-                  //         { field: 'Gender', displayName: 'Giới tính'},
-                  //         { field: 'CourseID', displayName: 'Mã lớp học'}
-                  //       ],
                   documentTitle : "PHIẾU BÁO DỰ THI",
                   css : "../../css/ticket.css",
                   scanStyles: true,
