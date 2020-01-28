@@ -221,6 +221,7 @@
           </b-message>
         </section>
       </div>
+      <b-loading :is-full-page="false" :active.sync="semester.loading" :can-cancel="false"></b-loading>
     </section>
   </div>
 

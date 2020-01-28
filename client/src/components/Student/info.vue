@@ -6,6 +6,7 @@
     <section>
         <b-tabs type="is-boxed">
             <b-tab-item label="Thông tin về sinh viên" icon="info-circle">
+              <b-field-body>
                 <b-field label="Tài khoản">
                   <p>{{ student_info.Username }}</p>
                 </b-field>
@@ -21,6 +22,8 @@
                 <b-field label="Giới tính">
                   <p>{{ student_info.Gender }}</p>
                 </b-field>
+                <b-loading :is-full-page="false" :active.sync="loading" :can-cancel="false"></b-loading>
+              </b-field-body>
             </b-tab-item>
         </b-tabs>
     </section>
@@ -44,13 +47,15 @@
                     Gender: '',
                     CourseID: '',
                 },
+                loading: false,
             }
         },
         methods: {
             formatDate(date) {
-                return moment(date).format('L');
+                return date !== '' ? moment(date).format('L') : '';
             },
             async getStudentInfo() {
+                this.loading = true;
                 try {
                     const response = await axios({
                         url: '/shift-register/get-info',
@@ -71,6 +76,8 @@
                         type: 'is-danger',
                         hasIcon: true
                     });
+                } finally {
+                    this.loading = false;
                 }
 
             }
