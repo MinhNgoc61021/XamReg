@@ -19,7 +19,7 @@
     "core-js": "^2.6.5",
     "lodash.debounce": "^4.0.8",
     "moment": "^2.24.0",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "print-js": "^1.0.63",
     "vee-validate": "^2.2.15",
     "vue": "^2.6.10",
